@@ -1,0 +1,15 @@
+{
+    "new_notification": "إشعار جديد",
+    "booking_container_assigned": "تم تعيين حاوية حجز بواسطة :superagent إلى :agent",
+    "booking_assigned": "تم تعيين حجز بواسطة :superagent إلى :agent",
+    "daily_financial_custody_added": "تمت إضافة عُهدة مالية يومية بقيمة :value إلى الوكيل :agent",
+    "booking_specification": "تم تخصيص الحجز رقم :booking_number بواسطة :agent",
+    "container_loaded": "تم تحميل الحاوية رقم :container_no بواسطة :agent",
+    "container_unloaded": "تم تعتيق الحاوية رقم :container_no بواسطة :agent",
+    "money_transferred": "تم تحويل مبلغ من المال إليك من :agent بقيمة :value",
+    "the_payer" : "المسدد",
+    "the_rest" : "المتبقى",
+    "Pay" : "سدد",
+    "Wait For Superagent approval": "انتظر موافقة المندوب المسئول",
+    "This Container Alread Has Delivery Plicy" : "هذه الحاوية لديها بوليصة تأمين بالفعل"
+}

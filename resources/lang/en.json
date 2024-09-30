@@ -1,0 +1,10 @@
+{
+    "new_notification": "New Notification",
+    "booking_container_assigned": "A booking container has been assigned by :superagent to :agent",
+    "booking_assigned": "A booking has been assigned by :superagent to :agent",
+    "daily_financial_custody_added": "A daily financial custody with a value :value has been added to the agent :agent",
+    "booking_specification": "Booking number :booking_number was specified by :agent",
+    "container_loaded": "Container number :container_no was loaded by :agent",
+    "container_unloaded": "Container number :container_no was unloaded by :agent",
+    "money_transferred": "An amount of money has been transferred to you from :agent with a value :value"
+}
