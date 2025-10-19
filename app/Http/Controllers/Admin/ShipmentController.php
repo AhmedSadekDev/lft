@@ -114,11 +114,10 @@ class ShipmentController extends Controller
         return view('admin.shipments.payments', compact('car', 'shipments'));
     }
 
-    public function export(Request $request, $id)
+    public function export(Request $request)
     {
 
-        $ids = explode(',', $request->ids);
-        return Excel::download(new ShipmentExport($ids), 'shipments.xlsx');
+        return Excel::download(new ShipmentExport($request->from, $request->to, $request->car_id), 'shipments.xlsx');
     }
 
     public function create($id)

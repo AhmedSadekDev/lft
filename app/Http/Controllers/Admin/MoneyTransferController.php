@@ -51,7 +51,7 @@ class MoneyTransferController extends Controller
         }
 
         $agent = Agent::find($request->agent_id);
-        $agent->update(['wallet' => $agent->wallet + $request->value]);
+        $agent->update(['wallet' => $agent->wallet + $request->value, 'total_wallet' => $agent->total_wallet + $request->value]);
 
         $data["value"] = $request->value;
         $data["transfered_type"] = "App\Models\Agent";

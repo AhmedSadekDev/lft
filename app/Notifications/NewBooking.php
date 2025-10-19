@@ -33,11 +33,16 @@ class NewBooking extends Notification
 
     public function toMail($notifiable)
     {
+        $track_id = $this->booking->booking_number;
         return (new MailMessage)
-            ->line('لديك حجز جديد برقم الحجز ' . $this->booking->booking_number . ' و ' . $this->booking->bookingContainers->count() . ' حاوية')
+            ->subject('إشعار حجز جديد')
+            ->greeting('مرحباً!')
+            ->line('تم إضافة حجز جديد بالمعلومات التالية:')
+            ->line('رقم الحجز: ' . $this->booking->booking_number)
+            ->line('عدد الحاويات: ' . $this->booking->bookingContainers->count())
+            ->action('عرض تفاصيل الحجز', "https://leaderfortrans.com/book/?track=$track_id")
             ->line('شكراً لاستخدامك تطبيقنا!');
     }
-
 
     public function toArray($notifiable)
     {

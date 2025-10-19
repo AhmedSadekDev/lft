@@ -26,7 +26,7 @@ class CarController extends Controller
     public function index()
     {
         $input = [
-            'cars' => Car::all(),
+            'cars' => Car::with('deliveryPolicies')->get(),
         ];
         return view('admin.cars.index', $input);
     }

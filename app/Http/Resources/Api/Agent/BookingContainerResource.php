@@ -29,6 +29,7 @@ class BookingContainerResource extends JsonResource
             'specification_latter' => $this->bookingPapers->where('type', 0)->last()->image->image ?? '',
             'container_image' => $this->bookingPapers->where('type', 1)->last()->image->image ?? '',
             'container_with_sail_image' => $this->bookingPapers->where('type', 2)->last()->image->image ?? '',
+            'unloading_image' => $this->bookingPapers->where('type', 3)->last()->image->image ?? '',
 
 
         ];

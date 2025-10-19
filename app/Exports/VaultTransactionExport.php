@@ -23,13 +23,13 @@ class VaultTransactionExport implements FromCollection, ShouldAutoSize, WithHead
     */
     public function collection()
     {
-         return VaultTransaction::whereIn('id', $this->ids)->get()->map(function($item) {
+         return VaultTransaction::whereIn('id', $this->ids)->where('type', 0)->get()->map(function($item) {
             return [
                 'id' => $item->id,
                 'name' => $item->name,
                 'amount' => $item->amount,
                 'type' => $item->type ? __('main.debit') : __('main.credit'),
-                'bank' => $item->bank->name,
+                'bank' => $item->bank?->name ?? "N/A",
             ];
         });
     }

@@ -25,14 +25,16 @@ class ExpenseController extends Controller
         $financial_custodies = $agent->sended_financial_custodies()
             ->orderBy("id", "desc")
             ->get();
+        // dd($financial_custodies);
         $expenses = $agent->expenses()
             ->orderBy("id", "desc")
             ->get();
-
+        // dd($expenses);
         $merged = $financial_custodies->concat($expenses);
 
         $ordered = $merged->sortBy('created_at')->values();
         $allExpenses = $ordered;
+        // dd($allExpenses);
         return view('admin.agents.expenses.index', compact("allExpenses"));
     }
     

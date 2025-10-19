@@ -162,6 +162,7 @@
                                 <th scope="col">{{ __('admin.created_at') }}</th>
                                 <th scope="col">{{ __('admin.print_invoice') }}</th>
                                 <th scope="col">{{ __('admin.print_eInvoice') }}</th>
+                                <th scope="col">الملاحظات</th>
 
                                 <th scope="col">{{ __('admin.delete') }}</th>
                             </tr>
@@ -189,8 +190,7 @@
                                     <td class="text-center">
                                         @if (is_null($booking->invoice?->invoice_number))
                                             @if ($booking->type_of_action != 2)
-                                                <a href="{{ route('booking-invoices.create', ['booking' => $booking->id]) }}"
-                                                    class="btn btn-primary">
+                                                <a class="btn btn-primary" href="{{ route('booking-invoices.create', $booking->id) }}">
                                                     {{ __('admin.create_invoice') }}
                                                 </a>
                                             @else
@@ -211,8 +211,12 @@
                                             @endif
                                         @endif
                                     </td>
+                                   
                                     <td>{{ 'لم يتم طباعة الفاتورة الالكترونية' }}</td>
-
+                                    <td><a href="{{ route('bookings.booking_notes', ['booking' => $booking->id]) }}"
+                                                    class="btn btn-primary w-full">
+                                                    الملاحظات
+                                                </a></td>
                                     <td>
                                         <div class="row">
                                             @if (auth()->user()->hasPermissionTo('bookings.index'))
@@ -246,9 +250,38 @@
                                                     {{ __('admin.papers') }}
                                                 </a>
                                             </div>
+                                            
                                         </div>
                                     </td>
                                 </tr>
+                                <div class="modal fade" id="invoiceModal{{ $booking->id }}" tabindex="-1" aria-labelledby="invoiceModalLabel{{ $booking->id }}" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="invoiceModalLabel{{ $booking->id }}">إنشاء فاتورة</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{-- محتوى إنشاء الفاتورة --}}
+        <form method="GET" id="invoiceForm{{$booking->id}}" action="{{ route('booking-invoices.create', $booking->id) }}">
+
+  <div class="form-group">
+    <label for="invoice_number">رقم الفاتورة</label>
+    <input form="invoiceForm{{$booking->id}}" type="text" name="invoice_number" id="invoice_number" class="form-control" required>
+  </div>
+
+  {{-- باقي الحقول المطلوبة --}}
+
+  <button type="submit" form="invoiceForm{{$booking->id}}" class="btn btn-success">حفظ الفاتورة</button>
+</form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
                             @endforeach
                         </tbody>
                     </table>
@@ -257,8 +290,13 @@
         </div>
         <!--end::Card-->
     </div>
+    <!-- Modal -->
+
+
 @endsection
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         (function($) {
             "use strict";

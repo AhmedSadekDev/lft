@@ -36,7 +36,6 @@
                             <th scope="col">{{ __('admin.email') }}</th>
                             <th scope="col">{{ __('admin.phone') }}</th>
                             <th scope="col">{{ __('admin.wallet') }}</th>
-                            <th scope="col">{{ __('admin.created_at') }}</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -61,7 +60,6 @@
                                     {{ $superagent->wallet }}
                                 </td>
 
-                                <td>{{ $superagent->created_at }}</td>
                                 <td>
                                     <div class="row">
                                         <div class="col-md-3 mr-3">

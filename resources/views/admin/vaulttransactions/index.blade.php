@@ -74,6 +74,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">{{ __('admin.bank') }}</th>
+                            <th scope="col">المندوب</th>
                             <th scope="col">{{ __('admin.name') }}</th>
                             <th scope="col">{{ __('main.amount') }}</th>
                             <th scope="col">{{ __('main.date') }}</th>
@@ -86,7 +87,10 @@
                             <tr>
                                 <th scope="row">{{ $item->id }}</th>
                                 <td>
-                                    {{ $item->bank->name ?? 'N/A' }}
+                                    {{ $item->bank?->name ?? 'N/A' }}
+                                </td>
+                                <td>
+                                    {{ $item->agient?->name ?? 'N/A' }}
                                 </td>
                                 <td>
                                     {{ $item->name }}

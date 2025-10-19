@@ -207,6 +207,23 @@
                     </div>
                     <!--end::Date-->
                 </div>
+                <div class="form-group col-md-6">
+                    <label for="image" class="font-weight-bold">اختر صورة أو ملف</label>
+                    <input type="file" name="image" id="image" class="form-control">
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="type" class="font-weight-bold">نوع الملف</label>
+                    <select name="type" id="type" class="form-control">
+                        <option>اختر نوع الملف</option>
+                        <option value="0">جواب تخصيص</option>
+                        <option value="1">صورة الحاوية</option>
+                        <option value="5">صورة سيل ملاحي</option>
+                        <option value="4">جواب التعتيق</option>
+                        <option value="8">اذن شحن</option>
+                        <option value="9">أخرى</option>
+                    </select>
+                </div>
             </div>
 
             <div class="row justify-content-end">
@@ -420,7 +437,6 @@
                                         array_replace(['to_be_disabled' => __('admin.select')], $containers_type->all()),
                                         old('containers.0.container_id'),
                                         [
-                                            'id' => 'container_id',
                                             'class' => 'form-control',
                                             'required' => 'required',
                                         ],
@@ -569,19 +585,56 @@
             }
         }
 
-        $(document).ready(function() {
-            // Add new container
-            $(document).on('click', '.add-container-btn', function() {
-                var newContainer = $('.containers-div').first().clone();
-                newContainer.find('.delete-div').removeClass('d-none');
-                newContainer.appendTo('.containers-div').parent();
-            });
+        $(document).ready(function () {
+    let containerIndex = $(".containers-div").length; // Track index for new containers
 
-            // Delete container
-            $(document).on('click', '.delete-container', function() {
-                $(this).closest('.containers-div').remove();
-            });
+    // Add new container
+    $(document).on("click", ".add-container-btn", function (e) {
+        e.preventDefault();
+
+        // Get the last container
+        let lastContainer = $(".containers-div").last();
+        let newContainer = lastContainer.clone(); // Clone the last container
+
+        // Increment the index for the new container
+        containerIndex++;
+
+        // Update input names and IDs for uniqueness
+        newContainer.find("select, input").each(function () {
+            let name = $(this).attr("name");
+            let id = $(this).attr("id");
+
+            if (name) {
+                // Replace the index in the name (e.g., containers[0][branch_id] -> containers[1][branch_id])
+                let newName = name.replace(/\[\d+\]/, "[" + containerIndex + "]");
+                $(this).attr("name", newName);
+            }
+            if (id) {
+                // Replace the index in the ID (e.g., branch_id_0 -> branch_id_1)
+                let newId = id.replace(/\d+/, containerIndex);
+                $(this).attr("id", newId);
+            }
+
+            // Clear values for inputs
+            if ($(this).is("input")) {
+                $(this).val("");
+            }
         });
+
+        // Show the delete button for the new container
+        newContainer.find(".delete-div").removeClass("d-none");
+
+        // Append the new container after the last one
+        lastContainer.after(newContainer);
+    });
+
+    // Delete container
+    $(document).on("click", ".delete-container", function () {
+        if ($(".containers-div").length > 1) {
+            $(this).closest(".containers-div").remove();
+        }
+    });
+});
     </script>
     <script>
         $(function() {

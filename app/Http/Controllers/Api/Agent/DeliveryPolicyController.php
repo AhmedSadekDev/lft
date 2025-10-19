@@ -15,6 +15,7 @@ use App\Models\Agent;
 use App\Models\BookingContainer;
 use App\Models\CompanyTransportation;
 use App\Models\DeliveryPolicy;
+use App\Models\CitiesAndRegions;
 use App\Models\Image;
 use App\Models\MoneyTransfer;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class DeliveryPolicyController extends Controller
     public function create_delivery_policy(DeliveryPolicyRequest $request)
     {
         try {
-
+            // dd($request->all());
             $agent = auth()->guard('agent')->user();
             
             
@@ -40,10 +41,12 @@ class DeliveryPolicyController extends Controller
             if ($agent->wallet < $request->value) {
                 return $this->returnError(200, __('main.you dont have enougth money'));
             }
-
+            $city = CitiesAndRegions::find($request->loading_id);
             //create delivery_policy
             $delivery_policy_data["car_id"] = $request->car_id;
             $delivery_policy_data["driver_id"] = $request->driver_id;
+            $delivery_policy_data["date"] = $request->date;
+            $delivery_policy_data["address"] = $city->address . " " . $city->city;
             $delivery_policy = DeliveryPolicy::create($delivery_policy_data);
 
             $delivery_policy->booking_containers()->attach($request->booking_container_ids);
@@ -96,6 +99,8 @@ class DeliveryPolicyController extends Controller
             $data["transfered_type"] = "App\Models\Driver";
             $data["transfered_id"] = $request->driver_id;
             $data["delivery_policy_id"] = $delivery_policy->id;
+            $data["date"] = $request->id;
+            $data["address"] = $city->address . " " . $city->city;
             $moneyTransfer = MoneyTransfer::create($data);
 
             $this->saveLogActivity($agent->id, Agent::class, $moneyTransfer->id, MoneyTransfer::class);

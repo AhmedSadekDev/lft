@@ -26,6 +26,9 @@
                         </a>
                     @endif
                     <!--end::Button-->
+                    <a href="{{ route('cars.export') }}" class="btn btn-success font-weight-bolder">
+                        <i class="fas fa-file-excel"></i> تصدير إلى Excel
+                    </a>
                 </div>
             </div>
             <div class="card-body">
@@ -34,7 +37,8 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">{{ __('admin.car_number') }}</th>
-                            <th scope="col">{{ __('admin.created_at') }}</th>
+                            <th scope="col">تاريخ اخر نقلة</th>
+                            <th scope="col">اجمالي حساب السيارة</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -53,7 +57,8 @@
 
                                 </td>
 
-                                <td>{{ $car->created_at }}</td>
+                                <td>{{ optional($car->deliveryPolicies()->latest()->first())->date ?? "لا توجد نقلة" }}</td>
+                                <td>{{ $car->deliveryPolicies->sum('cost') - $car->payingcars->sum('value') }}</td>
 
                                 <td>
                                     <div class="row">

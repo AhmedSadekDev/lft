@@ -84,7 +84,7 @@ class Agent extends  Authenticatable implements JWTSubject
     }
     public function getRemainingFinancialCustodyAttribute(): int
     {
-        return   $this->total_financial_custody - $this->spented_financial_custody;
+        return   $this->wallet - $this->spented_financial_custody;
     }
     public function booking_containers(): HasMany
     {
@@ -98,6 +98,11 @@ class Agent extends  Authenticatable implements JWTSubject
     public function agent_booking_containers(): BelongsToMany
     {
         return $this->belongsToMany(BookingContainer::class, "booking_container_agents", "agent_id", "booking_container_id")->withPivot("booking_container_status","created_at")->withTimestamps();
+    }
+    public function scopeToday($query)
+    {
+        return $query->wherePivot('created_at', '>=', now()->startOfDay())
+                     ->wherePivot('created_at', '<=', now()->endOfDay());
     }
     public function scopeOfFilter($query){
         return $query->when(request()->word != null ,function($q){

@@ -78,30 +78,39 @@ class BookingContainerController extends Controller
         );
     }
     public function store(
-        BookingContainerRequest $request,
-        Booking $booking
+    BookingContainerRequest $request,
+    Booking $booking
     ) {
         try {
-            $op = BookingContainer::inseFrt(
+            // Begin transaction if needed
+            DB::beginTransaction();
+    
+            // Insert booking container record
+            $op = BookingContainer::insert(
                 array_merge(
                     $request->except('_token', 'factory_id'),
                     ['booking_id' => $booking->id]
                 )
             );
-
+    
+            // Commit the transaction
+            DB::commit();
+    
             // Handling Redirection
-            $referer =  session('booking_containers_edit_referrer')
+            $referer = session('booking_containers_edit_referrer') 
                 ?? route('bookings.show', ['booking' => $booking->id]);
             session()->forget('booking_containers_edit_referrer');
-
+    
             return redirect($referer)->with(['success' => __('alerts.updated_successfully')]);
         } catch (\Throwable $th) {
+            // Roll back the transaction in case of an error
             DB::rollBack();
-            // throw $th;
-            \Illuminate\Support\Facades\Log::error($th);
-            return redirect()
-                ->back()
-                ->with(['error' => $th]);
+    
+            // Log only the message and stack trace to avoid serialization issues
+            \Illuminate\Support\Facades\Log::error($th->getMessage(), ['stack' => $th->getTraceAsString()]);
+    
+            // Redirect back with the error message
+            return redirect()->back()->with(['error' => $th->getMessage()]);
         }
     }
 
@@ -140,117 +149,73 @@ class BookingContainerController extends Controller
 
         DB::beginTransaction();
         try {
-            $invoiceTransportationRow = $booking_container
-                ->update(
-                    $request->validated()
-                );
+            // Updating the booking_container with validated request data
+            $invoiceTransportationRow = $booking_container->update($request->validated());
+        
+            // Fetching related models
             $bookingAgent = BookingContainerAgent::where('booking_container_id', $booking_container->id)->first();
             $dailyBooking = DailyBookingContainer::where("booking_container_id", $booking_container->id)->first();
-
-
-            if ($request->status == 0) {
-
-                $booking_container->update([
+        
+            // Define the updates based on status
+            $containerUpdates = [
+                0 => [
                     'superagent_specification_approved' => 0,
                     'superagent_loading_approved' => 0,
                     'superagent_unloading_approved' => 0,
-                ]);
-
-                $bookingAgent->update([
-                    'booking_container_status' => 0,
-                    'superagent_specification_approved' => 0,
-                    'superagent_loading_approved' => 0,
-                    'superagent_unloading_approved' => 0,
-                ]);
-
-                $dailyBooking->update([
-                    'booking_container_status' => 0,
-                    'superagent_specification_approved' => 0,
-                    'superagent_loading_approved' => 0,
-                    'superagent_unloading_approved' => 0,
-                ]);
-            } elseif ($request->status == 1) {
-
-                $booking_container->update([
+                    'booking_container_status' => 0
+                ],
+                1 => [
                     'superagent_specification_approved' => 1,
                     'superagent_loading_approved' => 0,
                     'superagent_unloading_approved' => 0,
-                ]);
-
-                $bookingAgent->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 0,
-                    'superagent_unloading_approved' => 0,
-                ]);
-
-                $dailyBooking->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 0,
-                    'superagent_unloading_approved' => 0,
-                ]);
-            } elseif ($request->status == 2) {
-
-                $booking_container->update([
+                    'booking_container_status' => 1
+                ],
+                2 => [
                     'superagent_specification_approved' => 1,
                     'superagent_loading_approved' => 1,
                     'superagent_unloading_approved' => 0,
-                ]);
-
-                $bookingAgent->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 1,
-                    'superagent_unloading_approved' => 0,
-                ]);
-
-                $dailyBooking->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 1,
-                    'superagent_unloading_approved' => 0,
-                ]);
-            } else {
-
-                $booking_container->update([
+                    'booking_container_status' => 1
+                ],
+                3 => [
                     'superagent_specification_approved' => 1,
                     'superagent_loading_approved' => 1,
                     'superagent_unloading_approved' => 1,
-                ]);
-
-                $bookingAgent->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 1,
-                    'superagent_unloading_approved' => 1,
-                ]);
-
-                $dailyBooking->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 1,
-                    'superagent_unloading_approved' => 1,
-                ]);
+                    'booking_container_status' => 1
+                ]
+            ];
+        
+            // Get the update data for the current status
+            $statusUpdate = $containerUpdates[$request->status] ?? $containerUpdates[0];
+        
+            // Update booking_container, bookingAgent, and dailyBooking
+            $booking_container->update([
+                'superagent_specification_approved' => $statusUpdate['superagent_specification_approved'],
+                'superagent_loading_approved' => $statusUpdate['superagent_loading_approved'],
+                'superagent_unloading_approved' => $statusUpdate['superagent_unloading_approved']
+            ]);
+        
+            // Check for null and update only if the model exists
+            if ($bookingAgent) {
+                $bookingAgent->update($statusUpdate);
             }
-
-
+            if ($dailyBooking) {
+                $dailyBooking->update($statusUpdate);
+            }
+        
             DB::commit();
-
+        
             // Handling Redirection
-            $referer =  session('booking_containers_edit_referrer')
+            $referer = session('booking_containers_edit_referrer')
                 ?? route('bookings.show', ['booking' => $booking_container->booking->id]);
             session()->forget('booking_containers_edit_referrer');
-
+        
             return redirect($referer)->with(['success' => __('alerts.updated_successfully')]);
         } catch (\Throwable $th) {
             DB::rollBack();
-            // throw $th;
             \Illuminate\Support\Facades\Log::error($th);
-            return redirect()
-                ->back()
-                ->with(['error' => $th]);
+            return redirect()->back()->with(['error' => $th]);
         }
+
     }
 
     public function destroy(BookingContainer $booking_container)

@@ -24,7 +24,7 @@ class VaultTransactionController extends Controller
             $vaulttransactions->whereDate('created_at', '<=', $request->date_to);
         }
 
-        $vaulttransactions = $vaulttransactions->get();
+        $vaulttransactions = $vaulttransactions->where('type', 0)->get();
 
         return view('admin.vaulttransactions.index', compact('vaulttransactions'));
     }

@@ -47,6 +47,11 @@ use App\Http\Controllers\Admin\Booking\BookingServiceController;
 use App\Http\Controllers\Admin\Booking\BookingContainerController;
 use App\Http\Controllers\BookingContaBookingContrainerExtraCostsController;
 use App\Http\Controllers\InvoicePaymentController;
+use App\Exports\CarsExport;
+use Maatwebsite\Excel\Facades\Excel;
+
+
+use App\Services\SendNotification;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,11 +71,21 @@ Route::get('/index', function () {
 Route::get('/', function () {
     return to_route('main');
 });
+Route::get('/termsAgent', function () {
+    return view('termsAgent');
+});
+Route::get('/termsSuper', function () {
+    return view('termsSuper');
+});
+
+
 
 
 
 Route::get('set_password/companies', [SetPasswordController::class, 'company']);
 Route::post('companies/update_password', [SetPasswordController::class, 'updateCompany'])->name('companies.update_password');
+Route::get('set_password/employees', [SetPasswordController::class, 'employees']);
+Route::post('employees/update_password', [SetPasswordController::class, 'updateEmployee'])->name('employees.update_password');
 Route::get('set_password/superagents', [SetPasswordController::class, 'superagent']);
 Route::post('superagents/update_password', [SetPasswordController::class, 'updateSuperAgent'])->name('superagents.update_password');
 Route::get('set_password/agents', [SetPasswordController::class, 'agent']);
@@ -79,7 +94,7 @@ Route::post('agents/update_password', [SetPasswordController::class, 'updateAgen
 
 
 Auth::routes();
-
+Route::get('/previewInvoicePDF/{companyId}/{invoiceUUID}', [InvoicesController::class, 'previewInvoicePDF'])->name('bookings.previewInvoicePDF');
 
 // ----------------- companyInvoice -----------------
 Route::prefix('companyInvoice')->group(function () {
@@ -91,6 +106,7 @@ Route::prefix('companyInvoice')->group(function () {
     Route::delete('/{id}/destroy', [companyInvoiceController::class, 'destroy'])->name('companyInvoice.destroy');
     Route::get('/export/{from}/{to}/{company_id}', [companyInvoiceController::class, 'export'])->name('companyInvoice.export');
 });
+
 // ----------------- companyInvoice -----------------
 
 // ----------------- CarShipments -----------------
@@ -102,7 +118,7 @@ Route::prefix('car_shipments')->group(function () {
     Route::post('/store', [ShipmentController::class, 'store'])->name('shipments.store');
     Route::put('/{id}/update', [ShipmentController::class, 'update'])->name('shipments.update');
     Route::delete('/{id}/destroy', [ShipmentController::class, 'destroy'])->name('shipments.destroy');
-    Route::get('/{id}/export', [ShipmentController::class, 'export'])->name('shipments.export');
+    Route::get('/export', [ShipmentController::class, 'export'])->name('shipments.export');
 });
 
 Route::prefix('car_payments')->group(function () {
@@ -128,7 +144,10 @@ Route::prefix('car_payments')->group(function () {
 
 
 Route::get("get-employees-by-company", [EmployeeController::class, 'company']);
-
+Route::get('/submit-invoice/{id}', [InvoicesController::class, 'submitInvoice'])->name('bookings.invoices.submit');
+Route::get('/cancel-invoice/{id}', [InvoicesController::class, 'cancel_invoice'])->name('bookings.invoices.cancel');
+Route::get('/reject-invoice/{id}', [InvoicesController::class, 'reject_invoice'])->name('bookings.invoices.reject');
+Route::get('/get-invoice/{id}', [InvoicesController::class, 'get_invoice'])->name('bookings.invoices.get');
 
 
 // ----------------- Dashboard -----------------
@@ -193,7 +212,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('bookings-invoices/{id?}', [InvoicesController::class, 'index'])->name('bokkings.invoices');
     Route::get('bookings-invoices-exports/{id?}', [InvoicesController::class, 'export'])->name('bookings.invoices.exports');
     Route::get('/download-invoice/{companyId?}', [InvoicesController::class, 'downloadPDF'])->name('bookings.invoices.pdf');
-
+    
+    Route::get('/export-cars', function () {
+        return Excel::download(new CarsExport, 'cars.xlsx');
+    })->name('cars.export');
 
     Route::get('invoice-payments/{invoiceId}', [InvoicePaymentController::class , 'index'])->name('invoice_payments.index');
     Route::get('invoice-payments-excel/{invoiceId}', [InvoicePaymentController::class , 'excel'])->name('invoice_payments.excel');
@@ -206,8 +228,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     // invoices ----------------------------------------------------------------
 
     Route::get("booking_papers/{booking}", [BookingController::class, "booking_papers"])->name("bookings.booking_papers");
+    Route::post("storePapers", [BookingController::class, "storePapers"])->name("bookings.papers.store");
+    Route::get("booking_notes/{booking}", [BookingController::class, "booking_notes"])->name("bookings.booking_notes");
     Route::get("booking_container_papers/{booking}", [BookingController::class, "booking_container_papers"])->name("bookings.booking_container_papers");
     Route::get("booking_container_policies/{booking}", [BookingController::class, "booking_container_policies"])->name("bookings.booking_container_policies");
+    Route::delete("deletePaper/{booking}", [BookingController::class, "deletePaper"])->name("admin.papers.delete");
     // ----------------- Booking Containers -----------------
     Route::resource(
         'booking-containers',
@@ -393,6 +418,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('/booking_container_expenses/{id}', [ExpenseController::class, 'booking_container_expenses'])->name('expenses.booking_container_expenses');
 
     Route::get('/daily_reports', [ReportController::class, 'daily_reports'])->name('reports.daily_reports');
+    Route::get('/export_excel', [ReportController::class, 'exportExcel'])->name('reports.export_excel');
+    Route::get('/general_expenses', [ReportController::class, 'general_expenses'])->name('reports.general_expenses');
+    Route::get('/general_expenses_export', [ReportController::class, 'general_expenses_export'])->name('reports.general_expenses.export');
 });
 // ----------------- \Dashboard -----------------
 

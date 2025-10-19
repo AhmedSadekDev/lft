@@ -19,7 +19,6 @@ class BookingContainerActionController extends Controller
 {
     public function done_specification(BookingRequest $request)
     {
-        try {
 
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
@@ -40,11 +39,7 @@ class BookingContainerActionController extends Controller
             //response
 
             return $this->returnAllData($response, __('alerts.success'));
-        } catch (\Exception $ex) {
-
-
-            return $this->returnError(500, $ex->getMessage());
-        }
+        
     }
 
     public function done_loading(BookingContainerRequest $request)

@@ -10,10 +10,10 @@ class BookingContainerResource extends JsonResource
 
     public function toArray($request)
     {
-
+        // dd($this);
         $superagent_id = auth()->guard("superagent")->id();
-
-        $is_today = DailyBookingContainer::where([["superagent_id","=",$superagent_id],["booking_container_status","=",$this->status],["booking_container_id","=",$this->id]])->whereDate("created_at",now())->first();
+//["superagent_id","=",$superagent_id]
+        $is_today = DailyBookingContainer::where([["booking_container_status","=",$this->status],["booking_container_id","=",$this->id]])->whereDate("created_at",now())->first();
         return [
             'id'                => $this->id,
             'company_name' => $this->booking->company->name ?? "",

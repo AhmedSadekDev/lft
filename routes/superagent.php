@@ -70,6 +70,7 @@ Route::group(['middleware' => 'localization'], function () {
             Route::get("booking/loading", "loading");
 
             Route::get("booking/unloading", "unloading");
+            Route::get("booking/missions/all", "all");
         });
 
         //agents
@@ -102,6 +103,7 @@ Route::group(['middleware' => 'localization'], function () {
 
             Route::post("booking/save_specification_booking_yard", "save_specification_booking_yard");
 
+            Route::get("booking/all", "all");
             Route::get("booking/specification_assignments", "specification_assignments");
 
             Route::get("booking/unloading_assignments", "unloading_assignments");

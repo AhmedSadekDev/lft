@@ -159,10 +159,14 @@
                 'document_title' => __('admin.attachments'),
             ])
             <div style="margin-bottom: .25cm;">
-                @include('admin.components.booking-invoices.printing.table.expenses-row')
-                {{-- @include('admin.components.booking-invoices.printing.table.layout', [
-                    'items' => $attachment_rows,
-                ]) --}}
+                @if(count($booking->expenses) > 0)
+                    @include('admin.components.booking-invoices.printing.table.expenses-row')
+                @endif
+                @if(count($attachment_rows) > 0)
+                    @include('admin.components.booking-invoices.printing.table.layout', [
+                        'items' => $attachment_rows,
+                    ])
+                @endif
             </div>
         </div>
         <!-- First page -->

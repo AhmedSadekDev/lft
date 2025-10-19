@@ -21,10 +21,7 @@ class AgentExpense extends Model
     {
         return date('Y-m-d', strtotime($value));
     }
-    public function getImageAttribute($value)
-    {
-        return asset('/storage/' . $this->imageFolder . '/' . $value);
-    }
+    
 
     public function bookingContainer()
     {

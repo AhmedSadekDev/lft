@@ -98,6 +98,7 @@
                             <th scope="col">{{ __('main.date') }}</th>
                             <th scope="col">{{ __('main.added_by') }}</th>
                             <th scope="col">{{ __('admin.image') }}</th>
+                            <th scope="col">نوع العملية</th>
 
                             <th scope="col"></th>
                         </tr>
@@ -130,7 +131,9 @@
                                         </a>
                                     @endif
                                 </td>
-
+                                <td>
+                                    {{ $item->typeText() }}
+                                </td>
                                 <td>
                                     <div class="row">
                                         <div class="col-md-3 mr-3">

@@ -25,12 +25,12 @@ class BookingContainerAssignmentController extends Controller
             $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
                 ->wherePivot("created_at", "<=", now()->endOfDay())->wherePivot("booking_container_status", 1)->orWherePivot('superagent_loading_approved', 0)->get();
 
-
             $yards = Yard::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers) {
                 $qc->where('superagent_specification_approved', 1)->where(function ($query) {
                     $query->where("status", 1)->orWhere('superagent_loading_approved', 0);
                 })->whereIn("booking_containers.id", $agent_booking_containers->pluck("id")->toArray());
             })->orderBy("id", "desc")->get();
+            // dd($yards);
 
             $data = LoadingYardResource::collection($yards);
 

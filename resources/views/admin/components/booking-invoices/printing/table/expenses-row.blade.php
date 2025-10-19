@@ -18,7 +18,7 @@
                         <div class="info" style="display: flex;width: 100%;justify-content: start;margin-bottom: 0;">
                             <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">الخدمة : </p>
                             <p class="text" style="margin-bottom: 0;margin-top: 0">
-                                {{ $expenses->service->name . ' ' . $expenses->service->serviceCategory->title }}</p>
+                                {{ $expenses->service->name . ' ' . $expenses->service->serviceCategory?->title }}</p>
                         </div>
                         <div class="info" style="display: flex;width: 100%;justify-content: start;margin-bottom: 0;">
                             <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">ملاحظات : </p>

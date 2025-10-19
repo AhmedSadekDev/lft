@@ -61,7 +61,7 @@ class BookingContainerActionController extends Controller
             ]);
 
             SaveNotification::create($title, $text, null, null, AppNotification::all);
-            SendNotification::send($agent->device_token ?? "", $title, $text);
+            // SendNotification::send($agent->device_token ?? "", $title, $text);
 
             $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
             foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {

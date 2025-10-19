@@ -16,7 +16,8 @@ class DeliveryPolicyResource extends JsonResource
             "value" => $this?->money_transfer->value ?? "",
             "container_nos" => $this->booking_containers->pluck("container_no")->toArray(),
             "booking_number" => $this?->booking_containers?->first()?->booking?->booking_number ?? "",
-            "date" => $this->created_at ?? "",
+            "date" => $this->date ?? "",
+            "address" => $this->address ?? "",
             "is_settled" => $this->is_settled
 
         ];

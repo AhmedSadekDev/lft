@@ -542,12 +542,7 @@
                                             </a>
                                         </li>
                                     @endif
-                                    <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                        data-menu-toggle="hover">
-                                        <a href="{{ route('booking_containers_agents.index') }}" class="menu-link">
-                                            <span class="menu-text">{{ __('main.agent_assignment') }}</span>
-                                        </a>
-                                    </li>
+                                    
                                 </ul>
                             </div>
                         </li>
@@ -577,6 +572,12 @@
                                             data-menu-toggle="hover">
                                             <a href="{{ route('reports.daily_reports') }}" class="menu-link">
                                                 <span class="menu-text">{{ __('main.daily_reports') }}</span>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('reports.general_expenses') }}" class="menu-link">
+                                                <span class="menu-text">المصروفات العامة</span>
                                             </a>
                                         </li>
                                     @endif

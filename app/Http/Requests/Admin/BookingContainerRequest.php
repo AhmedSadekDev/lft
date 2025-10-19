@@ -39,19 +39,19 @@ class BookingContainerRequest extends FormRequest
                 'string'
             ],
             'departure_id' => [
-                'required',
+                'nullable',
                 'exists:cities_and_regions,id'
             ],
             'loading_id' => [
-                'required',
+                'nullable',
                 'exists:cities_and_regions,id'
             ],
             'aging_id' => [
-                'required',
+                'nullable',
                 'exists:cities_and_regions,id'
             ],
             'price' => [
-                'required',
+                'nullable',
                 'numeric',
                 'min:0'
             ],

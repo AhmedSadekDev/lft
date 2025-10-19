@@ -28,6 +28,7 @@ class CarExpenseController extends Controller
             }
 
             $data = $request->validated();
+            $data["value"] = $request->value;
             $data["delivery_policy_id"] = $request->delivery_policy_id;
             $data["type"] = 2;
           $AgentExpense =   AgentExpense::create($data);

@@ -211,6 +211,7 @@
                                     <th>{{ __('admin.loading') }}</th>
                                     <th>{{ __('admin.aging') }}</th>
                                     <th>{{ __('admin.value') }}</th>
+                                    <th>التاريخ</th>
                                 </thead>
 
 
@@ -224,6 +225,7 @@
                                             <td>{{ $policy->booking_containers->first()->loading->title ?? '' }}</td>
                                             <td>{{ $policy->booking_containers->first()->aging->title ?? '' }}</td>
                                             <td>{{ $policy->money_transfer->value ?? '' }}</td>
+                                            <td>{{ $policy->money_transfer->date ?? '' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

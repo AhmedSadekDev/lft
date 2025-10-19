@@ -26,6 +26,9 @@
                         </a>
                     @endif
                     <!--end::Button-->
+                    <div class="p-2">
+                        <button class="btn btn-primary" type="button" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> تصدير إلى Excel</button>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -42,6 +45,8 @@
                                 <th scope="col">{{ __('admin.tax_no') }}</th>
                                 <th scope="col">{{ __('admin.taxed_status') }}</th>
                                 <th scope="col">{{ __('admin.bill_type') }}</th>
+                                <th scope="col">تاريخ اخر فاتورة</th>
+                                <th scope="col">اجمالي المبلغ المتبقي</th>
                                 <th scope="col">{{ __('admin.attachments') }}</th>
                                 <th scope="col">{{ __('admin.created_at') }}</th>
                                 <th scope="col"></th>
@@ -81,6 +86,10 @@
                                     <td>
                                         {{ $company->bill_type == 1 ? __('admin.bill_type_invoice') : __('admin.bill_type_statement') }}
                                     </td>
+                                    <td>
+                                        {{ optional($company->companyInvoices()->latest()->first())->created_at }}
+                                    </td>
+                                    <td>{{ $company->wallet }}</td>
                                     <td>
 
                                         @if (!is_null($company->attachments))
@@ -215,4 +224,13 @@
             $('#attachmentModal').modal('show');
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        function exportToExcel() {
+            let table = document.getElementById("table");
+            let wb = XLSX.utils.table_to_book(table, { sheet: "الشركات" });
+            XLSX.writeFile(wb, "الشركات.xlsx");
+        }
+    </script>
 @endpush
+

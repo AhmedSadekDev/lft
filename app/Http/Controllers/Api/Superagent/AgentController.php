@@ -11,7 +11,6 @@ use App\Models\AppNotification;
 use App\Models\BookingContainer;
 use App\Services\SaveNotification;
 use App\Services\SendNotification;
-
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\BookingContainerAgent;
@@ -192,7 +191,6 @@ class AgentController extends Controller
             $message = 'تم تخصيص حاويات الطلب ' . $container->booking_id;
 
         } elseif ($request->type_id == 1) {
-
             $container->update([
                 'superagent_loading_approved'   => 1,
                 'status' => 2
@@ -206,11 +204,12 @@ class AgentController extends Controller
                 'booking_container_status' => 2,
                 'superagent_loading_approved' => 1
             ]);
-
-            $bookingContainerDaily->update([
-                'booking_container_status' => 2,
-                'superagent_loading_approved' => 1
-            ]);
+            if($bookingContainerDaily){
+                $bookingContainerDaily->update([
+                    'booking_container_status' => 2,
+                    'superagent_loading_approved' => 1
+                ]);
+            }
             $message = 'تم تحميل حاوية رقم ' . $container->container_no;
 
         } elseif ($request->type_id == 2) {
@@ -228,16 +227,17 @@ class AgentController extends Controller
                 'booking_container_status' => 2,
                 'superagent_unloading_approved' => 1
             ]);
-
-            $bookingContainerDaily->update([
-                'booking_container_status' => 2,
-                'superagent_unloading_approved' => 1
-            ]);
+            if($bookingContainerDaily){
+                $bookingContainerDaily->update([
+                    'booking_container_status' => 2,
+                    'superagent_unloading_approved' => 1
+                ]);
+            }
 
             $message = 'تم تعتيق حاوية رقم ' . $container->container_no;
         }
 
-        Notification::send($container->booking->company, new ConatinerStatus($container, $message));
+        Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
 
 
         return $this->returnAllData("", __('alerts.success'));
@@ -267,15 +267,24 @@ class AgentController extends Controller
                 'value' => $ex->value
             ];
         });
+        if ($request->type_id == 0 || $request->type_id == 1) {
+    $types = [$request->type_id];
+} else {
+    $types = [4, 5];
+}
 
-        $papers = BookingPaper::where('booking_container_id', $request->booking_container_id)->where('type', $request->type_id)->get()->map(function ($paper) {
-            return [
-                'id'    => $paper->id,
-                'image' => $paper->image->image,
-                'agent_id' => $paper->agent_id ?? 0,
-                'agent_name' => $paper->agent ? $paper->agent->name : '',
-            ];
-        });
+$papers = BookingPaper::where('booking_container_id', $request->booking_container_id)
+    ->whereIn('type', $types)
+    ->get()
+    ->map(function ($paper) {
+        return [
+            'id'         => $paper->id,
+            'image'      => $paper->image->image,
+            'agent_id'   => $paper->agent_id ?? 0,
+            'agent_name' => $paper->agent ? $paper->agent->name : '',
+        ];
+    });
+
 
         $agent =
 

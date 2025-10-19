@@ -26,6 +26,8 @@
     <div class="card-body">
         {{-- ================== ================== INVOICE TOTALS ================== ================== --}}
         <div class="row">
+            
+
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <h4>{{ __('admin.transportation_total') }}</h4>
                 <h4>{{ $transportation_total }}</h4>
@@ -102,6 +104,14 @@
             <div class="col-sm-12">
                 <h4>{{ __('admin.required_to_be_paid_after_discount') }}</h4>
                 <h4 id="required_to_be_paid_after_discount"></h4>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <div class="form-group">
+                    {!! Form::label('invoice_number', __('admin.invoice_number')) !!}
+                    {!! Form::text('invoice_number', old('invoice_number') ?? ($invoice_number ?? ''), [
+                        'class' => 'form-control',
+                    ]) !!}
+                </div>
             </div>
         </div>
     </div>

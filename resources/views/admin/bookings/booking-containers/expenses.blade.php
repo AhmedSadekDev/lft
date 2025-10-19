@@ -23,6 +23,7 @@
                 <thead class="thead-light">
                     <tr>
                         <th scope="col">#</th>
+                        <th scope="col">الصورة</th>
                         <th scope="col">{{ __('admin.agent') }}</th>
                         <th scope="col">{{ __('admin.title') }}</th>
                         <th scope="col">{{ __('admin.value') }}</th>
@@ -34,7 +35,9 @@
                     @foreach ($allExpenses as $allExpense)
                     <tr>
                             <th scope="row">{{$allExpense->id}}</th>
-
+                                <td >@if($allExpense->image !== null) <img
+                                    src="{{ asset('Admin/images/expenses/' . $allExpense->image_agent_expenses) }}" alt="صورة الايصال"
+                                    style="width: 100px;" /> @else لا توجد صورة @endif</td>
                             <td>{{ $allExpense->agent->name ?? "" }}</td>
                             <td>{{ $allExpense->title ?? "" }}</td>
                             <td>{{ $allExpense->value ?? "" }}</td>

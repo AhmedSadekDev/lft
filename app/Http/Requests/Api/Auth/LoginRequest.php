@@ -28,10 +28,22 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email'     => 'required|email:rfc,dns|exists:companies,email',
+            'email'     => [
+                'required',
+                'email:rfc,dns',
+                function ($attribute, $value, $fail) {
+                    $companyExists = \App\Models\Company::where('email', $value)->exists();
+                    $employeeExists = \App\Models\Employee::where('email', $value)->exists();
+                    
+                    if (! $companyExists && ! $employeeExists) {
+                        $fail(__('validation.exists'));
+                    }
+                }
+            ],
             'password'  => 'required',
         ];
     }
+
 
     protected function failedValidation(Validator $validator){
         $response = $this->validationError($validator->errors()->first());

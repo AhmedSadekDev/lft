@@ -64,18 +64,19 @@ class BookingInvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
+            // dd($request->all());
             $company = $booking->company;
             $company = $booking->company;
-            $invoice_number = date("Y") . '-'
-                . invoiceNumberTrim($company->id) . '-'
-                . invoiceNumberTrim(
-                    Invoice::getMaxCompanyInvoiceNumber($company->id)
-                        + 1
-                );
+            // $invoice_number = date("Y") . '-'
+            //     . invoiceNumberTrim($company->id) . '-'
+            //     . invoiceNumberTrim(
+            //         Invoice::getMaxCompanyInvoiceNumber($company->id)
+            //             + 1
+            //     );
 
             $invoice_data = array_merge(
                 [
-                    'invoice_number' => $invoice_number,
+                    'invoice_number' => $request->invoice_number,
                     'booking_id' => $booking->id,
 
                     'transportation_json' => $booking->bookingContainers,
@@ -191,6 +192,7 @@ class BookingInvoiceController extends Controller
 
             'invoice'           => $booking_invoice,
             'booking'           => $booking,
+            'invoice_number'    => $booking->invoice->invoice_number,
 
             'transportation_total' => $transportation_total,
             'taxed_services_total' => $taxed_services_total,
@@ -223,6 +225,7 @@ class BookingInvoiceController extends Controller
                     'transportation_total_before_vat' => $booking->transportation_total_price,
                     'taxed_services_total_before_vat' => $booking->taxed_services_total_price,
                     'untaxed_services_total_before_vat' => $booking->untaxed_services_total_price,
+                    'invoice_number' => $request->invoice_number
                 ],
                 $request->only([
                     'value_added_tax',

@@ -25,10 +25,7 @@ class LoadingBookingRequest extends FormRequest
     {
         return [
             'booking_container_id'  => 'required|exists:booking_containers,id',
-            'container_number' => [
-                'required',
-                'regex:/^[A-Za-z]{4}[0-9]{7}$/',
-            ],
+            'container_number' => 'required',
             'image'         => 'sometimes|mimes:png,jpg,jpeg|max:10000'
 
         ];

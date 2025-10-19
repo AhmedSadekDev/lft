@@ -25,7 +25,7 @@ class TransferAgentRequest extends FormRequest
     {
         return [
             'value'     => 'required|numeric',
-            'agent_id'  => 'required|exists:agents,id',
+            'agent_id'  => 'nullable|exists:agents,id',
             'notes'     => 'sometimes'
         ];
     }

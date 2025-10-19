@@ -20,8 +20,10 @@ class BookingPaperController extends Controller
 {
     public function save_specification_booking_yard(SpecificationBookingYardRequest $request)
     {
+        ini_set('max_execution_time', 120);
+        set_time_limit(120);
         try {
-
+            
             $booking = Booking::whereId($request->booking_id)->first();
             
 
@@ -37,6 +39,7 @@ class BookingPaperController extends Controller
             
 
             if ($request->image) {
+                BookingPaper::where(['booking_id' => $request->booking_id, 'type' => 0])->delete();
                 $paper["booking_id"] = $booking->id;
                 $paper["type"] = 0;
                 $paper['booking_container_id'] = $request->booking_container_id;
@@ -54,8 +57,10 @@ class BookingPaperController extends Controller
     }
     public function save_loading_booking_container(LoadingBookingRequest $request)
     {
+        ini_set('max_execution_time', 120);
+        set_time_limit(120);
         try {
-
+            // INFO($request->all());
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
             $booking_container->update([
@@ -63,6 +68,7 @@ class BookingPaperController extends Controller
             ]);
 
             if ($request->image) {
+                BookingPaper::where(['booking_id' => $booking_container->booking_id, 'type' => 1])->delete();
                 $paper["booking_container_id"] = $booking_container->id;
                 $paper["booking_id"] = $booking_container->booking_id;
                 $paper["type"] = 1;
@@ -72,12 +78,19 @@ class BookingPaperController extends Controller
                 $image_data["imageable_type"] = "App\Models\BookingPaper";
                 Image::create($image_data);
             }
+            if ($request->specification_latter) {
+                BookingPaper::where(['booking_id' => $booking_container->booking_id, 'type' => 0])->delete();
+                $paper["booking_container_id"] = $booking_container->id;
+                $paper["booking_id"] = $booking_container->booking_id;
+                $paper["type"] = 0;
+                $booking_paper = BookingPaper::create($paper);
+                $image_data["image"] = $request->specification_latter;
+                $image_data["imageable_id"] = $booking_paper->id;
+                $image_data["imageable_type"] = "App\Models\BookingPaper";
+                Image::create($image_data);
+            }
 
             $data = new BookingContainerResource($booking_container);
-
-
-
-
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $Exception) {
@@ -86,8 +99,10 @@ class BookingPaperController extends Controller
     }
     public function save_unloading_booking_sail(unloadingBookingSailRequest $request)
     {
+        ini_set('max_execution_time', 120);
+        set_time_limit(120);
         try {
-
+            INFO($request->all());
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
             $booking_container->update([
@@ -95,11 +110,34 @@ class BookingPaperController extends Controller
             ]);
 
             if ($request->image) {
+                BookingPaper::where(['booking_id' => $booking_container->booking_id, 'type' => 2])->delete();
                 $paper["booking_container_id"] = $booking_container->id;
                 $paper["booking_id"] = $booking_container->booking_id;
                 $paper["type"] = 2;
                 $booking_paper = BookingPaper::create($paper);
                 $image_data["image"] = $request->image;
+                $image_data["imageable_id"] = $booking_paper->id;
+                $image_data["imageable_type"] = "App\Models\BookingPaper";
+                Image::create($image_data);
+            }
+            if ($request->unloading_image) {
+                BookingPaper::where(['booking_id' => $booking_container->booking_id, 'type' => 4])->delete();
+                $paper["booking_container_id"] = $booking_container->id;
+                $paper["booking_id"] = $booking_container->booking_id;
+                $paper["type"] = 4;
+                $booking_paper = BookingPaper::create($paper);
+                $image_data["image"] = $request->unloading_image;
+                $image_data["imageable_id"] = $booking_paper->id;
+                $image_data["imageable_type"] = "App\Models\BookingPaper";
+                Image::create($image_data);
+            }
+            if ($request->unloading_image_sail) {
+                BookingPaper::where(['booking_id' => $booking_container->booking_id, 'type' => 5])->delete();
+                $paper["booking_container_id"] = $booking_container->id;
+                $paper["booking_id"] = $booking_container->booking_id;
+                $paper["type"] = 5;
+                $booking_paper = BookingPaper::create($paper);
+                $image_data["image"] = $request->unloading_image_sail;
                 $image_data["imageable_id"] = $booking_paper->id;
                 $image_data["imageable_type"] = "App\Models\BookingPaper";
                 Image::create($image_data);
@@ -118,6 +156,8 @@ class BookingPaperController extends Controller
     }
     public function send_car_papers(CarPaperRequest $request)
     {
+        ini_set('max_execution_time', 120);
+        set_time_limit(120);
         try {
 
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();

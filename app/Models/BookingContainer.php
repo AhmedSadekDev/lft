@@ -6,12 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Carbon\Carbon;
+
 
 class BookingContainer extends Model
 {
     use HasFactory;
+    
+    public $timestamps = true;
 
-    protected $guarded = ['id'];
+    protected $guarded = ['id', 'created_at', 'updated_at'];
 
     public function booking()
     {
@@ -76,6 +80,11 @@ class BookingContainer extends Model
     public function getCreatedAtAttribute($value)
     {
         return date('Y-m-d', strtotime($value));
+    }
+    
+    public function setCreatedAt($value)
+    {
+        $this->attributes['created_at'] = $value ? Carbon::parse($value) : Carbon::now();
     }
 
     public function notes(): HasMany
