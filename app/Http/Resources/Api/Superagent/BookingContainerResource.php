@@ -28,6 +28,9 @@ class BookingContainerResource extends JsonResource
             "container_size" => $this->container?->size ?? "",
             "shipping_agent" => $this->booking?->shipping_agent ?? "",
             'date'              => $this->created_at ?? "",
+            // إضافات مطلوبة: بوليصة المكتب وتاريخ الخروج
+            'office_policy'     => optional($this->delivery_policies->first()?->money_transfer)->value ?? null,
+            'exit_date'         => $this->delivery_policies->first()->date ?? null,
             "yard_title" => $this?->booking?->yard?->title ?? "",
             "yard_id" => $this?->booking?->yard?->id ?? "",
             "notes" => NoteResource::collection($this->notes),

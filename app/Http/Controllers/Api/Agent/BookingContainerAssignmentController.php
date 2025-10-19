@@ -9,6 +9,7 @@ use App\Http\Resources\Api\Agent\LoadingYardResource;
 use App\Http\Resources\Api\Agent\SimpleBookingContainer2Resource;
 use App\Http\Resources\Api\Agent\SpecificationShippingAgentResource;
 use App\Http\Resources\Api\Agent\UnloadingShippingAgentResource;
+use App\Models\Agent;
 use App\Models\Booking;
 use App\Models\Car;
 use App\Models\shippingAgent;
@@ -22,6 +23,7 @@ class BookingContainerAssignmentController extends Controller
         try {
 
             $agent = auth()->guard('agent')->user();
+            /** @var Agent $agent */
             $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
                 ->wherePivot("created_at", "<=", now()->endOfDay())->wherePivot("booking_container_status", 1)->orWherePivot('superagent_loading_approved', 0)->get();
 
@@ -46,6 +48,7 @@ class BookingContainerAssignmentController extends Controller
         try {
 
             $agent = auth()->guard('agent')->user();
+            /** @var Agent $agent */
             // get today assigments
             $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
                 ->wherePivot("created_at", "<=", now()->endOfDay())->wherePivot("booking_container_status", 0)->orWherePivot('superagent_specification_approved', 0)->get();
@@ -78,6 +81,7 @@ class BookingContainerAssignmentController extends Controller
         try {
 
             $agent = auth()->guard('agent')->user();
+            /** @var Agent $agent */
             // get today assigments
             $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
                 ->wherePivot("created_at", "<=", now()->endOfDay())->wherePivot("superagent_unloading_approved", 0)->wherePivot('superagent_specification_approved', 1)->wherePivot('superagent_loading_approved', 1)->get();
@@ -106,6 +110,7 @@ class BookingContainerAssignmentController extends Controller
             $word = $request->word;
 
             $agent = auth()->guard('agent')->user();
+            /** @var Agent $agent */
             // get bookings
             $booking_ids = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
                 ->wherePivot("created_at", "<=", now()->endOfDay())->get()->pluck("booking_id")->toArray();
@@ -132,17 +137,12 @@ class BookingContainerAssignmentController extends Controller
         try {
 
             $agent = auth()->guard('agent')->user();
+            /** @var Agent $agent */
             // get agent_booking_containers
 
             $agent_booking_containers = $agent->agent_booking_containers()
                 ->whereDoesntHave('delivery_policies')
-                ->where(function ($query) {
-                    $query->where('booking_container_agents.created_at', '>=', now()->startOfDay())
-                        ->where('booking_container_agents.created_at', '<=', now()->endOfDay());
-                })
                 ->get();
-
-
 
             //return data
             $data = SimpleBookingContainer2Resource::collection($agent_booking_containers);
@@ -159,6 +159,7 @@ class BookingContainerAssignmentController extends Controller
         try {
 
             $agent = auth()->guard('agent')->user();
+            /** @var Agent $agent */
             $agent_booking_containers = $agent->booking_containers()->whereDate("created_at", now());
             $booking_containers = $agent->agent_booking_containers();
 

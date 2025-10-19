@@ -39,24 +39,32 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
                     break;
             }
 
+            $containerNo = $item->container_no;
+            if (empty($containerNo)) {
+                $firstPolicy = $item->delivery_policies->first();
+                // Safely read first related container_no from first delivery policy, else fallback to sail_of_number
+                $containerNo = data_get($firstPolicy, 'booking_containers.0.container_no') ?: $item->sail_of_number;
+            }
+
             return [
                 'id' => $item->booking_id,
                 'date' => $item->created_at ?? $item->updated_at,
-                'invoice_no' => $item->booking ? $item->booking->invoice ? $item->booking->invoice->invoice_number : null : null,
-                'company_name' => $item->booking ? $item->booking->company ? $item->booking->company->name : null : null,
-                'container_no' => $item->container_no,
-                'factory' => $item->booking ? $item->booking->factory ? $item->booking->factory->name : null : null,
+                'invoice_no' => $item->booking ? ($item->booking->invoice ? $item->booking->invoice->invoice_number : null) : null,
+                'company_name' => $item->booking ? ($item->booking->company ? $item->booking->company->name : null) : null,
+                'container_no' => $containerNo,
+                'factory' => $item->booking ? ($item->booking->factory ? $item->booking->factory->name : null) : null,
                 'booking_number' => $item->booking ? $item->booking->booking_number : null,
                 'certificate_number' => $item->booking->certificate_number ?? '',
                 'ContainerType' => $item->ContainerType,
-                'policy' => $item->delivery_policies->first()->money_transfer->value ?? '',
+                'policy' => optional(optional($item->delivery_policies->first())->money_transfer)->value ?? '',
                 'type_of_sail' => $typePolicy,
                 'sail_name' => $item->booking->shippingAgent->title ?? '',
                 'sail_of_number' => $item->sail_of_number,
-                'car' => $item->delivery_policies->first()->car->car_number ?? '',
-                'drive' => $item->delivery_policies->first()->driver->name ?? '',
-                'drive_phone' => $item->delivery_policies->first()->driver->phone ?? '',
-                'departure' => $item->Departure ? $item->Departure->title : null,
+                'car' => optional(optional($item->delivery_policies->first())->car)->car_number ?? '',
+                'drive' => optional(optional($item->delivery_policies->first())->driver)->name ?? '',
+                'drive_phone' => optional(optional($item->delivery_policies->first())->driver)->phone ?? '',
+                // خروج: تاريخ الخروج من أول بوليصة
+                'departure' => optional($item->delivery_policies->first())->date ?? null,
                 'loading' => $item->Loading ? $item->Loading->title : null,
                 'aging_id' => $item->Aging ? $item->Aging->title : null,
                 'total' => $item->price,
@@ -95,6 +103,5 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
             'المسدد',
             'المتبقى'
         ];
-
     }
 }
