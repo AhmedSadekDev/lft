@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Channels\PhpMailChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -33,7 +34,7 @@ class ConatinerStatus extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return [PhpMailChannel::class];
     }
 
     /**
@@ -44,11 +45,18 @@ class ConatinerStatus extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->view('email.booking_status', [
-                        'container' => $this->container,
-                        'msg' => $this->msg,
-                    ]);
+        return (new MailMessage);
+    }
+
+    public function toPhpMail($notifiable)
+    {
+        $subject = 'تحديث حالة الشحنة';
+        $msg = (string) $this->msg;
+        $html = '<html dir="rtl" lang="ar"><head><meta charset="UTF-8"><title>تحديث الحالة</title></head><body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px"><div style="max-width:600px;margin:auto;background:#fff;border-radius:8px;overflow:hidden"><div style="background:#0dcaf0;color:#fff;padding:16px;text-align:center">Leader</div><div style="padding:24px"><p>'.htmlspecialchars($msg, ENT_QUOTES, 'UTF-8').'</p></div><div style="background:#f8f9fa;padding:12px;text-align:center;font-size:12px;color:#6c757d">'.date('Y-m-d H:i:s').'</div></div></body></html>';
+        return [
+            'subject' => $subject,
+            'html' => $html,
+        ];
     }
 
     /**
