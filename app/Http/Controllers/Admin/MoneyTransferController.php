@@ -12,6 +12,7 @@ use App\Models\Agent;
 use App\Models\Company;
 use App\Models\Vault;
 use App\Models\MoneyTransfer;
+use App\Models\VaultTransaction;
 use App\Services\SaveNotification;
 use App\Services\SendNotification;
 use Illuminate\Http\Request;
@@ -73,6 +74,14 @@ class MoneyTransferController extends Controller
        
         
         $vault->update(['amount' => $vault->amount - $value]);
+
+        // log vault deduction
+        VaultTransaction::create([
+            'name' => 'صرف عهدة للمندوب: ' . ($agent->name ?? ''),
+            'amount' => $value,
+            'type' => 0,
+            'agent_id' => $agent->id,
+        ]);
 
         SaveNotification::create($title, $text, $agent->id, Agent::class,AppNotification::specific);
         SendNotification::send($agent->device_token ?? "", $title, $text);

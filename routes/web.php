@@ -388,6 +388,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     Route::prefix('vaultransactions')->group(function () {
         Route::get('/', [VaultTransactionController::class, 'index'])->name('vaultransactions.index');
+        Route::get('/{id}/edit', [VaultTransactionController::class, 'edit'])->name('vaultransactions.edit');
+        Route::put('/{id}/update', [VaultTransactionController::class, 'update'])->name('vaultransactions.update');
         Route::delete('/{id}/destroy', [VaultTransactionController::class, 'destroy'])->name('vaultransactions.destroy');
         Route::get('/export', [VaultTransactionController::class, 'export'])->name('vaultransactions.export');
     });

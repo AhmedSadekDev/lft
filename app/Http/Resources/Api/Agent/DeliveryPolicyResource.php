@@ -18,8 +18,8 @@ class DeliveryPolicyResource extends JsonResource
             "booking_number" => $this?->booking_containers?->first()?->booking?->booking_number ?? "",
             "date" => $this->date ?? "",
             "address" => $this->address ?? "",
-            "is_settled" => $this->is_settled
-
+            "is_settled" => $this->is_settled,
+            "image" => $this->image?->image ?? "",
         ];
     }
 }

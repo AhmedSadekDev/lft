@@ -63,7 +63,7 @@
 @push('js')
     <script>
         (function($) {
-            "use strict";s
+            "use strict";
         })(jQuery);
 
         function Delete(id, agent_id) {
@@ -94,7 +94,7 @@
                             console.log(response);
                             location.reload();
                             Swal.fire({
-                                title: {{ __('alerts.done') }},
+                                title: "{{ __('alerts.done') }}",
                                 icon: 'success',
                                 showConfirmButton: false,
                                 timer: 3000,

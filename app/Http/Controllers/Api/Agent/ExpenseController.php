@@ -12,10 +12,117 @@ use App\Models\AgentExpense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Image;
+use Illuminate\Support\Facades\DB;
 
 class ExpenseController extends Controller
 {
     use ImagesTrait;
+    
+    public function update_expense(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|exists:agent_expenses,id',
+                'value' => 'required|numeric',
+                'service_id' => 'sometimes|exists:services,id',
+                'notes' => 'sometimes',
+                'booking_container_id' => 'sometimes|exists:booking_containers,id',
+                'type_id' => 'sometimes',
+                'image' => 'sometimes|mimes:png,jpg,jpeg|max:10000',
+            ]);
+
+            $agent = auth()->guard('agent')->user();
+            $expense = AgentExpense::findOrFail($request->id);
+
+            if ($expense->agent_id !== $agent->id) {
+                return $this->returnError(403, __('main.not_allowed'));
+            }
+
+            // Adjust wallet by difference
+            $oldValue = (float) $expense->value;
+            $newValue = (float) $request->value;
+            $diff = $newValue - $oldValue;
+
+            if ($diff > 0 && $agent->wallet < $diff) {
+                return $this->returnError(200, __('main.you dont have enougth money'));
+            }
+
+            DB::beginTransaction();
+
+            // Handle image replacement if provided
+            $imageName = $expense->image_agent_expenses;
+            if ($request->hasFile('image')) {
+                $newImageName = time() . '_expenses.' . $request->image->extension();
+                $oldPath = $imageName ? 'Admin/images/expenses/' . $imageName : null;
+                $this->uploadImage($request->image, $newImageName, 'expenses', $oldPath);
+                $imageName = $newImageName;
+            }
+
+            // Update expense fields
+            $expense->update([
+                'value' => $newValue,
+                'service_id' => $request->input('service_id', $expense->service_id),
+                'notes' => $request->input('notes', $expense->notes),
+                'booking_container_id' => $request->input('booking_container_id', $expense->booking_container_id),
+                'type_id' => $request->input('type_id', $expense->type_id),
+                'image_agent_expenses' => $imageName,
+            ]);
+
+            // Update wallet
+            if ($diff !== 0.0) {
+                $agent->update(['wallet' => $agent->wallet - $diff]);
+            }
+
+            DB::commit();
+
+            return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
+        } catch (\Exception $Exception) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+            return $this->returnError(401, $Exception->getMessage());
+        }
+    }
+
+    public function delete_expense(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|exists:agent_expenses,id',
+            ]);
+
+            $agent = auth()->guard('agent')->user();
+            $expense = AgentExpense::findOrFail($request->id);
+
+            if ($expense->agent_id !== $agent->id) {
+                return $this->returnError(403, __('main.not_allowed'));
+            }
+
+            DB::beginTransaction();
+
+            // refund wallet by expense value
+            $agent->update(['wallet' => $agent->wallet + $expense->value]);
+
+            // delete image file if exists
+            if ($expense->image_agent_expenses) {
+                $path = public_path('Admin/images/expenses/' . $expense->image_agent_expenses);
+                if (file_exists($path)) {
+                    @unlink($path);
+                }
+            }
+
+            $expense->delete();
+
+            DB::commit();
+
+            return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
+        } catch (\Exception $Exception) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+            return $this->returnError(401, $Exception->getMessage());
+        }
+    }
     public function fetch_financial_custody()
     {
         try {

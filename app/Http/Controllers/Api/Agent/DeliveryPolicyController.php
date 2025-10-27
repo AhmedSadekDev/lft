@@ -5,12 +5,10 @@ namespace App\Http\Controllers\Api\Agent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Agent\DeliveryPolicyDetailsRequest;
 use App\Http\Requests\Api\Agent\DeliveryPolicyRequest;
-use App\Http\Requests\Api\Agent\TransferAgentRequest;
 use App\Http\Resources\Api\Agent\CarExpenseResource;
 use App\Http\Resources\Api\Agent\DeliveryPolicyDetailsResource;
 use App\Http\Resources\Api\Agent\DeliveryPolicyResource;
 use App\Http\Resources\Api\Agent\MoneyTransferResource;
-use App\Http\Resources\Api\Agent\NameResource;
 use App\Models\Agent;
 use App\Models\BookingContainer;
 use App\Models\CompanyTransportation;
@@ -19,7 +17,7 @@ use App\Models\CitiesAndRegions;
 use App\Models\Image;
 use App\Models\MoneyTransfer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class DeliveryPolicyController extends Controller
 {
@@ -29,14 +27,14 @@ class DeliveryPolicyController extends Controller
         try {
             // dd($request->all());
             $agent = auth()->guard('agent')->user();
-            
-            
-             $bookingContainer = BookingContainer::find($request->booking_container_ids[0]);
-            
-            if($bookingContainer->delivery_policies->count() > 0) {
-                 return $this->returnResponseSuccessMessage(__('This Container Alread Has Delivery Plicy'), 200);
+
+
+            $bookingContainer = BookingContainer::find($request->booking_container_ids[0]);
+
+            if ($bookingContainer->delivery_policies->count() > 0) {
+                return $this->returnResponseSuccessMessage(__('This Container Alread Has Delivery Plicy'), 200);
             }
-            
+
 
             if ($agent->wallet < $request->value) {
                 return $this->returnError(200, __('main.you dont have enougth money'));
@@ -53,21 +51,21 @@ class DeliveryPolicyController extends Controller
 
             //create MoneyTransfer
 
-           
-            
+
+
             if ($bookingContainer) {
                 if ($request->filled("departure_id")) {
                     $bookingContainer->update([
                         'departure_id' => $request->departure_id
                     ]);
                 }
-                
+
                 if ($request->filled("loading_id")) {
                     $bookingContainer->update([
                         'loading_id' => $request->loading_id
                     ]);
                 }
-                
+
                 if ($request->filled("aging_id")) {
                     $bookingContainer->update([
                         'aging_id' => $request->aging_id
@@ -78,19 +76,19 @@ class DeliveryPolicyController extends Controller
 
             if ($bookingContainer->departure_id && $bookingContainer->loading_id && $bookingContainer->aging_id) {
                 $check = CompanyTransportation::where('container_id', $bookingContainer->container_id)
-                        ->where('departure_id', $bookingContainer->departure_id)
-                        ->where('loading_id', $bookingContainer->loading_id)
-                        ->where('aging_id', $bookingContainer->aging_id)
-                        ->first();
+                    ->where('departure_id', $bookingContainer->departure_id)
+                    ->where('loading_id', $bookingContainer->loading_id)
+                    ->where('aging_id', $bookingContainer->aging_id)
+                    ->first();
 
                 if ($check) {
                     $bookingContainer->update(['price' => $check->price]);
                 }
-             }
+            }
 
 
 
-            
+
 
             $data["value"] = $request->value;
             $data["type"] = 3;
@@ -223,6 +221,148 @@ class DeliveryPolicyController extends Controller
 
             return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
         } catch (\Exception $Exception) {
+            return $this->returnError(500, $Exception->getMessage());
+        }
+    }
+
+    public function update_delivery_policy(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|exists:delivery_policies,id',
+                'value' => 'sometimes|numeric',
+                'car_id'  => 'sometimes|exists:cars,id',
+                'driver_id'  => 'sometimes|exists:drivers,id',
+                'booking_container_ids' => 'sometimes|array',
+                'booking_container_ids.*' => 'exists:booking_containers,id',
+                'departure_id' => 'sometimes|exists:cities_and_regions,id',
+                'loading_id' => 'sometimes|exists:cities_and_regions,id',
+                'aging_id' => 'sometimes|exists:cities_and_regions,id',
+                'date' => 'sometimes|date',
+                'image' => 'sometimes',
+            ]);
+
+            $agent = auth()->guard('agent')->user();
+            $delivery_policy = DeliveryPolicy::findOrFail($request->id);
+
+            if ($delivery_policy->is_settled == 1) {
+                return $this->returnError(200, __('main.delivery_policy is settled'));
+            }
+
+            if (($delivery_policy->money_transfer?->transferer_id) !== $agent->id) {
+                return $this->returnError(403, __('main.not_allowed'));
+            }
+
+            $oldValue = (float) ($delivery_policy->money_transfer?->value ?? 0);
+            $newValue = $request->has('value') ? (float) $request->value : $oldValue;
+            $diff = $newValue - $oldValue;
+
+            if ($diff > 0 && $agent->wallet < $diff) {
+                return $this->returnError(200, __('main.you dont have enougth money'));
+            }
+
+            DB::beginTransaction();
+
+            if ($request->filled('loading_id')) {
+                $city = CitiesAndRegions::find($request->loading_id);
+                if ($city) {
+                    $delivery_policy->address = $city->address . ' ' . $city->city;
+                }
+            }
+
+            if ($request->filled('car_id')) {
+                $delivery_policy->car_id = $request->car_id;
+            }
+            if ($request->filled('driver_id')) {
+                $delivery_policy->driver_id = $request->driver_id;
+            }
+            if ($request->filled('date')) {
+                $delivery_policy->date = $request->date;
+            }
+            $delivery_policy->save();
+
+            if ($request->filled('booking_container_ids')) {
+                $delivery_policy->booking_containers()->sync($request->booking_container_ids);
+            }
+
+            if ($delivery_policy->money_transfer) {
+                $delivery_policy->money_transfer->update([
+                    'value' => $newValue,
+                    'transfered_id' => $request->input('driver_id', $delivery_policy->money_transfer->transfered_id),
+                ]);
+            }
+
+            if ($diff !== 0.0) {
+                $agent->update(['wallet' => $agent->wallet - $diff]);
+            }
+
+            if ($request->filled('image')) {
+                if ($delivery_policy->image) {
+                    $delivery_policy->image->update(['image' => $request->image]);
+                } else {
+                    Image::create([
+                        'image' => $request->image,
+                        'imageable_id' => $delivery_policy->id,
+                        'imageable_type' => DeliveryPolicy::class,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
+        } catch (\Exception $Exception) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+            return $this->returnError(500, $Exception->getMessage());
+        }
+    }
+
+    public function delete_delivery_policy(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|exists:delivery_policies,id',
+            ]);
+
+            $agent = auth()->guard('agent')->user();
+            $delivery_policy = DeliveryPolicy::findOrFail($request->id);
+
+            if ($delivery_policy->is_settled == 1) {
+                return $this->returnError(200, __('main.delivery_policy is settled'));
+            }
+
+            if (($delivery_policy->money_transfer?->transferer_id) !== $agent->id) {
+                return $this->returnError(403, __('main.not_allowed'));
+            }
+
+            DB::beginTransaction();
+
+            $valueToRefund = (float) ($delivery_policy->money_transfer?->value ?? 0);
+            if ($valueToRefund > 0) {
+                $agent->update(['wallet' => $agent->wallet + $valueToRefund]);
+            }
+
+            if ($delivery_policy->image) {
+                $delivery_policy->image()->delete();
+            }
+
+            $delivery_policy->booking_containers()->detach();
+
+            if ($delivery_policy->money_transfer) {
+                $delivery_policy->money_transfer()->delete();
+            }
+
+            $delivery_policy->delete();
+
+            DB::commit();
+
+            return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
+        } catch (\Exception $Exception) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return $this->returnError(500, $Exception->getMessage());
         }
     }

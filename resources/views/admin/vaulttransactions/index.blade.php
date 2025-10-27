@@ -104,8 +104,13 @@
 
                                 <td>
                                     <div class="row">
-                                        
-
+                                        <a class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Edit"
+                                            href="{{ route('vaultransactions.edit', $item->id) }}">
+                                            <i class="la la-edit"></i>
+                                        </a>
+                                        <a class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Delete" onclick="Delete({{ $item->id }})">
+                                            <i class="la la-trash"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
