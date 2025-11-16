@@ -212,7 +212,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('bookings-invoices/{id?}', [InvoicesController::class, 'index'])->name('bokkings.invoices');
     Route::get('bookings-invoices-exports/{id?}', [InvoicesController::class, 'export'])->name('bookings.invoices.exports');
     Route::get('/download-invoice/{companyId?}', [InvoicesController::class, 'downloadPDF'])->name('bookings.invoices.pdf');
-    
+
     Route::get('/export-cars', function () {
         return Excel::download(new CarsExport, 'cars.xlsx');
     })->name('cars.export');
@@ -419,7 +419,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     Route::get('/booking_container_expenses/{id}', [ExpenseController::class, 'booking_container_expenses'])->name('expenses.booking_container_expenses');
 
-    Route::get('/daily_reports', [ReportController::class, 'daily_reports'])->name('reports.daily_reports');
+    // تم إلغاء التقارير اليومية ودمجها في المصروفات العامة
     Route::get('/export_excel', [ReportController::class, 'exportExcel'])->name('reports.export_excel');
     Route::get('/general_expenses', [ReportController::class, 'general_expenses'])->name('reports.general_expenses');
     Route::get('/general_expenses_export', [ReportController::class, 'general_expenses_export'])->name('reports.general_expenses.export');

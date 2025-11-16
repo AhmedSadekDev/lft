@@ -15,13 +15,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LogActivityExport;
+use App\Models\MoneyTransfer;
 
 class ReportController extends Controller
 {
 
     public function __construct()
     {
-        $this->middleware('permission:daily_reports.index')->only('daily_reports');
+        // تم إلغاء صفحة التقارير اليومية المنفصلة
+        // يمكن استخدام صلاحيات أخرى لتقارير المصروفات العامة إذا لزم الأمر
     }
 
     public function agent_reports(Agent $agent)
@@ -30,33 +32,105 @@ class ReportController extends Controller
         return view('admin.agents.reports.index', compact("log_activities"));
     }
 
-    public function daily_reports(Request $request)
-    {
-        $query = LogActivity::query();
-        if ($request->filled('from')) {
-            $query->whereDate('created_at', '>=', $request->from);
-        }
-    
-        if ($request->filled('to')) {
-            $query->whereDate('created_at', '<=', $request->to);
-        }
-    
-        $log_activities = $query->latest()->get();
-        return view('admin.reports.index', compact("log_activities"));
-    }
-    
+    // public function daily_reports(Request $request)
+    // {
+    //     $query = LogActivity::query();
+    //     if ($request->filled('from')) {
+    //         $query->whereDate('created_at', '>=', $request->from);
+    //     }
+    //
+    //     if ($request->filled('to')) {
+    //         $query->whereDate('created_at', '<=', $request->to);
+    //     }
+    //
+    //     $log_activities = $query->latest()->get();
+    //     return view('admin.reports.index', compact("log_activities"));
+    // }
+
     public function general_expenses(Request $request)
     {
-        $expenses = AgentExpense::query();
+        // جلب المصروفات (AgentExpense)
+        $expensesQuery = AgentExpense::with(['agent', 'service.serviceCategory', 'bookingContainer.booking', 'delivery_policy']);
+
         if($request->from)
         {
-            $expenses->where('created_at', '>=', $request->from);
+            $expensesQuery->where('created_at', '>=', $request->from);
         }
         if($request->to)
         {
-            $expenses->where('created_at', '<=', $request->to);
+            $expensesQuery->where('created_at', '<=', $request->to);
         }
-        $expenses = $expenses->whereHas('bookingContainer')->latest()->get();
+
+        // إحضار جميع مصروفات المندوبين (سواء مرتبطة بحاوية أو لا)
+        $agentExpenses = $expensesQuery->latest()->get();
+
+        // جلب معاملات عهدة السيارة (type 3)
+        $deliveryPoliciesQuery = MoneyTransfer::with(['transferer', 'transfered', 'delivery_policy.booking_containers.booking', 'delivery_policy.image'])
+            ->where('type', MoneyTransfer::deliveryPolicy);
+
+        if($request->from)
+        {
+            $deliveryPoliciesQuery->where('created_at', '>=', $request->from);
+        }
+        if($request->to)
+        {
+            $deliveryPoliciesQuery->where('created_at', '<=', $request->to);
+        }
+
+        $deliveryPolicies = $deliveryPoliciesQuery->latest()->get();
+
+        // جلب معاملات دخان المكتب (type 5)
+        $officeCommissionsQuery = MoneyTransfer::with(['transfered', 'delivery_policy.booking_containers.booking', 'delivery_policy.image'])
+            ->where('type', MoneyTransfer::officeCommission);
+
+        if($request->from)
+        {
+            $officeCommissionsQuery->where('created_at', '>=', $request->from);
+        }
+        if($request->to)
+        {
+            $officeCommissionsQuery->where('created_at', '<=', $request->to);
+        }
+
+        $officeCommissions = $officeCommissionsQuery->latest()->get();
+
+        // جلب سجلات النشاط (LogActivity) - فقط السجلات المالية
+        $logActivitiesQuery = LogActivity::with([
+            'attacher',
+            'log',
+            'log.delivery_policy.booking_containers.booking',
+            'log.delivery_policy.image'
+        ])
+            ->whereIn('log_type', [
+                'App\Models\AgentExpense',
+                'App\Models\MoneyTransfer'
+            ]);
+
+        if($request->from)
+        {
+            $logActivitiesQuery->where('created_at', '>=', $request->from);
+        }
+        if($request->to)
+        {
+            $logActivitiesQuery->where('created_at', '<=', $request->to);
+        }
+
+        $logActivities = $logActivitiesQuery->latest()->get();
+
+        // تحميل علاقة bookingContainer لسجلات AgentExpense فقط
+        foreach ($logActivities as $logActivity) {
+            if ($logActivity->log_type === 'App\Models\AgentExpense' && $logActivity->log) {
+                $logActivity->log->loadMissing('bookingContainer.booking');
+            }
+        }
+
+        // دمج المصروفات، عهدة السيارة، دخان المكتب، وسجلات النشاط في مصفوفة واحدة
+        $expenses = $agentExpenses
+            ->concat($deliveryPolicies)
+            ->concat($officeCommissions)
+            ->concat($logActivities)
+            ->sortByDesc('created_at');
+
         return view('admin.reports.general_expenses', compact("expenses"));
     }
     public function exportExcel(Request $request)

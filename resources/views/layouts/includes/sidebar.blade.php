@@ -542,7 +542,7 @@
                                             </a>
                                         </li>
                                     @endif
-                                    
+
                                 </ul>
                             </div>
                         </li>
@@ -568,12 +568,6 @@
                                         </span>
                                     </li>
                                     @if (auth()->user()->hasPermissionTo('daily_reports.index'))
-                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
-                                            data-menu-toggle="hover">
-                                            <a href="{{ route('reports.daily_reports') }}" class="menu-link">
-                                                <span class="menu-text">{{ __('main.daily_reports') }}</span>
-                                            </a>
-                                        </li>
                                         <li class="menu-item menu-item-submenu" aria-haspopup="true"
                                             data-menu-toggle="hover">
                                             <a href="{{ route('reports.general_expenses') }}" class="menu-link">

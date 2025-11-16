@@ -14,17 +14,17 @@ class VaultTransactionController extends Controller
 
     public function index(Request $request)
     {
-        $vaulttransactions = VaultTransaction::query();
+        $vaulttransactionsQuery = VaultTransaction::with(['bank', 'agient']);
 
-        if ($request->filled('date_from')) {
-            $vaulttransactions->whereDate('created_at', '>=', $request->date_from);
+        if ($request->filled('from')) {
+            $vaulttransactionsQuery->where('created_at', '>=', $request->from);
         }
 
-        if ($request->filled('date_to')) {
-            $vaulttransactions->whereDate('created_at', '<=', $request->date_to);
+        if ($request->filled('to')) {
+            $vaulttransactionsQuery->where('created_at', '<=', $request->to);
         }
 
-        $vaulttransactions = $vaulttransactions->where('type', 0)->get();
+        $vaulttransactions = $vaulttransactionsQuery->where('type', 0)->latest()->get();
 
         return view('admin.vaulttransactions.index', compact('vaulttransactions'));
     }

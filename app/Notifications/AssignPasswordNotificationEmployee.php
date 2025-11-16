@@ -51,7 +51,114 @@ class AssignPasswordNotificationEmployee extends Notification
         $url = env('APP_URL') . '/set_password/employees?token='. $this->company->session_id;
         $name = method_exists($notifiable, 'getAttribute') ? ($notifiable->getAttribute('name') ?? '') : '';
         $subject = 'تعيين كلمة المرور - Employee';
-        $html = '<html dir="rtl" lang="ar"><head><meta charset="UTF-8"><title>تعيين كلمة المرور</title></head><body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px"><div style="max-width:600px;margin:auto;background:#fff;border-radius:8px;overflow:hidden"><div style="background:#0d6efd;color:#fff;padding:16px;text-align:center">Leader</div><div style="padding:24px"><h2 style="margin-top:0">مرحباً '.htmlspecialchars($name, ENT_QUOTES, 'UTF-8').'</h2><p>برجاء الضغط على الزر التالي لتعيين كلمة المرور:</p><p style="text-align:center"><a href="'.htmlspecialchars($url, ENT_QUOTES, 'UTF-8').'" style="display:inline-block;background:#0d6efd;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none">تعيين كلمة المرور</a></p></div><div style="background:#f8f9fa;padding:12px;text-align:center;font-size:12px;color:#6c757d">'.date('Y-m-d H:i:s').'</div></div></body></html>';
+        $nameEsc = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+        $urlEsc = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+
+        $html = '<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعيين كلمة المرور</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            text-align: right;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 22px;
+            color: #0d6efd;
+            margin: 0;
+        }
+
+        .greeting {
+            font-size: 18px;
+            margin: 20px 0 10px;
+        }
+
+        .text {
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .button-wrapper {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #0d6efd;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background-color: #0b5ed7;
+        }
+
+        .footer {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://admin.leaderfortrans.com/assets/media/logo.png" alt="Leader" class="logo">
+            <h1 class="title">تعيين كلمة المرور للموظف</h1>
+        </div>
+
+        <p class="greeting">مرحباً ' . $nameEsc . '</p>
+
+        <p class="text">
+            تم إنشاء حساب لك كموظف على نظام ليدر، برجاء الضغط على الزر التالي لتعيين كلمة المرور الخاصة بك وإكمال تفعيل الحساب.
+        </p>
+
+        <div class="button-wrapper">
+            <a href="' . $urlEsc . '" class="btn">تعيين كلمة المرور</a>
+        </div>
+
+        <p class="footer">
+            إذا لم تكن تتوقع هذا البريد، يمكنك تجاهله بأمان.<br>
+            شكراً لاستخدامك أنظمتنا.
+        </p>
+    </div>
+</body>
+</html>';
         return [
             'subject' => $subject,
             'html' => $html,
