@@ -12,10 +12,9 @@ class MoneyTransfer extends Model
 
     const fromDashboard = 1;
     const transferAgent = 2;
-
     const deliveryPolicy = 3;
-
     const settle = 4;
+    const officeCommission = 5; // دخان المكتب
 
     protected $guarded = [];
 
@@ -27,6 +26,11 @@ class MoneyTransfer extends Model
     {
         return $this->morphTo();
     }
+    
+    public function delivery_policy()
+    {
+        return $this->belongsTo(DeliveryPolicy::class);
+    }
 
     public function getCreatedAtAttribute($value)
     {
@@ -34,7 +38,23 @@ class MoneyTransfer extends Model
     }
     public function getTitleAttribute()
     {
-        return __('main.custody_transfer') . '   -   ' . $this->transfered?->name ?? "";
+        if ($this->type == self::officeCommission) {
+            return __('main.office_commission') . '   -   ' . ($this->transfered?->name ?? "");
+        }
+        
+        if ($this->type == self::settle) {
+            return __('main.settle_delivery_policy') . '   -   ' . ($this->transfered?->name ?? "");
+        }
+        
+        if ($this->type == self::deliveryPolicy) {
+            return __('main.custody_transfer') . '   -   ' . ($this->transfered?->name ?? "");
+        }
+        
+        if ($this->type == self::transferAgent) {
+            return __('main.transfer_to_agent') . '   -   ' . ($this->transfered?->name ?? "");
+        }
+        
+        return __('main.custody_transfer') . '   -   ' . ($this->transfered?->name ?? "");
     }
 
 }

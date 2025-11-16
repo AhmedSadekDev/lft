@@ -55,26 +55,72 @@
                 <thead class="thead-light">
                     <tr>
                         <th scope="col">#</th>
+                        <th scope="col">{{ __('admin.type') }}</th>
                         <th scope="col">{{ __('admin.agent') }}</th>
                         <th scope="col">{{ __('admin.action') }}</th>
+                        <th scope="col">{{ __('admin.value') }}</th>
+                        <th scope="col">{{ __('admin.direction') }}</th>
                         <th scope="col">{{ __('main.date') }}</th>
                         <th scope="col">{{ __('main.time') }}</th>
-                        {{-- <th scope="col"></th> --}}
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($log_activities as $log_activity)
+                    @php
+                        $isMoneyTransfer = $log_activity->log_type == 'App\Models\MoneyTransfer';
+                        $isExpense = $log_activity->log_type == 'App\Models\AgentExpense';
+                        $isBookingContainer = $log_activity->log_type == 'App\Models\BookingContainer';
+                        
+                        $value = 0;
+                        $direction = '';
+                        $typeBadge = '';
+                        
+                        if ($isMoneyTransfer) {
+                            $value = $log_activity->log?->value ?? 0;
+                            $type = $log_activity->log?->type;
+                            
+                            // تحديد نوع المعاملة
+                            if ($type == 1) {
+                                $typeBadge = '<span class="badge badge-success">'.__('main.from_dashboard').'</span>';
+                                $direction = '<span class="badge badge-success"><i class="fas fa-arrow-down"></i> '.__('admin.deposit').'</span>';
+                            } elseif ($type == 2) {
+                                $typeBadge = '<span class="badge badge-info">'.__('main.transfer_to_agent').'</span>';
+                                $direction = '<span class="badge badge-danger"><i class="fas fa-arrow-up"></i> '.__('admin.withdrawal').'</span>';
+                            } elseif ($type == 3) {
+                                $typeBadge = '<span class="badge badge-warning">'.__('main.custody_transfer').'</span>';
+                                $direction = '<span class="badge badge-danger"><i class="fas fa-arrow-up"></i> '.__('admin.withdrawal').'</span>';
+                            } elseif ($type == 4) {
+                                $typeBadge = '<span class="badge badge-primary">'.__('main.settle_delivery_policy').'</span>';
+                                $direction = '<span class="badge badge-warning"><i class="fas fa-exchange-alt"></i> '.__('admin.settle').'</span>';
+                            } elseif ($type == 5) {
+                                $typeBadge = '<span class="badge badge-secondary">'.__('main.office_commission').'</span>';
+                                $direction = '<span class="badge badge-success"><i class="fas fa-arrow-down"></i> '.__('admin.deposit').'</span>';
+                            }
+                        } elseif ($isExpense) {
+                            $value = $log_activity->log?->value ?? 0;
+                            $typeBadge = '<span class="badge badge-danger">'.__('admin.expense').'</span>';
+                            $direction = '<span class="badge badge-danger"><i class="fas fa-arrow-up"></i> '.__('admin.withdrawal').'</span>';
+                        } elseif ($isBookingContainer) {
+                            $typeBadge = '<span class="badge badge-dark">'.__('admin.booking_container').'</span>';
+                            $direction = '<span class="badge badge-light">-</span>';
+                        }
+                    @endphp
                     <tr>
-                            <th scope="row">{{$log_activity->id}}</th>
-                            <td>
-                                {{$log_activity?->attacher?->name ?? ""}}
-                            </td>
-                    
-                            <td>{{ $log_activity->action ?? "" }}</td>
-                            <td>{{ $log_activity->date ?? "" }}</td>
-                            <td>{{ $log_activity->time ?? "" }}</td>
-                          
-                        </tr>
+                        <th scope="row">{{$log_activity->id}}</th>
+                        <td>{!! $typeBadge !!}</td>
+                        <td>{{$log_activity?->attacher?->name ?? "-"}}</td>
+                        <td>{{ $log_activity->action ?? "" }}</td>
+                        <td>
+                            @if($value > 0)
+                                <strong>{{ number_format($value, 2) }}</strong>
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>{!! $direction !!}</td>
+                        <td>{{ $log_activity->date ?? "" }}</td>
+                        <td>{{ $log_activity->time ?? "" }}</td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>

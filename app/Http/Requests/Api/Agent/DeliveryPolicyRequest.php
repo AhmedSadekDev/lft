@@ -29,9 +29,11 @@ class DeliveryPolicyRequest extends FormRequest
             'booking_container_ids' => "required",
             'booking_container_ids.*' =>  'exists:booking_containers,id',
             'value'     => 'required|numeric',
+            'office_commission' => 'nullable|numeric|min:0',
             'departure_id' => 'required|exists:cities_and_regions,id',
             'loading_id'    => ['required', 'exists:cities_and_regions,id'],
             'aging_id'      => ['required', 'exists:cities_and_regions,id'],
+            'date'          => ['nullable', 'date'],
             'image'         => ['sometimes', 'mimes:png,jpg,jpeg', 'max:10000']
         ];
     }

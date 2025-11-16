@@ -159,7 +159,7 @@ class BookingController extends Controller
                     'type' => $request->type,
                     'booking_container_id' => $request->booking_container_id ?? null,
                 ]);
-    
+
                 // Save image file
                 $path = $request->file('image')->store('uploads', 'public');
                 $image_data["image"] = $request->image;
@@ -167,7 +167,7 @@ class BookingController extends Controller
                 $image_data["imageable_type"] = "App\Models\BookingPaper";
                 Image::create($image_data);
             }
-            
+
             $company = Company::find($request->company_id);
             $employee = Employee::find($request->employee_id);
             Notification::send($company, new NewBooking($booking));
@@ -181,7 +181,7 @@ class BookingController extends Controller
                 redirect()->back()->with('error', 'something went wrong');
             }
         } catch (\Throwable $th) {
-            dd("ddd");
+           
             DB::rollBack();
             // throw $th;
             if (!$th->getMessage()) {
@@ -213,8 +213,8 @@ class BookingController extends Controller
                 $container->where('booking_id', $booking->id);
             })->get()
         ];
-        
-        
+
+
 
         return view('admin.bookings.show', $input);
     }
@@ -303,7 +303,7 @@ class BookingController extends Controller
                     'type' => $request->type,
                     'booking_container_id' => $request->booking_container_id ?? null,
                 ]);
-    
+
                 // Save image file
                 $path = $request->file('image')->store('uploads', 'public');
                 $image_data["image"] = $request->image;
@@ -393,22 +393,22 @@ class BookingController extends Controller
                 'type' => 'required|integer',
                 'image' => 'required|file', // allow images or PDFs
             ]);
-    
+
             $booking = Booking::findOrFail($request->booking_id);
-    
+
             // If yard_id is sent, update booking and all containers
             if ($request->filled('yard_id')) {
                 $booking->update([
                     'yard_id' => $request->yard_id,
                 ]);
-    
+
                 foreach ($booking->bookingContainers as $container) {
                     $container->update([
                         'yard_id' => $request->yard_id,
                     ]);
                 }
             }
-    
+
             // If image uploaded, handle file and paper record
             if ($request->hasFile('image')) {
 
@@ -418,7 +418,7 @@ class BookingController extends Controller
                     'type' => $request->type,
                     'booking_container_id' => $request->booking_container_id ?? null,
                 ]);
-    
+
                 // Save image file
                 $path = $request->file('image')->store('uploads', 'public');
                 $image_data["image"] = $request->image;
@@ -426,9 +426,9 @@ class BookingController extends Controller
                 $image_data["imageable_type"] = "App\Models\BookingPaper";
                 Image::create($image_data);
             }
-    
+
             return back()->with('success', 'تم اضافة الملف بنجاح');
-    
+
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

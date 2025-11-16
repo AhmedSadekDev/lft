@@ -21,7 +21,7 @@ class BookingContainerController extends Controller
     public function all(Request $request)
     {
         try {
-            $perPage = (int) $request->get('per_page', 10);
+            $perPage = (int) $request->get('per_page', default: 100);
             $page    = (int) $request->get('page', 1);
 
             // نفس العلاقات اللي كانت بتتجاب في القديم عشان نتجنب N+1
@@ -40,7 +40,7 @@ class BookingContainerController extends Controller
                 ->selectRaw("'specification' as stage_type")
                 ->where(function ($q) {
                     $q->where('status', 0)
-                      ->orWhere('superagent_specification_approved', 0);
+                    ->orWhere('superagent_specification_approved', 0);
                 })
                 ->get();
 
@@ -98,10 +98,10 @@ class BookingContainerController extends Controller
             $bookings = Booking::has('bookingContainers') // Ensure there are containers
                 ->whereHas('bookingContainers', function ($qc) {
                     $qc->whereIn('status', [0, 1])
-                       ->orWhere('superagent_specification_approved', 0);
+                    ->orWhere('superagent_specification_approved', 0);
                 })
                 ->orderBy('id', 'desc')
-                ->paginate(10);
+                ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
 
@@ -120,10 +120,10 @@ class BookingContainerController extends Controller
             $bookings = Booking::has('bookingContainers') // Ensure there are containers
                 ->whereHas('bookingContainers', function ($qc) {
                     $qc->whereIn('status', [0, 1, 2])
-                       ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 0);
+                    ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 0);
                 })
                 ->orderBy('id', 'desc')
-                ->paginate(10);
+                ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
             return $this->returnAllData($data, __('alerts.success'));
@@ -139,10 +139,10 @@ class BookingContainerController extends Controller
             $bookings = Booking::has('bookingContainers') // Ensure there are containers
                 ->whereHas('bookingContainers', function ($qc) {
                     $qc->whereIn('status', [0, 1, 2, 3])
-                       ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 1);
+                    ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 1);
                 })
                 ->orderBy('id', 'desc')
-                ->paginate(10);
+                ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
 

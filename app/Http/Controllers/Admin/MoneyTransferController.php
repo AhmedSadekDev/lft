@@ -24,8 +24,11 @@ class MoneyTransferController extends Controller
     public function index()
     {
         $input = [
-            'financial_custody_agents'     => MoneyTransfer::where('transfered_type', 'App\Models\Agent')->get(),
-            'route_create'      => route('financial_custody_agents.create')
+            'financial_custody_agents' => MoneyTransfer::where(function($query) {
+                $query->where('transfered_type', 'App\Models\Agent')
+                      ->orWhere('transferer_type', 'App\Models\Agent');
+            })->orderBy('created_at', 'desc')->get(),
+            'route_create' => route('financial_custody_agents.create')
         ];
 
         return view('admin.financial_custody_agents.index', $input);

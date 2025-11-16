@@ -28,30 +28,33 @@ class DeliveryPolicyController extends Controller
             // dd($request->all());
             $agent = auth()->guard('agent')->user();
 
-
             $bookingContainer = BookingContainer::find($request->booking_container_ids[0]);
 
             if ($bookingContainer->delivery_policies->count() > 0) {
                 return $this->returnResponseSuccessMessage(__('This Container Alread Has Delivery Plicy'), 200);
             }
 
+            $officeCommission = $request->office_commission ?? 0;
+            $actualDeduction = $request->value - $officeCommission; // المبلغ الفعلي المخصوم
 
-            if ($agent->wallet < $request->value) {
+            // التحقق من أن المحفظة تكفي للمبلغ الفعلي المخصوم
+            if ($agent->wallet < $actualDeduction) {
                 return $this->returnError(200, __('main.you dont have enougth money'));
             }
+
             $city = CitiesAndRegions::find($request->loading_id);
+            
+            DB::beginTransaction();
+
             //create delivery_policy
             $delivery_policy_data["car_id"] = $request->car_id;
             $delivery_policy_data["driver_id"] = $request->driver_id;
             $delivery_policy_data["date"] = $request->date;
             $delivery_policy_data["address"] = $city->address . " " . $city->city;
+            $delivery_policy_data["office_commission"] = $officeCommission;
             $delivery_policy = DeliveryPolicy::create($delivery_policy_data);
 
             $delivery_policy->booking_containers()->attach($request->booking_container_ids);
-
-            //create MoneyTransfer
-
-
 
             if ($bookingContainer) {
                 if ($request->filled("departure_id")) {
@@ -73,7 +76,6 @@ class DeliveryPolicyController extends Controller
                 }
             }
 
-
             if ($bookingContainer->departure_id && $bookingContainer->loading_id && $bookingContainer->aging_id) {
                 $check = CompanyTransportation::where('container_id', $bookingContainer->container_id)
                     ->where('departure_id', $bookingContainer->departure_id)
@@ -86,10 +88,7 @@ class DeliveryPolicyController extends Controller
                 }
             }
 
-
-
-
-
+            // إنشاء معاملة العهدة للسائق (type 3)
             $data["value"] = $request->value;
             $data["type"] = 3;
             $data["transferer_type"] = "App\Models\Agent";
@@ -97,12 +96,27 @@ class DeliveryPolicyController extends Controller
             $data["transfered_type"] = "App\Models\Driver";
             $data["transfered_id"] = $request->driver_id;
             $data["delivery_policy_id"] = $delivery_policy->id;
-            $data["date"] = $request->id;
+            $data["date"] = $request->date ?? now();
             $data["address"] = $city->address . " " . $city->city;
             $moneyTransfer = MoneyTransfer::create($data);
 
             $this->saveLogActivity($agent->id, Agent::class, $moneyTransfer->id, MoneyTransfer::class);
 
+            // إنشاء معاملة دخان المكتب (type 5) - إرجاع للمندوب
+            if ($officeCommission > 0) {
+                $commissionData["value"] = $officeCommission;
+                $commissionData["type"] = 5; // نوع جديد: دخان المكتب
+                $commissionData["transferer_type"] = "App\Models\Driver";
+                $commissionData["transferer_id"] = $request->driver_id;
+                $commissionData["transfered_type"] = "App\Models\Agent";
+                $commissionData["transfered_id"] = $agent->id;
+                $commissionData["delivery_policy_id"] = $delivery_policy->id;
+                $commissionData["date"] = $request->date ?? now();
+                $commissionData["address"] = $city->address . " " . $city->city;
+                $officeCommissionTransfer = MoneyTransfer::create($commissionData);
+
+                $this->saveLogActivity($agent->id, Agent::class, $officeCommissionTransfer->id, MoneyTransfer::class);
+            }
 
             if ($request->image) {
                 $image_data["image"] = $request->image;
@@ -111,13 +125,16 @@ class DeliveryPolicyController extends Controller
                 Image::create($image_data);
             }
 
+            // خصم المبلغ الفعلي فقط (القيمة - دخان المكتب)
             $agent->update([
-                'wallet' => $agent->wallet -= $request->value
+                'wallet' => $agent->wallet - $actualDeduction
             ]);
 
+            DB::commit();
 
             return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
         } catch (\Exception $Exception) {
+            DB::rollBack();
             return $this->returnError(500, $Exception->getMessage());
         }
     }
@@ -128,7 +145,15 @@ class DeliveryPolicyController extends Controller
             $agent = auth()->guard('agent')->user();
 
 
-            $delivery_policies = DeliveryPolicy::whereHas("money_transfer", function ($q) use ($agent) {
+            $delivery_policies = DeliveryPolicy::with([
+                'car',
+                'driver',
+                'money_transfer',
+                'image',
+                'booking_containers' => function ($query) {
+                    $query->with(['booking', 'branch']);
+                }
+            ])->whereHas("money_transfer", function ($q) use ($agent) {
                 return $q->where("transferer_id", $agent->id);
             })->get();
 
@@ -231,6 +256,7 @@ class DeliveryPolicyController extends Controller
             $request->validate([
                 'id' => 'required|exists:delivery_policies,id',
                 'value' => 'sometimes|numeric',
+                'office_commission' => 'nullable|numeric|min:0',
                 'car_id'  => 'sometimes|exists:cars,id',
                 'driver_id'  => 'sometimes|exists:drivers,id',
                 'booking_container_ids' => 'sometimes|array',
@@ -254,10 +280,16 @@ class DeliveryPolicyController extends Controller
             }
 
             $oldValue = (float) ($delivery_policy->money_transfer?->value ?? 0);
-            $newValue = $request->has('value') ? (float) $request->value : $oldValue;
-            $diff = $newValue - $oldValue;
+            $oldCommission = (float) ($delivery_policy->office_commission ?? 0);
+            $oldActualDeduction = $oldValue - $oldCommission; // المبلغ القديم المخصوم فعلياً
 
-            if ($diff > 0 && $agent->wallet < $diff) {
+            $newValue = $request->has('value') ? (float) $request->value : $oldValue;
+            $newCommission = $request->has('office_commission') ? (float) $request->office_commission : $oldCommission;
+            $newActualDeduction = $newValue - $newCommission; // المبلغ الجديد المخصوم فعلياً
+
+            $actualDiff = $newActualDeduction - $oldActualDeduction; // الفرق الفعلي
+
+            if ($actualDiff > 0 && $agent->wallet < $actualDiff) {
                 return $this->returnError(200, __('main.you dont have enougth money'));
             }
 
@@ -279,12 +311,16 @@ class DeliveryPolicyController extends Controller
             if ($request->filled('date')) {
                 $delivery_policy->date = $request->date;
             }
+            if ($request->has('office_commission')) {
+                $delivery_policy->office_commission = $newCommission;
+            }
             $delivery_policy->save();
 
             if ($request->filled('booking_container_ids')) {
                 $delivery_policy->booking_containers()->sync($request->booking_container_ids);
             }
 
+            // تحديث معاملة العهدة (type 3)
             if ($delivery_policy->money_transfer) {
                 $delivery_policy->money_transfer->update([
                     'value' => $newValue,
@@ -292,8 +328,35 @@ class DeliveryPolicyController extends Controller
                 ]);
             }
 
-            if ($diff !== 0.0) {
-                $agent->update(['wallet' => $agent->wallet - $diff]);
+            // تحديث أو إنشاء معاملة دخان المكتب (type 5)
+            $officeCommissionTransfer = MoneyTransfer::where('delivery_policy_id', $delivery_policy->id)
+                ->where('type', 5)
+                ->first();
+
+            if ($newCommission > 0) {
+                if ($officeCommissionTransfer) {
+                    $officeCommissionTransfer->update(['value' => $newCommission]);
+                } else {
+                    // إنشاء معاملة دخان المكتب إذا لم تكن موجودة
+                    $commissionData["value"] = $newCommission;
+                    $commissionData["type"] = 5;
+                    $commissionData["transferer_type"] = "App\Models\Driver";
+                    $commissionData["transferer_id"] = $delivery_policy->driver_id;
+                    $commissionData["transfered_type"] = "App\Models\Agent";
+                    $commissionData["transfered_id"] = $agent->id;
+                    $commissionData["delivery_policy_id"] = $delivery_policy->id;
+                    $commissionData["date"] = $delivery_policy->date ?? now();
+                    $commissionData["address"] = $delivery_policy->address;
+                    MoneyTransfer::create($commissionData);
+                }
+            } elseif ($officeCommissionTransfer && $newCommission == 0) {
+                // حذف معاملة دخان المكتب إذا أصبحت صفر
+                $officeCommissionTransfer->delete();
+            }
+
+            // تحديث محفظة المندوب بناءً على الفرق الفعلي
+            if ($actualDiff !== 0.0) {
+                $agent->update(['wallet' => $agent->wallet - $actualDiff]);
             }
 
             if ($request->filled('image')) {
@@ -339,9 +402,13 @@ class DeliveryPolicyController extends Controller
 
             DB::beginTransaction();
 
+            // حساب المبلغ الذي يجب إرجاعه (القيمة - دخان المكتب)
             $valueToRefund = (float) ($delivery_policy->money_transfer?->value ?? 0);
-            if ($valueToRefund > 0) {
-                $agent->update(['wallet' => $agent->wallet + $valueToRefund]);
+            $officeCommission = (float) ($delivery_policy->office_commission ?? 0);
+            $actualRefund = $valueToRefund - $officeCommission; // المبلغ الفعلي الذي تم خصمه
+
+            if ($actualRefund > 0) {
+                $agent->update(['wallet' => $agent->wallet + $actualRefund]);
             }
 
             if ($delivery_policy->image) {
@@ -350,9 +417,15 @@ class DeliveryPolicyController extends Controller
 
             $delivery_policy->booking_containers()->detach();
 
+            // حذف معاملة العهدة (type 3)
             if ($delivery_policy->money_transfer) {
                 $delivery_policy->money_transfer()->delete();
             }
+
+            // حذف معاملة دخان المكتب (type 5) إن وجدت
+            MoneyTransfer::where('delivery_policy_id', $delivery_policy->id)
+                ->where('type', 5)
+                ->delete();
 
             $delivery_policy->delete();
 
