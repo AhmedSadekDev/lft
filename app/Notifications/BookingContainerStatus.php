@@ -74,33 +74,23 @@ class BookingContainerStatus extends Notification
                 $loading = $item->loading?->title ?? '-';
                 $aging = $item->aging?->title ?? '-';
 
-                // بيانات السائقين
-                $driversHtml = '';
+                // بيانات السائقين والسيارات (مدمجة)
+                $driversCarsHtml = '';
                 if ($item->delivery_policies && $item->delivery_policies->count()) {
                     foreach ($item->delivery_policies as $policy) {
                         $driverName = $policy->driver?->name ?? '-';
                         $driverPhone = $policy->driver?->phone ?? '-';
+                        $carPlate = $policy->car?->plate_number ?? '-';
 
-                        $driversHtml .= '
+                        $driversCarsHtml .= '
                                 <div class="driver-info">
                                     <div class="driver-name">' . htmlspecialchars($driverName, ENT_QUOTES, 'UTF-8') . '</div>
                                     <div class="driver-phone">' . htmlspecialchars($driverPhone, ENT_QUOTES, 'UTF-8') . '</div>
+                                    <div class="car-plate">رقم السيارة: ' . htmlspecialchars($carPlate, ENT_QUOTES, 'UTF-8') . '</div>
                                 </div>';
                     }
                 } else {
-                    $driversHtml = '-';
-                }
-
-                // أرقام العربيات
-                $carsHtml = '';
-                if ($item->delivery_policies && $item->delivery_policies->count()) {
-                    foreach ($item->delivery_policies as $policy) {
-                        $plate = $policy->car?->plate_number ?? '-';
-                        $carsHtml .= '
-                                <div class="driver-info car-plate">' . htmlspecialchars($plate, ENT_QUOTES, 'UTF-8') . '</div>';
-                    }
-                } else {
-                    $carsHtml = '-';
+                    $driversCarsHtml = '-';
                 }
 
                 $rowsHtml .= '
@@ -115,8 +105,7 @@ class BookingContainerStatus extends Notification
                         <td>' . htmlspecialchars($departure, ENT_QUOTES, 'UTF-8') . '</td>
                         <td>' . htmlspecialchars($loading, ENT_QUOTES, 'UTF-8') . '</td>
                         <td>' . htmlspecialchars($aging, ENT_QUOTES, 'UTF-8') . '</td>
-                        <td>' . $driversHtml . '</td>
-                        <td>' . $carsHtml . '</td>
+                        <td colspan="2">' . $driversCarsHtml . '</td>
                     </tr>';
             }
         }
@@ -238,7 +227,10 @@ class BookingContainerStatus extends Notification
         }
 
         .car-plate {
-            color: #000;
+            color: #007bff;
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -258,8 +250,7 @@ class BookingContainerStatus extends Notification
                     <th>خروج</th>
                     <th>تحميل</th>
                     <th>تعتيق</th>
-                    <th>بيانات السائقين</th>
-                    <th>أرقام العربيات</th>
+                    <th colspan="2">بيانات السائق والسيارة</th>
                 </tr>
             </thead>
             <tbody>' . $rowsHtml . '

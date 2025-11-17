@@ -124,11 +124,46 @@ class ReportController extends Controller
             }
         }
 
-        // دمج المصروفات، عهدة السيارة، دخان المكتب، وسجلات النشاط في مصفوفة واحدة
+        // جمع IDs للسجلات التي تم جلبها مباشرة لتجنب التكرار
+        $existingIds = collect();
+
+        // جمع IDs من AgentExpense
+        $existingIds = $existingIds->merge(
+            $agentExpenses->map(fn($expense) => [
+                'type' => 'App\Models\AgentExpense',
+                'id' => $expense->id
+            ])
+        );
+
+        // جمع IDs من MoneyTransfer (deliveryPolicy و officeCommission)
+        $existingIds = $existingIds->merge(
+            $deliveryPolicies->map(fn($transfer) => [
+                'type' => 'App\Models\MoneyTransfer',
+                'id' => $transfer->id
+            ])
+        );
+
+        $existingIds = $existingIds->merge(
+            $officeCommissions->map(fn($transfer) => [
+                'type' => 'App\Models\MoneyTransfer',
+                'id' => $transfer->id
+            ])
+        );
+
+        // تصفية LogActivity لاستبعاد السجلات المكررة
+        $filteredLogActivities = $logActivities->filter(function ($logActivity) use ($existingIds) {
+            // إذا كان log_id موجود في السجلات التي تم جلبها مباشرة، استبعده
+            return !$existingIds->contains(function ($existing) use ($logActivity) {
+                return $existing['type'] === $logActivity->log_type &&
+                       $existing['id'] == $logActivity->log_id;
+            });
+        });
+
+        // دمج المصروفات، عهدة السيارة، دخان المكتب، وسجلات النشاط المفلترة في مصفوفة واحدة
         $expenses = $agentExpenses
             ->concat($deliveryPolicies)
             ->concat($officeCommissions)
-            ->concat($logActivities)
+            ->concat($filteredLogActivities)
             ->sortByDesc('created_at');
 
         return view('admin.reports.general_expenses', compact("expenses"));
