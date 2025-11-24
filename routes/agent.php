@@ -181,4 +181,5 @@ Route::group(['middleware' => 'localization'], function () {
 
     //fetch_yards
     Route::get('fetch_yards', [YardController::class, 'fetch_yards']);
+    Route::get('fetch_yard_bookings', [YardController::class, 'fetch_yard_bookings']);
 });

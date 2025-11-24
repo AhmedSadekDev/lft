@@ -36,7 +36,12 @@ class BookingContainerResource extends JsonResource
             "notes" => NoteResource::collection($this->notes),
             "is_today" => $is_today ? 1 : 0,
             "booking_id" => $this->booking_id ?? "",
-            'responsible_agents' => AgentResource::collection($this->agents()->wherePivot('booking_container_status', $this->status)->get())
+            'responsible_agents' => AgentResource::collection($this->agents()->wherePivot('booking_container_status', $this->status)->get()),
+            'specification_latter' => optional($this->bookingPapers->where('type', 0)->last())->image->image ?? '',
+            'container_image' => optional($this->bookingPapers->where('type', 1)->last())->image->image ?? '',
+            'loading_answer' => optional($this->bookingPapers->where('type', 6)->last())->image->image ?? '',
+            'container_with_sail_image' => optional($this->bookingPapers->where('type', 2)->last())->image->image ?? '',
+            'unloading_image' => optional($this->bookingPapers->where('type', 3)->last())->image->image ?? '',
 
         ];
     }

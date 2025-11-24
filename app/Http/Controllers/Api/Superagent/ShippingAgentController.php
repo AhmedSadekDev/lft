@@ -37,8 +37,14 @@ class ShippingAgentController extends Controller
         $spec_shipping_agent_ids = Booking::has('shippingAgent')
             ->whereHas('bookingContainers', function ($query) use ($superagent_booking_containers) {
                 $query->where(function ($q) {
+                        // الحاويات التي تحتاج موافقة على التخصيص:
+                        // 1. status = 0 (لم يتم التخصيص بعد)
+                        // 2. status = 1 و superagent_specification_approved = 0 (تم التخصيص لكن لم يتم الموافقة)
                         $q->where('booking_containers.status', 0)
-                          ->orWhere('booking_containers.superagent_specification_approved', 0);
+                          ->orWhere(function($q2) {
+                              $q2->where('booking_containers.status', 1)
+                                 ->where('booking_containers.superagent_specification_approved', 0);
+                          });
                     })
                     ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());
             })
@@ -53,8 +59,14 @@ class ShippingAgentController extends Controller
             $bookings = $agent->bookings()
                 ->whereHas('bookingContainers', function ($q) use ($superagent_booking_containers) {
                     $q->where(function ($qq) {
+                            // الحاويات التي تحتاج موافقة على التخصيص:
+                            // 1. status = 0 (لم يتم التخصيص بعد)
+                            // 2. status = 1 و superagent_specification_approved = 0 (تم التخصيص لكن لم يتم الموافقة)
                             $qq->where('booking_containers.status', 0)
-                               ->orWhere('booking_containers.superagent_specification_approved', 0);
+                               ->orWhere(function($q2) {
+                                   $q2->where('booking_containers.status', 1)
+                                      ->where('booking_containers.superagent_specification_approved', 0);
+                               });
                         })
                       ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());
                 })
@@ -145,34 +157,41 @@ class ShippingAgentController extends Controller
     {
         try {
             $superagent = auth()->guard('superagent')->user();
-    
+
             // Get all booking containers for the superagent created today
             $superagent_booking_containers = $superagent->superagent_booking_containers()
                 ->wherePivot('created_at', '>=', now()->startOfDay())
                 ->wherePivot('created_at', '<=', now()->endOfDay())
                 ->get();
-                
-                
-    
+
+
+
             // Retrieve shipping agent IDs where booking containers have status 0 and match superagent booking container IDs
             $shipping_agent_ids = Booking::has('shippingAgent')
                 ->whereHas('bookingContainers', function ($query) use ($superagent_booking_containers) {
                     $query->where(function($q) {
-                        $q->where('status', 0)->orWhere('superagent_specification_approved', 0);
+                        // الحاويات التي تحتاج موافقة على التخصيص:
+                        // 1. status = 0 (لم يتم التخصيص بعد)
+                        // 2. status = 1 و superagent_specification_approved = 0 (تم التخصيص لكن لم يتم الموافقة)
+                        $q->where('status', 0)
+                          ->orWhere(function($q2) {
+                              $q2->where('status', 1)
+                                 ->where('superagent_specification_approved', 0);
+                          });
                     })
                         ->whereIn('id', $superagent_booking_containers->pluck('id')->toArray());
                 })
                 ->orderBy('id', 'desc')
                 ->pluck('shipping_agent_id')
                 ->toArray();
-                
-    
+
+
             // Retrieve shipping agents using the retrieved IDs
             $shipping_agents = ShippingAgent::whereIn('id', $shipping_agent_ids)->get();
-    
+
             // Transform data using the resource collection
             $data = SpecificationShippingAgentResource::collection($shipping_agents);
-    
+
             // Response
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
@@ -190,9 +209,9 @@ class ShippingAgentController extends Controller
                 ->wherePivot("created_at", "<=", now()->endOfDay())
                 //->wherePivot("booking_container_status", 2)
                     ->get();
-                    
-                    
-                
+
+
+
 
             $shipping_agent_ids = Booking::has("shippingAgent")
                 ->whereHas("bookingContainers", function ($qc) use ($superagent_booking_containers) {
@@ -202,7 +221,7 @@ class ShippingAgentController extends Controller
                 ->get()
                 ->pluck("shipping_agent_id")
                 ->toArray();
-                
+
             $shipping_agents = shippingAgent::whereIn("id", $shipping_agent_ids)->get();
 
             $data = UnloadingShippingAgentResource::collection($shipping_agents);
@@ -219,19 +238,19 @@ class ShippingAgentController extends Controller
 
     public function loading_assignments()
     {
-      
+
         $superagent = auth()->guard('superagent')->user();
         $superagent_booking_containers = $superagent->superagent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
             ->wherePivot("created_at", "<=", now()->endOfDay())
             //->wherePivot("booking_container_status", 1)
             ->get();
-            
+
 
         $yards = Yard::whereHas("bookingContainers", function ($qc) use ($superagent_booking_containers) {
             $qc->where('superagent_loading_approved', 0)->where('superagent_specification_approved', 1)->whereIn("booking_containers.id", $superagent_booking_containers->pluck("id")->toArray());
         })->orderBy("id", "desc")->get();
-        
-        
+
+
         $data = LoadingYardResource::collection($yards);
 
         //response

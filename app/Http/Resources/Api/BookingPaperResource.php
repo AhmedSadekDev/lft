@@ -23,6 +23,8 @@ class BookingPaperResource extends JsonResource
                 return 'جواب تخصيص';
             case 1:
                 return 'صوره الحاويه';
+            case 6:
+                return 'جواب التحميل';
             case 5:
                 return 'صورة سيل ملاحي';
             case 4:

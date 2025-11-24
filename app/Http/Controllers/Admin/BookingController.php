@@ -41,28 +41,46 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        $bookings  = Booking::query();
+        $bookings = Booking::query()
+            ->with(['company', 'factory', 'invoice']);
 
-
+        // Search filter
         if ($request->filled('search')) {
-            $bookings->whereHas('bookingContainers', function($container) use($request){
-                $container->where('container_no', 'like',  '%' . $request->search . '%');
-            })
-                ->orWhere('booking_number', 'like', '%' . $request->search . '%')
-                ->orWhere('employee_name', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $bookings->where(function($query) use ($search) {
+                $query->where('booking_number', 'like', '%' . $search . '%')
+                    ->orWhere('employee_name', 'like', '%' . $search . '%')
+                    ->orWhereHas('bookingContainers', function($container) use($search){
+                        $container->where('container_no', 'like', '%' . $search . '%');
+                    });
+            });
         }
 
+        // Date filter
         if ($request->filled('arrival_date')) {
             $bookings->filterDate(request('arrival_date'));
-
         }
 
+        // Company filter
         if ($request->filled("company")) {
             $bookings->filterCompany(request('company'));
-
         }
 
-        $bookings = $bookings->get();
+        // Tax status filter
+        if ($request->filled("tax_status")) {
+            $bookings->filterTaxStatus(request('tax_status'));
+        }
+
+        // Invoice status filter
+        if ($request->filled("invoice_status")) {
+            if ($request->invoice_status == '1') {
+                $bookings->whereHas('invoice');
+            } else {
+                $bookings->whereDoesntHave('invoice');
+            }
+        }
+
+        $bookings = $bookings->orderBy('id', 'desc')->paginate(15)->withQueryString();
 
         $companies = Company::query()->get();
 
@@ -181,7 +199,7 @@ class BookingController extends Controller
                 redirect()->back()->with('error', 'something went wrong');
             }
         } catch (\Throwable $th) {
-           
+
             DB::rollBack();
             // throw $th;
             if (!$th->getMessage()) {

@@ -23,20 +23,20 @@ class BookingPaperController extends Controller
         ini_set('max_execution_time', 120);
         set_time_limit(120);
         try {
-            
+
             $booking = Booking::whereId($request->booking_id)->first();
-            
+
 
             $booking->update([
                 "yard_id" => $request->yard_id
             ]);
-            
+
             foreach($booking->bookingContainers as $container) {
                 $container->update([
                     "yard_id" => $request->yard_id
                 ]);
             }
-            
+
 
             if ($request->image) {
                 BookingPaper::where(['booking_id' => $request->booking_id, 'type' => 0])->delete();
@@ -85,6 +85,17 @@ class BookingPaperController extends Controller
                 $paper["type"] = 0;
                 $booking_paper = BookingPaper::create($paper);
                 $image_data["image"] = $request->specification_latter;
+                $image_data["imageable_id"] = $booking_paper->id;
+                $image_data["imageable_type"] = "App\Models\BookingPaper";
+                Image::create($image_data);
+            }
+            if ($request->loading_answer) {
+                BookingPaper::where(['booking_id' => $booking_container->booking_id, 'type' => 6])->delete();
+                $paper["booking_container_id"] = $booking_container->id;
+                $paper["booking_id"] = $booking_container->booking_id;
+                $paper["type"] = 6;
+                $booking_paper = BookingPaper::create($paper);
+                $image_data["image"] = $request->loading_answer;
                 $image_data["imageable_id"] = $booking_paper->id;
                 $image_data["imageable_type"] = "App\Models\BookingPaper";
                 Image::create($image_data);

@@ -218,6 +218,7 @@
                         <option>اختر نوع الملف</option>
                         <option value="0">جواب تخصيص</option>
                         <option value="1">صورة الحاوية</option>
+                        <option value="6">جواب التحميل</option>
                         <option value="5">صورة سيل ملاحي</option>
                         <option value="4">جواب التعتيق</option>
                         <option value="8">اذن شحن</option>

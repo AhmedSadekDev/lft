@@ -58,7 +58,7 @@ Route::group(['middleware' => 'localization'], function () {
 
         //home
         Route::get('fetch_home', [HomeController::class, 'fetch_home']);
-        
+
         Route::post('change-container-status', [AgentController::class, 'changeStatus']);
 
 
@@ -119,5 +119,6 @@ Route::group(['middleware' => 'localization'], function () {
             Route::post("fetch_agents_notifications", "fetch_agents_notifications");
         });
         Route::get('fetch_yards', [YardController::class, 'fetch_yards']);
+        Route::get('fetch_yard_bookings', [YardController::class, 'fetch_yard_bookings']);
     });
 });

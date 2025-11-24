@@ -29,6 +29,7 @@
                     <select name="type" id="type" class="form-control" required>
                         <option value="0">جواب تخصيص</option>
                         <option value="1">صورة الحاوية</option>
+                        <option value="6">جواب التحميل</option>
                         <option value="5">صورة سيل ملاحي</option>
                         <option value="4">جواب التعتيق</option>
                         <option value="8">اذن شحن</option>
@@ -60,7 +61,7 @@
                                     $fileExtension = pathinfo($fileUrl, PATHINFO_EXTENSION);
                                     $isImage = in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                 @endphp
-                                
+
                                 <a href="{{ $fileUrl }}" target="_blank">
                                     @if ($isImage)
                                         <img src="{{ $fileUrl }}" class="img-fluid rounded"
@@ -93,6 +94,7 @@
                                     @switch($paper->type)
                                         @case(0) جواب تخصيص @break
                                         @case(1) صوره الحاويه @break
+                                        @case(6) جواب التحميل @break
                                         @case(5) صورة سيل ملاحي @break
                                         @case(4) جواب التعتيق @break
                                         @case(8) اذن شحن  @break

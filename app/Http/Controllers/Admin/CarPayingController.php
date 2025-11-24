@@ -13,6 +13,7 @@ use App\Http\Traits\ImagesTrait;
 use App\Models\BookingContainer;
 use App\Http\Controllers\Controller;
 use App\Models\DeliveryPolicy;
+use App\Models\Shipment;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CarPayingController extends Controller
@@ -67,19 +68,26 @@ class CarPayingController extends Controller
 
     public function store(Request $request)
     {
-        
+
         $data = $request->validate([
             'delivery_policy_id' => 'required|exists:delivery_policies,id',
             'value' => 'required|numeric',
             'image' => 'nullable|mimes:jpg,jpeg,png'
         ]);
-        
+
         $policy = DeliveryPolicy::find($request->delivery_policy_id);
 
+        // حساب المتبقي للسداد: البوليصة (cost) والحوالة (money_transfer) لا تُخصم من السداد
+        // فقط المصروف الإضافي (extraExpenses) يُحسب
+        $extraExpensesTotal = $policy->extraExpenses->sum('value');
+        $paidTotal = $policy->payingCars->sum('value');
+
         if ($policy->cost) {
-            $calc = $policy->cost - $policy->payingCars->sum('value');
+            // إذا كان cost موجود: المتبقي = cost - المدفوع
+            $calc = $policy->cost - $paidTotal;
         } else {
-            $calc = ($policy->money_transfer->value + $policy->extraExpenses->sum('value')) - $policy->payingCars->sum('value');
+            // إذا لم يكن cost موجود: المتبقي = المصروف الإضافي فقط (بدون money_transfer)
+            $calc = $extraExpensesTotal - $paidTotal;
         }
 
         if ($request->value > ($calc)) {
@@ -98,11 +106,12 @@ class CarPayingController extends Controller
 
         $vault = Vault::first();
 
+        // حساب المبلغ المطلوب: قيمة السداد فقط (بدون المصروف الإضافي)
         if ($vault->amount < $request->value) {
-
             return back()->with('error', __('main.car_wallet_does_not_have_enough_amount'));
         }
-        
+
+        // سجل معاملة السداد (منصرف)
         VaultTransaction::create([
             'name' => 'سداد سياره',
             'amount' => $request->value,
@@ -119,9 +128,36 @@ class CarPayingController extends Controller
 
         MoneyTransfer::create($transaction);
 
+        // خصم قيمة السداد من الخزنة
         $vault->update([
             'amount' => $vault->amount - $request->value
         ]);
+
+        // إضافة المصروف الإضافي للخزنة (وارد) عند السداد
+        // يتم إضافة المصروف الإضافي فقط عند السداد، وليس عند إنشاء المصروف
+        if ($extraExpensesTotal > 0) {
+            // حساب المصروف الإضافي غير المدفوع بعد
+            $remainingExtraExpenses = $extraExpensesTotal - $paidTotal;
+
+            // إذا كان هناك مصروف إضافي غير مدفوع، أضف جزء منه للخزنة
+            if ($remainingExtraExpenses > 0) {
+                // المبلغ الذي يُضاف = الحد الأدنى بين قيمة السداد والمصروف الإضافي المتبقي
+                $extraExpenseToAdd = min($request->value, $remainingExtraExpenses);
+
+                if ($extraExpenseToAdd > 0) {
+                    // إضافة المصروف الإضافي للخزنة
+                    VaultTransaction::create([
+                        'name' => 'مصروف إضافي - بوليصة ' . $policy->id,
+                        'amount' => $extraExpenseToAdd,
+                        'type' => 1 // وارد
+                    ]);
+
+                    $vault->update([
+                        'amount' => $vault->amount + $extraExpenseToAdd
+                    ]);
+                }
+            }
+        }
 
         return back()->with('success', __('alerts.added_successfully'));
     }

@@ -34,13 +34,16 @@ class BookingContainerController extends Controller
                 'agents',
             ];
 
-            // 1) specification (status=0 أو superagent_specification_approved=0)
+            // 1) specification (status=0 أو status=1 و superagent_specification_approved=0)
             $specItems = BookingContainer::with($with)
                 ->select('*')
                 ->selectRaw("'specification' as stage_type")
                 ->where(function ($q) {
                     $q->where('status', 0)
-                    ->orWhere('superagent_specification_approved', 0);
+                      ->orWhere(function($q2) {
+                          $q2->where('status', 1)
+                             ->where('superagent_specification_approved', 0);
+                      });
                 })
                 ->get();
 
@@ -97,8 +100,16 @@ class BookingContainerController extends Controller
 
             $bookings = Booking::has('bookingContainers') // Ensure there are containers
                 ->whereHas('bookingContainers', function ($qc) {
-                    $qc->whereIn('status', [0, 1])
-                    ->orWhere('superagent_specification_approved', 0);
+                    // الحاويات التي تحتاج موافقة على التخصيص:
+                    // 1. status = 0 (لم يتم التخصيص بعد)
+                    // 2. status = 1 و superagent_specification_approved = 0 (تم التخصيص لكن لم يتم الموافقة)
+                    $qc->where(function($q) {
+                        $q->where('status', 0)
+                          ->orWhere(function($q2) {
+                              $q2->where('status', 1)
+                                 ->where('superagent_specification_approved', 0);
+                          });
+                    });
                 })
                 ->orderBy('id', 'desc')
                 ->paginate(100);

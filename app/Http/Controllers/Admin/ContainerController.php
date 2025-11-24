@@ -27,13 +27,22 @@ class ContainerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $input = [
-            'containers' => Container::all(),
-        ];
+        $query = Container::query();
 
-        return view('admin.containers.index', $input);
+        // تطبيق البحث إذا كان موجود
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('type', 'like', '%' . $search . '%')
+                    ->orWhere('size', 'like', '%' . $search . '%');
+            });
+        }
+
+        $containers = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();
+
+        return view('admin.containers.index', compact('containers'));
     }
 
     /**
@@ -120,7 +129,7 @@ class ContainerController extends Controller
         $container->delete();
         return response()->json(['staus' => true, 'msg' => __('alerts.deleted_successfully')], 200);
     }
-    
+
     public function export(Request $request)
     {
         $bookings = Booking::whereIn('id', explode(',', $request->ids))->get();
@@ -132,5 +141,5 @@ class ContainerController extends Controller
         }
         return Excel::download(new BookingContainerDetails($containerIds), 'booking_containers.xlsx');
     }
-        
+
 }

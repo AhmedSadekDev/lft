@@ -22,7 +22,18 @@ class SpecificationBookingResource extends JsonResource
             "id" => $this->id,
             "booking_number" => $this->booking_number ?? "",
             "is_today" => $superagent_booking_containers->count() ? 1 : 0,
-            "booking_containers" => BookingContainerResource::collection($this->bookingContainers()->whereIn("booking_containers.status", [0,1, 2, 3])->get())
+            "booking_containers" => BookingContainerResource::collection(
+                $this->bookingContainers()->where(function($q) {
+                    // الحاويات التي تحتاج موافقة على التخصيص:
+                    // 1. status = 0 (لم يتم التخصيص بعد)
+                    // 2. status = 1 و superagent_specification_approved = 0 (تم التخصيص لكن لم يتم الموافقة)
+                    $q->where('booking_containers.status', 0)
+                      ->orWhere(function($q2) {
+                          $q2->where('booking_containers.status', 1)
+                             ->where('booking_containers.superagent_specification_approved', 0);
+                      });
+                })->get()
+            )
         ];
     }
 }

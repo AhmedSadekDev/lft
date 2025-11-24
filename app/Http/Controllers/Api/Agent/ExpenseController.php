@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 class ExpenseController extends Controller
 {
     use ImagesTrait;
-    
+
     public function update_expense(Request $request)
     {
         try {
@@ -92,7 +92,7 @@ class ExpenseController extends Controller
             ]);
 
             $agent = auth()->guard('agent')->user();
-            $expense = AgentExpense::findOrFail($request->id);
+            $expense = AgentExpense::with('delivery_policy.money_transfer')->findOrFail($request->id);
 
             if ($expense->agent_id !== $agent->id) {
                 return $this->returnError(403, __('main.not_allowed'));
@@ -100,8 +100,27 @@ class ExpenseController extends Controller
 
             DB::beginTransaction();
 
-            // refund wallet by expense value
-            $agent->update(['wallet' => $agent->wallet + $expense->value]);
+            // إذا كان المصروف مرتبط بعهدة، إرجاع القيمة للعهدة
+            if ($expense->delivery_policy_id && $expense->delivery_policy) {
+                $deliveryPolicy = $expense->delivery_policy;
+
+                // التحقق من أن العهدة لم يتم تسويتها
+                if ($deliveryPolicy->is_settled == 1) {
+                    DB::rollBack();
+                    return $this->returnError(200, __('main.delivery_policy is settled'));
+                }
+
+                // إرجاع القيمة للعهدة عن طريق زيادة قيمة money_transfer
+                if ($deliveryPolicy->money_transfer) {
+                    $moneyTransfer = $deliveryPolicy->money_transfer;
+                    $moneyTransfer->update([
+                        'value' => $moneyTransfer->value + $expense->value
+                    ]);
+                }
+            } else {
+                // إذا لم يكن مرتبط بعهدة، إرجاع القيمة للمحفظة
+                $agent->update(['wallet' => $agent->wallet + $expense->value]);
+            }
 
             // delete image file if exists
             if ($expense->image_agent_expenses) {
@@ -128,7 +147,7 @@ class ExpenseController extends Controller
         try {
 
             $agent = auth()->guard('agent')->user();
-            
+
             $total_financial_custody  = (int)$agent->total_wallet;
             $spented_financial_custody  = $agent->spented_financial_custody;
             $remaining_financial_custody  = (int)$agent->wallet;
@@ -137,7 +156,7 @@ class ExpenseController extends Controller
             $data["total_financial_custody"] = $total_financial_custody;
             $data["spented_financial_custody"] = $spented_financial_custody;
             $data["remaining_financial_custody"] = $remaining_financial_custody;
-            
+
 
             return $this->returnAllData((object) $data, __('alerts.success'));
         } catch (\Exception $Exception) {
@@ -165,9 +184,9 @@ class ExpenseController extends Controller
             $data["image_agent_expenses"] = $imageName;
             $data['type_id'] = $request->type_id;
             $data['booking_container_id'] = $request->booking_container_id;
-            
+
             $expense =  AgentExpense::create($data);
-            
+
             $agent->update(['wallet' => $agent->wallet - $request->value]);
 
             $this->saveLogActivity($agent->id, Agent::class, $expense->id, AgentExpense::class);
@@ -186,7 +205,7 @@ class ExpenseController extends Controller
             if ($agent->wallet < $request->value) {
                 return $this->returnError(200, __('main.you dont have enougth money'));
             }
-            
+
             $data = $request->validated();
             $imageName = null;
             if($request->image)
@@ -199,7 +218,7 @@ class ExpenseController extends Controller
             $data["image_agent_expenses"] = $imageName;
             $data['type_id'] = $request->type_id;
             $data['booking_container_id'] = $request->booking_container_id;
-            
+
             $expense = AgentExpense::create([
                 'agent_id' => $agent->id,
                 'type' => 2,
@@ -209,7 +228,7 @@ class ExpenseController extends Controller
                 'value' => $request->value,
                 'booking_container_id' => $request->booking_container_id,
             ]);
-            
+
             $agent->update(['wallet' => $agent->wallet - $request->value]);
 
             $this->saveLogActivity($agent->id, Agent::class, $expense->id, AgentExpense::class);

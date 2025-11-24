@@ -416,6 +416,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     Route::get('/agent_reports/{agent}', [ReportController::class, 'agent_reports'])->name('reports.agent_reports');
     Route::get('/agent_expenses/{agent}', [ExpenseController::class, 'agent_expenses'])->name('expenses.agent_expenses');
+    Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
 
     Route::get('/booking_container_expenses/{id}', [ExpenseController::class, 'booking_container_expenses'])->name('expenses.booking_container_expenses');
 
