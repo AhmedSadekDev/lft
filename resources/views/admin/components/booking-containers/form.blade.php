@@ -83,7 +83,7 @@
                 {!! Form::select(
                     'yard_id',
                     array_replace(['to_be_disabled' => __('admin.select')], $yards->all()),
-                    old('yard_id'),
+                    old('yard_id', isset($booking_container) ? $booking_container->yard_id : null),
                     ['id' => 'yard_id', 'class' => 'form-control'],
                 ) !!}
                 <small class="text-danger">{{ $errors->first('yard_id') }}</small>

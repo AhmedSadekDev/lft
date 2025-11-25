@@ -84,31 +84,35 @@ class BookingContainerController extends Controller
         try {
             // Begin transaction if needed
             DB::beginTransaction();
-    
+
+            // Get validated data and exclude factory_id (not stored in booking_containers table)
+            $validatedData = $request->validated();
+            unset($validatedData['factory_id']);
+
             // Insert booking container record
-            $op = BookingContainer::insert(
+            $op = BookingContainer::create(
                 array_merge(
-                    $request->except('_token', 'factory_id'),
+                    $validatedData,
                     ['booking_id' => $booking->id]
                 )
             );
-    
+
             // Commit the transaction
             DB::commit();
-    
+
             // Handling Redirection
-            $referer = session('booking_containers_edit_referrer') 
+            $referer = session('booking_containers_edit_referrer')
                 ?? route('bookings.show', ['booking' => $booking->id]);
             session()->forget('booking_containers_edit_referrer');
-    
+
             return redirect($referer)->with(['success' => __('alerts.updated_successfully')]);
         } catch (\Throwable $th) {
             // Roll back the transaction in case of an error
             DB::rollBack();
-    
+
             // Log only the message and stack trace to avoid serialization issues
             \Illuminate\Support\Facades\Log::error($th->getMessage(), ['stack' => $th->getTraceAsString()]);
-    
+
             // Redirect back with the error message
             return redirect()->back()->with(['error' => $th->getMessage()]);
         }
@@ -149,13 +153,17 @@ class BookingContainerController extends Controller
 
         DB::beginTransaction();
         try {
+            // Get validated data and exclude factory_id (not stored in booking_containers table)
+            $validatedData = $request->validated();
+            unset($validatedData['factory_id']);
+
             // Updating the booking_container with validated request data
-            $invoiceTransportationRow = $booking_container->update($request->validated());
-        
+            $invoiceTransportationRow = $booking_container->update($validatedData);
+
             // Fetching related models
             $bookingAgent = BookingContainerAgent::where('booking_container_id', $booking_container->id)->first();
             $dailyBooking = DailyBookingContainer::where("booking_container_id", $booking_container->id)->first();
-        
+
             // Define the updates based on status
             $containerUpdates = [
                 0 => [
@@ -183,17 +191,17 @@ class BookingContainerController extends Controller
                     'booking_container_status' => 1
                 ]
             ];
-        
+
             // Get the update data for the current status
             $statusUpdate = $containerUpdates[$request->status] ?? $containerUpdates[0];
-        
+
             // Update booking_container, bookingAgent, and dailyBooking
             $booking_container->update([
                 'superagent_specification_approved' => $statusUpdate['superagent_specification_approved'],
                 'superagent_loading_approved' => $statusUpdate['superagent_loading_approved'],
                 'superagent_unloading_approved' => $statusUpdate['superagent_unloading_approved']
             ]);
-        
+
             // Check for null and update only if the model exists
             if ($bookingAgent) {
                 $bookingAgent->update($statusUpdate);
@@ -201,14 +209,14 @@ class BookingContainerController extends Controller
             if ($dailyBooking) {
                 $dailyBooking->update($statusUpdate);
             }
-        
+
             DB::commit();
-        
+
             // Handling Redirection
             $referer = session('booking_containers_edit_referrer')
                 ?? route('bookings.show', ['booking' => $booking_container->booking->id]);
             session()->forget('booking_containers_edit_referrer');
-        
+
             return redirect($referer)->with(['success' => __('alerts.updated_successfully')]);
         } catch (\Throwable $th) {
             DB::rollBack();

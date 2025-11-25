@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\Agent\CarResource;
 use App\Http\Resources\Api\Agent\YardResource;
 use App\Http\Resources\Api\Superagent\BookingResource;
+use App\Http\Resources\Api\Superagent\YardBookingResource;
 use App\Models\Booking;
 use App\Models\Superagent;
 use App\Models\Yard;
@@ -38,24 +39,21 @@ class YardController extends Controller
             $superagent = auth()->guard('superagent')->user();
             /** @var Superagent $superagent */
 
-            // Get booking container IDs assigned to this superagent today
-            $superagent_booking_containers = $superagent->superagent_booking_containers()
-                ->wherePivot("created_at", ">=", now()->startOfDay())
-                ->wherePivot("created_at", "<=", now()->endOfDay())
-                ->get();
-
-            // Get bookings that belong to the specified yard and have containers assigned to this superagent
+            // Get all bookings that belong to the specified yard
+            // YardBookingResource will show all containers in the booking
             $bookings = Booking::where('yard_id', $request->yard_id)
-                ->whereHas('bookingContainers', function ($query) use ($superagent_booking_containers) {
-                    $query->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());
-                })
-                ->with(['bookingContainers' => function ($query) use ($superagent_booking_containers) {
-                    $query->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());
-                }])
+                ->with([
+                    'bookingContainers.branch.factory',
+                    'bookingContainers.container',
+                    'bookingContainers.booking.company',
+                    'bookingContainers.booking.yard',
+                    'company',
+                    'yard'
+                ])
                 ->orderBy('id', 'desc')
                 ->get();
 
-            $data = BookingResource::collection($bookings);
+            $data = YardBookingResource::collection($bookings);
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $Exception) {
