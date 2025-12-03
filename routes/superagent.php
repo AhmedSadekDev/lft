@@ -119,6 +119,7 @@ Route::group(['middleware' => 'localization'], function () {
             Route::post("fetch_agents_notifications", "fetch_agents_notifications");
         });
         Route::get('fetch_yards', [YardController::class, 'fetch_yards']);
+        Route::get('fetch_active_yards', [YardController::class, 'fetch_active_yards']);
         Route::get('fetch_yard_bookings', [YardController::class, 'fetch_yard_bookings']);
     });
 });

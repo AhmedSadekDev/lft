@@ -28,7 +28,29 @@ class YardController extends Controller
             return $this->returnError(500, $Exception->getMessage());
         }
     }
+    public function fetch_active_yards()
+    {
+        try {
 
+            $yards = Yard::select('yards.*')
+                ->selectSub(function ($query) {
+                    $query->selectRaw('COUNT(*)')
+                        ->from('booking_containers')
+                        ->join('bookings', 'booking_containers.booking_id', '=', 'bookings.id')
+                        ->whereColumn('bookings.yard_id', 'yards.id')
+                        ->where('booking_containers.status', '!=', 3);
+                }, 'active_containers_count')
+                ->havingRaw('active_containers_count > 0')
+                ->get();
+
+            $data = YardResource::collection($yards);
+
+
+            return $this->returnAllData($data, __('alerts.success'));
+        } catch (\Exception $Exception) {
+            return $this->returnError(500, $Exception->getMessage());
+        }
+    }
     public function fetch_yard_bookings(Request $request)
     {
         try {
@@ -48,7 +70,8 @@ class YardController extends Controller
                     'bookingContainers.booking.company',
                     'bookingContainers.booking.yard',
                     'company',
-                    'yard'
+                    'yard',
+                    'factory'
                 ])
                 ->orderBy('id', 'desc')
                 ->get();

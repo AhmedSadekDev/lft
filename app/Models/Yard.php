@@ -28,6 +28,7 @@ class Yard extends Model
     {
         return $this->hasManyThrough(BookingContainer::class, Booking::class);
     }
+
     public function booking(){
         return $this->hasMany(Booking::class);
     }

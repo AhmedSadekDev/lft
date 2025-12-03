@@ -94,10 +94,10 @@ class BookingContainerController extends Controller
             return $this->returnError(500, $ex->getMessage());
         }
     }
-    public function specification()
+    public function specification(Request $request)
     {
         try {
-
+            $request->merge(['stage' => 'specification']);
             $bookings = Booking::has('bookingContainers') // Ensure there are containers
                 ->whereHas('bookingContainers', function ($qc) {
                     // الحاويات التي تحتاج موافقة على التخصيص:
@@ -111,6 +111,7 @@ class BookingContainerController extends Controller
                           });
                     });
                 })
+                ->with(['bookingContainers'])
                 ->orderBy('id', 'desc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
@@ -125,14 +126,16 @@ class BookingContainerController extends Controller
         }
     }
 
-    public function loading()
+    public function loading(Request $request)
     {
         try {
+            $request->merge(['stage' => 'loading']);
             $bookings = Booking::has('bookingContainers') // Ensure there are containers
                 ->whereHas('bookingContainers', function ($qc) {
                     $qc->whereIn('status', [0, 1, 2])
                     ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 0);
                 })
+                ->with(['bookingContainers'])
                 ->orderBy('id', 'desc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
@@ -144,14 +147,16 @@ class BookingContainerController extends Controller
         }
     }
 
-    public function unloading()
+    public function unloading(Request $request)
     {
         try {
+            $request->merge(['stage' => 'unloading']);
             $bookings = Booking::has('bookingContainers') // Ensure there are containers
                 ->whereHas('bookingContainers', function ($qc) {
                     $qc->whereIn('status', [0, 1, 2, 3])
                     ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 1);
                 })
+                ->with(['bookingContainers'])
                 ->orderBy('id', 'desc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);

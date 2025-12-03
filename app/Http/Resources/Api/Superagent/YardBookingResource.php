@@ -33,6 +33,7 @@ class YardBookingResource extends JsonResource
             "certificate_number" => $this->certificate_number ?? "",
             "shipping_agent" => $this->shipping_agent ?? "",
             "company_name" => $this->company->name ?? "",
+            "factory_name" => $this->factory->name ?? "",
             "yard_id" => $this->yard_id ?? "",
             "yard_title" => $this->yard->title ?? "",
             "is_today" => $superagent_booking_containers->count() ? 1 : 0,
