@@ -53,6 +53,7 @@ class AssignPasswordNotificationEmployee extends Notification
         $subject = 'تعيين كلمة المرور - Employee';
         $nameEsc = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         $urlEsc = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+        $to = $notifiable->email ?? null;
 
         $html = '<!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -160,6 +161,7 @@ class AssignPasswordNotificationEmployee extends Notification
 </body>
 </html>';
         return [
+            'to' => $to,
             'subject' => $subject,
             'html' => $html,
         ];

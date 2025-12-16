@@ -4,6 +4,7 @@ namespace App\Notifications\Channels;
 
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PhpMailChannel
 {
@@ -39,45 +40,31 @@ class PhpMailChannel
             return;
         }
 
-        if (is_array($to)) {
-            $to = implode(', ', array_filter($to));
-        }
+        // Extract email and name from "Name <email@domain>" format
+        $fromEmail = $this->extractEmailAddress($from) ?: 'booking@leaderfortrans.com';
+        $fromName = $this->extractNameFromAddress($from) ?: 'Leader for Trans';
 
-        $headers = [];
-        $headers[] = 'MIME-Version: 1.0';
-        $headers[] = 'Content-type: text/html; charset=UTF-8';
-        $headers[] = 'From: ' . $from;
-        $headers[] = 'Reply-To: ' . $replyTo;
-        $headers[] = 'Return-Path: booking@leaderfortrans.com';
-        $headers[] = 'X-Mailer: PHP/' . phpversion();
-        $headers[] = 'X-Priority: 1 (Highest)';
-        $headers[] = 'Importance: High';
+        try {
+            // Use Laravel Mail with SMTP instead of mail() function
+            Mail::html($html, function ($message) use ($to, $subject, $fromEmail, $fromName, $replyTo) {
+                $message->to($to)
+                    ->subject($subject)
+                    ->from($fromEmail, $fromName)
+                    ->replyTo($replyTo);
+            });
 
-        foreach ($extraHeaders as $headerLine) {
-            if (is_string($headerLine) && trim($headerLine) !== '') {
-                $headers[] = $headerLine;
-            }
-        }
-
-        $headersString = implode("\r\n", $headers);
-
-        $envelopeSender = $this->extractEmailAddress($from) ?: 'booking@leaderfortrans.com';
-        $additionalParams = $envelopeSender ? '-f ' . $envelopeSender : '';
-
-        // Use envelope sender to avoid showing default server sender
-        $result = @mail($to, $subject, $html, $headersString, $additionalParams);
-
-        if ($result) {
             Log::info('PhpMailChannel: Email sent successfully', [
                 'to' => $to,
                 'subject' => $subject,
                 'notification' => get_class($notification),
             ]);
-        } else {
-            Log::error('PhpMailChannel: Failed to send email (mail() returned FALSE)', [
+        } catch (\Exception $e) {
+            Log::error('PhpMailChannel: Failed to send email', [
                 'to' => $to,
                 'subject' => $subject,
                 'notification' => get_class($notification),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }
@@ -125,5 +112,19 @@ class PhpMailChannel
         $parts = preg_split('/\s+/', $from);
         $candidate = $parts ? end($parts) : null;
         return filter_var($candidate, FILTER_VALIDATE_EMAIL) ? $candidate : null;
+    }
+
+    /**
+     * Extract name from "Name <email@domain>" format.
+     */
+    protected function extractNameFromAddress(?string $from): ?string
+    {
+        if (!$from) {
+            return null;
+        }
+        if (preg_match('/^(.+?)\s*<[^>]+>$/', $from, $m)) {
+            return trim($m[1], '"\'');
+        }
+        return null;
     }
 }

@@ -30,7 +30,7 @@ Class PasswordResetService{
             return new OtpResource($otp);
         }
 
-        abort(response()->json(__('auth.invalid_email'), 404));
+        abort(404, __('auth.invalid_email'));
     }
 
     public function verifyOtp($request)
@@ -44,7 +44,7 @@ Class PasswordResetService{
 
     if ($verificationCode) {
         if ($now->isAfter($verificationCode->expire_at)) {
-            abort(response()->json(__('auth.expired_otp'), 404));
+            abort(404, __('auth.expired_otp'));
         }
 
         $company = Company::find($request->company_id);
@@ -63,7 +63,7 @@ Class PasswordResetService{
 
     if ($verificationCodeEmployee) {
         if ($now->isAfter($verificationCodeEmployee->expire_at)) {
-            abort(response()->json(__('auth.expired_otp'), 404));
+            abort(404, __('auth.expired_otp'));
         }
 
         $employee = Employee::find($request->company_id);
@@ -76,7 +76,7 @@ Class PasswordResetService{
     }
 
     // لم يتم التحقق
-    abort(response()->json(__('alerts.failed'), 404));
+    abort(404, __('alerts.failed'));
 }
 
 

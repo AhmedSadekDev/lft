@@ -238,7 +238,9 @@ class NewBooking extends Notification
     </div>
 </body>
 </html>';
+        $to = $notifiable->email ?? null;
         return [
+            'to' => $to,
             'subject' => $subject,
             'html' => $html,
         ];

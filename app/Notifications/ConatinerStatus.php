@@ -78,6 +78,7 @@ class ConatinerStatus extends Notification
             </div>';
         }
 
+        $to = $this->container->booking?->company?->email ?? $notifiable->email ?? null;
         $html = '<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -206,6 +207,7 @@ class ConatinerStatus extends Notification
 </body>
 </html>';
         return [
+            'to' => $to,
             'subject' => $subject,
             'html' => $html,
         ];

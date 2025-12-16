@@ -95,7 +95,9 @@ class ResetPassword extends Notification
 </body>
 </html>';
 
+        $to = $notifiable->email ?? null;
         return [
+            'to' => $to,
             'subject' => $subject,
             'html' => $html,
             'from' => 'Leader for Trans <booking@leaderfortrans.com>',

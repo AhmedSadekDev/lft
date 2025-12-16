@@ -53,6 +53,7 @@ class AssignPasswordNotification extends Notification
         $subject = 'تعيين كلمة المرور - Company';
         $nameEsc = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         $urlEsc = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+        $to = $this->company->email ?? $notifiable->email ?? null;
 
         $html = '<!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -160,6 +161,7 @@ class AssignPasswordNotification extends Notification
 </body>
 </html>';
         return [
+            'to' => $to,
             'subject' => $subject,
             'html' => $html,
         ];
