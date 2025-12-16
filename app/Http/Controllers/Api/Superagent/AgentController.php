@@ -197,15 +197,18 @@ class AgentController extends Controller
             ]);
 
             $containerIds = $container->booking->bookingContainers->pluck('id')->toArray();
-            $bookingContainerAgent = BookingContainerAgent::where('booking_container_id', $containerIds)->first();
-            $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $containerIds)->first();
+            $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
+            $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
 
-            $bookingContainerAgent->update([
-                'booking_container_status' => 2,
-                'superagent_loading_approved' => 1
-            ]);
-            if($bookingContainerDaily){
-                $bookingContainerDaily->update([
+            foreach ($bookingContainerAgents as $item) {
+                $item->update([
+                    'booking_container_status' => 2,
+                    'superagent_loading_approved' => 1
+                ]);
+            }
+
+            foreach ($bookingContainerDaily as $item) {
+                $item->update([
                     'booking_container_status' => 2,
                     'superagent_loading_approved' => 1
                 ]);
@@ -220,16 +223,19 @@ class AgentController extends Controller
             ]);
 
             $containerIds = $container->booking->bookingContainers->pluck('id')->toArray();
-            $bookingContainerAgent = BookingContainerAgent::where('booking_container_id', $containerIds)->first();
-            $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $containerIds)->first();
+            $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
+            $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
 
-            $bookingContainerAgent->update([
-                'booking_container_status' => 2,
-                'superagent_unloading_approved' => 1
-            ]);
-            if($bookingContainerDaily){
-                $bookingContainerDaily->update([
-                    'booking_container_status' => 2,
+            foreach ($bookingContainerAgents as $item) {
+                $item->update([
+                    'booking_container_status' => 3,
+                    'superagent_unloading_approved' => 1
+                ]);
+            }
+
+            foreach ($bookingContainerDaily as $item) {
+                $item->update([
+                    'booking_container_status' => 3,
                     'superagent_unloading_approved' => 1
                 ]);
             }
@@ -237,7 +243,13 @@ class AgentController extends Controller
             $message = 'تم تعتيق حاوية رقم ' . $container->container_no;
         }
 
-        Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
+        // إرسال الإشعار للموظف والشركة
+        if ($container->booking->employee) {
+            Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
+        }
+        if ($container->booking->company) {
+            Notification::send($container->booking->company, new ConatinerStatus($container, $message));
+        }
 
 
         return $this->returnAllData("", __('alerts.success'));

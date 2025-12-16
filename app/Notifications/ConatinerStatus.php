@@ -2,9 +2,9 @@
 
 namespace App\Notifications;
 
+use App\Models\Employee;
 use App\Notifications\Channels\PhpMailChannel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -78,7 +78,14 @@ class ConatinerStatus extends Notification
             </div>';
         }
 
-        $to = $this->container->booking?->company?->email ?? $notifiable->email ?? null;
+        // الحصول على البريد من notifiable أولاً (employee أو company)
+        // إذا كان notifiable هو employee وليس لديه email، نستخدم email الشركة كبديل
+        $to = $notifiable->email ?? null;
+
+        // إذا كان notifiable هو employee وليس لديه email، نستخدم email الشركة
+        if (empty($to) && $notifiable instanceof Employee) {
+            $to = $this->container->booking?->company?->email ?? null;
+        }
         $html = '<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
