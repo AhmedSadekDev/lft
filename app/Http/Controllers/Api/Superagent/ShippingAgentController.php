@@ -105,7 +105,7 @@ class ShippingAgentController extends Controller
                 'id'         => $yard->id,
                 'title'      => $yard->title ?? '',
                 'items_type' => 'booking_containers',
-                'items'      => \App\Http\Resources\Api\Superagent\BookingContainerResource::collection($containers),
+                'items'      => BookingContainerResource::collection($containers),
             ];
         });
 
@@ -137,7 +137,7 @@ class ShippingAgentController extends Controller
                 'id'         => $agent->id,
                 'title'      => $agent->title ?? '',
                 'items_type' => 'booking_containers',
-                'items'      => \App\Http\Resources\Api\Superagent\BookingContainerResource::collection($containers),
+                'items'      => BookingContainerResource::collection($containers),
             ];
         });
 

@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Api\Superagent;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\Superagent\allBookingContainerResource;
-use App\Http\Resources\Api\Superagent\BookingContainerResource;
-use App\Http\Resources\Api\Superagent\BookingResource;
 use App\Http\Resources\Api\Superagent\SpecificationBookingResource;
 use App\Models\Booking;
 use App\Models\BookingContainer;
