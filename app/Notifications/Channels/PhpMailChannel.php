@@ -45,27 +45,61 @@ class PhpMailChannel
         $fromName = $this->extractNameFromAddress($from) ?: 'Leader for Trans';
 
         try {
+            // Log email configuration for debugging
+            Log::info('PhpMailChannel: Attempting to send email', [
+                'to' => $to,
+                'subject' => $subject,
+                'from' => $fromEmail,
+                'notification' => get_class($notification),
+                'mailer_config' => [
+                    'driver' => config('mail.default'),
+                    'host' => config('mail.mailers.smtp.host'),
+                    'port' => config('mail.mailers.smtp.port'),
+                    'encryption' => config('mail.mailers.smtp.encryption'),
+                    'username' => config('mail.mailers.smtp.username') ? '***' : 'not set',
+                ]
+            ]);
+
+            // Enable SMTP debug logging
+            $originalDebug = config('mail.mailers.smtp.stream.verify_peer', true);
+
             // Use Laravel Mail with SMTP instead of mail() function
-            Mail::html($html, function ($message) use ($to, $subject, $fromEmail, $fromName, $replyTo) {
+            $sent = Mail::html($html, function ($message) use ($to, $subject, $fromEmail, $fromName, $replyTo) {
                 $message->to($to)
                     ->subject($subject)
                     ->from($fromEmail, $fromName)
                     ->replyTo($replyTo);
             });
 
-            Log::info('PhpMailChannel: Email sent successfully', [
+            Log::info('PhpMailChannel: Email command sent to SMTP server', [
                 'to' => $to,
                 'subject' => $subject,
                 'notification' => get_class($notification),
+                'sent_response' => $sent,
+                'warning' => 'Email was sent to SMTP server but actual delivery depends on the mail server configuration',
             ]);
+        } catch (\Swift_TransportException $e) {
+            Log::error('PhpMailChannel: SMTP Transport error', [
+                'to' => $to,
+                'subject' => $subject,
+                'notification' => get_class($notification),
+                'error' => $e->getMessage(),
+                'smtp_host' => config('mail.mailers.smtp.host'),
+                'smtp_port' => config('mail.mailers.smtp.port'),
+            ]);
+            throw $e;
         } catch (\Exception $e) {
             Log::error('PhpMailChannel: Failed to send email', [
                 'to' => $to,
                 'subject' => $subject,
                 'notification' => get_class($notification),
                 'error' => $e->getMessage(),
+                'error_type' => get_class($e),
                 'trace' => $e->getTraceAsString(),
             ]);
+
+            // Re-throw the exception so the notification system knows it failed
+            throw $e;
         }
     }
 

@@ -6,7 +6,6 @@ use App\Models\Agent;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
-use App\Services\PasswordResetAgentService;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Admin\Agent\StoreRequest;
 use App\Http\Requests\Admin\Agent\UpdateRequest;
@@ -15,12 +14,8 @@ use App\Notifications\AssignAgentPasswordNotification;
 
 class AgentController extends Controller
 {
-    protected $passwordResetAgentService;
-
-    public function __construct(PasswordResetAgentService $passwordResetAgentService)
+    public function __construct()
     {
-        $this->passwordResetAgentService = $passwordResetAgentService;
-
         $this->middleware('permission:agents.index')->only('index');
         $this->middleware('permission:agents.create')->only(['create', 'store']);
         $this->middleware('permission:agents.udpate')->only(['edit', 'udpate']);
@@ -59,8 +54,7 @@ class AgentController extends Controller
         $agent = Agent::create($request->validated());
         $token = JWTAuth::fromUser($agent);
         $agent->update(array_merge(['session_id' => $token]));
-         Notification::send($agent, new AssignAgentPasswordNotification($agent));
-        $otp = $this->passwordResetAgentService->sendOtp($request->email);
+        Notification::send($agent, new AssignAgentPasswordNotification($agent));
 
         return redirect()->route('agents.index')
             ->with('success', __('alerts.added_successfully'));

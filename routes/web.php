@@ -432,3 +432,8 @@ Route::get('/home', function() {
     return to_route('main');
 })->name('home');
 Route::get('dashboard/get/services/{serviceCategories}', [ServiceController::class, 'getServices'])->name('services.getServices');
+
+// ⚠️ Test Email Routes - احذفها أو أضف middleware للحماية في production
+if (config('app.debug')) {
+    require __DIR__ . '/test-email.php';
+}
