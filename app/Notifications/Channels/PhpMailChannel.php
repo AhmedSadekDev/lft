@@ -4,7 +4,6 @@ namespace App\Notifications\Channels;
 
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class PhpMailChannel
 {
@@ -45,49 +44,45 @@ class PhpMailChannel
         $fromName = $this->extractNameFromAddress($from) ?: 'Leader for Trans';
 
         try {
-            // Log email configuration for debugging
-            Log::info('PhpMailChannel: Attempting to send email', [
+            // Headers للبريد
+            $headers = "MIME-Version: 1.0\r\n";
+            $headers .= "Content-type: text/html; charset=UTF-8\r\n";
+            $headers .= "From: " . $fromName . " <" . $fromEmail . ">\r\n";
+            $headers .= "Reply-To: " . $replyTo . "\r\n";
+            $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+            $headers .= "X-Priority: 1 (Highest)\r\n";
+            $headers .= "Importance: High\r\n";
+
+            // إضافة headers إضافية إذا كانت موجودة
+            if (!empty($extraHeaders) && is_array($extraHeaders)) {
+                foreach ($extraHeaders as $key => $value) {
+                    $headers .= $key . ": " . $value . "\r\n";
+                }
+            }
+
+            Log::info('PhpMailChannel: Attempting to send email using PHP mail()', [
                 'to' => $to,
                 'subject' => $subject,
                 'from' => $fromEmail,
+                'from_name' => $fromName,
                 'notification' => get_class($notification),
-                'mailer_config' => [
-                    'driver' => config('mail.default'),
-                    'host' => config('mail.mailers.smtp.host'),
-                    'port' => config('mail.mailers.smtp.port'),
-                    'encryption' => config('mail.mailers.smtp.encryption'),
-                    'username' => config('mail.mailers.smtp.username') ? '***' : 'not set',
-                ]
+                'method' => 'PHP mail()',
             ]);
 
-            // Enable SMTP debug logging
-            $originalDebug = config('mail.mailers.smtp.stream.verify_peer', true);
+            // إرسال البريد باستخدام PHP mail()
+            $result = mail($to, $subject, $html, $headers);
 
-            // Use Laravel Mail with SMTP instead of mail() function
-            $sent = Mail::html($html, function ($message) use ($to, $subject, $fromEmail, $fromName, $replyTo) {
-                $message->to($to)
-                    ->subject($subject)
-                    ->from($fromEmail, $fromName)
-                    ->replyTo($replyTo);
-            });
-
-            Log::info('PhpMailChannel: Email command sent to SMTP server', [
-                'to' => $to,
-                'subject' => $subject,
-                'notification' => get_class($notification),
-                'sent_response' => $sent,
-                'warning' => 'Email was sent to SMTP server but actual delivery depends on the mail server configuration',
-            ]);
-        } catch (\Swift_TransportException $e) {
-            Log::error('PhpMailChannel: SMTP Transport error', [
-                'to' => $to,
-                'subject' => $subject,
-                'notification' => get_class($notification),
-                'error' => $e->getMessage(),
-                'smtp_host' => config('mail.mailers.smtp.host'),
-                'smtp_port' => config('mail.mailers.smtp.port'),
-            ]);
-            throw $e;
+            if ($result) {
+                Log::info('PhpMailChannel: Email sent successfully using PHP mail()', [
+                    'to' => $to,
+                    'subject' => $subject,
+                    'notification' => get_class($notification),
+                    'time' => now()->toDateTimeString(),
+                    'method' => 'PHP mail()',
+                ]);
+            } else {
+                throw new \Exception('PHP mail() returned FALSE');
+            }
         } catch (\Exception $e) {
             Log::error('PhpMailChannel: Failed to send email', [
                 'to' => $to,
@@ -95,6 +90,7 @@ class PhpMailChannel
                 'notification' => get_class($notification),
                 'error' => $e->getMessage(),
                 'error_type' => get_class($e),
+                'method' => 'PHP mail()',
                 'trace' => $e->getTraceAsString(),
             ]);
 

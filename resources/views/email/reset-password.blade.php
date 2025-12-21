@@ -70,7 +70,7 @@
 
     <div class="email-container">
         <div class="logo">
-            <img src="https://admin.leaderfortrans.com/assets/media/logo.png" alt="El Zimity Logo" loading="lazy">
+            <img src="https://cloudymenue.cloudy-digital.com/assets/media/logo.png" alt="El Zimity Logo" loading="lazy">
         </div>
 
         <div class="email-title">مرحبًا،</div>

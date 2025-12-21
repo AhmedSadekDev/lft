@@ -6,16 +6,19 @@ use App\Models\Agent;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Notification;
+use App\Services\AgentEmailService;
 use App\Http\Requests\Admin\Agent\StoreRequest;
 use App\Http\Requests\Admin\Agent\UpdateRequest;
-use App\Notifications\AssignPasswordNotification;
-use App\Notifications\AssignAgentPasswordNotification;
+use Illuminate\Support\Facades\Log;
 
 class AgentController extends Controller
 {
-    public function __construct()
+    protected $agentEmailService;
+
+    public function __construct(AgentEmailService $agentEmailService)
     {
+        $this->agentEmailService = $agentEmailService;
+
         $this->middleware('permission:agents.index')->only('index');
         $this->middleware('permission:agents.create')->only(['create', 'store']);
         $this->middleware('permission:agents.udpate')->only(['edit', 'udpate']);
@@ -54,7 +57,20 @@ class AgentController extends Controller
         $agent = Agent::create($request->validated());
         $token = JWTAuth::fromUser($agent);
         $agent->update(array_merge(['session_id' => $token]));
-        Notification::send($agent, new AssignAgentPasswordNotification($agent));
+
+        // Send email using AgentEmailService (uses PHP mail() directly)
+        Log::info('AgentController: About to send email using AgentEmailService', [
+            'agent_id' => $agent->id,
+            'email' => $agent->email,
+            'method' => 'AgentEmailService::sendPasswordAssignmentEmail()',
+        ]);
+
+        $this->agentEmailService->sendPasswordAssignmentEmail($agent, $token);
+
+        Log::info('AgentController: Email service called successfully', [
+            'agent_id' => $agent->id,
+            'email' => $agent->email,
+        ]);
 
         return redirect()->route('agents.index')
             ->with('success', __('alerts.added_successfully'));

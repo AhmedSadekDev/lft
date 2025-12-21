@@ -74,23 +74,34 @@ class BookingContainerStatus extends Notification
                 $loading = $item->loading?->title ?? '-';
                 $aging = $item->aging?->title ?? '-';
 
-                // بيانات السائقين والسيارات (مدمجة)
+                // بيانات السائقين والسيارات (محسّنة)
                 $driversCarsHtml = '';
                 if ($item->delivery_policies && $item->delivery_policies->count()) {
                     foreach ($item->delivery_policies as $policy) {
-                        $driverName = $policy->driver?->name ?? '-';
-                        $driverPhone = $policy->driver?->phone ?? '-';
-                        $carPlate = $policy->car?->plate_number ?? '-';
+                        $driverName = $policy->driver?->name ?? 'غير محدد';
+                        $driverPhone = $policy->driver?->phone ?? 'غير محدد';
+                        $carPlate = $policy->car?->plate_number ?? 'غير محدد';
 
                         $driversCarsHtml .= '
-                                <div class="driver-info">
-                                    <div class="driver-name">' . htmlspecialchars($driverName, ENT_QUOTES, 'UTF-8') . '</div>
-                                    <div class="driver-phone">' . htmlspecialchars($driverPhone, ENT_QUOTES, 'UTF-8') . '</div>
-                                    <div class="car-plate">رقم السيارة: ' . htmlspecialchars($carPlate, ENT_QUOTES, 'UTF-8') . '</div>
+                                <div class="driver-card">
+                                    <div class="driver-header">
+                                        <span class="driver-icon">👤</span>
+                                        <span class="driver-name">' . htmlspecialchars($driverName, ENT_QUOTES, 'UTF-8') . '</span>
+                                    </div>
+                                    <div class="driver-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">📞 رقم التليفون:</span>
+                                            <span class="detail-value">' . htmlspecialchars($driverPhone, ENT_QUOTES, 'UTF-8') . '</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">🚗 رقم السيارة:</span>
+                                            <span class="detail-value car-number">' . htmlspecialchars($carPlate, ENT_QUOTES, 'UTF-8') . '</span>
+                                        </div>
+                                    </div>
                                 </div>';
                     }
                 } else {
-                    $driversCarsHtml = '-';
+                    $driversCarsHtml = '<div class="no-driver">لا توجد بيانات متاحة</div>';
                 }
 
                 $rowsHtml .= '
@@ -127,29 +138,47 @@ class BookingContainerStatus extends Notification
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تنبيه حالة الحجز</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 40px 20px;
             color: #333;
             direction: rtl;
+            min-height: 100vh;
+        }
+
+        .email-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            padding: 30px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .container {
-            max-width: 1000px;
-            margin: auto;
-            background: #fff;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        h1 {
-            font-size: 26px;
-            color: #007bff;
-            text-align: center;
-            margin-bottom: 30px;
         }
 
         table {
@@ -157,49 +186,93 @@ class BookingContainerStatus extends Notification
             border-collapse: collapse;
             margin-bottom: 30px;
             table-layout: fixed;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         th, td {
-            padding: 10px;
+            padding: 12px 8px;
             text-align: center;
             border: 1px solid #dee2e6;
             word-wrap: break-word;
+            font-size: 13px;
         }
 
         th {
-            background-color: #007bff;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: #fff;
-            font-size: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
         }
 
         tr:hover {
-            background-color: #f1faff;
+            background-color: #e7f3ff;
+            transition: background-color 0.3s ease;
+        }
+
+        td {
+            vertical-align: top;
         }
 
         .footer {
+            background: #f8f9fa;
+            padding: 25px 30px;
             text-align: center;
-            color: #888;
+            border-top: 1px solid #e9ecef;
+            color: #6c757d;
             font-size: 14px;
-            margin-bottom: 20px;
+        }
+
+        .footer-text {
+            margin: 5px 0;
+        }
+
+        @media only screen and (max-width: 600px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            th, td {
+                padding: 8px 4px;
+            }
+
+            .driver-card {
+                padding: 12px;
+            }
         }
 
         .btn {
             display: inline-block;
-            background-color: #007bff;
-            color: white;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white !important;
             text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
         }
 
         .btn:hover {
-            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
         }
 
         .button-wrapper {
@@ -207,37 +280,85 @@ class BookingContainerStatus extends Notification
             margin-top: 20px;
         }
 
-        .driver-info {
+        .driver-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #007bff;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
             text-align: right;
-            padding: 5px 0;
-            border-bottom: 1px dashed #ccc;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
         }
 
-        .driver-info:last-child {
-            border-bottom: none;
+        .driver-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .driver-icon {
+            font-size: 24px;
         }
 
         .driver-name {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .driver-phone {
-            color: #666;
-            font-size: 13px;
-        }
-
-        .car-plate {
+            font-weight: 700;
             color: #007bff;
-            font-weight: bold;
-            margin-top: 5px;
-            font-size: 13px;
+            font-size: 16px;
+        }
+
+        .driver-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: #ffffff;
+            border-radius: 8px;
+            border-right: 3px solid #007bff;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .detail-value {
+            color: #212529;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .car-number {
+            color: #007bff;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .no-driver {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>تنبيه حالة الحجز</h1>
+    <div class="email-wrapper">
+        <div class="header">
+            <h1>📦 تنبيه حالة الحجز</h1>
+        </div>
+        <div class="container">
         <table>
             <thead>
                 <tr>
@@ -258,7 +379,16 @@ class BookingContainerStatus extends Notification
             </tbody>
         </table>
         ' . $urlButtonHtml . '
-        <p class="footer">شكراً لاستخدامك تطبيقنا!</p>
+        </div>
+        <div class="footer">
+            <p class="footer-text">
+                <strong>Leader for Trans</strong><br>
+                نظام إدارة الشحنات والنقل
+            </p>
+            <p class="footer-text" style="margin-top: 10px;">
+                © ' . date('Y') . ' Leader for Trans. جميع الحقوق محفوظة.
+            </p>
+        </div>
     </div>
 </body>
 </html>';

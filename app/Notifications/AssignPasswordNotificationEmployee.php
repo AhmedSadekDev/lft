@@ -139,7 +139,7 @@ class AssignPasswordNotificationEmployee extends Notification
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://admin.leaderfortrans.com/assets/media/logo.png" alt="Leader" class="logo">
+            <img src="https://cloudymenue.cloudy-digital.com/assets/media/logo.png" alt="Leader" class="logo">
             <h1 class="title">تعيين كلمة المرور للموظف</h1>
         </div>
 

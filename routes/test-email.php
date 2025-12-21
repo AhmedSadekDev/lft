@@ -98,6 +98,54 @@ Route::post('/test-email/send-agent', function(Request $request) {
     }
 })->name('test.email.send-agent');
 
+Route::get('/test-email/agent-service', function(Request $request) {
+    $email = $request->get('email', 'ahmedhassansadek8@gmail.com');
+    $name = $request->get('name', 'Test Agent');
+
+    $config = [
+        'MAIL_MAILER' => config('mail.default'),
+        'MAIL_HOST' => config('mail.mailers.smtp.host'),
+        'MAIL_PORT' => config('mail.mailers.smtp.port'),
+        'MAIL_ENCRYPTION' => config('mail.mailers.smtp.encryption'),
+        'MAIL_USERNAME' => config('mail.mailers.smtp.username') ? '***' : 'not set',
+        'MAIL_FROM' => config('mail.from.address'),
+    ];
+
+    return view('test-agent-email', [
+        'email' => $email,
+        'name' => $name,
+        'config' => $config,
+    ]);
+})->name('test.email.agent-service');
+
+Route::post('/test-email/agent-service/send', function(Request $request) {
+    $email = $request->input('email');
+    $name = $request->input('name', 'Test Agent');
+
+    if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return back()->with('error', 'البريد الإلكتروني غير صحيح');
+    }
+
+    try {
+        $agentEmailService = app(\App\Services\AgentEmailService::class);
+        $result = $agentEmailService->testEmail($email, $name);
+
+        if ($result) {
+            return back()->with('success', "✓ تم إرسال إيميل اختبار بنجاح إلى: {$email}. تحقق من صندوق الوارد ومجلد Spam");
+        } else {
+            return back()->with('error', 'فشل إرسال الإيميل. تحقق من الـ logs');
+        }
+    } catch (\Exception $e) {
+        Log::error('Test agent email exception', [
+            'email' => $email,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return back()->with('error', 'خطأ في إرسال الإيميل: ' . $e->getMessage());
+    }
+})->name('test.email.agent-service.send');
+
 Route::get('/test-email/check-smtp', function() {
     $config = [
         'host' => config('mail.mailers.smtp.host'),
