@@ -1,38 +1,36 @@
-<tr>
-    <td style="border-top: 2px solid #f5f5f5;">{{ $key }}</td>
-    <td style="border-top: 2px solid #f5f5f5;">
-        <div class="detalis_container" style="display: flex;justify-content: start;flex-wrap: wrap;text-align: center;padding: 0.25rem 0.5rem;">
-            <div class="info" style="display: flex;width: 25%;justify-content: start;margin-bottom: 0;">
-                <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">رقم الحاوية : </p>
-                <p class="text" style="margin-bottom: 0;margin-top: 0">{{ $booking_container->container_no ?? '' }}</p>
+<tr style="border-bottom: 1px solid #e9ecef;">
+    <td style="padding: 12px; text-align: center; border-right: 1px solid #e9ecef; font-weight: 700; color: #495057; background: #f8f9fa; vertical-align: top;">{{ $key }}</td>
+    <td style="padding: 12px; text-align: start; border-right: 1px solid #e9ecef; vertical-align: top;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 700; color: #6c757d; font-size: 11px; min-width: 85px;">📦 رقم الحاوية:</span>
+                <span style="color: #212529; font-size: 12px; font-weight: 600;">{{ $booking_container->container_no ?? '' }}</span>
             </div>
-            <div class="info" style="display: flex;width: 25%;justify-content: start;margin-bottom: 0;">
-                <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">مقاس ونوع : </p>
-                <p class="text" style="margin-bottom: 0;margin-top: 0">{{ $booking_container->container->full_name ?? '' }}</p>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 700; color: #6c757d; font-size: 11px; min-width: 85px;">📏 مقاس ونوع:</span>
+                <span style="color: #212529; font-size: 12px;">{{ $booking_container->container->full_name ?? '' }}</span>
             </div>
-            <div class="info" style="display: flex;width: 25%;justify-content: start;">
-                <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">تاريخ : </p>
-                <p class="text" style="margin-bottom: 0;margin-top: 0">{{ $booking_container->arrival_date ?? '' }}</p>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 700; color: #6c757d; font-size: 11px; min-width: 85px;">📅 تاريخ:</span>
+                <span style="color: #212529; font-size: 12px;">{{ $booking_container->arrival_date ?? '' }}</span>
             </div>
-            <div class="info" style="display: flex;width: 25%;justify-content: start;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 700; color: #6c757d; font-size: 11px; min-width: 85px;">🏭 اسم المصنع:</span>
+                <span style="color: #212529; font-size: 12px;">{{ $booking_container->branch?->factory->name ?? 'N/A' }}</span>
             </div>
-            <div class="info" style="display: flex;width: 25%;justify-content: start;margin-bottom: 0;">
-                <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">اسم المصنع : </p>
-                <p class="text" style="margin-bottom: 0;margin-top: 0">{{ $booking_container->branch?->factory->name }}</p>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 700; color: #6c757d; font-size: 11px; min-width: 85px;">🚚 خروج:</span>
+                <span style="color: #212529; font-size: 12px;">{{ $booking_container->departure?->title ?? 'N/A' }}</span>
             </div>
-            <div class="info" style="display: flex;width: 25%;justify-content: start;">
-                <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">خروج : </p>
-                <p class="text" style="margin-bottom: 0;margin-top: 0">{{ $booking_container->departure?->title }}</p>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 700; color: #6c757d; font-size: 11px; min-width: 85px;">📍 وجهة:</span>
+                <span style="color: #212529; font-size: 12px;">{{ $booking_container->loading?->title ?? 'N/A' }}</span>
             </div>
-            <div class="info" style="display: flex;width: 25%;justify-content: start;">
-                <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">وجهة : </p>
-                <p class="text" style="margin-bottom: 0;margin-top: 0">{{ $booking_container->loading?->title }}</p>
-            </div>
-            <div class="info" style="display: flex;width: 25%;justify-content: start;">
-                <p class="title" style="margin-bottom: 0;margin-top: 0;font-weight: 900;">تعتيق : </p>
-                <p class="text" style="margin-bottom: 0;margin-top: 0">{{ $booking_container->aging?->title }}</p>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 700; color: #6c757d; font-size: 11px; min-width: 85px;">⏱️ تعتيق:</span>
+                <span style="color: #212529; font-size: 12px;">{{ $booking_container->aging?->title ?? 'N/A' }}</span>
             </div>
         </div>
     </td>
-    <td style="border-top: 2px solid #f5f5f5;">{{ $booking_container->price ?? 0 }}</td>
+    <td style="padding: 12px; text-align: center; font-weight: 700; color: #28a745; font-size: 14px; background: #f8f9fa; vertical-align: top;">{{ number_format($booking_container->price ?? 0, 2) }} ج.م</td>
 </tr>

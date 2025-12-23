@@ -224,11 +224,18 @@
                             </div>
                         </div>
 
-                        <!-- Date Filter -->
+                        <!-- Date From Filter -->
                         <div class="col-md-2 mb-3">
-                            <label class="form-label">{{ __('admin.date') }}</label>
-                            <input type="date" name="arrival_date" class="form-control"
-                                    value="{{ request('arrival_date') }}">
+                            <label class="form-label">{{ __('admin.date_from') ?? 'تاريخ من' }}</label>
+                            <input type="date" name="date_from" class="form-control"
+                                    value="{{ request('date_from') }}">
+                        </div>
+
+                        <!-- Date To Filter -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">{{ __('admin.date_to') ?? 'تاريخ إلى' }}</label>
+                            <input type="date" name="date_to" class="form-control"
+                                    value="{{ request('date_to') }}">
                         </div>
 
                         <!-- Company Filter -->

@@ -56,9 +56,9 @@ class BookingController extends Controller
             });
         }
 
-        // Date filter
-        if ($request->filled('arrival_date')) {
-            $bookings->filterDate(request('arrival_date'));
+        // Date range filter
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $bookings->filterDateRange(request('date_from'), request('date_to'));
         }
 
         // Company filter

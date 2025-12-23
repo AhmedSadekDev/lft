@@ -126,8 +126,37 @@ class BookingInvoiceController extends Controller
         $lpr_limit = 8;
 
         $booking = $booking_invoice->booking;
+
+        // Get taxed services and separate receipts (ايصالات) from them
+        $taxedServices = $booking->getTaxedServices()->get();
+        $receiptServices = collect();
+        $nonReceiptTaxedServices = collect();
+
+        foreach ($taxedServices as $service) {
+            $fullName = $service->full_name ?? '';
+            // Check if service name contains "ايصالات" or "receipt"
+            if (stripos($fullName, 'ايصالات') !== false || stripos($fullName, 'receipt') !== false) {
+                $receiptServices->push($service);
+            } else {
+                $nonReceiptTaxedServices->push($service);
+            }
+        }
+
+        // Sort services: "مصاريف أخرى" should come before "بيانه"
+        $nonReceiptTaxedServices = $nonReceiptTaxedServices->sortBy(function ($service) {
+            $fullName = $service->full_name ?? '';
+            // "مصاريف أخرى" should have priority 1, "بيانه" should have priority 2
+            if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
+                return 1;
+            } elseif (stripos($fullName, 'بيانه') !== false || stripos($fullName, 'بيان') !== false) {
+                return 2;
+            }
+            return 3; // Other services
+        })->values(); // Reset keys after sorting
+
+        // Invoice rows: containers + non-receipt taxed services
         $invoice_rows = $booking->bookingContainers
-            ->concat($booking->getTaxedServices);
+            ->concat($nonReceiptTaxedServices);
         $fpr = [];
         $mps = [];
         $lpr = [];
@@ -155,6 +184,33 @@ class BookingInvoiceController extends Controller
         if (!is_array($lpr) && !($lpr instanceof Collection))
             $lpr = [$lpr];
 
+        // Attachment rows: untaxed services + receipt services (sorted)
+        $untaxedServices = $booking->getUntaxedServices()->get();
+
+        // Sort untaxed services: "مصاريف أخرى" should come before "بيانه"
+        $untaxedServices = $untaxedServices->sortBy(function ($service) {
+            $fullName = $service->full_name ?? '';
+            if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
+                return 1;
+            } elseif (stripos($fullName, 'بيانه') !== false || stripos($fullName, 'بيان') !== false) {
+                return 2;
+            }
+            return 3;
+        })->values();
+
+        // Sort receipt services as well
+        $receiptServices = $receiptServices->sortBy(function ($service) {
+            $fullName = $service->full_name ?? '';
+            if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
+                return 1;
+            } elseif (stripos($fullName, 'بيانه') !== false || stripos($fullName, 'بيان') !== false) {
+                return 2;
+            }
+            return 3;
+        })->values();
+
+        $attachment_rows = $untaxedServices->concat($receiptServices);
+
         return view('admin.bookings.booking-invoices.show', [
             'invoice' => $booking_invoice,
             'fpr' => $fpr,
@@ -165,7 +221,7 @@ class BookingInvoiceController extends Controller
             'mpr_limit' => $mpr_limit,
             'lpr_limit' => $lpr_limit,
             'booking' => $booking,
-            'attachment_rows' => $booking->getUnTaxedServices
+            'attachment_rows' => $attachment_rows
         ])->render();
     }
 
