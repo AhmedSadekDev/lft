@@ -69,6 +69,29 @@
         </div>
 
         <div class="col-md-12 col-sm-12">
+            <div class="form-group{{ $errors->has('payment_type') ? ' has-error' : '' }}">
+                {!! Form::label('payment_type', __('admin.payment_type')) !!}
+                {!! Form::select('payment_type',
+                    [
+                        '' => __('admin.select_payment_type'),
+                        'vault' => __('admin.vault'),
+                        'bank' => __('main.bank'),
+                        'agent' => __('main.agent'),
+                    ],
+                    old('payment_type', isset($booking_service) ? $booking_service->payment_type : null),
+                    ['id' => 'payment_type', 'class' => 'form-control', 'onchange' => 'togglePaymentFields()']
+                ) !!}
+                <small class="text-danger">{{ $errors->first('payment_type') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12" id="vault_field" style="display: none;">
+            <div class="form-group">
+                <small class="text-muted d-block mb-2">{{ __('admin.payment_from_vault') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12" id="bank_field" style="display: none;">
             <div class="form-group{{ $errors->has('bank_id') ? ' has-error' : '' }}">
                 {!! Form::label('bank_id', __('main.bank')) !!}
                 {!! Form::select('bank_id',
@@ -77,7 +100,18 @@
                     ['id' => 'bank_id', 'class' => 'form-control']
                 ) !!}
                 <small class="text-danger">{{ $errors->first('bank_id') }}</small>
-                <small class="text-muted d-block mt-1">{{ __('admin.select_bank_for_receipt') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12" id="agent_field" style="display: none;">
+            <div class="form-group{{ $errors->has('agent_id') ? ' has-error' : '' }}">
+                {!! Form::label('agent_id', __('main.agent')) !!}
+                {!! Form::select('agent_id',
+                    array_replace(['' => __('admin.select_agent')], isset($agents) ? $agents->toArray() : []),
+                    old('agent_id', isset($booking_service) ? $booking_service->agent_id : null),
+                    ['id' => 'agent_id', 'class' => 'form-control']
+                ) !!}
+                <small class="text-danger">{{ $errors->first('agent_id') }}</small>
             </div>
         </div>
 
@@ -176,5 +210,27 @@
                 $('#price').val(company_prices[service_id]);
         }
 
+        function togglePaymentFields() {
+            var paymentType = $('#payment_type').val();
+
+            // Hide all fields
+            $('#vault_field').hide();
+            $('#bank_field').hide();
+            $('#agent_field').hide();
+
+            // Show relevant field
+            if (paymentType === 'vault') {
+                $('#vault_field').show();
+            } else if (paymentType === 'bank') {
+                $('#bank_field').show();
+            } else if (paymentType === 'agent') {
+                $('#agent_field').show();
+            }
+        }
+
+        // Initialize on page load
+        $(document).ready(function() {
+            togglePaymentFields();
+        });
     </script>
 @endpush

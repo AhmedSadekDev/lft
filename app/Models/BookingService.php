@@ -20,6 +20,8 @@ class BookingService extends Model
         'service_data', // TODO: HANDLE WHEN THESE SHLD BE ADDED
         'vault_id',
         'bank_id',
+        'payment_type', // vault, bank, agent
+        'agent_id',
         'created_by',
         'updated_by',
     ];
@@ -65,5 +67,10 @@ class BookingService extends Model
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class);
     }
 }
