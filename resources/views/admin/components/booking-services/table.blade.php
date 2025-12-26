@@ -1,10 +1,12 @@
 <div class="col-md-12 mt-2 p-5">
     <!-- Button trigger modal -->
-    <a href="{{ route('booking-services.create', ['booking' => $booking->id]) }}">
-        <button class="btn btn-primary float-right" data-target="#serviceModal" type="button" {{-- onclick=" serviceModal('{{ $booking->id }}')" --}}>
-            <i class="fa fa-plus text-white"></i> {{ __('admin.add') }}
-        </button>
-    </a>
+    @if(isset($booking))
+        <a href="{{ route('booking-services.create', ['booking' => $booking->id]) }}">
+            <button class="btn btn-primary float-right" data-target="#serviceModal" type="button" {{-- onclick=" serviceModal('{{ $booking->id }}')" --}}>
+                <i class="fa fa-plus text-white"></i> {{ __('admin.add') }}
+            </button>
+        </a>
+    @endif
 </div>
 
 <table class="table table-striped" id="extensions_id" style="width:100%">
@@ -22,11 +24,14 @@
             <th>
                 {{ __('admin.cost') }}
             </th>
+            <th>
+                {{ __('admin.receipt_image') }}
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody id="serviceTableRows">
-        @forelse ($booking_services as $service)
+        @forelse (isset($booking_services) ? $booking_services : [] as $service)
             <tr id="service_{{ $service->id }}">
                 <td>
                     {{ $service->id }}
@@ -41,12 +46,32 @@
                     {{ $service->price }}
                 </td>
                 <td>
-                    @if (auth()->user()->hasPermissionTo('services.delete'))
-                        <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
-                            onclick="serviceDelete(event, '{{ $service->id }}')">
-                            <i class="fas fa-trash text-danger"></i>
-                        </button>
+                    @if($service->image && $service->getRawOriginal('image'))
+                        <a href="{{ $service->image }}" target="_blank" style="display: inline-block;">
+                            <img src="{{ $service->image }}" alt="Receipt"
+                                 style="max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid #e0e0e0;"
+                                 onmouseover="this.style.borderColor='#007bff'"
+                                 onmouseout="this.style.borderColor='#e0e0e0'">
+                        </a>
+                    @else
+                        <span class="text-muted">-</span>
                     @endif
+                </td>
+                <td>
+                    <div class="d-flex gap-2">
+                        @if (auth()->user()->hasPermissionTo('services.update') && isset($booking))
+                            <a href="{{ route('booking-services.edit', ['booking' => $booking->id, 'booking_service' => $service->id]) }}"
+                               class="btn btn-icon btn-light btn-hover-primary btn-sm">
+                                <i class="fas fa-edit text-primary"></i>
+                            </a>
+                        @endif
+                        @if (auth()->user()->hasPermissionTo('services.delete'))
+                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
+                                onclick="serviceDelete(event, '{{ $service->id }}')">
+                                <i class="fas fa-trash text-danger"></i>
+                            </button>
+                        @endif
+                    </div>
                 </td>
             </tr>
         @empty
@@ -66,6 +91,18 @@
                     </td>
                     <td class="services_total_price" data-price="{{ $expense->value }}">
                         {{ $expense->value }}
+                    </td>
+                    <td>
+                        @if(isset($expense->image) && $expense->image)
+                            <a href="{{ $expense->image }}" target="_blank" style="display: inline-block;">
+                                <img src="{{ $expense->image }}" alt="Receipt"
+                                     style="max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid #e0e0e0;"
+                                     onmouseover="this.style.borderColor='#007bff'"
+                                     onmouseout="this.style.borderColor='#e0e0e0'">
+                            </a>
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
                     </td>
                     <td>
                         @if (auth()->user()->hasPermissionTo('services.delete'))

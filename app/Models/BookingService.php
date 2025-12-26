@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\FileAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class BookingService extends Model
 {
@@ -17,6 +18,10 @@ class BookingService extends Model
         'price',
         'image',
         'service_data', // TODO: HANDLE WHEN THESE SHLD BE ADDED
+        'vault_id',
+        'bank_id',
+        'created_by',
+        'updated_by',
     ];
 
     public function getImageAttribute($value)
@@ -40,5 +45,25 @@ class BookingService extends Model
         return $this->service->name
             . ' '
             . $this->service->serviceCategory->title;
+    }
+
+    public function vault()
+    {
+        return $this->belongsTo(Vault::class);
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

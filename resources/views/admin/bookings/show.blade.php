@@ -175,8 +175,9 @@
                     <div class="form-group">
                         <div class="col-md-12">
                             @include('admin.components.booking-services.table', [
-                                'booking_services' => $booking->bookingServices,
-                                'expensesServices' => $booking->expenses,
+                                'booking_services' => $booking->bookingServices ?? collect(),
+                                'expensesServices' => $booking->expenses ?? collect(),
+                                'booking' => $booking,
                             ])
                         </div>
                     </div>

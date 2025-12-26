@@ -45,6 +45,7 @@ class BookingServiceRequest extends FormRequest
             'price'         => ['required', 'numeric', 'min:0'],
             'note'          => ['sometimes', 'nullable', 'string'],
             'image'         => ['sometimes', 'nullable', 'mimes:png,jpg,jpeg', 'max:5000'],
+            'bank_id'       => ['sometimes', 'nullable', 'exists:banks,id'],
         ];
     }
 

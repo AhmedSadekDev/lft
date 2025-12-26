@@ -329,6 +329,14 @@ return [
 
     // -----------  Code Related  ------------
     'select'                      => 'أختر',
+    'vault'                       => 'الخزنة',
+    'select_vault_or_bank'        => 'أختر خزنة أو بنك',
+    'select_bank'                 => 'أختر بنك',
+    'select_either_vault_or_bank' => 'أختر إما خزنة أو بنك (ليس كلاهما)',
+    'select_bank_for_receipt'     => 'أختر الحساب البنكي الذي تم الدفع منه',
+    'current_image'               => 'الصورة الحالية',
+    'view_current_image'          => 'عرض الصورة الحالية',
+    'edit_service'                => 'تعديل الخدمة',
     // -----------  Code Related  ------------
 
     // ------------------ drivers ------------------

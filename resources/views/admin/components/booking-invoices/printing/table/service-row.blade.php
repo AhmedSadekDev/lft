@@ -72,6 +72,12 @@
                 <span style="color: #856404; font-size: 11px;">{{ $booking_service->note }}</span>
             </div>
             @endif
+            @if($booking_service->image && $booking_service->getRawOriginal('image'))
+            <div style="display: flex; align-items: start; gap: 6px; background: #e7f3ff; padding: 6px 8px; border-radius: 4px; border-right: 3px solid #007bff; margin-top: 4px;">
+                <span style="font-weight: 700; color: #004085; font-size: 11px; min-width: 70px;">🖼️ الإيصال:</span>
+                <a href="{{ $booking_service->image }}" target="_blank" style="color: #007bff; font-size: 11px; text-decoration: underline;">عرض الإيصال</a>
+            </div>
+            @endif
         </div>
     </td>
     <td style="padding: 12px; text-align: center; font-weight: 700; color: #28a745; font-size: 14px; background: #f8f9fa; vertical-align: top;">{{ number_format($booking_service->price ?? 0, 2) }} ج.م</td>

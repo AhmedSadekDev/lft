@@ -256,7 +256,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
             Route::resource(
                 'booking-services',
                 BookingServiceController::class,
-                ['only' => ['create', 'store']]
+                ['only' => ['create', 'store', 'edit', 'update']]
             );
             // ----------------- \Booking Services -----------------
 

@@ -104,6 +104,7 @@ return [
     'credit' => 'إيداع',
     "vault_balance" => 'ميزانية الخزنة',
     "banks" => 'البنوك',
+    "bank" => 'البنك',
     "balance" => 'الرصيد',
     "Tax_invoices" => 'الفواتير الضريبية',
     "Navigation_line" => 'الخط الملاحى',
