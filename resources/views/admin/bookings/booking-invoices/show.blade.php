@@ -41,7 +41,10 @@
 
             /* Header and Footer for print */
             @page {
-                margin: 0;
+                margin-top: 4.5cm;
+                margin-bottom: 4.5cm;
+                margin-left: 0;
+                margin-right: 0;
             }
 
             .header {
@@ -239,7 +242,7 @@
                     ])
                     {{-- END HEADER --}}
 
-                    <div style="margin-bottom: .5rem;">
+                    <div style="margin-bottom: .3rem;">
                         {{-- START TABLE --}}
                         @include('admin.components.booking-invoices.printing.table.layout', [
                             'items' => $fpr,
@@ -258,7 +261,7 @@
                 <!-- Middle page(s) -->
                 @forelse ($mps as $mpr)
                     <div class="invoice" style="overflow: visible;">
-                        <div style="margin-bottom: .5rem;margin-top: 1rem;">
+                        <div style="margin-bottom: .3rem;margin-top: .5rem;">
                             {{-- START TABLE --}}
                             @include('admin.components.booking-invoices.printing.table.layout', [
                                 'items' => $mpr,
@@ -274,7 +277,7 @@
                 @if (count($fpr) > $fpr_hf_limit)
                     <!-- Last page -->
                     <div class="invoice" style="overflow: visible;">
-                        <div style="margin-bottom: .5rem;margin-top: 1rem;">
+                        <div style="margin-bottom: .3rem;margin-top: .5rem;">
                             {{-- START TABLE --}}
                             @if (count($lpr) > 0)
                                 @include('admin.components.booking-invoices.printing.table.layout', [
@@ -301,16 +304,21 @@
                     @include('admin.components.booking-invoices.printing.header', [
                         'document_title' => __('admin.attachments'),
                     ])
-                    <div style="margin-bottom: .5rem;">
+                    <div style="margin-bottom: .3rem;">
                         @if(count($booking->expenses) > 0)
                             @include('admin.components.booking-invoices.printing.table.expenses-row')
                         @endif
                         @if(count($attachment_rows) > 0)
                             @include('admin.components.booking-invoices.printing.table.layout', [
                                 'items' => $attachment_rows,
+                                'is_attachments' => true,
                             ])
                         @endif
                     </div>
+                    
+                    {{-- START INVOICE SUMMARY FOR ATTACHMENTS --}}
+                    @include('admin.components.booking-invoices.printing.attachment-invoice-summary')
+                    {{-- END INVOICE SUMMARY FOR ATTACHMENTS --}}
                 </div>
                 <!-- First page -->
             </div>

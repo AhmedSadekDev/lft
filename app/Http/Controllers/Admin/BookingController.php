@@ -52,6 +52,12 @@ class BookingController extends Controller
                     ->orWhere('employee_name', 'like', '%' . $search . '%')
                     ->orWhereHas('bookingContainers', function($container) use($search){
                         $container->where('container_no', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('factory', function($factory) use($search){
+                        $factory->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('invoice', function($invoice) use($search){
+                        $invoice->where('invoice_number', 'like', '%' . $search . '%');
                     });
             });
         }

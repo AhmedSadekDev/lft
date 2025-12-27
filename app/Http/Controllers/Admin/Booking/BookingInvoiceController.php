@@ -209,7 +209,40 @@ class BookingInvoiceController extends Controller
             return 3;
         })->values();
 
-        $attachment_rows = $untaxedServices->concat($receiptServices);
+        // Group receipt services by type (e.g., "تخصيص", "هيئة الميناء")
+        $groupedReceiptServices = collect();
+        $receiptGroups = $receiptServices->groupBy(function ($service) {
+            $fullName = $service->full_name ?? '';
+            // Extract the part before "ايصالات" as the group key
+            $parts = preg_split('/(ايصالات|إيصالات)/i', $fullName, 2, PREG_SPLIT_DELIM_CAPTURE);
+            if (count($parts) >= 2) {
+                $beforePart = trim($parts[0]);
+                // If there's a part after "ايصالات", use it instead
+                if (isset($parts[2]) && !empty(trim($parts[2]))) {
+                    $beforePart = trim($parts[2]);
+                }
+                return !empty($beforePart) ? $beforePart : 'عام';
+            }
+            return 'عام';
+        });
+
+        foreach ($receiptGroups as $groupKey => $services) {
+            $totalPrice = $services->sum('price');
+            $allNotes = $services->filter(function($s) { return !empty($s->note); })->pluck('note')->toArray();
+            
+            // Create a grouped service object
+            $groupedService = (object)[
+                'type' => 'grouped_receipt',
+                'group_key' => $groupKey,
+                'services' => $services,
+                'total_price' => $totalPrice,
+                'notes' => $allNotes,
+                'count' => $services->count()
+            ];
+            $groupedReceiptServices->push($groupedService);
+        }
+
+        $attachment_rows = $untaxedServices->concat($groupedReceiptServices);
 
         return view('admin.bookings.booking-invoices.show', [
             'invoice' => $booking_invoice,

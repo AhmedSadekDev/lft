@@ -410,9 +410,14 @@
                                         </td>
                                         <td>
                                             @if(!is_null($booking->invoice?->invoice_number))
-                                                <span class="badge badge-success badge-custom">
-                                                    <i class="fas fa-check"></i> تم إنشاء فاتورة
-                                                </span>
+                                                <div class="d-flex flex-column">
+                                                    <span class="badge badge-success badge-custom mb-1">
+                                                        <i class="fas fa-check"></i> تم إنشاء فاتورة
+                                                    </span>
+                                                    <span class="badge badge-info badge-custom" style="font-size: 0.75rem;">
+                                                        <i class="fas fa-file-invoice"></i> {{ $booking->invoice->invoice_number }}
+                                                    </span>
+                                                </div>
                                             @else
                                                 <span class="badge badge-warning badge-custom">
                                                     <i class="fas fa-clock"></i> لم يتم إنشاء فاتورة
