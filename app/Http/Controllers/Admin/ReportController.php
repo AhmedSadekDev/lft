@@ -18,6 +18,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LogActivityExport;
+use App\Exports\GeneralExpensesExport;
 use App\Models\MoneyTransfer;
 
 class ReportController extends Controller
@@ -94,6 +95,7 @@ class ReportController extends Controller
             'search' => $request->search,
             'from' => $request->from,
             'to' => $request->to,
+            'perPage' => $request->get('per_page', 15),
         ]);
     }
 
@@ -353,6 +355,8 @@ class ReportController extends Controller
     private function paginateCollection($collection, Request $request)
     {
         $perPage = $request->get('per_page', 15);
+        // التأكد من أن per_page بين 1 و 100
+        $perPage = max(1, min(100, (int) $perPage));
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $collection->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
@@ -370,5 +374,14 @@ class ReportController extends Controller
     public function exportExcel(Request $request)
     {
         return Excel::download(new LogActivityExport($request), 'التقارير_اليومية.xlsx');
+    }
+
+    /**
+     * تصدير المصروفات العامة إلى Excel
+     */
+    public function general_expenses_export(Request $request)
+    {
+        $fileName = 'المصروفات_العامة_' . date('Y-m-d') . '.xlsx';
+        return Excel::download(new GeneralExpensesExport($request), $fileName);
     }
 }

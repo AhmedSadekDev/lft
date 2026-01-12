@@ -83,11 +83,14 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            // get today assigments
-            $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
-                ->wherePivot("created_at", "<=", now()->endOfDay())->wherePivot("superagent_unloading_approved", 0)->wherePivot('superagent_specification_approved', 1)->wherePivot('superagent_loading_approved', 1)->get();
+            // get all available assignments
+            $agent_booking_containers = $agent->agent_booking_containers()
+                ->wherePivot("superagent_unloading_approved", 0)
+                ->wherePivot('superagent_specification_approved', 1)
+                ->wherePivot('superagent_loading_approved', 1)
+                ->get();
 
-            // fetch shipping_agents that contain get today assigments
+            // fetch shipping_agents that contain available assignments
             $shipping_agent_ids = Booking::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers) {
                 $qc->where(function ($query) {
                     $query->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 1);

@@ -10,6 +10,10 @@ class ExpenseResource extends JsonResource
   
     public function toArray($request)
     {
+		$image = '';
+		if (!empty($this->image_agent_expenses)) {
+			$image = asset('Admin/images/expenses/' . $this->image_agent_expenses);
+		}
 		
 		return [
 			"id" => $this->id,
@@ -17,7 +21,7 @@ class ExpenseResource extends JsonResource
 			"text" => $this->notes ?? "",
 			"date" => $this->created_at ?? "",
 			"value" => $this->value,
-			"image" => asset('Admin/images/expenses/'.$this->image_agent_expenses ?? ""),
+			"image" => $image,
 		];
     }
 }

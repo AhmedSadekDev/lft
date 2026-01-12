@@ -20,9 +20,10 @@
                         <i class="fas fa-filter"></i> فلتر
                     </button>
                     <!-- زر تصدير Excel -->
-                    <button class="btn btn-success font-weight-bold shadow-sm" type="button" onclick="exportToExcel()">
+                    <a href="{{ route('reports.general_expenses.export', array_filter(['from' => request('from'), 'to' => request('to'), 'search' => request('search')])) }}" 
+                       class="btn btn-success font-weight-bold shadow-sm">
                         <i class="fas fa-file-excel"></i> تصدير Excel
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -43,6 +44,9 @@
                         <div class="modal-body">
                             @if(request('search'))
                                 <input type="hidden" name="search" value="{{ request('search') }}">
+                            @endif
+                            @if(request('per_page'))
+                                <input type="hidden" name="per_page" value="{{ request('per_page') }}">
                             @endif
                             <div class="form-group">
                                 <label for="fromInput" class="font-weight-bold">من تاريخ</label>
@@ -85,6 +89,9 @@
                         <input type="hidden" name="from" value="{{ request('from') }}">
                         <input type="hidden" name="to" value="{{ request('to') }}">
                     @endif
+                    @if(request('per_page'))
+                        <input type="hidden" name="per_page" value="{{ request('per_page') }}">
+                    @endif
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary font-weight-bold w-100">
                             <i class="fas fa-search mr-1"></i> بحث
@@ -92,7 +99,7 @@
                     </div>
                     @if(request('search'))
                         <div class="col-md-2">
-                            <a href="{{ route('reports.general_expenses', array_filter(['from' => request('from'), 'to' => request('to')])) }}"
+                            <a href="{{ route('reports.general_expenses', array_filter(['from' => request('from'), 'to' => request('to'), 'per_page' => request('per_page')])) }}"
                                class="btn btn-secondary font-weight-bold w-100">
                                 <i class="fas fa-times mr-1"></i> إلغاء البحث
                             </a>
@@ -103,9 +110,19 @@
 
             <!-- معلومات النتائج -->
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="text-muted">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    عرض {{ $expenses->firstItem() ?? 0 }} - {{ $expenses->lastItem() ?? 0 }} من أصل {{ $expenses->total() }} سجل
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-muted">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        عرض {{ $expenses->firstItem() ?? 0 }} - {{ $expenses->lastItem() ?? 0 }} من أصل {{ $expenses->total() }} سجل
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="perPageSelect" class="mb-0 text-muted font-weight-bold" style="font-size: 0.9rem;">عرض:</label>
+                        <select id="perPageSelect" class="form-control form-control-sm" style="width: auto; min-width: 80px;" onchange="changePerPage(this.value)">
+                            @for($i = 15; $i <= 100; $i+=15)
+                                <option value="{{ $i }}" {{ ($perPage ?? 15) == $i ? 'selected' : '' }}>{{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
                 @if(request('from') || request('to'))
                     <div class="badge badge-primary badge-pill">
@@ -399,8 +416,11 @@
                                             $imagePath = asset($imagePath);
                                         }
                                     @endphp
+                                    @php
+                                        $fallbackImage = asset('assets/img/avatar_logo.png');
+                                    @endphp
                                     <a href="{{ $imagePath }}" data-lightbox="expense-{{ $item->id }}" data-title="إيصال المصروف - {{ $category }}">
-                                        <img src="{{ $imagePath }}" alt="صورة المصروف" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 8px;" onerror="this.src='{{ asset('assets/img/avatar_logo.png') }}'; this.onerror=null;">
+                                        <img src="{{ $imagePath }}" alt="صورة المصروف" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 8px;" onerror="this.src='{{ $fallbackImage }}'; this.onerror=null;" />
                                     </a>
                                 @else
                                     <span class="text-muted">-</span>
@@ -412,14 +432,14 @@
                             <td class="align-middle">{{ $service }}</td>
                             <td class="text-center align-middle">
                                 @if($expenseValue > 0)
-                                    <strong class="text-danger font-weight-bold">{{ number_format($expenseValue, 2) }} ج.م</strong>
+                                    <strong class="text-danger font-weight-bold">{{ number_format($expenseValue, 2) }}</strong>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
                             <td class="text-center align-middle">
                                 @if($incomeValue > 0)
-                                    <strong class="text-success font-weight-bold">{{ number_format($incomeValue, 2) }} ج.م</strong>
+                                    <strong class="text-success font-weight-bold">{{ number_format($incomeValue, 2) }}</strong>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
@@ -457,15 +477,15 @@
                                 <strong>الإجمالي:</strong>
                             </td>
                             <td class="text-center text-danger align-middle">
-                                <strong>{{ number_format($totalExpenses ?? 0, 2) }} ج.م</strong>
+                                <strong>{{ number_format($totalExpenses ?? 0, 2) }}</strong>
                             </td>
                             <td class="text-center text-success align-middle">
-                                <strong>{{ number_format($totalIncome ?? 0, 2) }} ج.م</strong>
+                                <strong>{{ number_format($totalIncome ?? 0, 2) }}</strong>
                             </td>
                             <td colspan="3" class="text-right align-middle">
                                 <span class="text-muted">الصافي: </span>
                                 <strong class="{{ (($totalIncome ?? 0) - ($totalExpenses ?? 0)) >= 0 ? 'text-success' : 'text-danger' }}">
-                                    {{ number_format(($totalIncome ?? 0) - ($totalExpenses ?? 0), 2) }} ج.م
+                                    {{ number_format(($totalIncome ?? 0) - ($totalExpenses ?? 0), 2) }}
                                 </strong>
                             </td>
                         </tr>
@@ -496,36 +516,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        function exportToExcel() {
-            // الحصول على البيانات من الجدول
-            let table = document.getElementById("expensesTable");
-            let wb = XLSX.utils.book_new();
-
-            // تحويل الجدول إلى ورقة عمل
-            let ws = XLSX.utils.table_to_sheet(table, {
-                raw: false,
-                dateNF: 'dd/mm/yyyy'
-            });
-
-            // تنسيق الأعمدة
-            ws['!cols'] = [
-                { wch: 15 },  // الصورة
-                { wch: 20 },  // الفئة
-                { wch: 30 },  // الخدمة
-                { wch: 15 },  // القيمة منصرف
-                { wch: 15 },  // القيمة وارد
-                { wch: 20 },  // رقم الشحنة
-                { wch: 15 },  // التاريخ
-                { wch: 20 }   // المندوب
-            ];
-
-            // إضافة الورقة إلى المصنف
-            XLSX.utils.book_append_sheet(wb, ws, "المصروفات العامة");
-
-            // تصدير الملف
-            XLSX.writeFile(wb, "المصروفات_العامة_" + new Date().toISOString().split('T')[0] + ".xlsx");
+        function changePerPage(value) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', value);
+            url.searchParams.set('page', '1'); // العودة للصفحة الأولى عند تغيير عدد العناصر
+            window.location.href = url.toString();
         }
     </script>
 @endpush

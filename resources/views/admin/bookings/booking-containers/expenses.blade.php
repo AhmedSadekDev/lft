@@ -72,8 +72,7 @@
                 cancelButtonText: "{{ __('alerts.cancel') }}",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = '{{ route("expenses.destroy", ":id") }}';
-                    url = url.replace(':id', id);
+                    var url = '{{ url("/dashboard/expenses") }}/' + id;
                     var token = '{{ csrf_token() }}';
                     $.ajaxSetup({
                         headers: {
@@ -83,7 +82,8 @@
                     });
                     $.ajax({
                         url: url,
-                        type: 'delete',
+                        type: 'DELETE',
+                        method: 'DELETE',
                         success: function(response, textStatus, xhr) {
                             Swal.fire({
                                 title: "{{ __('alerts.done') }}",
