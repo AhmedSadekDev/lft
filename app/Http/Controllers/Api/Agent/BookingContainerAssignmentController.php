@@ -12,6 +12,7 @@ use App\Http\Resources\Api\Agent\UnloadingShippingAgentResource;
 use App\Models\Agent;
 use App\Models\Booking;
 use App\Models\Car;
+use App\Models\Invoice;
 use App\Models\shippingAgent;
 use App\Models\Yard;
 use Illuminate\Http\Request;
@@ -111,16 +112,24 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            // get bookings
-            $booking_ids = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
-                ->wherePivot("created_at", "<=", now()->endOfDay())->get()->pluck("booking_id")->toArray();
+            // get bookings IDs for this agent (without date filter)
+            $booking_ids = $agent->agent_booking_containers()->get()->pluck("booking_id")->unique()->toArray();
 
-            // fetch bookings
-            $bookings = Booking::whereIn("id", $booking_ids)->when($word != null, function ($q) use ($word) {
-                $q->where("booking_number", "LIKE", "%$word%")->orWhereHas("bookingContainers", function ($q) use ($word) {
-                    $q->where("container_no", "LIKE", "%$word%");
-                });
-            })->orderBy("id", "desc")->get();
+            // get booking IDs that have invoices
+            $bookings_with_invoices = Invoice::whereIn('booking_id', $booking_ids)->pluck('booking_id')->toArray();
+
+            // exclude bookings that have invoices
+            $booking_ids_without_invoices = array_diff($booking_ids, $bookings_with_invoices);
+
+            // fetch bookings that don't have an invoice
+            $bookings = Booking::whereIn("id", $booking_ids_without_invoices)
+                ->when($word != null, function ($q) use ($word) {
+                    $q->where("booking_number", "LIKE", "%$word%")->orWhereHas("bookingContainers", function ($q) use ($word) {
+                        $q->where("container_no", "LIKE", "%$word%");
+                    });
+                })
+                ->orderBy("id", "desc")
+                ->get();
 
 
             //return data

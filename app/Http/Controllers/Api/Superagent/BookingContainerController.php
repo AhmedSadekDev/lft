@@ -68,7 +68,7 @@ class BookingContainerController extends Controller
                 ->merge($loadingItems)
                 ->merge($specItems)
                 ->unique('id')
-                ->sortByDesc('id')
+                ->sortBy('arrival_date')
                 ->values();
 
             // Manual pagination بنفس فورمات لارافيل
@@ -110,7 +110,11 @@ class BookingContainerController extends Controller
                     });
                 })
                 ->with(['bookingContainers'])
-                ->orderBy('id', 'desc')
+                ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
+                ->select('bookings.*')
+                ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
+                ->groupBy('bookings.id')
+                ->orderBy('min_arrival_date', 'asc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
@@ -134,7 +138,11 @@ class BookingContainerController extends Controller
                     ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 0);
                 })
                 ->with(['bookingContainers'])
-                ->orderBy('id', 'desc')
+                ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
+                ->select('bookings.*')
+                ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
+                ->groupBy('bookings.id')
+                ->orderBy('min_arrival_date', 'asc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
@@ -155,7 +163,11 @@ class BookingContainerController extends Controller
                     ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 1);
                 })
                 ->with(['bookingContainers'])
-                ->orderBy('id', 'desc')
+                ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
+                ->select('bookings.*')
+                ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
+                ->groupBy('bookings.id')
+                ->orderBy('min_arrival_date', 'asc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
