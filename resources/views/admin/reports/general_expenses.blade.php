@@ -20,7 +20,7 @@
                         <i class="fas fa-filter"></i> فلتر
                     </button>
                     <!-- زر تصدير Excel -->
-                    <a href="{{ route('reports.general_expenses.export', array_filter(['from' => request('from'), 'to' => request('to'), 'search' => request('search')])) }}" 
+                    <a href="{{ route('reports.general_expenses.export', array_filter(['from' => request('from'), 'to' => request('to'), 'search' => request('search')])) }}"
                        class="btn btn-success font-weight-bold shadow-sm">
                         <i class="fas fa-file-excel"></i> تصدير Excel
                     </a>
@@ -146,6 +146,7 @@
                             <th scope="col">رقم الشحنة</th>
                             <th scope="col">التاريخ</th>
                             <th scope="col">المندوب</th>
+                            <th scope="col">الملاحظات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -167,6 +168,7 @@
                             $bookingId = null;
                             $imageUrl = '';
                             $date = '';
+                            $notes = '';
 
                             if ($isLogActivity) {
                                 // سجل نشاط (LogActivity)
@@ -209,6 +211,11 @@
                                     if ($log && $log->bookingContainer) {
                                         $bookingNumber = $log->bookingContainer->booking?->booking_number ?? '';
                                         $bookingId = $log->bookingContainer->booking_id;
+                                    }
+
+                                    // الحصول على الملاحظات
+                                    if ($log && isset($log->notes)) {
+                                        $notes = $log->notes ?? '';
                                     }
                                 } elseif ($logType == \App\Models\MoneyTransfer::class && $log) {
                                     $type = $log->type;
@@ -271,6 +278,11 @@
                                         $category = 'سجل نشاط - تسوية';
                                         $service = $item->action ?? 'تسوية البوليصة';
                                     }
+
+                                    // الحصول على الملاحظات من MoneyTransfer
+                                    if ($log && isset($log->notes)) {
+                                        $notes = $log->notes ?? '';
+                                    }
                                 }
                             } elseif ($isMoneyTransfer && $item->type == 3) {
                                 // عهدة السيارة (منصرف)
@@ -295,6 +307,9 @@
                                         $bookingId = $firstContainer->booking_id;
                                     }
                                 }
+
+                                // الحصول على الملاحظات
+                                $notes = $item->notes ?? '';
                             } elseif ($isMoneyTransfer && $item->type == 5) {
                                 // دخان المكتب (وارد)
                                 $incomeValue = $item->value ?? 0;
@@ -318,6 +333,9 @@
                                         $bookingId = $firstContainer->booking_id;
                                     }
                                 }
+
+                                // الحصول على الملاحظات
+                                $notes = $item->notes ?? '';
                             } elseif ($isExpense) {
                                 // مصروف عادي (منصرف)
                                 $expenseValue = $item->value ?? 0;
@@ -339,6 +357,9 @@
                                 $agentName = $item->agent?->name ?? '-';
                                 $bookingNumber = $item->bookingContainer?->booking?->booking_number ?? '';
                                 $bookingId = $item->bookingContainer?->booking_id;
+
+                                // الحصول على الملاحظات
+                                $notes = $item->notes ?? '';
 
                                 // معالجة الصورة من AgentExpense
                                 if ($item->image_agent_expenses) {
@@ -403,6 +424,9 @@
                                         $bookingId = $firstContainer->booking_id;
                                     }
                                 }
+
+                                // الحصول على الملاحظات
+                                $notes = $item->notes ?? '';
                             }
                         @endphp
                         <tr>
@@ -459,10 +483,17 @@
                             <td class="align-middle">
                                 <span class="font-weight-bold">{{ $agentName }}</span>
                             </td>
+                            <td class="align-middle">
+                                @if(!empty($notes))
+                                    <span class="text-muted" style="font-size: 0.9rem;" title="{{ $notes }}">{{ Str::limit($notes, 50) }}</span>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5">
+                            <td colspan="9" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="fas fa-inbox fa-3x mb-3"></i>
                                     <p class="font-weight-bold">لا توجد بيانات</p>
@@ -482,7 +513,7 @@
                             <td class="text-center text-success align-middle">
                                 <strong>{{ number_format($totalIncome ?? 0, 2) }}</strong>
                             </td>
-                            <td colspan="3" class="text-right align-middle">
+                            <td colspan="4" class="text-right align-middle">
                                 <span class="text-muted">الصافي: </span>
                                 <strong class="{{ (($totalIncome ?? 0) - ($totalExpenses ?? 0)) >= 0 ? 'text-success' : 'text-danger' }}">
                                     {{ number_format(($totalIncome ?? 0) - ($totalExpenses ?? 0), 2) }}

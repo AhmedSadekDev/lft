@@ -64,6 +64,7 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
                 $data['bookingNumber'] ?: '-',
                 $data['date'],
                 $data['agentName'],
+                $data['notes'] ?: '-',
             ];
         });
     }
@@ -79,6 +80,7 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
             'رقم الشحنة',
             'التاريخ',
             'المندوب',
+            'الملاحظات',
         ];
     }
 
@@ -95,6 +97,7 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
             'agentName' => '',
             'bookingNumber' => '',
             'date' => '',
+            'notes' => '',
         ];
 
         $isMoneyTransfer = $item instanceof MoneyTransfer;
@@ -117,6 +120,11 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
 
                 if ($log && $log->bookingContainer) {
                     $data['bookingNumber'] = $log->bookingContainer->booking?->booking_number ?? '';
+                }
+
+                // الحصول على الملاحظات
+                if ($log && isset($log->notes)) {
+                    $data['notes'] = $log->notes ?? '';
                 }
             } elseif ($logType == MoneyTransfer::class && $log) {
                 $type = $log->type;
@@ -156,6 +164,11 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
                     $data['category'] = 'سجل نشاط - تسوية';
                     $data['service'] = $item->action ?? 'تسوية البوليصة';
                 }
+
+                // الحصول على الملاحظات من MoneyTransfer
+                if ($log && isset($log->notes)) {
+                    $data['notes'] = $log->notes ?? '';
+                }
             }
         } elseif ($isMoneyTransfer && $item->type == 3) {
             $data['expenseValue'] = $item->value ?? 0;
@@ -170,6 +183,9 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
                     $data['bookingNumber'] = $firstContainer->booking?->booking_number ?? '';
                 }
             }
+
+            // الحصول على الملاحظات
+            $data['notes'] = $item->notes ?? '';
         } elseif ($isMoneyTransfer && $item->type == 5) {
             $data['incomeValue'] = $item->value ?? 0;
             $data['category'] = 'دخان المكتب';
@@ -183,6 +199,9 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
                     $data['bookingNumber'] = $firstContainer->booking?->booking_number ?? '';
                 }
             }
+
+            // الحصول على الملاحظات
+            $data['notes'] = $item->notes ?? '';
         } elseif ($isExpense) {
             $data['expenseValue'] = $item->value ?? 0;
 
@@ -203,6 +222,9 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
             $data['agentName'] = $item->agent?->name ?? '-';
             $data['bookingNumber'] = $item->bookingContainer?->booking?->booking_number ?? '';
             $data['date'] = $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('Y-m-d H:i') : '';
+
+            // الحصول على الملاحظات
+            $data['notes'] = $item->notes ?? '';
         } elseif ($isPayingcar) {
             $data['expenseValue'] = (float) ($item->value ?? 0);
             $data['category'] = 'سداد المديونية للسيارات';
@@ -216,6 +238,9 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
                     $data['bookingNumber'] = $firstContainer->booking?->booking_number ?? '';
                 }
             }
+
+            // الحصول على الملاحظات
+            $data['notes'] = $item->notes ?? '';
         }
 
         return $data;

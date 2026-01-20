@@ -25,8 +25,7 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
-                ->wherePivot("created_at", "<=", now()->endOfDay())->wherePivot("booking_container_status", 1)->orWherePivot('superagent_loading_approved', 0)->get();
+            $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("booking_container_status", 1)->orWherePivot('superagent_loading_approved', 0)->get();
 
             $yards = Yard::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers) {
                 $qc->where('superagent_specification_approved', 1)->where(function ($query) {
@@ -50,12 +49,11 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            // get today assigments
-            $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
-                ->wherePivot("created_at", "<=", now()->endOfDay())->wherePivot("booking_container_status", 0)->orWherePivot('superagent_specification_approved', 0)->get();
+            // get assignments
+            $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("booking_container_status", 0)->orWherePivot('superagent_specification_approved', 0)->get();
 
 
-            // fetch shipping_agents that contain get today assigments
+            // fetch shipping_agents that contain assignments
             $shipping_agent_ids = Booking::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers) {
                 $qc->where(function ($query) {
                     $query->where("status", 0)->orWhere('superagent_specification_approved', 0);
@@ -172,7 +170,7 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $agent_booking_containers = $agent->booking_containers()->whereDate("created_at", now());
+            $agent_booking_containers = $agent->booking_containers();
             $booking_containers = $agent->agent_booking_containers();
 
             // get agent_booking_containers specification

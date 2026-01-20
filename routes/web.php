@@ -414,6 +414,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::resource('cars', CarController::class);
     // ----------------- cars -----------------
 
+    // ----------------- FCM Notifications -----------------
+    Route::get('fcm/send', [\App\Http\Controllers\FireBasePushNotification::class, 'index'])->name('fcm.index');
+    Route::post('fcm/send', [\App\Http\Controllers\FireBasePushNotification::class, 'sendNotification'])->name('fcm.send');
+    // ----------------- \FCM Notifications -----------------
+
     Route::get('/agent_reports/{agent}', [ReportController::class, 'agent_reports'])->name('reports.agent_reports');
     Route::get('/agent_expenses/{agent}', [ExpenseController::class, 'agent_expenses'])->name('expenses.agent_expenses');
     Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
