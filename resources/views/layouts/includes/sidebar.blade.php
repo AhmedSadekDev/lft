@@ -550,13 +550,13 @@
 
 
 
-                    @if (auth()->user()->hasPermissionTo('daily_reports.index'))
+                    @if (auth()->user()->hasPermissionTo('accounts.index') || auth()->user()->hasPermissionTo('daily_reports.index'))
                         <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
                             <a href="javascript:;" class="menu-link menu-toggle">
                                 <span class="svg-icon menu-icon">
-                                    <i class="fas fa-box"></i>
+                                    <i class="fas fa-calculator"></i>
                                 </span>
-                                <span class="menu-text">{{ __('main.reports') }}</span>
+                                <span class="menu-text">الحسابات والتقارير</span>
                                 <i class="menu-arrow"></i>
                             </a>
                             <div class="menu-submenu">
@@ -564,14 +564,41 @@
                                 <ul class="menu-subnav">
                                     <li class="menu-item menu-item-parent" aria-haspopup="true">
                                         <span class="menu-link">
-                                            <span class="menu-text">{{ __('main.reports') }}</span>
+                                            <span class="menu-text">الحسابات والتقارير</span>
                                         </span>
                                     </li>
+                                    @if (auth()->user()->hasPermissionTo('accounts.index'))
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('accounts.index') }}" class="menu-link">
+                                                <span class="menu-text">حسابات الشركات</span>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if (auth()->user()->hasPermissionTo('cars.index'))
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('cars.index') }}" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">حسابات السيارات</span>
+                                            </a>
+                                        </li>
+                                    @endif
                                     @if (auth()->user()->hasPermissionTo('daily_reports.index'))
                                         <li class="menu-item menu-item-submenu" aria-haspopup="true"
                                             data-menu-toggle="hover">
                                             <a href="{{ route('reports.general_expenses') }}" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
                                                 <span class="menu-text">المصروفات العامة</span>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if (auth()->user()->hasPermissionTo('accounts.index'))
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('accounts.profit-loss') }}" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">تقرير الأرباح والخسائر</span>
                                             </a>
                                         </li>
                                     @endif

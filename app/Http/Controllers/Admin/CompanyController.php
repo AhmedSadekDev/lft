@@ -7,6 +7,7 @@ use App\Http\Traits\ImagesTrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CompanyRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AssignPasswordNotification;
 use App\Notifications\WelcomeCompany;
@@ -27,10 +28,30 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = Company::query();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('tax_no', 'like', "%{$search}%");
+            });
+        }
+
+        // Sort by
+        $sortBy = $request->get('sort_by', 'id');
+        $sortDir = $request->get('sort_dir', 'desc');
+        $query->orderBy($sortBy, $sortDir);
+
+        $companies = $query->with(['bookings.invoice.invoicePayments'])->paginate(20);
+
         $input = [
-            'companies' => Company::all(),
+            'companies' => $companies,
         ];
         return view('admin.companies.index', $input);
     }

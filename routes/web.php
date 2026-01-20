@@ -48,6 +48,7 @@ use App\Http\Controllers\Admin\Booking\BookingContainerController;
 use App\Http\Controllers\BookingContaBookingContrainerExtraCostsController;
 use App\Http\Controllers\InvoicePaymentController;
 use App\Exports\CarsExport;
+use App\Http\Controllers\Admin\AccountController;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -221,8 +222,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('invoice-payments-excel/{invoiceId}', [InvoicePaymentController::class , 'excel'])->name('invoice_payments.excel');
     Route::get('invoice-payments-pdf/{invoiceId}', [InvoicePaymentController::class , 'pdf'])->name('invoice_payments.pdf');
     Route::post('invoice-payments-store/', [InvoicePaymentController::class , 'store'])->name('invoice_payments.store');
-    Route::post('invoice-payments-update/{invoiceId}', [InvoicePaymentController::class , 'update'])->name('invoice_payments.update');
-    Route::post('invoice-payments-destroy/{invoiceId}', [InvoicePaymentController::class , 'destroy'])->name('invoice_payments.destroy');
+    Route::post('invoice-payments-update/{id}', [InvoicePaymentController::class , 'update'])->name('invoice_payments.update');
+    Route::post('invoice-payments-destroy/{id}', [InvoicePaymentController::class , 'destroy'])->name('invoice_payments.destroy');
 
 
     // invoices ----------------------------------------------------------------
@@ -429,6 +430,30 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('/export_excel', [ReportController::class, 'exportExcel'])->name('reports.export_excel');
     Route::get('/general_expenses', [ReportController::class, 'general_expenses'])->name('reports.general_expenses');
     Route::get('/general_expenses_export', [ReportController::class, 'general_expenses_export'])->name('reports.general_expenses.export');
+
+    // ----------------- Accounts -----------------
+    Route::get('accounts', [AccountController::class, 'index'])->name('accounts.index');
+    Route::get('accounts/{companyId}/statement', [AccountController::class, 'statement'])->name('accounts.statement');
+    Route::get('accounts/{companyId}/statement/export-excel', [AccountController::class, 'exportExcel'])->name('accounts.statement.export.excel');
+    Route::get('accounts/{companyId}/statement/export-pdf', [AccountController::class, 'exportPDF'])->name('accounts.statement.export.pdf');
+    Route::get('accounts/{companyId}/payment', [AccountController::class, 'showPaymentForm'])->name('accounts.payment');
+    Route::post('accounts/{companyId}/payment', [AccountController::class, 'processPayment'])->name('accounts.payment.process');
+
+    // كشف حساب السيارات
+    Route::get('accounts/car/{carId}/statement', [AccountController::class, 'carStatement'])->name('accounts.car.statement');
+    Route::get('accounts/car/{carId}/statement/export-excel', [AccountController::class, 'exportCarExcel'])->name('accounts.car.statement.export.excel');
+    Route::get('accounts/car/{carId}/statement/export-pdf', [AccountController::class, 'exportCarPDF'])->name('accounts.car.statement.export.pdf');
+
+    // تقرير الموقف المالي - الشركات المدينة
+    Route::get('accounts/financial-position', [AccountController::class, 'financialPositionReport'])->name('accounts.financial-position');
+    Route::get('accounts/financial-position/export-pdf', [AccountController::class, 'exportFinancialPositionPDF'])->name('accounts.financial-position.export.pdf');
+    Route::get('accounts/financial-position/export-excel', [AccountController::class, 'exportFinancialPositionExcel'])->name('accounts.financial-position.export.excel');
+
+    // تقرير الأرباح والخسائر
+    Route::get('accounts/profit-loss', [AccountController::class, 'profitLossReport'])->name('accounts.profit-loss');
+    Route::get('accounts/profit-loss/export-excel', [AccountController::class, 'exportProfitLossExcel'])->name('accounts.profit-loss.export.excel');
+    Route::get('accounts/profit-loss/export-pdf', [AccountController::class, 'exportProfitLossPDF'])->name('accounts.profit-loss.export.pdf');
+    // ----------------- \Accounts -----------------
 });
 // ----------------- \Dashboard -----------------
 

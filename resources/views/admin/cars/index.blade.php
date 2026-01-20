@@ -112,6 +112,13 @@
                                 </td>
                                 <td class="text-center align-middle">
                                     <div class="d-flex justify-content-center gap-2">
+                                        @if (auth()->user()->hasPermissionTo('accounts.index'))
+                                            <a href="{{ route('accounts.car.statement', $car->id) }}"
+                                                class="btn btn-icon btn-light btn-hover-info btn-sm"
+                                                title="كشف حساب">
+                                                <i class="fas fa-file-invoice text-info"></i>
+                                            </a>
+                                        @endif
                                         @if (auth()->user()->hasPermissionTo('cars.update'))
                                             <a href="{{ route('cars.edit', $car->id) }}"
                                                 class="btn btn-icon btn-light btn-hover-primary btn-sm"
