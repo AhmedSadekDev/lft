@@ -21,6 +21,19 @@ class allBookingContainerResource extends JsonResource
         $typeKey   = $this->stage_type ?? null; // specification|loading|unloading
         $typeLabel = $typeKey ? __("booking_container.types.$typeKey") : null;
 
+        // دمج رقم الحجز ورقم الحاوية في جميع الحالات
+        $bookingNumber = $this->booking?->booking_number ?? "";
+        $containerNumber = $this->container_no ?? "";
+        $displayNumber = "";
+
+        if ($bookingNumber && $containerNumber) {
+            $displayNumber = $bookingNumber . ' - ' . $containerNumber;
+        } elseif ($containerNumber) {
+            $displayNumber = $containerNumber;
+        } elseif ($bookingNumber) {
+            $displayNumber = $bookingNumber;
+        }
+
         return [
             'id'                 => $this->id,
             'type'               => $typeKey,
@@ -30,9 +43,9 @@ class allBookingContainerResource extends JsonResource
             'container_type'     => $this->container?->type ?? null,
             'branch'             => $this->branch?->name ?? null,
             'sail_of_number'     => $this->sail_of_number,
-            'container_number'   => $this->container_no,
+            'container_number'   => $displayNumber, // يظهر رقم الحجز ورقم الحاوية معاً في جميع الحالات
             'arrival_date'       => $this->arrival_date,
-            "booking_number"     => $this->booking?->booking_number ?? "",
+            "booking_number"     => $bookingNumber,
             "certificate_number" => $this->booking?->certificate_number ?? "",
             "container_size"     => $this->container?->size ?? "",
             "shipping_agent"     => $this->booking?->shipping_agent ?? "",

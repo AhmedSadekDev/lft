@@ -14,13 +14,14 @@ class BookingContainerController extends Controller
 {
     /**
      * GET /superagent/booking-containers/all
-     * اختياري: ?per_page=10&page=1
+     * اختياري: ?per_page=10&page=1&stage_type=specification|loading|unloading
      */
     public function all(Request $request)
     {
         try {
             $perPage = (int) $request->get('per_page', default: 100);
             $page    = (int) $request->get('page', 1);
+            $stageType = $request->get('stage_type'); // فلتر حسب نوع المرحلة
 
             // نفس العلاقات اللي كانت بتتجاب في القديم عشان نتجنب N+1
             $with = [
@@ -33,42 +34,52 @@ class BookingContainerController extends Controller
             ];
 
             // 1) specification (status=0 أو status=1 و superagent_specification_approved=0)
-            $specItems = BookingContainer::with($with)
-                ->select('*')
-                ->selectRaw("'specification' as stage_type")
-                ->where(function ($q) {
-                    $q->where('status', 0)
-                      ->orWhere(function($q2) {
-                          $q2->where('status', 1)
-                             ->where('superagent_specification_approved', 0);
-                      });
-                })
-                ->get();
+            $specItems = collect();
+            if (!$stageType || $stageType === 'specification') {
+                $specItems = BookingContainer::with($with)
+                    ->select('*')
+                    ->selectRaw("'specification' as stage_type")
+                    ->where(function ($q) {
+                        $q->where('status', 0)
+                          ->orWhere(function($q2) {
+                              $q2->where('status', 1)
+                                 ->where('superagent_specification_approved', 0);
+                          });
+                    })
+                    ->get();
+            }
 
             // 2) loading
-            $loadingItems = BookingContainer::with($with)
-                ->select('*')
-                ->selectRaw("'loading' as stage_type")
-                ->where('superagent_specification_approved', 1)
-                ->where('superagent_loading_approved', 0)
-                ->where('superagent_unloading_approved', 0)
-                ->get();
+            $loadingItems = collect();
+            if (!$stageType || $stageType === 'loading') {
+                $loadingItems = BookingContainer::with($with)
+                    ->select('*')
+                    ->selectRaw("'loading' as stage_type")
+                    ->where('superagent_specification_approved', 1)
+                    ->where('superagent_loading_approved', 0)
+                    ->where('superagent_unloading_approved', 0)
+                    ->get();
+            }
 
             // 3) unloading
-            $unloadingItems = BookingContainer::with($with)
-                ->select('*')
-                ->selectRaw("'unloading' as stage_type")
-                ->where('superagent_specification_approved', 1)
-                ->where('superagent_loading_approved', 1)
-                ->where('superagent_unloading_approved', 0)
-                ->get();
+            $unloadingItems = collect();
+            if (!$stageType || $stageType === 'unloading') {
+                $unloadingItems = BookingContainer::with($with)
+                    ->select('*')
+                    ->selectRaw("'unloading' as stage_type")
+                    ->where('superagent_specification_approved', 1)
+                    ->where('superagent_loading_approved', 1)
+                    ->where('superagent_unloading_approved', 0)
+                    ->get();
+            }
 
             // دمج مع أولوية أعلى مرحلة (unloading > loading > specification) + إزالة التكرار + ترتيب
+            // ترتيب حسب id تنازلي (الأحدث أولاً) مثل الداش بورد
             $merged = $unloadingItems
                 ->merge($loadingItems)
                 ->merge($specItems)
                 ->unique('id')
-                ->sortBy('arrival_date')
+                ->sortByDesc('id')
                 ->values();
 
             // Manual pagination بنفس فورمات لارافيل
@@ -114,7 +125,7 @@ class BookingContainerController extends Controller
                 ->select('bookings.*')
                 ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
                 ->groupBy('bookings.id')
-                ->orderBy('min_arrival_date', 'asc')
+                ->orderBy('bookings.id', 'desc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
@@ -142,7 +153,7 @@ class BookingContainerController extends Controller
                 ->select('bookings.*')
                 ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
                 ->groupBy('bookings.id')
-                ->orderBy('min_arrival_date', 'asc')
+                ->orderBy('bookings.id', 'desc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
@@ -167,7 +178,7 @@ class BookingContainerController extends Controller
                 ->select('bookings.*')
                 ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
                 ->groupBy('bookings.id')
-                ->orderBy('min_arrival_date', 'asc')
+                ->orderBy('bookings.id', 'desc')
                 ->paginate(100);
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 

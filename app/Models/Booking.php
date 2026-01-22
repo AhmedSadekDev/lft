@@ -27,7 +27,15 @@ class Booking extends Model
 
 
     public function expenses(){
-        return $this->hasMany(AgentExpense::class);
+        // ربط المصروفات بالحجز من خلال الحاويات المرتبطة به
+        return $this->hasManyThrough(
+            AgentExpense::class,
+            BookingContainer::class,
+            'booking_id', // Foreign key on booking_containers table
+            'booking_container_id', // Foreign key on agent_expenses table
+            'id', // Local key on bookings table
+            'id' // Local key on booking_containers table
+        );
     }
 
 
