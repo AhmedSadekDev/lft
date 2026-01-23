@@ -212,6 +212,9 @@
             </div>
             <div class="card-body">
                 <form method="GET" action="{{ route('bookings.index') }}" id="filterForm">
+                    @if(request('per_page'))
+                        <input type="hidden" name="per_page" value="{{ request('per_page') }}">
+                    @endif
                     <div class="row">
                         <!-- Search Input -->
                         <div class="col-md-3 mb-3">
@@ -362,7 +365,7 @@
                     @endif
                     @if($bookings->count() > 0)
                         <a class="btn btn-success ml-2"
-                            href="{{ route('booking_container.export', ['ids' => implode(',', $bookings->pluck('id')->toArray())]) }}"
+                            href="{{ route('booking_container.export', request()->only(['search', 'date_from', 'date_to', 'company', 'tax_status', 'invoice_status'])) }}"
                             title="{{ __('admin.export') }}">
                             <i class="fas fa-download"></i> {{ __('admin.export') }}
                         </a>
@@ -492,9 +495,19 @@
 
                         <!-- Custom Pagination -->
                         <div class="pagination-wrapper">
-                            <div class="pagination-info">
-                                <i class="fas fa-info-circle"></i>
-                                عرض {{ $bookings->firstItem() ?? 0 }} إلى {{ $bookings->lastItem() ?? 0 }} من {{ $bookings->total() }} نتيجة
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="pagination-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    عرض {{ $bookings->firstItem() ?? 0 }} إلى {{ $bookings->lastItem() ?? 0 }} من {{ $bookings->total() }} نتيجة
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="perPageSelect" class="mb-0 text-muted font-weight-bold" style="font-size: 0.9rem;">عرض:</label>
+                                    <select id="perPageSelect" class="form-control form-control-sm" style="width: auto; min-width: 80px;" onchange="changePerPage(this.value)">
+                                        @for($i = 15; $i <= 100; $i+=15)
+                                            <option value="{{ $i }}" {{ (request('per_page', 15) == $i) ? 'selected' : '' }}>{{ $i }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
                             </div>
                             <div class="custom-pagination">
                                 @php
@@ -660,6 +673,13 @@
                     });
                 }
             });
+        }
+
+        function changePerPage(value) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', value);
+            url.searchParams.set('page', '1'); // العودة للصفحة الأولى عند تغيير عدد العناصر
+            window.location.href = url.toString();
         }
     </script>
 @endpush

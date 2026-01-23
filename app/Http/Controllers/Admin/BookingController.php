@@ -86,7 +86,11 @@ class BookingController extends Controller
             }
         }
 
-        $bookings = $bookings->orderBy('id', 'desc')->paginate(15)->withQueryString();
+        // Per page filter
+        $perPage = $request->get('per_page', 15);
+        $perPage = min(max((int)$perPage, 15), 100); // Between 15 and 100
+
+        $bookings = $bookings->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
 
         $companies = Company::query()->get();
 

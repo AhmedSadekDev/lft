@@ -19,72 +19,81 @@ class BookingContainerActionController extends Controller
 {
     public function done_specification(BookingRequest $request)
     {
+        try {
+            $booking_containers = BookingContainer::whereIn(
+                'id',
+                $request->booking_container_id
+            )->get();
 
-            $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
+            foreach ($booking_containers as $booking_container) {
 
-            $daily_container = DailyBookingContainer::whereDate("created_at", now())->where([["booking_container_id", "=", $booking_container->id],])->first();
-            if (!$daily_container) {
+                $daily_container = DailyBookingContainer::whereDate('created_at', now())
+                    ->where('booking_container_id', $booking_container->id)
+                    ->first();
 
-                $data["superagent_id"] = auth()->guard("superagent")->id();
-                $data["booking_container_id"] = $booking_container->id;
-                $data["booking_container_status"] = $booking_container->status;
-
-                DailyBookingContainer::create($data);
-            } else {
-
-                $daily_container->delete();
+                if (!$daily_container) {
+                    DailyBookingContainer::create([
+                        'superagent_id'           => auth()->guard('superagent')->id(),
+                        'booking_container_id'    => $booking_container->id,
+                        'booking_container_status'=> $booking_container->status,
+                    ]);
+                } else {
+                    $daily_container->delete();
+                }
             }
-            $response = new BookingContainerResource($booking_container);
 
-            //response
+            return $this->returnAllData(
+                BookingContainerResource::collection($booking_containers),
+                __('alerts.success')
+            );
 
-            return $this->returnAllData($response, __('alerts.success'));
-        
+        } catch (\Exception $ex) {
+            return $this->returnError(500, $ex->getMessage());
+        }
     }
+
 
     public function done_loading(BookingContainerRequest $request)
     {
         try {
 
-            $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
+            BookingContainer::whereIn('id', $request->booking_container_id)
+                ->update([
+                    'status' => 2
+                ]);
 
-
-            $booking_container->update([
-                "status" => 2
-            ]);
-            $data = new BookingContainerResource($booking_container);
-
-            //response
+            $data = BookingContainerResource::collection(
+                BookingContainer::whereIn('id', $request->booking_container_id)->get()
+            );
 
             return $this->returnAllData($data, __('alerts.success'));
+
         } catch (\Exception $ex) {
-
-
             return $this->returnError(500, $ex->getMessage());
         }
     }
+
 
     public function done_unloading(BookingContainerRequest $request)
     {
         try {
 
-            $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
+            BookingContainer::whereIn('id', $request->booking_container_id)
+                ->update([
+                    'status' => 3
+                ]);
 
-
-            $booking_container->update([
-                "status" => 3
-            ]);
-            $data = new BookingContainerResource($booking_container);
-
-            //response
+            $data = BookingContainerResource::collection(
+                BookingContainer::whereIn('id', $request->booking_container_id)->get()
+            );
 
             return $this->returnAllData($data, __('alerts.success'));
+
         } catch (\Exception $ex) {
-
-
             return $this->returnError(500, $ex->getMessage());
         }
     }
+
 
     public function make_it_today(BookingContainerRequest $request)
     {

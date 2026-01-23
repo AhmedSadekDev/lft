@@ -24,7 +24,8 @@ class BookingRequest extends FormRequest
     public function rules()
     {
         return [
-            'booking_id'  => 'required|exists:bookings,id',
+            'booking_container_id'   => 'required|array',
+            'booking_container_id.*' => 'exists:booking_containers,id',
         ];
     }
 
