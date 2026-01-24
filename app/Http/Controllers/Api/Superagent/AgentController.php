@@ -56,7 +56,7 @@ class AgentController extends Controller
                 : [$request->booking_container_id];
 
             // Get all booking containers
-            $booking_containers = BookingContainer::whereIn('id', $booking_container_ids)->get();
+            $booking_containers = BookingContainer::whereIn('booking_id', $booking_container_ids)->get();
 
             if ($booking_containers->isEmpty()) {
                 return $this->returnError(404, __('Booking container not found'));
@@ -90,6 +90,9 @@ class AgentController extends Controller
 
                 // Refresh to get updated agents relationship
                 $booking_container->refresh();
+
+                // Load agents relationship with pivot
+                $booking_container->load('agents');
 
                 // Notify each agent
                 foreach ($booking_container->agents as $agent) {
@@ -127,15 +130,15 @@ class AgentController extends Controller
         try {
 
             $superagent = auth()->guard("superagent")->user();
-            
+
             // Get booking_ids as array
-            $booking_ids = is_array($request->booking_id) 
-                ? $request->booking_id 
+            $booking_ids = is_array($request->booking_id)
+                ? $request->booking_id
                 : [$request->booking_id];
 
             // Validate all booking IDs exist
             $bookings = Booking::whereIn('id', $booking_ids)->get();
-            
+
             if ($bookings->isEmpty()) {
                 return $this->returnError(404, __('Booking not found'));
             }
@@ -166,7 +169,7 @@ class AgentController extends Controller
                 ]);
 
                 SaveNotification::create($title, $text, $agent->id, Agent::class, AppNotification::specific);
-                
+
                 if ($agent->device_token) {
                     // Send notification for each booking
                     foreach ($bookings as $booking) {
@@ -241,7 +244,7 @@ class AgentController extends Controller
                 ]);
             }
             $message = 'تم تخصيص حاويات الطلب ' . $container->booking_id;
-            
+
             // Send Firebase notifications to agents
             $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
@@ -282,7 +285,7 @@ class AgentController extends Controller
                 ]);
             }
             $message = 'تم تحميل حاوية رقم ' . $container->container_no;
-            
+
             // Send Firebase notifications to agents
             $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
@@ -325,7 +328,7 @@ class AgentController extends Controller
             }
 
             $message = 'تم تعتيق حاوية رقم ' . $container->container_no;
-            
+
             // Send Firebase notifications to agents
             $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
