@@ -20,12 +20,13 @@ class FireBasePushNotification extends Controller
         $this->token = $creadentials->fetchAuthToken(HttpHandlerFactory::build());
     }
 
-    public function to($device, $body, $title = "My favorite App")
+    public function to($device, $body, $title = "My favorite App", $extraData = [])
     {
         $data = [
             'token' => $device,
             'title' => $title,
-            'body' => $body
+            'body' => $body,
+            'data' => $extraData
         ];
 
         return $this->send($data);
@@ -47,6 +48,11 @@ class FireBasePushNotification extends Controller
                 ]
             ]
         ];
+
+        // Add data payload if provided
+        if (!empty($data['data'])) {
+            $fields['message']['data'] = array_map('strval', $data['data']);
+        }
 
         $fields = json_encode($fields);
 

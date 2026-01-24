@@ -65,7 +65,11 @@ class BookingContainerActionController extends Controller
 
             $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
             foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
-                SendNotification::send($superAgent->device_token ?? "", $title, $text);
+                $notificationData = [
+                    'booking_id' => $booking->id,
+                    'action_type' => 'specification' // تخصيص
+                ];
+                SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
 
@@ -111,12 +115,22 @@ class BookingContainerActionController extends Controller
             ]);
 
             SaveNotification::create($title, $text, null, null, AppNotification::all);
-            SendNotification::send($agent->device_token ?? "", $title, $text);
-
+            
+            if ($agent->device_token) {
+                $notificationData = [
+                    'booking_id' => $booking_container->booking_id,
+                    'action_type' => 'loading' // تحميل
+                ];
+                SendNotification::send($agent->device_token, $title, $text, $notificationData);
+            }
 
             $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
             foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
-                SendNotification::send($superAgent->device_token ?? "", $title, $text);
+                $notificationData = [
+                    'booking_id' => $booking_container->booking_id,
+                    'action_type' => 'loading' // تحميل
+                ];
+                SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
             $this->saveLogActivity(auth()->guard("agent")->user()->id, Agent::class, $booking_container->id, BookingContainer::class, $booking_container->status);
@@ -167,11 +181,22 @@ class BookingContainerActionController extends Controller
             ]);
 
             SaveNotification::create($title, $text, null, null, AppNotification::all);
-            SendNotification::send($agent->device_token ?? "", $title, $text);
+            
+            if ($agent->device_token) {
+                $notificationData = [
+                    'booking_id' => $booking_container->booking_id,
+                    'action_type' => 'unloading' // تعتيق
+                ];
+                SendNotification::send($agent->device_token, $title, $text, $notificationData);
+            }
 
             $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
             foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
-                SendNotification::send($superAgent->device_token ?? "", $title, $text);
+                $notificationData = [
+                    'booking_id' => $booking_container->booking_id,
+                    'action_type' => 'unloading' // تعتيق
+                ];
+                SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
             $this->saveLogActivity(auth()->guard("agent")->user()->id, Agent::class, $booking_container->id, BookingContainer::class, $booking_container->status);
