@@ -26,7 +26,8 @@ class BookingAgentRequest extends FormRequest
         return [
             'agent_ids'     => 'nullable|array',
             'agent_ids.*'     => 'nullable|exists:agents,id',
-            'booking_id'  => 'required|exists:bookings,id',
+            'booking_id'  => 'required|array',
+            'booking_id.*'  => 'required|exists:bookings,id',
         ];
     }
 

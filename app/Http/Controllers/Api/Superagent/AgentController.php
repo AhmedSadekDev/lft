@@ -49,9 +49,16 @@ class AgentController extends Controller
     {
         try {
             $superagent = auth()->guard("superagent")->user();
-            $booking_container = BookingContainer::find($request->booking_container_id);
 
-            if (!$booking_container) {
+            // Get booking_container_ids as array
+            $booking_container_ids = is_array($request->booking_container_id)
+                ? $request->booking_container_id
+                : [$request->booking_container_id];
+
+            // Get all booking containers
+            $booking_containers = BookingContainer::whereIn('id', $booking_container_ids)->get();
+
+            if ($booking_containers->isEmpty()) {
                 return $this->returnError(404, __('Booking container not found'));
             }
 
@@ -60,40 +67,50 @@ class AgentController extends Controller
                 return $id !== null && Agent::find($id) !== null;
             });
 
-            // Delete existing records for the given booking container and agent IDs
-            BookingContainerAgent::where('booking_container_id', $request->booking_container_id)->delete();
+            $processed_containers = [];
 
-            // Re-create BookingContainerAgent records
-            if (count($agent_ids)) {
-                foreach ($agent_ids as $agentId) {
-                    BookingContainerAgent::create([
-                        'booking_container_id' => $request->booking_container_id,
-                        'agent_id' => $agentId,
-                        'booking_container_status' => $booking_container->status,
-                        'superagent_specification_approved' => $booking_container->superagent_specification_approved,
-                        'superagent_loading_approved' => $booking_container->superagent_loading_approved,
-                        'superagent_unloading_approved' => $booking_container->superagent_unloading_approved,
-                    ]);
+            // Process each booking container
+            foreach ($booking_containers as $booking_container) {
+                // Delete existing records for the given booking container
+                BookingContainerAgent::where('booking_container_id', $booking_container->id)->delete();
+
+                // Re-create BookingContainerAgent records
+                if (count($agent_ids)) {
+                    foreach ($agent_ids as $agentId) {
+                        BookingContainerAgent::create([
+                            'booking_container_id' => $booking_container->id,
+                            'agent_id' => $agentId,
+                            'booking_container_status' => $booking_container->status,
+                            'superagent_specification_approved' => $booking_container->superagent_specification_approved,
+                            'superagent_loading_approved' => $booking_container->superagent_loading_approved,
+                            'superagent_unloading_approved' => $booking_container->superagent_unloading_approved,
+                        ]);
+                    }
                 }
+
+                // Refresh to get updated agents relationship
+                $booking_container->refresh();
+
+                // Notify each agent
+                foreach ($booking_container->agents as $agent) {
+                    $title = __('new_notification');
+                    $text = __('booking_container_assigned', [
+                        'superagent' => $superagent->name,
+                        'agent' => $agent->name
+                    ]);
+
+                    SaveNotification::create($title, $text, $agent->id, Agent::class, AppNotification::specific);
+
+                    if ($agent->device_token) {
+                        SendNotification::send($agent->device_token, $title, $text);
+                    }
+                }
+
+                $processed_containers[] = $booking_container;
             }
 
             // Prepare data for the response
-            $data = new SimpleBookingContainerResource($booking_container);
-
-            // Notify each agent
-            foreach ($booking_container->agents as $agent) {
-                $title = __('new_notification');
-                $text = __('booking_container_assigned', [
-                    'superagent' => $superagent->name,
-                    'agent' => $agent->name
-                ]);
-
-                SaveNotification::create($title, $text, $agent->id, Agent::class, AppNotification::specific);
-
-                if ($agent->device_token) {
-                    SendNotification::send($agent->device_token, $title, $text);
-                }
-            }
+            $data = SimpleBookingContainerResource::collection($processed_containers);
 
             // Response
             return $this->returnAllData($data, __('alerts.success'));
@@ -106,16 +123,37 @@ class AgentController extends Controller
         try {
 
             $superagent = auth()->guard("superagent")->user();
-            $booking = Booking::whereId($request->booking_id)->first();
+            
+            // Get booking_ids as array
+            $booking_ids = is_array($request->booking_id) 
+                ? $request->booking_id 
+                : [$request->booking_id];
 
-            $booking_containers = $booking->bookingContainers()->where("booking_containers.status", 0)->get();
-
-            $agents = Agent::whereIn("id", $request->agent_ids)->get();
-
-            foreach ($booking_containers as $booking_container) {
-                $booking_container->agents()->wherePivot('booking_container_status', '=', $booking_container->status)->detach($request->agent_ids);
-                $booking_container->agents()->attach($request->agent_ids, ["booking_container_status" => $booking_container->status]);
+            // Validate all booking IDs exist
+            $bookings = Booking::whereIn('id', $booking_ids)->get();
+            
+            if ($bookings->isEmpty()) {
+                return $this->returnError(404, __('Booking not found'));
             }
+
+            // Filter out null and invalid agent IDs
+            $agent_ids = array_filter($request->agent_ids ?? [], function ($id) {
+                return $id !== null && Agent::find($id) !== null;
+            });
+
+            $agents = Agent::whereIn("id", $agent_ids)->get();
+
+            // Process each booking
+            foreach ($bookings as $booking) {
+                $booking_containers = $booking->bookingContainers()->where("booking_containers.status", 0)->get();
+
+                foreach ($booking_containers as $booking_container) {
+                    $booking_container->agents()->wherePivot('booking_container_status', '=', $booking_container->status)->detach($agent_ids);
+                    $booking_container->agents()->attach($agent_ids, ["booking_container_status" => $booking_container->status]);
+                }
+            }
+
+            // Notify each agent
             foreach ($agents as $agent) {
                 $title = __('new_notification');
                 $text = __('booking_assigned', [
@@ -124,7 +162,10 @@ class AgentController extends Controller
                 ]);
 
                 SaveNotification::create($title, $text, $agent->id, Agent::class, AppNotification::specific);
-                SendNotification::send($agent->device_token ?? "", $title, $text);
+                
+                if ($agent->device_token) {
+                    SendNotification::send($agent->device_token, $title, $text);
+                }
             }
             //response
 
@@ -189,7 +230,6 @@ class AgentController extends Controller
                 ]);
             }
             $message = 'تم تخصيص حاويات الطلب ' . $container->booking_id;
-
         } elseif ($request->type_id == 1) {
             $container->update([
                 'superagent_loading_approved'   => 1,
@@ -214,7 +254,6 @@ class AgentController extends Controller
                 ]);
             }
             $message = 'تم تحميل حاوية رقم ' . $container->container_no;
-
         } elseif ($request->type_id == 2) {
 
             $container->update([
@@ -280,22 +319,22 @@ class AgentController extends Controller
             ];
         });
         if ($request->type_id == 0 || $request->type_id == 1) {
-    $types = [$request->type_id];
-} else {
-    $types = [4, 5];
-}
+            $types = [$request->type_id];
+        } else {
+            $types = [4, 5];
+        }
 
-$papers = BookingPaper::where('booking_container_id', $request->booking_container_id)
-    ->whereIn('type', $types)
-    ->get()
-    ->map(function ($paper) {
-        return [
-            'id'         => $paper->id,
-            'image'      => $paper->image->image,
-            'agent_id'   => $paper->agent_id ?? 0,
-            'agent_name' => $paper->agent ? $paper->agent->name : '',
-        ];
-    });
+        $papers = BookingPaper::where('booking_container_id', $request->booking_container_id)
+            ->whereIn('type', $types)
+            ->get()
+            ->map(function ($paper) {
+                return [
+                    'id'         => $paper->id,
+                    'image'      => $paper->image->image,
+                    'agent_id'   => $paper->agent_id ?? 0,
+                    'agent_name' => $paper->agent ? $paper->agent->name : '',
+                ];
+            });
 
 
         $agent =

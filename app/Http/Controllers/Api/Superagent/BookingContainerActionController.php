@@ -20,33 +20,27 @@ class BookingContainerActionController extends Controller
     public function done_specification(BookingRequest $request)
     {
         try {
-            $booking_containers = BookingContainer::whereIn(
-                'id',
-                $request->booking_container_id
-            )->get();
+            $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
-            foreach ($booking_containers as $booking_container) {
+      
+            $daily_container = DailyBookingContainer::whereDate('created_at', now())
+                ->where('booking_container_id', $booking_container->id)
+                ->first();
 
-                $daily_container = DailyBookingContainer::whereDate('created_at', now())
-                    ->where('booking_container_id', $booking_container->id)
-                    ->first();
-
-                if (!$daily_container) {
-                    DailyBookingContainer::create([
-                        'superagent_id'           => auth()->guard('superagent')->id(),
-                        'booking_container_id'    => $booking_container->id,
-                        'booking_container_status'=> $booking_container->status,
-                    ]);
-                } else {
-                    $daily_container->delete();
-                }
+            if (!$daily_container) {
+                DailyBookingContainer::create([
+                    'superagent_id'           => auth()->guard('superagent')->id(),
+                    'booking_container_id'    => $booking_container->id,
+                    'booking_container_status' => $booking_container->status,
+                ]);
+            } else {
+                $daily_container->delete();
             }
 
             return $this->returnAllData(
-                BookingContainerResource::collection($booking_containers),
+                new BookingContainerResource($booking_container),
                 __('alerts.success')
             );
-
         } catch (\Exception $ex) {
             return $this->returnError(500, $ex->getMessage());
         }
@@ -57,17 +51,16 @@ class BookingContainerActionController extends Controller
     {
         try {
 
-            BookingContainer::whereIn('id', $request->booking_container_id)
+            BookingContainer::whereId($request->booking_container_id)
                 ->update([
                     'status' => 2
                 ]);
 
             $data = BookingContainerResource::collection(
-                BookingContainer::whereIn('id', $request->booking_container_id)->get()
+                BookingContainer::whereId($request->booking_container_id)->get()
             );
 
             return $this->returnAllData($data, __('alerts.success'));
-
         } catch (\Exception $ex) {
             return $this->returnError(500, $ex->getMessage());
         }
@@ -78,17 +71,16 @@ class BookingContainerActionController extends Controller
     {
         try {
 
-            BookingContainer::whereIn('id', $request->booking_container_id)
+            BookingContainer::whereId($request->booking_container_id)
                 ->update([
                     'status' => 3
                 ]);
 
             $data = BookingContainerResource::collection(
-                BookingContainer::whereIn('id', $request->booking_container_id)->get()
+                BookingContainer::whereId($request->booking_container_id)->get()
             );
 
             return $this->returnAllData($data, __('alerts.success'));
-
         } catch (\Exception $ex) {
             return $this->returnError(500, $ex->getMessage());
         }
