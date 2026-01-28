@@ -211,7 +211,7 @@ class AccountStatementSummarySheet implements FromCollection, WithHeadings, Shou
 
     public function collection()
     {
-        return collect([
+        $data = [
             ['معلومات الشركة', ''],
             ['الاسم', $this->company->name],
             ['البريد الإلكتروني', $this->company->email ?? '-'],
@@ -220,11 +220,19 @@ class AccountStatementSummarySheet implements FromCollection, WithHeadings, Shou
             ['ملخص الحساب', ''],
             ['من تاريخ', $this->fromDate],
             ['إلى تاريخ', $this->toDate],
-            ['الرصيد المرحّل', number_format($this->carriedForwardBalance, 2)],
-            ['إجمالي الفواتير', number_format($this->totalInvoices, 2)],
-            ['إجمالي السداد', number_format($this->totalPayments, 2)],
-            ['الرصيد النهائي المستحق', number_format($this->finalBalance, 2)],
-        ]);
+        ];
+
+        // إضافة الرصيد الافتتاحي إن وجد
+        if ($this->company->opening_balance && $this->company->opening_balance != 0) {
+            $data[] = ['الرصيد الافتتاحي', number_format($this->company->opening_balance, 2)];
+        }
+
+        $data[] = ['الرصيد المرحّل', number_format($this->carriedForwardBalance, 2)];
+        $data[] = ['إجمالي الفواتير', number_format($this->totalInvoices, 2)];
+        $data[] = ['إجمالي السداد', number_format($this->totalPayments, 2)];
+        $data[] = ['الرصيد النهائي المستحق', number_format($this->finalBalance, 2)];
+
+        return collect($data);
     }
 
     public function headings(): array

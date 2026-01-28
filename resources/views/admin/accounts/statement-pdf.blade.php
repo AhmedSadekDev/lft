@@ -90,6 +90,14 @@
         <h1>كشف حساب</h1>
         <div class="company-name">الاسم: {{ $company->name }}</div>
         <div class="period">الحساب في الفترة من {{ $fromDate }} الى {{ $toDate }}</div>
+        @if($company->opening_balance && $company->opening_balance != 0)
+        <div style="font-size: 11px; color: #555; margin-top: 5px;">
+            <strong>الرصيد الافتتاحي:</strong>
+            <span style="color: {{ $company->opening_balance >= 0 ? '#d32f2f' : '#388e3c' }}; font-weight: bold;">
+                {{ number_format($company->opening_balance, 2) }}
+            </span>
+        </div>
+        @endif
     </div>
 
     <table>

@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->double('opening_balance', 15, 2)->default(0)->after('wallet');
+            $table->unsignedBigInteger('private_company_id')->nullable()->after('taxed');
+            $table->foreign('private_company_id')->references('id')->on('private_companies')->onDelete('set null');
         });
     }
 
@@ -26,7 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->dropColumn('opening_balance');
+            $table->dropForeign(['private_company_id']);
+            $table->dropColumn('private_company_id');
         });
     }
 };

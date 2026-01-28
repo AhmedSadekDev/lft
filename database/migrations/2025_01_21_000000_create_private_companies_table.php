@@ -13,8 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('companies', function (Blueprint $table) {
-            $table->double('opening_balance', 15, 2)->default(0)->after('wallet');
+        Schema::create('private_companies', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('tax_no')->nullable();
+            $table->string('commercial_register')->nullable();
+            $table->string('logo')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -25,8 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('companies', function (Blueprint $table) {
-            $table->dropColumn('opening_balance');
-        });
+        Schema::dropIfExists('private_companies');
     }
 };

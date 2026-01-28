@@ -45,9 +45,10 @@
                     @endif
                     <!--end::Button-->
                     <div class="p-2">
-                        <button class="btn btn-primary" type="button" onclick="exportToExcel()">
+                        <a href="{{ route('companies.export-excel', ['search' => request('search')]) }}"
+                           class="btn btn-primary">
                             <i class="fas fa-file-excel"></i> تصدير إلى Excel
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -160,7 +161,7 @@
                                     <td class="text-center align-middle">
                                         <div class="d-flex flex-column align-items-center">
                                             <span class="badge badge-{{ $remainingBalance > 0 ? 'warning' : ($remainingBalance < 0 ? 'info' : 'success') }} badge-lg font-weight-bold mb-2">
-                                                {{ number_format(abs($remainingBalance), 2) }} ر.س
+                                                {{ number_format(abs($remainingBalance), 2) }} ج
                                             </span>
                                             @if($remainingBalance > 0)
                                                 <span class="text-muted font-size-sm mb-2">مستحق</span>
@@ -403,14 +404,6 @@
         function openFile(attach) {
             $('#attachment_preview').html(`<embed src="${attach}"  frameborder="0" width="100%" height="400px">`)
             $('#attachmentModal').modal('show');
-        }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script>
-        function exportToExcel() {
-            let table = document.getElementById("table");
-            let wb = XLSX.utils.table_to_book(table, { sheet: "الشركات" });
-            XLSX.writeFile(wb, "الشركات.xlsx");
         }
     </script>
 @endpush

@@ -72,6 +72,13 @@
                 </div>
                 <div class="col-md-6 text-right">
                     <h5 class="font-weight-bold">ملخص الحساب</h5>
+                    @if($company->opening_balance && $company->opening_balance != 0)
+                    <p><strong>الرصيد الافتتاحي:</strong>
+                        <span class="text-{{ $company->opening_balance >= 0 ? 'danger' : 'success' }}">
+                            {{ number_format($company->opening_balance, 2) }}
+                        </span>
+                    </p>
+                    @endif
                     <p><strong>الرصيد المرحّل:</strong>
                         <span class="text-{{ $carriedForwardBalance >= 0 ? 'danger' : 'success' }}">
                             {{ number_format($carriedForwardBalance, 2) }}

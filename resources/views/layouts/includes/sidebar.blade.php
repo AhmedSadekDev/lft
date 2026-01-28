@@ -226,6 +226,13 @@
                                         </li>
                                     @endif
 
+                                    <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                        data-menu-toggle="hover">
+                                        <a href="{{ route('private-companies.index') }}" class="menu-link">
+                                            <span class="menu-text">الشركات الخاصة</span>
+                                        </a>
+                                    </li>
+
 
                                     @if (auth()->user()->hasPermissionTo('employees.index'))
                                         <li class="menu-item menu-item-submenu" aria-haspopup="true"

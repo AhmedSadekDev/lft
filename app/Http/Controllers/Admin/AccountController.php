@@ -81,7 +81,7 @@ class AccountController extends Controller
         $payments = $this->getPaymentsInPeriod($company, $fromDate, $toDate);
 
         // إنشاء قائمة موحدة بجميع الحركات (فواتير + سداد) مرتبة حسب التاريخ
-        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate);
+        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company);
 
         return view('admin.accounts.statement', compact(
             'company',
@@ -100,21 +100,50 @@ class AccountController extends Controller
     /**
      * بناء قائمة موحدة بجميع الحركات (فواتير + سداد)
      */
-    private function buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate = null)
+    private function buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate = null, $company = null)
     {
         $transactions = collect();
 
-        // إضافة الرصيد المرحّل كأول حركة
-        if ($carriedForwardBalance != 0) {
+        // حساب الرصيد المرحّل بدون الرصيد الافتتاحي
+        $openingBalance = $company ? ($company->opening_balance ?? 0) : 0;
+        $carriedForwardWithoutOpening = $carriedForwardBalance - $openingBalance;
+
+        // إضافة الرصيد الافتتاحي كأول حركة (إن وجد)
+        if ($openingBalance != 0) {
             $startDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->startOfYear();
+            $transactions->push([
+                'date' => $startDate->copy()->subDay(),
+                'type' => 'opening_balance',
+                'type_label' => 'رصيد افتتاحي',
+                'booking_number' => '',
+                'invoice_number' => '',
+                'previous_debit' => $openingBalance > 0 ? abs($openingBalance) : 0,
+                'previous_credit' => $openingBalance < 0 ? abs($openingBalance) : 0,
+                'discount' => 0,
+                'tax' => 0,
+                'attachment_statement' => '',
+                'transportation' => 0,
+                'total' => 0,
+                'paid' => 0,
+                'notes' => 'رصيد افتتاحي',
+                'current_debit' => $openingBalance > 0 ? abs($openingBalance) : 0,
+                'current_credit' => $openingBalance < 0 ? abs($openingBalance) : 0,
+                'running_balance' => $openingBalance,
+            ]);
+        }
+
+        // إضافة الرصيد المرحّل كحركة ثانية (إن وجد)
+        if ($carriedForwardWithoutOpening != 0) {
+            $startDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->startOfYear();
+            $runningBalance = $openingBalance + $carriedForwardWithoutOpening;
             $transactions->push([
                 'date' => $startDate->copy()->subDay(),
                 'type' => 'carried_forward',
                 'type_label' => 'رصيد مرحّل',
                 'booking_number' => '',
                 'invoice_number' => '',
-                'previous_debit' => $carriedForwardBalance > 0 ? abs($carriedForwardBalance) : 0,
-                'previous_credit' => $carriedForwardBalance < 0 ? abs($carriedForwardBalance) : 0,
+                'previous_debit' => $carriedForwardWithoutOpening > 0 ? abs($carriedForwardWithoutOpening) : 0,
+                'previous_credit' => $carriedForwardWithoutOpening < 0 ? abs($carriedForwardWithoutOpening) : 0,
                 'discount' => 0,
                 'tax' => 0,
                 'attachment_statement' => '',
@@ -122,9 +151,9 @@ class AccountController extends Controller
                 'total' => 0,
                 'paid' => 0,
                 'notes' => 'رصيد مرحّل من الفترة السابقة',
-                'current_debit' => $carriedForwardBalance > 0 ? abs($carriedForwardBalance) : 0,
-                'current_credit' => $carriedForwardBalance < 0 ? abs($carriedForwardBalance) : 0,
-                'running_balance' => $carriedForwardBalance,
+                'current_debit' => $carriedForwardWithoutOpening > 0 ? abs($carriedForwardWithoutOpening) : 0,
+                'current_credit' => $carriedForwardWithoutOpening < 0 ? abs($carriedForwardWithoutOpening) : 0,
+                'running_balance' => $runningBalance,
             ]);
         }
 
@@ -139,7 +168,7 @@ class AccountController extends Controller
             $totalInvoice = $invoice['total'];
             $paidAmount = $invoice['paid'];
 
-            $currentBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) + $totalInvoice;
+            $currentBalance = ($transactions->last()['running_balance'] ?? ($carriedForwardBalance)) + $totalInvoice;
 
             $transactions->push([
                 'date' => $invoice['date'],
@@ -164,7 +193,7 @@ class AccountController extends Controller
 
         // إضافة المدفوعات
         foreach ($payments as $payment) {
-            $currentBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) - $payment->value;
+            $currentBalance = ($transactions->last()['running_balance'] ?? ($carriedForwardBalance)) - $payment->value;
 
             // الحصول على ملاحظات السداد
             $notes = '';
@@ -231,7 +260,7 @@ class AccountController extends Controller
         $finalBalance = $carriedForwardBalance + $totalInvoices - $totalPayments;
 
         // إنشاء قائمة موحدة بجميع الحركات
-        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate);
+        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company);
 
         $fileName = 'كشف_حساب_' . $company->name . '_' . $fromDate . '_' . $toDate . '.xlsx';
 
@@ -266,7 +295,7 @@ class AccountController extends Controller
         $finalBalance = $carriedForwardBalance + $totalInvoices - $totalPayments;
 
         // إنشاء قائمة موحدة بجميع الحركات
-        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate);
+        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company);
 
         $html = view('admin.accounts.statement-pdf', compact(
             'company',
@@ -456,7 +485,10 @@ class AccountController extends Controller
                   ->whereDate('invoice_payments.created_at', '<', $fromDate);
         })->sum('value');
 
-        return $totalInvoices - $totalPayments;
+        // إضافة الرصيد الافتتاحي
+        $openingBalance = $company->opening_balance ?? 0;
+
+        return $openingBalance + $totalInvoices - $totalPayments;
     }
 
     /**

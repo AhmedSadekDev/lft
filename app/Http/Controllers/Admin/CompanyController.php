@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Company;
 use App\Http\Traits\ImagesTrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Exports\CompaniesListExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CompanyRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AssignPasswordNotification;
 use App\Notifications\WelcomeCompany;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CompanyController extends Controller
 {
@@ -56,6 +58,19 @@ class CompanyController extends Controller
         return view('admin.companies.index', $input);
     }
 
+    /**
+     * Export companies list to Excel (server-side).
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportExcel(Request $request)
+    {
+        $search = $request->get('search');
+
+        return Excel::download(new CompaniesListExport($search), 'companies.xlsx');
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -64,9 +79,12 @@ class CompanyController extends Controller
      */
     public function create()
     {
+        $privateCompanies = \App\Models\PrivateCompany::orderBy('name')->pluck('name', 'id');
+
         $input = [
             'method'    => 'POST',
-            'action'    => route('companies.store')
+            'action'    => route('companies.store'),
+            'privateCompanies' => $privateCompanies,
         ];
 
         return view('admin.companies.create', $input);
@@ -120,10 +138,13 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
+        $privateCompanies = \App\Models\PrivateCompany::orderBy('name')->pluck('name', 'id');
+
         $input = [
             'method'    => 'PUT',
             'action'    => route('companies.update', $company->id),
             'company'   => $company,
+            'privateCompanies' => $privateCompanies,
         ];
 
         return view('admin.companies.edit', $input);

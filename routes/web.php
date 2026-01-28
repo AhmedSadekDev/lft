@@ -184,9 +184,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     // ----------------- Companies -----------------
     Route::resource('companies', CompanyController::class);
+    Route::get('companies-export-excel', [CompanyController::class, 'exportExcel'])->name('companies.export-excel');
 
     Route::get('company/employee/{company}', 'App\Http\Controllers\Admin\CompanyController@getEmployees')->name('company.employee');
     // ----------------- \Companies -----------------
+
+    // ----------------- Private Companies -----------------
+    Route::resource('private-companies', \App\Http\Controllers\Admin\PrivateCompanyController::class);
+    // ----------------- \Private Companies -----------------
 
     // ----------------- Cities & Regions -----------------
     Route::resource('citiesAndRegions', CitiesAndRegionsController::class);
