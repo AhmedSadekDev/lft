@@ -89,7 +89,6 @@ class BookingInvoiceController extends Controller
                 ],
                 $request->only([
                     'value_added_tax',
-                    'sales_tax',
                     'discount'
                 ])
             );
@@ -229,7 +228,7 @@ class BookingInvoiceController extends Controller
         foreach ($receiptGroups as $groupKey => $services) {
             $totalPrice = $services->sum('price');
             $allNotes = $services->filter(function($s) { return !empty($s->note); })->pluck('note')->toArray();
-            
+
             // Create a grouped service object
             $groupedService = (object)[
                 'type' => 'grouped_receipt',
@@ -318,7 +317,6 @@ class BookingInvoiceController extends Controller
                 ],
                 $request->only([
                     'value_added_tax',
-                    'sales_tax',
                     'discount'
                 ])
             );

@@ -17,10 +17,6 @@
         </div>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 2px;">
             <div style="display: flex; align-items: center; gap: 3px;">
-                <span style="font-weight: 700; color: #6c757d; font-size: 9px; min-width: 60px;">🏭 اسم المصنع:</span>
-                <span style="color: #212529; font-size: 10px;">{{ $booking_container->branch?->factory->name ?? 'N/A' }}</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 3px;">
                 <span style="font-weight: 700; color: #6c757d; font-size: 9px; min-width: 60px;">🚚 خروج:</span>
                 <span style="color: #212529; font-size: 10px;">{{ $booking_container->departure?->title ?? 'N/A' }}</span>
             </div>
@@ -28,14 +24,10 @@
                 <span style="font-weight: 700; color: #6c757d; font-size: 9px; min-width: 60px;">📍 وجهة:</span>
                 <span style="color: #212529; font-size: 10px;">{{ $booking_container->loading?->title ?? 'N/A' }}</span>
             </div>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 2px;">
             <div style="display: flex; align-items: center; gap: 3px;">
                 <span style="font-weight: 700; color: #6c757d; font-size: 9px; min-width: 60px;">⏱️ تعتيق:</span>
                 <span style="color: #212529; font-size: 10px;">{{ $booking_container->aging?->title ?? 'N/A' }}</span>
             </div>
-            <div></div>
-            <div></div>
         </div>
     </td>
     <td style="padding: 4px 6px; text-align: center; font-weight: 700; color: #28a745; font-size: 12px; background: #f8f9fa; vertical-align: top;">{{ number_format($booking_container->price ?? 0, 2) }} ج.م</td>

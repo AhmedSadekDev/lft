@@ -74,12 +74,25 @@ class Invoice extends Model
 
    public function getInvoiceTotalBeforeTaxAttribute()
     {
+        // حساب مجموع الخدمات الخاضعة للضريبة غير الإيصالات
+        $nonReceiptTaxedServicesTotal = 0;
+        if ($this->booking) {
+            $taxedServices = $this->booking->getTaxedServices()->get();
+            foreach ($taxedServices as $service) {
+                $fullName = $service->full_name ?? '';
+                // استبعاد الإيصالات من الحساب
+                if (stripos($fullName, 'ايصالات') === false && stripos($fullName, 'receipt') === false) {
+                    $nonReceiptTaxedServicesTotal += $service->price ?? 0;
+                }
+            }
+        }
+
         return ceil(
             $this->transportation_total_before_vat
-                + $this->taxed_services_total_before_vat
+                + $nonReceiptTaxedServicesTotal
         );
     }
-    
+
     public function getValueAddedTaxAmountAttribute()
     {
         return ceil(
@@ -87,7 +100,7 @@ class Invoice extends Model
                 * ($this->value_added_tax / 100)
         );
     }
-    
+
     public function getSalesTaxAmountAttribute()
     {
         return ceil(
@@ -95,22 +108,21 @@ class Invoice extends Model
                 * ($this->sales_tax / 100)
         );
     }
-    
+
     public function getInvoiceTotalAfterTaxAttribute()
     {
         return ceil(
             $this->invoice_total_before_tax
                 + $this->value_added_tax_amount
-                - $this->sales_tax_amount
         );
     }
-    
+
     public function getDiscountAmountAttribute()
     {
         // Discount amount is fixed cost, so it's directly the discount value
         return $this->discount;
     }
-    
+
     public function getInvoiceTotalAfterDiscountAttribute()
     {
         return ceil(

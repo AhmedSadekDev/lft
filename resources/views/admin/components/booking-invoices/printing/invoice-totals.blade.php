@@ -22,19 +22,12 @@
                 <span style="font-weight: 700; color: #28a745; font-size: 10px;">{{ number_format($invoice->value_added_tax_amount ?? 0, 2) }} ج.م</span>
             </div>
         </div>
-
-        <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #6f42c1;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 700; color: #495057; font-size: 9px;">ضريبة عامة ({{$invoice->sales_tax ?? 0}}%):</span>
-                <span style="font-weight: 700; color: #6f42c1; font-size: 10px;">{{ number_format($invoice->sales_tax_amount ?? 0, 2) }} ج.م</span>
-            </div>
-        </div>
     </div>
 
     <div style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); padding: 8px 12px; border-radius: 6px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الفاتورة بعد الضريبة:</span>
-            <span style="font-weight: 700; color: #fff; font-size: 16px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format($invoice->invoice_total_after_tax ?? 0, 2) }} ج.م</span>
+            <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الفاتورة الضريبية:</span>
+            <span style="font-weight: 700; color: #fff; font-size: 16px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format($invoice->invoice_total_before_tax ?? 0, 2) }} ج.م</span>
         </div>
     </div>
 </div>
