@@ -17,6 +17,11 @@ class PrivateCompany extends Model
         'tax_no',
         'commercial_register',
         'logo',
+        'phone1',
+        'phone2',
+        'tel_fax',
+        'email',
+        'address',
     ];
 
     /*

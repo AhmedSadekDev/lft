@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PrivateCompanyRequest;
+use App\Http\Requests\Admin\PrivateCompanyRequestUpdate;
 use App\Models\PrivateCompany;
 use Illuminate\Http\Request;
 
@@ -113,7 +114,7 @@ class PrivateCompanyController extends Controller
      * @param  \App\Models\PrivateCompany  $privateCompany
      * @return \Illuminate\Http\Response
      */
-    public function update(PrivateCompanyRequest $request, PrivateCompany $privateCompany)
+    public function update(PrivateCompanyRequestUpdate $request, PrivateCompany $privateCompany)
     {
         $data = $request->all();
 

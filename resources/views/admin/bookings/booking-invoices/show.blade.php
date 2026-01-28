@@ -41,30 +41,50 @@
 
             /* Header and Footer for print */
             @page {
-                margin-top: 4.5cm;
-                margin-bottom: 4.5cm;
+                margin-top: 0;
+                margin-bottom: 0;
                 margin-left: 0;
                 margin-right: 0;
             }
 
-            .header {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4cm;
-                background-color: #fff;
-                z-index: 1000;
+            .letterhead-header {
+                position: relative !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: auto !important;
+                background-color: #fff !important;
+                padding: 20px !important;
+                margin-bottom: 20px !important;
+                margin-top: 0 !important;
+                border: 1px solid #000 !important;
+                border-bottom: 2px solid #8B4513 !important;
+                z-index: 1000 !important;
+                page-break-inside: avoid !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
             }
 
-            .footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 4cm;
-                background-color: #fff;
-                z-index: 1000;
+            .letterhead-footer {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 2.5cm !important;
+                background-color: #fff !important;
+                border-top: 2px solid #8B4513 !important;
+                z-index: 1000 !important;
+                page-break-inside: avoid !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .invoices-container {
@@ -98,6 +118,27 @@
                 visibility: visible !important;
                 opacity: 1 !important;
                 page-break-inside: avoid !important;
+            }
+
+            /* Ensure letterhead header is visible in print */
+            .letterhead-header,
+            .letterhead-header * {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            /* Ensure watermark is visible in print */
+            .watermark {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 0.15 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
             }
 
             /* Ensure header gradient prints */
@@ -143,7 +184,7 @@
         }
 
         .print-btn {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            background: linear-gradient(135deg, #DC143C 0%, #B22222 100%);
             color: #fff;
             font-family: 'Cairo', sans-serif;
             display: inline-block;
@@ -162,13 +203,13 @@
             border-radius: 8px;
             cursor: pointer;
             margin: 10px;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
             transition: all 0.3s ease;
         }
 
         .print-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.4);
         }
 
         .print-btn:active {
@@ -218,7 +259,7 @@
         }
 
         table tbody tr:hover {
-            background-color: #e7f3ff;
+            background-color: #ffe6e6;
         }
     </style>
     <title>Invoice</title>
@@ -233,14 +274,14 @@
     <div class="invoices-container">
         <!-- Invoice Section -->
         <div class="invoice-wrapper">
-            <div class="print" id="printableArea" style="width: 100%;margin: 0;padding: 10px 15px;border: 2px solid #007bff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 123, 255, 0.15); background: #fff;">
+            <div class="print" id="printableArea" style="width: 100%;margin: 0;padding: 10px 15px;border: 2px solid #DC143C; border-radius: 8px; box-shadow: 0 4px 20px rgba(220, 20, 60, 0.15); background: #fff;">
                 <!-- First page -->
                 <div class="invoice" style="overflow: visible;">
-                    {{-- START HEADER --}}
-                    @include('admin.components.booking-invoices.printing.header', [
+                    {{-- START LETTERHEAD AND HEADER --}}
+                    @include('admin.components.booking-invoices.printing.letterhead', [
                         'document_title' => __('admin.invoice'),
                     ])
-                    {{-- END HEADER --}}
+                    {{-- END LETTERHEAD AND HEADER --}}
 
                     <div style="margin-bottom: .3rem;">
                         {{-- START TABLE --}}
@@ -301,7 +342,7 @@
                 style="width: 100%;margin: 0;padding: 10px 15px;border: 2px solid #dc3545; border-radius: 8px; box-shadow: 0 4px 20px rgba(220, 53, 69, 0.15); background: #fff;">
                 <!-- First page -->
                 <div class="invoice" style="overflow: visible;">
-                    @include('admin.components.booking-invoices.printing.header', [
+                    @include('admin.components.booking-invoices.printing.letterhead', [
                         'document_title' => __('admin.attachments'),
                     ])
                     <div style="margin-bottom: .3rem;">
@@ -315,7 +356,7 @@
                             ])
                         @endif
                     </div>
-                    
+
                     {{-- START INVOICE SUMMARY FOR ATTACHMENTS --}}
                     @include('admin.components.booking-invoices.printing.attachment-invoice-summary')
                     {{-- END INVOICE SUMMARY FOR ATTACHMENTS --}}

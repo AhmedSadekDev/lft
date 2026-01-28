@@ -14,7 +14,7 @@
     @endphp
 
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 4px;">
-        <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #17a2b8;">
+        <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #DC143C;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-weight: 700; color: #495057; font-size: 9px;">النقل (خاضع للضريبة):</span>
                 <span style="font-weight: 700; color: #212529; font-size: 10px;">{{ number_format($invoice->transportation_total_before_vat ?? 0, 2) }} ج.م</span>

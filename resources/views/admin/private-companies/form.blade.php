@@ -73,6 +73,81 @@
                 @endif
             </div>
         </div>
+
+        <div class="col-md-12">
+            <h5 class="font-weight-bold mt-3 mb-3">معلومات الاتصال</h5>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+            <div class="form-group">
+                {!! Form::label('input_phone1', 'الهاتف الأول') !!}
+                {!! Form::text('phone1', old('phone1'), [
+                    'class' => 'form-control',
+                    'id' => 'input_phone1',
+                    'placeholder' => '01001365666',
+                ]) !!}
+                @error('phone1')
+                    <small class="aleart text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+            <div class="form-group">
+                {!! Form::label('input_phone2', 'الهاتف الثاني') !!}
+                {!! Form::text('phone2', old('phone2'), [
+                    'class' => 'form-control',
+                    'id' => 'input_phone2',
+                    'placeholder' => '01013118008',
+                ]) !!}
+                @error('phone2')
+                    <small class="aleart text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+            <div class="form-group">
+                {!! Form::label('input_tel_fax', 'تليفون - فاكس') !!}
+                {!! Form::text('tel_fax', old('tel_fax'), [
+                    'class' => 'form-control',
+                    'id' => 'input_tel_fax',
+                    'placeholder' => '057 - 2292423',
+                ]) !!}
+                @error('tel_fax')
+                    <small class="aleart text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+            <div class="form-group">
+                {!! Form::label('input_email', __('admin.email')) !!}
+                {!! Form::email('email', old('email'), [
+                    'class' => 'form-control',
+                    'id' => 'input_email',
+                    'placeholder' => 'leader@leaderfortrans.com',
+                ]) !!}
+                @error('email')
+                    <small class="aleart text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12">
+            <div class="form-group">
+                {!! Form::label('input_address', __('admin.address')) !!}
+                {!! Form::textarea('address', old('address'), [
+                    'class' => 'form-control',
+                    'id' => 'input_address',
+                    'placeholder' => 'ميناء دمياط المجمع الاستثمارى وحدة ٢٠٢',
+                    'rows' => 2,
+                ]) !!}
+                @error('address')
+                    <small class="aleart text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
     </div>
 </div>
 

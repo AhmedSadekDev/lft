@@ -17,12 +17,12 @@
             // "ايصالات:" تكون label، والجزء الآخر يكون displayValue
             $label = 'ايصالات:';
             $displayValue = '';
-            
+
             // الجزء قبل "ايصالات" (مثل "تخصيص" أو "هيئة الميناء")
             $beforePart = trim($parts[0]);
             // الجزء بعد "ايصالات" (إن وجد)
             $afterPart = isset($parts[2]) ? trim($parts[2]) : '';
-            
+
             // نستخدم الجزء قبل "ايصالات" كـ displayValue
             if (!empty($beforePart)) {
                 $displayValue = $beforePart;
@@ -91,9 +91,9 @@
         </div>
         @if($booking_service->image && $booking_service->getRawOriginal('image'))
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-top: 2px;">
-            <div style="display: flex; align-items: start; gap: 3px; background: #e7f3ff; padding: 2px 4px; border-radius: 3px; border-right: 2px solid #007bff;">
-                <span style="font-weight: 700; color: #004085; font-size: 9px; min-width: 70px;">🖼️ الإيصال:</span>
-                <a href="{{ $booking_service->image }}" target="_blank" style="color: #007bff; font-size: 9px; text-decoration: underline;">عرض الإيصال</a>
+            <div style="display: flex; align-items: start; gap: 3px; background: #ffe6e6; padding: 2px 4px; border-radius: 3px; border-right: 2px solid #DC143C;">
+                <span style="font-weight: 700; color: #8B0000; font-size: 9px; min-width: 70px;">🖼️ الإيصال:</span>
+                <a href="{{ $booking_service->image }}" target="_blank" style="color: #DC143C; font-size: 9px; text-decoration: underline;">عرض الإيصال</a>
             </div>
             <div></div>
         </div>

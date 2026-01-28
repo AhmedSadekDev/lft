@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class PrivateCompanyRequest extends FormRequest
+class PrivateCompanyRequestUpdate extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,27 +25,17 @@ class PrivateCompanyRequest extends FormRequest
      */
     public function rules()
     {
-        // Get the private company ID from route parameter
-        $privateCompany = $this->route('private-company') ?? $this->route('private_companies');
-        $privateCompanyId = $privateCompany ? $privateCompany->id : null;
-
         return [
             'name'                  => ['required', 'string', 'max:255'],
             'tax_no'               => [
                 'nullable',
                 'string',
                 'max:255',
-                request()->method() == 'POST'
-                    ? 'unique:private_companies,tax_no'
-                    : 'unique:private_companies,tax_no,' . $privateCompanyId
             ],
             'commercial_register'   => [
                 'nullable',
                 'string',
                 'max:255',
-                request()->method() == 'POST'
-                    ? 'unique:private_companies,commercial_register'
-                    : 'unique:private_companies,commercial_register,' . $privateCompanyId
             ],
             'logo'                  => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
             'phone1'                => ['nullable', 'string', 'max:255'],
