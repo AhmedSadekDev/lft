@@ -2,13 +2,19 @@
     $company = $invoice->booking->company ?? null;
     $privateCompany = $company->privateCompany ?? null;
 
-    // استخدام بيانات الشركة الخاصة للاسم واللوجو فقط
+    // استخدام بيانات الشركة الخاصة للاسم واللوجو والسجل التجاري والرقم الضريبي
     $displayName = $privateCompany ? $privateCompany->name : ($company->name ?? "");
     $logoUrl = $privateCompany ? $privateCompany->logo : null;
 
-    // الرقم الضريبي والسجل التجاري دائماً من الشركة (العميل) وليس الشركة الخاصة
-    $displayTaxNo = $company->tax_no ?? "";
-    $displayCommercialRegister = $company->commercial_register ?? "";
+    // السجل التجاري والرقم الضريبي من الشركة الخاصة
+    $privateCompanyTaxNo = $privateCompany->tax_no ?? "";
+    $privateCompanyCommercialRegister = $privateCompany->commercial_register ?? "";
+
+    // الرقم الضريبي للعميل (الشركة)
+    $clientTaxNo = $company->tax_no ?? "";
+
+    // اسم العميل/الشركة التي نرسل لها الفاتورة
+    $clientName = $company->name ?? "";
 
     // معلومات الاتصال من الشركة الخاصة
     if ($privateCompany) {
@@ -114,6 +120,15 @@
             flex: 0 0 auto !important;
         }
 
+        /* Bigger logo in print */
+        .logo-container img,
+        .logo-container svg {
+            max-width: 250px !important;
+            max-height: 120px !important;
+            width: 250px !important;
+            height: auto !important;
+        }
+
         /* Company info on the right */
         .company-info-container {
             order: 2 !important;
@@ -165,26 +180,29 @@
             flex: 0 0 auto;
             display: flex;
             align-items: center;
-            min-width: 120px;
+            min-width: 250px;
         ">
             @if($logoUrl)
                 <img src="{{ $logoUrl }}"
                      alt="Logo"
+                     class="logo-image"
                      style="
-                        max-width: 120px;
-                        max-height: 60px;
+                        max-width: 250px;
+                        max-height: 120px;
+                        width: 250px;
+                        height: auto;
                         object-fit: contain;
                         display: block;
                      ">
             @else
-                <svg width="120" height="60" viewBox="0 0 200 90">
+                <svg width="250" height="120" viewBox="0 0 200 90" class="logo-svg">
                     <circle cx="100" cy="45" r="40" fill="#DC143C" opacity="0.1"/>
                     <text x="100" y="50" font-size="20" font-weight="bold" fill="#DC143C" text-anchor="middle" font-family="Arial">LEADER FOR TRANS</text>
                 </svg>
             @endif
         </div>
 
-        <!-- RIGHT : Company Name and Info -->
+        <!-- RIGHT : Private Company Name and Info -->
         <div class="company-info-container" style="
             flex: 1;
             text-align: right;
@@ -210,8 +228,12 @@
                 لنقل الحاويات
             </div>
 
-            @if($displayTaxNo)
-                <div style="font-size: 12px; color: #666;">ب.ض : {{ $displayTaxNo }}</div>
+            @if($privateCompanyCommercialRegister)
+                <div style="font-size: 12px; color: #666; margin-bottom: 2px;">السجل التجاري: {{ $privateCompanyCommercialRegister }}</div>
+            @endif
+
+            @if($privateCompanyTaxNo)
+                <div style="font-size: 12px; color: #666;">ب.ض: {{ $privateCompanyTaxNo }}</div>
             @endif
         </div>
 
@@ -265,7 +287,7 @@
 <div style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; box-shadow: 0 4px 15px rgba(220, 20, 60, 0.2); -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact; display: block !important; visibility: visible !important; page-break-inside: avoid; position: relative; z-index: 2;">
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 8px;">
-            <h2 style="font-family: 'Cairo', sans-serif; color: #fff; margin: 0; font-size: 16px; font-weight: 700;">{{ str_replace('فواتير', 'فاتوره', $document_title ?? '') }}</h2>
+            <h2 style="font-family: 'Cairo', sans-serif; color: #fff; margin: 0; font-size: 16px; font-weight: 700;">{{ str_replace('فواتير', 'فاتوره', $document_title ?? '') }} - {{ $clientName }}</h2>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 4px;">
@@ -289,6 +311,12 @@
                 <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">👤 عناية:</span>
                 <span style="color: #212529; font-size: 11px;">{{ $invoice->booking->employee?->name ?? $invoice->booking->company->name ?? "" }}</span>
             </div>
+            @if($clientTaxNo)
+            <div style="display: flex; align-items: center; gap: 4px;">
+                <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">📋 الرقم الضريبي:</span>
+                <span style="color: #212529; font-size: 11px;">{{ $clientTaxNo }}</span>
+            </div>
+            @endif
             <div style="display: flex; align-items: center; gap: 4px;">
                 <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">🚢 الخط الملاحي:</span>
                 <span style="color: #212529; font-size: 11px;">{{ $invoice->booking->shippingAgent->title ?? "" }}</span>

@@ -43,8 +43,9 @@
             @page {
                 margin-top: 0;
                 margin-bottom: 0;
-                margin-left: 0;
-                margin-right: 0;
+                margin-left: auto;
+                margin-right: auto;
+                size: A4;
             }
 
             .letterhead-header {
@@ -93,9 +94,10 @@
             }
 
             .invoice-wrapper {
-                width: 100% !important;
-                max-width: 100% !important;
-                min-width: 100% !important;
+                width: 90% !important;
+                max-width: 90% !important;
+                min-width: 90% !important;
+                margin: 0 auto !important;
                 page-break-after: always;
                 margin-bottom: 20px;
             }
@@ -229,14 +231,14 @@
             justify-content: center;
             flex-wrap: wrap;
             margin: 0 auto;
-            max-width: 100%;
+            max-width: 90%;
             padding: 0;
         }
 
         .invoice-wrapper {
             flex: 1;
-            min-width: 45%;
-            max-width: 48%;
+            min-width: 40%;
+            max-width: 42%;
         }
 
         @media (max-width: 1200px) {
@@ -346,9 +348,6 @@
                         'document_title' => __('admin.attachments'),
                     ])
                     <div style="margin-bottom: .3rem;">
-                        @if(count($booking->expenses) > 0)
-                            @include('admin.components.booking-invoices.printing.table.expenses-row')
-                        @endif
                         @if(count($attachment_rows) > 0)
                             @include('admin.components.booking-invoices.printing.table.layout', [
                                 'items' => $attachment_rows,

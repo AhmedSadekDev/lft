@@ -279,12 +279,21 @@ class ExpenseController extends Controller
                     ->where("type", 2)
                     ->get();
             } elseif (request()->booking_id) {
+                $bookingId = request()->booking_id;
+
                 $expenses = $agent->expenses()
-                    ->where(function ($query) {
-                        $query->where('booking_id', request()->booking_id)
-                              ->orWhereHas('bookingContainer', function ($q) {
-                                  $q->where('booking_id', request()->booking_id);
+                    ->where(function ($query) use ($bookingId) {
+                        // المصروفات التي لها booking_id مباشرة يساوي الحجز المطلوب
+                        $query->where('booking_id', $bookingId)
+                              // أو المصروفات التي لها booking_container_id مرتبط بالحجز المطلوب فقط
+                              ->orWhereHas('bookingContainer', function ($q) use ($bookingId) {
+                                  $q->where('booking_id', $bookingId);
                               });
+                    })
+                    // استبعاد المصروفات التي لها booking_id مختلف عن الحجز المطلوب
+                    ->where(function ($query) use ($bookingId) {
+                        $query->whereNull('booking_id')
+                              ->orWhere('booking_id', $bookingId);
                     })
                     ->get();
             } elseif (request()->delivery_policy_id) {

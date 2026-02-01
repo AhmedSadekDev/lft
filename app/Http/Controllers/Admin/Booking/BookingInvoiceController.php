@@ -183,22 +183,21 @@ class BookingInvoiceController extends Controller
         if (!is_array($lpr) && !($lpr instanceof Collection))
             $lpr = [$lpr];
 
-        // Attachment rows: untaxed services + receipt services (sorted)
+        // Attachment rows: only untaxed receipt services (sorted)
+        // Get receipt services from untaxed services
         $untaxedServices = $booking->getUntaxedServices()->get();
-
-        // Sort untaxed services: "مصاريف أخرى" should come before "بيانه"
-        $untaxedServices = $untaxedServices->sortBy(function ($service) {
+        $untaxedReceiptServices = $untaxedServices->filter(function ($service) {
             $fullName = $service->full_name ?? '';
-            if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
-                return 1;
-            } elseif (stripos($fullName, 'بيانه') !== false || stripos($fullName, 'بيان') !== false) {
-                return 2;
-            }
-            return 3;
-        })->values();
+            return stripos($fullName, 'ايصالات') !== false || stripos($fullName, 'receipt') !== false || stripos($fullName, 'إيصالات') !== false;
+        });
 
-        // Sort receipt services as well
-        $receiptServices = $receiptServices->sortBy(function ($service) {
+        // Get all receipt services (from taxedServices, they are already collected above in $receiptServices)
+        // Note: receiptServices from taxedServices are already collected above (line 138)
+        // Combine all receipt services (from both taxed and untaxed service collections)
+        $allReceiptServices = $untaxedReceiptServices->concat($receiptServices);
+
+        // Sort all receipt services: "مصاريف أخرى" should come before "بيانه"
+        $allReceiptServices = $allReceiptServices->sortBy(function ($service) {
             $fullName = $service->full_name ?? '';
             if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
                 return 1;
@@ -210,7 +209,7 @@ class BookingInvoiceController extends Controller
 
         // Group receipt services by type (e.g., "تخصيص", "هيئة الميناء")
         $groupedReceiptServices = collect();
-        $receiptGroups = $receiptServices->groupBy(function ($service) {
+        $receiptGroups = $allReceiptServices->groupBy(function ($service) {
             $fullName = $service->full_name ?? '';
             // Extract the part before "ايصالات" as the group key
             $parts = preg_split('/(ايصالات|إيصالات)/i', $fullName, 2, PREG_SPLIT_DELIM_CAPTURE);
@@ -241,7 +240,7 @@ class BookingInvoiceController extends Controller
             $groupedReceiptServices->push($groupedService);
         }
 
-        $attachment_rows = $untaxedServices->concat($groupedReceiptServices);
+        $attachment_rows = $groupedReceiptServices;
 
         return view('admin.bookings.booking-invoices.show', [
             'invoice' => $booking_invoice,
