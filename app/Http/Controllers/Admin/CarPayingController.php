@@ -13,7 +13,6 @@ use App\Http\Traits\ImagesTrait;
 use App\Models\BookingContainer;
 use App\Http\Controllers\Controller;
 use App\Models\DeliveryPolicy;
-use App\Models\Shipment;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CarPayingController extends Controller
@@ -59,10 +58,8 @@ class CarPayingController extends Controller
 
     public function edit($id)
     {
-        // $shipment = Shipment::findOrfail($id);
-        // $agents = Agent::all();
-
-        return view('admin.payments.edit', compact('shipment', 'agents'));
+        $paying = Payingcar::findOrFail($id);
+        return view('admin.payments.edit', compact('paying'));
     }
 
 
@@ -164,59 +161,187 @@ class CarPayingController extends Controller
 
     public function update(Request $request, $id)
     {
-        $shipment = Shipment::findOrFail($id);
+        $paying = Payingcar::findOrFail($id);
+        $policy = $paying->delivery_policy;
+        $vault = Vault::first();
+
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'agent_id' => 'required|exists:agents,id',
             'value' => 'required|numeric',
-            'date' => 'required|date',
-            'addition' => 'nullable|numeric'
+            'image' => 'nullable|mimes:jpg,jpeg,png'
         ]);
-        $data['user_id'] = auth()->user()->id;
 
+        $oldValue = $paying->value;
+        $newValue = $request->value;
 
+        // حساب المتبقي للسداد بعد التحديث
+        $extraExpensesTotal = $policy->extraExpenses->sum('value');
+        $paidTotalBeforeUpdate = $policy->payingCars->sum('value');
+        $paidTotalAfterUpdate = $paidTotalBeforeUpdate - $oldValue + $newValue;
+
+        if ($policy->cost) {
+            $calc = $policy->cost - ($paidTotalAfterUpdate - $newValue);
+        } else {
+            $calc = $extraExpensesTotal - ($paidTotalAfterUpdate - $newValue);
+        }
+
+        if ($newValue > $calc) {
+            return back()->with('error', __('Delivery Policy is less than your money'));
+        }
+
+        // تحديث الصورة إن وجدت
         if ($request->hasFile('image')) {
             $imageName = time() . '_transaction.' . $request->image->extension();
-            $this->uploadImage($request->image, $imageName, 'banks', $shipment->image);
+            $this->uploadImage($request->image, $imageName, 'banks', $paying->image);
             $data['image'] = 'Admin/images/banks/' .  $imageName;
         }
 
+        // تحديث قيمة الخزنة
+        $valueDiff = $newValue - $oldValue;
+        if ($valueDiff != 0) {
+            if ($valueDiff > 0) {
+                // زيادة السداد - خصم من الخزنة
+                if ($vault->amount < $valueDiff) {
+                    return back()->with('error', __('main.car_wallet_does_not_have_enough_amount'));
+                }
 
-        $oldValue = $shipment->value + $shipment->addition;
-        $newValue = $request->value + $request->addition;
-        $car = $shipment->car;
-        $agent = $shipment->agent;
+                VaultTransaction::create([
+                    'name' => 'تحديث سداد سياره - ' . $paying->id,
+                    'amount' => $valueDiff,
+                    'type' => 0 // منصرف
+                ]);
 
-        if ($newValue > $oldValue) {
-            $diff = $newValue - $oldValue;
+                $vault->update([
+                    'amount' => $vault->amount - $valueDiff
+                ]);
+            } else {
+                // تقليل السداد - إضافة للخزنة
+                VaultTransaction::create([
+                    'name' => 'تحديث سداد سياره - ' . $paying->id,
+                    'amount' => abs($valueDiff),
+                    'type' => 1 // وارد
+                ]);
 
-            if ($agent->wallet - $diff < 0) {
-                return to_route('payments.index', $car->id)->with('error', __('main.car_wallet_does_not_have_enough_amount'));
+                $vault->update([
+                    'amount' => $vault->amount + abs($valueDiff)
+                ]);
             }
+        }
 
-            $agent->update([
-                'wallet' => $agent->wallet - $diff
+        // تحديث المصروف الإضافي
+        if ($extraExpensesTotal > 0) {
+            // حساب المصروف الإضافي قبل التحديث
+            $remainingExtraExpensesBeforeUpdate = $extraExpensesTotal - ($paidTotalBeforeUpdate - $oldValue);
+            $extraExpenseAddedBeforeUpdate = min($oldValue, $remainingExtraExpensesBeforeUpdate);
+
+            // حساب المصروف الإضافي بعد التحديث
+            $remainingExtraExpensesAfterUpdate = $extraExpensesTotal - ($paidTotalAfterUpdate - $newValue);
+            $extraExpenseAddedAfterUpdate = min($newValue, $remainingExtraExpensesAfterUpdate);
+
+            $extraExpenseDiff = $extraExpenseAddedAfterUpdate - $extraExpenseAddedBeforeUpdate;
+
+            if ($extraExpenseDiff != 0) {
+                if ($extraExpenseDiff > 0) {
+                    // زيادة المصروف الإضافي - إضافة للخزنة
+                    VaultTransaction::create([
+                        'name' => 'تحديث مصروف إضافي - بوليصة ' . $policy->id,
+                        'amount' => $extraExpenseDiff,
+                        'type' => 1 // وارد
+                    ]);
+
+                    $vault->update([
+                        'amount' => $vault->amount + $extraExpenseDiff
+                    ]);
+                } else {
+                    // تقليل المصروف الإضافي - خصم من الخزنة
+                    VaultTransaction::create([
+                        'name' => 'تحديث مصروف إضافي - بوليصة ' . $policy->id,
+                        'amount' => abs($extraExpenseDiff),
+                        'type' => 0 // منصرف
+                    ]);
+
+                    $vault->update([
+                        'amount' => $vault->amount - abs($extraExpenseDiff)
+                    ]);
+                }
+            }
+        }
+
+        // تحديث MoneyTransfer
+        $moneyTransfer = MoneyTransfer::where('transfered_type', 'App\Models\Payingcar')
+            ->where('transfered_id', $paying->id)
+            ->first();
+
+        if ($moneyTransfer) {
+            $moneyTransfer->update([
+                'value' => $newValue
             ]);
         }
 
-        if ($oldValue > $newValue) {
-            $diff = $oldValue - $newValue;
-            $agent->update([
-                'wallet' => $agent->wallet + $diff
-            ]);
-        }
+        $paying->update($data);
 
-        $shipment->update($data);
-        return to_route('payments.index', $shipment->car_id)->with('success', __('alerts.updated_successfully'));
+        return back()->with('success', __('alerts.updated_successfully'));
     }
 
 
     public function destroy($id)
     {
-        $shipment = Shipment::findOrFail($id);
+        $paying = Payingcar::findOrFail($id);
+        $policy = $paying->delivery_policy;
+        $vault = Vault::first();
 
-        $shipment->delete();
+        // إرجاع قيمة السداد للخزنة
+        $vault->update([
+            'amount' => $vault->amount + $paying->value
+        ]);
 
-        return response()->json(['staus' => true, 'msg' => __('alerts.deleted_successfully')], 200);
+        // سجل معاملة إرجاع السداد (وارد)
+        VaultTransaction::create([
+            'name' => 'إلغاء سداد سياره - ' . $paying->id,
+            'amount' => $paying->value,
+            'type' => 1 // وارد
+        ]);
+
+        // إعادة حساب المصروف الإضافي وإرجاعه من الخزنة إذا لزم الأمر
+        $extraExpensesTotal = $policy->extraExpenses->sum('value');
+        $paidTotalBeforeDelete = $policy->payingCars->sum('value');
+        $paidTotalAfterDelete = $paidTotalBeforeDelete - $paying->value;
+
+        if ($extraExpensesTotal > 0) {
+            // حساب المصروف الإضافي غير المدفوع قبل إضافة هذا السداد
+            $remainingExtraExpensesBeforeThisPayment = $extraExpensesTotal - ($paidTotalBeforeDelete - $paying->value);
+            // حساب المصروف الإضافي غير المدفوع بعد الحذف
+            $remainingExtraExpensesAfterDelete = $extraExpensesTotal - $paidTotalAfterDelete;
+
+            // الفرق هو المصروف الإضافي الذي كان قد أُضيف للخزنة عند هذا السداد
+            // عند السداد: $extraExpenseToAdd = min($paying->value, $remainingExtraExpensesBeforeThisPayment)
+            $extraExpenseAddedAtPayment = min($paying->value, $remainingExtraExpensesBeforeThisPayment);
+
+            if ($extraExpenseAddedAtPayment > 0) {
+                // إرجاع المصروف الإضافي من الخزنة
+                VaultTransaction::create([
+                    'name' => 'إلغاء مصروف إضافي - بوليصة ' . $policy->id,
+                    'amount' => $extraExpenseAddedAtPayment,
+                    'type' => 0 // منصرف
+                ]);
+
+                $vault->update([
+                    'amount' => $vault->amount - $extraExpenseAddedAtPayment
+                ]);
+            }
+        }
+
+        // حذف MoneyTransfer المرتبط
+        MoneyTransfer::where('transfered_type', 'App\Models\Payingcar')
+            ->where('transfered_id', $paying->id)
+            ->delete();
+
+        // حذف الصورة إن وجدت
+        if ($paying->image && file_exists(public_path($paying->image))) {
+            unlink(public_path($paying->image));
+        }
+
+        $paying->delete();
+
+        return response()->json(['status' => true, 'msg' => __('alerts.deleted_successfully')], 200);
     }
 }

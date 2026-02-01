@@ -55,17 +55,64 @@
                             {{ number_format($currentBalance, 2) }} جنيه
                         </span>
                     </p>
-                    <p><strong>رصيد الخزنة:</strong>
-                        <span class="text-success font-weight-bold" style="font-size: 1.2em">
-                            {{ number_format($vault->amount ?? 0, 2) }} جنيه
-                        </span>
-                    </p>
                 </div>
             </div>
+
+            <!-- الفواتير غير المسددة -->
+            @if($unpaidInvoices->count() > 0)
+                <div class="mb-4">
+                    <h5 class="font-weight-bold mb-3">الفواتير غير المسددة</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff;">
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="select_all" title="تحديد الكل">
+                                    </th>
+                                    <th>رقم الفاتورة</th>
+                                    <th>رقم الطلب</th>
+                                    <th>التاريخ</th>
+                                    <th>إجمالي الفاتورة</th>
+                                    <th>المسدد</th>
+                                    <th>المتبقي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($unpaidInvoices as $invoice)
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox"
+                                                   name="invoice_ids[]"
+                                                   class="invoice-checkbox"
+                                                   value="{{ $invoice['id'] }}"
+                                                   data-remaining="{{ $invoice['remaining'] }}">
+                                        </td>
+                                        <td>{{ $invoice['invoice_number'] }}</td>
+                                        <td>{{ $invoice['booking_number'] }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($invoice['date'])->format('Y-m-d') }}</td>
+                                        <td class="font-weight-bold">{{ number_format($invoice['total'], 2) }} ج.م</td>
+                                        <td class="text-success">{{ number_format($invoice['paid'], 2) }} ج.م</td>
+                                        <td class="text-danger font-weight-bold">{{ number_format($invoice['remaining'], 2) }} ج.م</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="alert alert-info mt-3">
+                        <strong>المجموع المحدد:</strong> <span id="selected_total" class="font-weight-bold">0.00</span> ج.م
+                        <span id="selected_count" class="ml-3">(0 فاتورة)</span>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-warning">
+                    لا توجد فواتير غير مسددة
+                </div>
+            @endif
 
             <!-- نموذج السداد -->
             <form action="{{ route('accounts.payment.process', $company->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="invoice_ids" id="invoice_ids_input" value="">
 
                 <div class="row">
                     <div class="col-md-6">
@@ -73,6 +120,7 @@
                             <label class="font-weight-bold required-field">المبلغ <span class="text-danger">*</span></label>
                             <input type="number"
                                    name="amount"
+                                   id="amount_input"
                                    class="form-control @error('amount') is-invalid @enderror"
                                    step="0.01"
                                    min="0.01"
@@ -97,6 +145,106 @@
                             @error('payment_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="font-weight-bold required-field">نوع طريقة السداد <span class="text-danger">*</span></label>
+                            <select name="payment_type"
+                                    id="payment_type"
+                                    class="form-control @error('payment_type') is-invalid @enderror"
+                                    required>
+                                <option value="">اختر نوع السداد</option>
+                                <option value="bank_transfer" {{ old('payment_type') == 'bank_transfer' ? 'selected' : '' }}>تحويل بنكي</option>
+                                <option value="check" {{ old('payment_type') == 'check' ? 'selected' : '' }}>شيك</option>
+                            </select>
+                            @error('payment_type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- حقل اختيار البنك (للتحويل البنكي) -->
+                    <div class="col-md-12" id="bank_transfer_field" style="display: none;">
+                        <div class="form-group">
+                            <label class="font-weight-bold required-field">البنك <span class="text-danger">*</span></label>
+                            <select name="bank_id"
+                                    id="bank_id"
+                                    class="form-control @error('bank_id') is-invalid @enderror">
+                                <option value="">اختر البنك</option>
+                                @foreach($banks as $bank)
+                                    <option value="{{ $bank->id }}" {{ old('bank_id') == $bank->id ? 'selected' : '' }}>
+                                        {{ $bank->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('bank_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- حقول الشيك -->
+                    <div class="col-md-12" id="check_fields" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold required-field">اسم البنك <span class="text-danger">*</span></label>
+                                    <input type="text"
+                                           name="check_bank_name"
+                                           id="check_bank_name"
+                                           class="form-control @error('check_bank_name') is-invalid @enderror"
+                                           value="{{ old('check_bank_name') }}"
+                                           placeholder="اسم البنك">
+                                    @error('check_bank_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold required-field">رقم الشيك <span class="text-danger">*</span></label>
+                                    <input type="text"
+                                           name="check_number"
+                                           id="check_number"
+                                           class="form-control @error('check_number') is-invalid @enderror"
+                                           value="{{ old('check_number') }}"
+                                           placeholder="رقم الشيك">
+                                    @error('check_number')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold required-field">قيمة الشيك <span class="text-danger">*</span></label>
+                                    <input type="number"
+                                           name="check_value"
+                                           id="check_value"
+                                           class="form-control @error('check_value') is-invalid @enderror"
+                                           step="0.01"
+                                           min="0.01"
+                                           value="{{ old('check_value') }}"
+                                           placeholder="قيمة الشيك">
+                                    @error('check_value')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold required-field">تاريخ استحقاق الشيك <span class="text-danger">*</span></label>
+                                    <input type="date"
+                                           name="check_due_date"
+                                           id="check_due_date"
+                                           class="form-control @error('check_due_date') is-invalid @enderror"
+                                           value="{{ old('check_due_date') }}">
+                                    @error('check_due_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -140,4 +288,70 @@
         </div>
     </div>
 </div>
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        // تحديد/إلغاء تحديد الكل
+        $('#select_all').on('change', function() {
+            $('.invoice-checkbox').prop('checked', $(this).prop('checked'));
+            updateSelectedTotal();
+        });
+
+        // تحديث المجموع عند تغيير الاختيار
+        $('.invoice-checkbox').on('change', function() {
+            updateSelectedTotal();
+            $('#select_all').prop('checked', $('.invoice-checkbox:checked').length === $('.invoice-checkbox').length);
+        });
+
+        function updateSelectedTotal() {
+            var total = 0;
+            var count = 0;
+            var selectedIds = [];
+
+            $('.invoice-checkbox:checked').each(function() {
+                total += parseFloat($(this).data('remaining')) || 0;
+                count++;
+                selectedIds.push($(this).val());
+            });
+
+            $('#selected_total').text(total.toFixed(2));
+            $('#selected_count').text('(' + count + ' فاتورة)');
+            $('#invoice_ids_input').val(selectedIds.join(','));
+            $('#amount_input').val(total > 0 ? total.toFixed(2) : '');
+        }
+
+        // تحديث نوع السداد
+        $('#payment_type').on('change', function() {
+            var paymentType = $(this).val();
+
+            // إخفاء جميع الحقول أولاً
+            $('#bank_transfer_field').hide();
+            $('#check_fields').hide();
+
+            // إزالة required من جميع الحقول
+            $('#bank_id').removeAttr('required');
+            $('#check_bank_name').removeAttr('required');
+            $('#check_number').removeAttr('required');
+            $('#check_value').removeAttr('required');
+            $('#check_due_date').removeAttr('required');
+
+            // إظهار الحقول المناسبة حسب نوع السداد
+            if (paymentType === 'bank_transfer') {
+                $('#bank_transfer_field').show();
+                $('#bank_id').attr('required', 'required');
+            } else if (paymentType === 'check') {
+                $('#check_fields').show();
+                $('#check_bank_name').attr('required', 'required');
+                $('#check_number').attr('required', 'required');
+                $('#check_value').attr('required', 'required');
+                $('#check_due_date').attr('required', 'required');
+            }
+        });
+
+        // تشغيل عند تحميل الصفحة إذا كان هناك قيمة قديمة
+        $('#payment_type').trigger('change');
+    });
+</script>
+@endpush
 @endsection

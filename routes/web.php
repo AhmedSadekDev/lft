@@ -444,6 +444,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('accounts/{companyId}/payment', [AccountController::class, 'showPaymentForm'])->name('accounts.payment');
     Route::post('accounts/{companyId}/payment', [AccountController::class, 'processPayment'])->name('accounts.payment.process');
 
+    // صفحة الشيكات
+    Route::get('accounts/checks', [AccountController::class, 'checksIndex'])->name('accounts.checks.index');
+    Route::post('accounts/checks/{paymentId}/mark-paid', [AccountController::class, 'markCheckAsPaid'])->name('accounts.checks.mark-paid');
+
     // كشف حساب السيارات
     Route::get('accounts/car/{carId}/statement', [AccountController::class, 'carStatement'])->name('accounts.car.statement');
     Route::get('accounts/car/{carId}/statement/export-excel', [AccountController::class, 'exportCarExcel'])->name('accounts.car.statement.export.excel');
@@ -453,6 +457,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('accounts/financial-position', [AccountController::class, 'financialPositionReport'])->name('accounts.financial-position');
     Route::get('accounts/financial-position/export-pdf', [AccountController::class, 'exportFinancialPositionPDF'])->name('accounts.financial-position.export.pdf');
     Route::get('accounts/financial-position/export-excel', [AccountController::class, 'exportFinancialPositionExcel'])->name('accounts.financial-position.export.excel');
+
+    // تقرير الموقف المالي - السيارات
+    Route::get('accounts/cars/financial-position', [AccountController::class, 'carsFinancialPositionReport'])->name('accounts.cars.financial-position');
 
     // تقرير الأرباح والخسائر
     Route::get('accounts/profit-loss', [AccountController::class, 'profitLossReport'])->name('accounts.profit-loss');

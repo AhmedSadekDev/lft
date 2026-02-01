@@ -15,6 +15,10 @@ use App\Models\AgentExpense;
 use App\Models\MoneyTransfer;
 use App\Models\Payingcar;
 use App\Models\DeliveryPolicy;
+use App\Models\Invoice;
+use App\Models\InvoicePayment;
+use App\Models\VaultTransaction;
+use App\Models\BankTrnsaction;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -53,6 +57,11 @@ class DashbaordController extends Controller
             // إحصائيات البوليصات
             'total_delivery_policies' => DeliveryPolicy::count(),
             'today_delivery_policies' => DeliveryPolicy::whereDate('created_at', today())->count(),
+
+            // إحصائيات الفواتير
+            'total_invoices' => Invoice::count(),
+            'today_invoices' => Invoice::whereDate('created_at', today())->count(),
+            'month_invoices' => Invoice::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
         ];
 
         // بيانات الرسوم البيانية - الحجوزات حسب الشهر (آخر 6 أشهر)
@@ -70,9 +79,21 @@ class DashbaordController extends Controller
         $deliveryPolicies = MoneyTransfer::where('type', MoneyTransfer::deliveryPolicy)
             ->whereDate('created_at', today())
             ->sum('value');
+        $settle = MoneyTransfer::where('type', MoneyTransfer::settle)
+            ->whereDate('created_at', today())
+            ->sum('value');
+        $transferAgent = MoneyTransfer::where('type', MoneyTransfer::transferAgent)
+            ->whereDate('created_at', today())
+            ->sum('value');
         $payingCars = Payingcar::whereDate('created_at', today())->sum('value');
+        $vaultTransactions = VaultTransaction::where('type', 0)
+            ->whereDate('created_at', today())
+            ->sum('amount');
+        $bankTransactions = BankTrnsaction::where('type', 0)
+            ->whereDate('created_at', today())
+            ->sum('amount');
 
-        return $agentExpenses + $deliveryPolicies + $payingCars;
+        return $agentExpenses + $deliveryPolicies + $settle + $transferAgent + $payingCars + $vaultTransactions + $bankTransactions;
     }
 
     private function getTodayIncome()
@@ -83,8 +104,23 @@ class DashbaordController extends Controller
         $fromDashboard = MoneyTransfer::where('type', MoneyTransfer::fromDashboard)
             ->whereDate('created_at', today())
             ->sum('value');
+        $invoicePayments = InvoicePayment::where(function($query) {
+                $query->where('payment_type', '!=', 'check')
+                      ->orWhere(function($q) {
+                          $q->where('payment_type', 'check')
+                            ->whereNotNull('check_paid_at');
+                      });
+            })
+            ->whereDate('created_at', today())
+            ->sum('value');
+        $vaultTransactions = VaultTransaction::where('type', 1)
+            ->whereDate('created_at', today())
+            ->sum('amount');
+        $bankTransactions = BankTrnsaction::where('type', 1)
+            ->whereDate('created_at', today())
+            ->sum('amount');
 
-        return $officeCommissions + $fromDashboard;
+        return $officeCommissions + $fromDashboard + $invoicePayments + $vaultTransactions + $bankTransactions;
     }
 
     private function getMonthExpenses()
@@ -96,11 +132,27 @@ class DashbaordController extends Controller
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('value');
+        $settle = MoneyTransfer::where('type', MoneyTransfer::settle)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('value');
+        $transferAgent = MoneyTransfer::where('type', MoneyTransfer::transferAgent)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('value');
         $payingCars = Payingcar::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('value');
+        $vaultTransactions = VaultTransaction::where('type', 0)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('amount');
+        $bankTransactions = BankTrnsaction::where('type', 0)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('amount');
 
-        return $agentExpenses + $deliveryPolicies + $payingCars;
+        return $agentExpenses + $deliveryPolicies + $settle + $transferAgent + $payingCars + $vaultTransactions + $bankTransactions;
     }
 
     private function getMonthIncome()
@@ -113,8 +165,26 @@ class DashbaordController extends Controller
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('value');
+        $invoicePayments = InvoicePayment::where(function($query) {
+                $query->where('payment_type', '!=', 'check')
+                      ->orWhere(function($q) {
+                          $q->where('payment_type', 'check')
+                            ->whereNotNull('check_paid_at');
+                      });
+            })
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('value');
+        $vaultTransactions = VaultTransaction::where('type', 1)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('amount');
+        $bankTransactions = BankTrnsaction::where('type', 1)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('amount');
 
-        return $officeCommissions + $fromDashboard;
+        return $officeCommissions + $fromDashboard + $invoicePayments + $vaultTransactions + $bankTransactions;
     }
 
     private function getBookingsChartData()
@@ -154,9 +224,25 @@ class DashbaordController extends Controller
                 ->whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
                 ->sum('value');
+            $monthExpenses += MoneyTransfer::where('type', MoneyTransfer::settle)
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->sum('value');
+            $monthExpenses += MoneyTransfer::where('type', MoneyTransfer::transferAgent)
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->sum('value');
             $monthExpenses += Payingcar::whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
                 ->sum('value');
+            $monthExpenses += VaultTransaction::where('type', 0)
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->sum('amount');
+            $monthExpenses += BankTrnsaction::where('type', 0)
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->sum('amount');
             $expenses[] = $monthExpenses;
 
             // الواردات
@@ -168,6 +254,24 @@ class DashbaordController extends Controller
                 ->whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
                 ->sum('value');
+            $monthIncome += InvoicePayment::where(function($query) {
+                    $query->where('payment_type', '!=', 'check')
+                          ->orWhere(function($q) {
+                              $q->where('payment_type', 'check')
+                                ->whereNotNull('check_paid_at');
+                          });
+                })
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->sum('value');
+            $monthIncome += VaultTransaction::where('type', 1)
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->sum('amount');
+            $monthIncome += BankTrnsaction::where('type', 1)
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->sum('amount');
             $income[] = $monthIncome;
         }
 

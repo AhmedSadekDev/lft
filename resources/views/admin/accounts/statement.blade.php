@@ -166,7 +166,9 @@
                                 $totalPreviousCredit = $transactions->sum('previous_credit');
                                 $totalCurrentDebit = $transactions->sum('current_debit');
                                 $totalCurrentCredit = $transactions->sum('current_credit');
-                                $finalRunningBalance = $transactions->last()['running_balance'] ?? $finalBalance;
+                                // استخدام $finalBalance المحسوب بشكل صحيح من الكنترولر
+                                // الرصيد النهائي = الرصيد المرحّل + إجمالي الفواتير - إجمالي المدفوعات
+                                $finalRunningBalance = $finalBalance;
                             @endphp
                             <tr class="table-info font-weight-bold">
                                 <td class="text-center" colspan="2">الحساب النهائي يوم {{ $toDate }}</td>

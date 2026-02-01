@@ -86,12 +86,18 @@
 <script>
     $(document).ready(function() {
         $('#myForm').on('submit', function(e) {
-            // Show a confirmation dialog
-            var confirmed = confirm("تم إصدار فاتوره لهذا الطلب هل تريد المتابعه ؟");
-            
-            // If the user clicks "Cancel", prevent the form from submitting
-            if (!confirmed) {
-                e.preventDefault();
+            // Check if the booking has an invoice
+            var bookingContainerId = $('#booking_container_id').val();
+            var hasInvoice = {{ $bookingContainer->booking->invoice ? 'true' : 'false' }};
+
+            // Only show confirmation if there's an invoice
+            if (hasInvoice) {
+                var confirmed = confirm("تم إصدار فاتوره لهذا الطلب هل تريد المتابعه ؟");
+
+                // If the user clicks "Cancel", prevent the form from submitting
+                if (!confirmed) {
+                    e.preventDefault();
+                }
             }
         });
     });

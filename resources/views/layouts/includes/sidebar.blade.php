@@ -581,6 +581,13 @@
                                                 <span class="menu-text">حسابات الشركات</span>
                                             </a>
                                         </li>
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('accounts.checks.index') }}" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">الشيكات</span>
+                                            </a>
+                                        </li>
                                     @endif
                                     @if (auth()->user()->hasPermissionTo('cars.index'))
                                         <li class="menu-item menu-item-submenu" aria-haspopup="true"

@@ -9,6 +9,7 @@ use App\Http\Resources\Api\Agent\ExpenseResource;
 use App\Models\Agent;
 use App\Traits\ImagesTrait;
 use App\Models\AgentExpense;
+use App\Models\BookingContainer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Image;
@@ -185,6 +186,14 @@ class ExpenseController extends Controller
             $data['type_id'] = $request->type_id;
             $data['booking_container_id'] = $request->booking_container_id;
 
+            // تعيين booking_id من booking_container_id
+            if ($request->booking_container_id) {
+                $bookingContainer = BookingContainer::find($request->booking_container_id);
+                if ($bookingContainer) {
+                    $data['booking_id'] = $bookingContainer->booking_id;
+                }
+            }
+
             $expense =  AgentExpense::create($data);
 
             $agent->update(['wallet' => $agent->wallet - $request->value]);
@@ -219,6 +228,14 @@ class ExpenseController extends Controller
             $data['type_id'] = $request->type_id;
             $data['booking_container_id'] = $request->booking_container_id;
 
+            // تعيين booking_id من booking_container_id
+            if ($request->booking_container_id) {
+                $bookingContainer = BookingContainer::find($request->booking_container_id);
+                if ($bookingContainer) {
+                    $data['booking_id'] = $bookingContainer->booking_id;
+                }
+            }
+
             $expense = AgentExpense::create([
                 'agent_id' => $agent->id,
                 'type' => 2,
@@ -227,6 +244,7 @@ class ExpenseController extends Controller
                 'service_id' => $request->service_id,
                 'value' => $request->value,
                 'booking_container_id' => $request->booking_container_id,
+                'booking_id' => $data['booking_id'] ?? null,
             ]);
 
             $agent->update(['wallet' => $agent->wallet - $request->value]);
@@ -262,7 +280,12 @@ class ExpenseController extends Controller
                     ->get();
             } elseif (request()->booking_id) {
                 $expenses = $agent->expenses()
-                    ->where("booking_id", request()->booking_id)
+                    ->where(function ($query) {
+                        $query->where('booking_id', request()->booking_id)
+                              ->orWhereHas('bookingContainer', function ($q) {
+                                  $q->where('booking_id', request()->booking_id);
+                              });
+                    })
                     ->get();
             } elseif (request()->delivery_policy_id) {
                 $expenses = $agent->expenses()

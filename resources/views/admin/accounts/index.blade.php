@@ -14,6 +14,10 @@
                 </h3>
             </div>
             <div class="card-toolbar">
+                <a href="{{ route('accounts.checks.index') }}"
+                   class="btn btn-warning font-weight-bold shadow-sm mr-2">
+                    <i class="fas fa-money-check"></i> الشيكات
+                </a>
                 <a href="{{ route('accounts.financial-position') }}"
                    class="btn btn-info font-weight-bold shadow-sm">
                     <i class="fas fa-chart-line"></i> تقرير الموقف المالي

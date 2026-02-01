@@ -77,16 +77,14 @@
             <!-- جدول الشركات المدينة -->
             <h5 class="font-weight-bold mt-4 mb-3">الشركات المدينة (التي عليها فلوس)</h5>
             <div class="table-responsive">
-                <table class="table table-bordered table-hover" style="font-size: 12px;">
-                    <thead class="thead-dark">
+                <table class="table table-bordered table-hover">
+                    <thead style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff;">
                         <tr class="text-center">
                             <th style="width: 5%;">#</th>
-                            <th style="width: 25%;">اسم الشركة</th>
-                            <th style="width: 20%;">البريد الإلكتروني</th>
-                            <th style="width: 15%;">الهاتف</th>
-                            <th style="width: 15%;">إجمالي الفواتير</th>
-                            <th style="width: 15%;">إجمالي المدفوعات</th>
-                            <th style="width: 15%;">الرصيد المستحق</th>
+                            <th style="width: 30%;">اسم الشركة</th>
+                            <th style="width: 25%;">البريد الإلكتروني</th>
+                            <th style="width: 20%;">الهاتف</th>
+                            <th style="width: 15%;">القيمة النهائية</th>
                             <th style="width: 10%;">الإجراءات</th>
                         </tr>
                     </thead>
@@ -97,10 +95,8 @@
                             <td class="font-weight-bold">{{ $company['name'] }}</td>
                             <td>{{ $company['email'] }}</td>
                             <td>{{ $company['phone'] }}</td>
-                            <td class="text-center">{{ number_format($company['total_invoices'], 2) }}</td>
-                            <td class="text-center text-success">{{ number_format($company['total_payments'], 2) }}</td>
-                            <td class="text-center text-danger font-weight-bold" style="font-size: 14px;">
-                                {{ number_format($company['balance'], 2) }}
+                            <td class="text-center text-danger font-weight-bold" style="font-size: 16px;">
+                                {{ number_format($company['balance'], 2) }} ج.م
                             </td>
                             <td class="text-center">
                                 <a href="{{ route('accounts.statement', $company['id']) }}?from={{ \Carbon\Carbon::parse($reportDate)->startOfYear()->format('Y-m-d') }}&to={{ $reportDate }}"
@@ -111,7 +107,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5">
+                            <td colspan="6" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
                                     <p class="font-weight-bold">لا توجد شركات مدينة في هذا التاريخ</p>
@@ -121,13 +117,11 @@
                         @endforelse
                     </tbody>
                     @if($companiesWithDebts->count() > 0)
-                    <tfoot class="table-info">
+                    <tfoot style="background: #f8f9fa;">
                         <tr class="font-weight-bold">
-                            <td colspan="4" class="text-right" style="font-size: 14px;">الإجمالي:</td>
-                            <td class="text-center">{{ number_format($companiesWithDebts->sum('total_invoices'), 2) }}</td>
-                            <td class="text-center">{{ number_format($companiesWithDebts->sum('total_payments'), 2) }}</td>
-                            <td class="text-center text-danger" style="font-size: 16px;">
-                                {{ number_format($totalDebts, 2) }}
+                            <td colspan="4" class="text-right" style="font-size: 16px;">الإجمالي:</td>
+                            <td class="text-center text-danger" style="font-size: 18px;">
+                                {{ number_format($totalDebts, 2) }} ج.م
                             </td>
                             <td></td>
                         </tr>

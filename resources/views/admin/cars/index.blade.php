@@ -14,6 +14,11 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex gap-2 flex-wrap">
+                    @if (auth()->user()->hasPermissionTo('accounts.index'))
+                        <a href="{{ route('accounts.cars.financial-position') }}" class="btn btn-info font-weight-bold shadow-sm">
+                            <i class="fas fa-chart-line mr-1"></i> الموقف المالي
+                        </a>
+                    @endif
                     @if (auth()->user()->hasPermissionTo('cars.create'))
                         <a href="{{ route('cars.create') }}" class="btn btn-primary font-weight-bold shadow-sm">
                             <i class="fas fa-plus mr-1"></i>{{ __('admin.add') }}

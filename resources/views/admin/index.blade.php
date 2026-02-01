@@ -142,6 +142,32 @@
         </div>
     </div>
 
+    <!-- إحصائيات الفواتير -->
+    <div class="row mb-6">
+        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+            <div class="card card-custom shadow-sm border-left-danger">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted font-weight-bold mb-2">إجمالي الفواتير</h6>
+                            <h2 class="font-weight-bolder text-danger mb-0">{{ number_format($stats['total_invoices']) }}</h2>
+                        </div>
+                        <div class="icon-circle bg-danger text-white">
+                            <i class="fas fa-file-invoice-dollar fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar-day mr-1"></i>
+                            اليوم: {{ $stats['today_invoices'] }} |
+                            هذا الشهر: {{ $stats['month_invoices'] }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- إحصائيات مالية -->
     <div class="row mb-6">
         <div class="col-lg-6 col-md-6 mb-4">
@@ -262,6 +288,9 @@
     }
     .border-left-warning {
         border-left: 4px solid #ffc107 !important;
+    }
+    .border-left-danger {
+        border-left: 4px solid #dc3545 !important;
     }
     .icon-circle {
         width: 60px;

@@ -2,11 +2,13 @@
     $company = $invoice->booking->company ?? null;
     $privateCompany = $company->privateCompany ?? null;
 
-    // استخدام بيانات الشركة الخاصة إن وجدت، وإلا استخدام بيانات الشركة العادية
+    // استخدام بيانات الشركة الخاصة للاسم واللوجو فقط
     $displayName = $privateCompany ? $privateCompany->name : ($company->name ?? "");
-    $displayTaxNo = $privateCompany ? $privateCompany->tax_no : ($company->tax_no ?? "");
-    $displayCommercialRegister = $privateCompany ? $privateCompany->commercial_register : "";
     $logoUrl = $privateCompany ? $privateCompany->logo : null;
+
+    // الرقم الضريبي والسجل التجاري دائماً من الشركة (العميل) وليس الشركة الخاصة
+    $displayTaxNo = $company->tax_no ?? "";
+    $displayCommercialRegister = $company->commercial_register ?? "";
 
     // معلومات الاتصال من الشركة الخاصة
     if ($privateCompany) {
@@ -93,11 +95,23 @@
             align-items: center !important;
         }
 
+        /* Ensure logo container is centered */
+        .letterhead-header > div > div:first-child {
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        /* Ensure company info is centered */
+        .letterhead-header > div > div:last-child {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+        }
+
         /* Logo on the left */
         .logo-container {
             order: 1 !important;
             flex: 0 0 auto !important;
-            min-width: 220px !important;
         }
 
         /* Company info on the right */
@@ -105,6 +119,7 @@
             order: 2 !important;
             flex: 1 !important;
             text-align: right !important;
+            direction: rtl !important;
         }
     }
 
@@ -122,162 +137,85 @@
             display: none !important;
         }
     }
+
 </style>
 
 <!-- Letterhead Header -->
 <div class="letterhead-header"
      style="
-        position: relative;
         width: 100%;
         background: #fff;
-        padding: 20px;
-        margin-bottom: 20px;
+        padding: 15px 20px;
+        margin-bottom: 15px;
         border: 1px solid #000;
         border-bottom: 2px solid #8B4513;
      ">
 
-    <!-- Top Section -->
-    <div style="
+    <!-- TOP ROW: Logo on Left, Company Info on Right -->
+    <div class="logo-company-container" style="
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        align-items: flex-start; /* محاذاة صحيحة */
-        gap: 30px;
         direction: ltr;
-        position: relative;
-        z-index: 2;
+        gap: 20px;
     ">
 
         <!-- LEFT : Logo -->
-        <div style="
+        <div class="logo-container" style="
             flex: 0 0 auto;
-            min-width: 220px;
-            height: 95px;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
+            min-width: 120px;
         ">
             @if($logoUrl)
                 <img src="{{ $logoUrl }}"
                      alt="Logo"
                      style="
-                        max-width: 200px;
-                        max-height: 95px;
+                        max-width: 120px;
+                        max-height: 60px;
                         object-fit: contain;
                         display: block;
-                        -webkit-print-color-adjust: exact;
-                        print-color-adjust: exact;
                      ">
             @else
-                <!-- Default Logo -->
-                <svg width="200" height="95" viewBox="0 0 200 95">
-                    <path d="M 5 55 Q 100 15 195 55"
-                          stroke="#DC143C" stroke-width="2.5" fill="none"/>
-                    <path d="M 185 50 L 195 55 L 190 55 L 190 60 L 195 60 L 195 55"
-                          fill="#DC143C"/>
-                    <text x="15" y="45" font-family="serif"
-                          font-size="28" font-weight="bold" fill="#333">
-                        LEADER
-                    </text>
-                    <text x="15" y="70" font-family="sans-serif"
-                          font-size="13" fill="#666">
-                        FOR TRANS
-                    </text>
+                <svg width="120" height="60" viewBox="0 0 200 90">
+                    <circle cx="100" cy="45" r="40" fill="#DC143C" opacity="0.1"/>
+                    <text x="100" y="50" font-size="20" font-weight="bold" fill="#DC143C" text-anchor="middle" font-family="Arial">LEADER FOR TRANS</text>
                 </svg>
             @endif
         </div>
 
-        <!-- RIGHT : Company Info -->
-        <div style="
+        <!-- RIGHT : Company Name and Info -->
+        <div class="company-info-container" style="
             flex: 1;
             text-align: right;
             direction: rtl;
-            padding-right: 20px;
-            padding-top: 2px;
         ">
-
             <div style="
                 color: #DC143C;
                 font-size: 24px;
                 font-weight: bold;
-                margin-bottom: 6px;
                 font-family: 'Cairo', sans-serif;
+                line-height: 1.3;
+                margin-bottom: 4px;
             ">
                 {{ $displayName }}
             </div>
 
             <div style="
                 color: #333;
-                font-size: 16px;
-                margin-bottom: 10px;
+                font-size: 14px;
                 font-family: 'Cairo', sans-serif;
+                margin-bottom: 4px;
             ">
                 لنقل الحاويات
             </div>
 
             @if($displayTaxNo)
-                <div style="
-                    color: #333;
-                    font-size: 13px;
-                    margin-bottom: 4px;
-                    font-family: 'Cairo', sans-serif;
-                ">
-                    ب.ض : {{ $displayTaxNo }}
-                </div>
+                <div style="font-size: 12px; color: #666;">ب.ض : {{ $displayTaxNo }}</div>
             @endif
-
-            @if($displayCommercialRegister)
-                <div style="
-                    color: #333;
-                    font-size: 13px;
-                    font-family: 'Cairo', sans-serif;
-                ">
-                    س.ت : {{ $displayCommercialRegister }}
-                </div>
-            @endif
-
         </div>
-    </div>
 
-    <!-- Watermark (Print Only) -->
-    <div class="watermark"
-         style="
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            opacity: 0.12;
-            z-index: 0;
-            pointer-events: none;
-            width: 600px;
-            height: 600px;
-            display: none;
-         ">
-        @if($logoUrl)
-            <img src="{{ $logoUrl }}"
-                 alt="Watermark"
-                 style="
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
-                    filter: grayscale(100%) brightness(1.4);
-                 ">
-        @else
-            <svg width="500" height="300" viewBox="0 0 500 300">
-                <path d="M 30 150 Q 250 30 470 150"
-                      stroke="#DC143C" stroke-width="4" fill="none" opacity="0.2"/>
-                <text x="50" y="140" font-family="serif"
-                      font-size="80" font-weight="bold"
-                      fill="#DC143C" opacity="0.2">
-                    LEADER
-                </text>
-                <text x="50" y="190" font-family="sans-serif"
-                      font-size="40"
-                      fill="#DC143C" opacity="0.2">
-                    FOR TRANS
-                </text>
-            </svg>
-        @endif
     </div>
-
 </div>
 
 <!-- Print Rules -->
@@ -343,26 +281,22 @@
 </div>
 
 <!-- Company and Booking Details -->
-<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 6px; position: relative; z-index: 2;">
-    <div style="background: #f8f9fa; padding: 6px 10px; border-radius: 6px; border-right: 3px solid #DC143C;">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; position: relative; z-index: 2;">
+    <!-- Left: Recipient Information -->
+    <div style="background: #fff; padding: 6px 10px; border-radius: 6px; border: 1px solid #dee2e6; border-right: 3px solid #DC143C;">
         <div style="display: flex; flex-direction: column; gap: 4px;">
             <div style="display: flex; align-items: center; gap: 4px;">
-                <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">🏢 اسم الشركة:</span>
-                <span style="color: #212529; font-size: 11px; font-weight: 600;">{{ $displayName }}</span>
+                <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">👤 عناية:</span>
+                <span style="color: #212529; font-size: 11px;">{{ $invoice->booking->employee?->name ?? $invoice->booking->company->name ?? "" }}</span>
             </div>
             <div style="display: flex; align-items: center; gap: 4px;">
-                <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">🔢 الرقم الضريبي:</span>
-                <span style="color: #212529; font-size: 11px;">{{ $displayTaxNo }}</span>
+                <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">🚢 الخط الملاحي:</span>
+                <span style="color: #212529; font-size: 11px;">{{ $invoice->booking->shippingAgent->title ?? "" }}</span>
             </div>
-            @if($displayCommercialRegister)
-            <div style="display: flex; align-items: center; gap: 4px;">
-                <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">📋 السجل التجاري:</span>
-                <span style="color: #212529; font-size: 11px;">{{ $displayCommercialRegister }}</span>
-            </div>
-            @endif
         </div>
     </div>
 
+    <!-- Right: Manufacturer Information -->
     <div style="background: #fff; padding: 6px 10px; border-radius: 6px; border: 1px solid #dee2e6; border-right: 3px solid #28a745;">
         <div style="display: flex; flex-direction: column; gap: 4px;">
             @php
@@ -380,19 +314,6 @@
             <div style="display: flex; align-items: center; gap: 4px;">
                 <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">📄 رقم الشهادة:</span>
                 <span style="color: #212529; font-size: 11px;">{{ $invoice->booking->certificate_number ?? "" }}</span>
-            </div>
-        </div>
-    </div>
-
-    <div style="background: #fff; padding: 6px 10px; border-radius: 6px; border: 1px solid #dee2e6; border-right: 3px solid #ffc107;">
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-            <div style="display: flex; align-items: center; gap: 4px;">
-                <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">👤 عناية:</span>
-                <span style="color: #212529; font-size: 11px;">{{ $invoice->booking->employee?->name ?? "" }}</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 4px;">
-                <span style="font-weight: 700; color: #495057; font-size: 10px; min-width: 75px;">🚢 الخط الملاحي:</span>
-                <span style="color: #212529; font-size: 11px;">{{ $invoice->booking->shippingAgent->title ?? "" }}</span>
             </div>
         </div>
     </div>
