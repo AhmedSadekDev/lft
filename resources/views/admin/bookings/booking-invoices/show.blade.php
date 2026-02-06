@@ -183,6 +183,74 @@
                 page-break-inside: avoid;
                 page-break-after: auto;
             }
+
+            /* Attachments print styles - Black and White, No Header/Footer */
+            body.print-attachments .letterhead-header {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                max-height: 0 !important;
+                overflow: hidden !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+            }
+
+            body.print-attachments .letterhead-footer {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                max-height: 0 !important;
+                position: static !important;
+            }
+
+            body.print-attachments,
+            body.print-attachments * {
+                color: #000 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body.print-attachments div,
+            body.print-attachments td,
+            body.print-attachments th,
+            body.print-attachments span,
+            body.print-attachments p {
+                background-color: #fff !important;
+                background-image: none !important;
+                background: #fff !important;
+            }
+
+            body.print-attachments table {
+                border: 1px solid #000 !important;
+            }
+
+            body.print-attachments table th {
+                background-color: #e0e0e0 !important;
+                border: 1px solid #000 !important;
+                color: #000 !important;
+            }
+
+            body.print-attachments table td {
+                border: 1px solid #000 !important;
+            }
+
+            body.print-attachments table tbody tr:nth-child(even) {
+                background-color: #f5f5f5 !important;
+            }
+
+            body.print-attachments table tbody tr:nth-child(odd) {
+                background-color: #fff !important;
+            }
+
+            body.print-attachments .watermark {
+                display: none !important;
+            }
+
+            body.print-attachments div[style*="gradient"] {
+                background: #e0e0e0 !important;
+                background-image: none !important;
+            }
         }
 
         .print-btn {
@@ -369,12 +437,21 @@
         function printDiv(divName) {
             var printContents = document.getElementById(divName).innerHTML;
             var originalContents = document.body.innerHTML;
+            var originalClassName = document.body.className;
+
+            // Add class for attachments printing (black & white, no header/footer)
+            if (divName === 'printableAreaAttachments') {
+                document.body.classList.add('print-attachments');
+                // Also add inline style to hide header/footer for attachments
+                printContents = '<style>.letterhead-header, .letterhead-footer { display: none !important; } * { color: #000 !important; } div, td, th, span, p { background: #fff !important; background-image: none !important; } table { border: 1px solid #000 !important; } table th { background: #e0e0e0 !important; border: 1px solid #000 !important; } table td { border: 1px solid #000 !important; } .watermark { display: none !important; } div[style*="gradient"] { background: #e0e0e0 !important; }</style>' + printContents;
+            }
 
             document.body.innerHTML = printContents;
 
             window.print();
 
             document.body.innerHTML = originalContents;
+            document.body.className = originalClassName;
         }
     </script>
 </body>
