@@ -48,7 +48,7 @@ class NewBooking extends Notification
         $count = (string) $this->booking->bookingContainers->count();
 
         // Prepare main booking data
-        $companyName = $this->booking->company ? $this->booking->company->name : 'غير محدد';
+        $factoryName = $this->booking->factory_name ?? 'غير محدد';
         $employeeName = $this->booking->employee_name ?? 'غير محدد';
         $shippingAgentTitle = $this->booking->shippingAgent ? $this->booking->shippingAgent->title : 'غير محدد';
         $certificateNumber = $this->booking->certificate_number ?? 'غير محدد';
@@ -60,7 +60,7 @@ class NewBooking extends Notification
         $trackIdEsc = htmlspecialchars($trackId, ENT_QUOTES, 'UTF-8');
         $countEsc = htmlspecialchars($count, ENT_QUOTES, 'UTF-8');
         $urlEsc = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
-        $companyNameEsc = htmlspecialchars($companyName, ENT_QUOTES, 'UTF-8');
+        $factoryNameEsc = htmlspecialchars($factoryName, ENT_QUOTES, 'UTF-8');
         $employeeNameEsc = htmlspecialchars($employeeName, ENT_QUOTES, 'UTF-8');
         $shippingAgentTitleEsc = htmlspecialchars($shippingAgentTitle, ENT_QUOTES, 'UTF-8');
         $certificateNumberEsc = htmlspecialchars($certificateNumber, ENT_QUOTES, 'UTF-8');
@@ -70,17 +70,17 @@ class NewBooking extends Notification
         $containersRows = '';
         foreach ($this->booking->bookingContainers as $container) {
             $containerNumber = $container->container_number ?? '-';
-            $departureTitle = $container->departure ? $container->departure->title : '-';
+            $containerSize = $container->container ? $container->container->type : '-';
             $arrivalDate = $container->arrival_date ?? '-';
 
             $containerNumberEsc = htmlspecialchars($containerNumber, ENT_QUOTES, 'UTF-8');
-            $departureTitleEsc = htmlspecialchars($departureTitle, ENT_QUOTES, 'UTF-8');
+            $containerSizeEsc = htmlspecialchars($containerSize, ENT_QUOTES, 'UTF-8');
             $arrivalDateEsc = htmlspecialchars($arrivalDate, ENT_QUOTES, 'UTF-8');
 
             $containersRows .= '
                         <tr>
                             <td>' . $containerNumberEsc . '</td>
-                            <td>' . $departureTitleEsc . '</td>
+                            <td>' . $containerSizeEsc . '</td>
                             <td>' . $arrivalDateEsc . '</td>
                         </tr>';
         }
@@ -186,8 +186,8 @@ class NewBooking extends Notification
                     <td>' . $trackIdEsc . '</td>
                 </tr>
                 <tr>
-                    <th>اسم الشركة</th>
-                    <td>' . $companyNameEsc . '</td>
+                    <th>اسم المصنع</th>
+                    <td>' . $factoryNameEsc . '</td>
                 </tr>
                 <tr>
                     <th>اسم الموظف المسؤول</th>
@@ -218,7 +218,7 @@ class NewBooking extends Notification
                 <thead>
                     <tr>
                         <th>رقم الحاوية</th>
-                        <th>الميناء</th>
+                        <th>مقاس الحاوية</th>
                         <th>الوصول</th>
                     </tr>
                 </thead>

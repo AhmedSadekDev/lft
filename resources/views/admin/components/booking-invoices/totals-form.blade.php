@@ -48,6 +48,8 @@
                             'class' => 'form-control',
                             'required' => 'required',
                             'step' => '0.01',
+                            'min' => '0',
+                            'max' => '100',
                         ]) !!}
                         <small class="text-danger">{{ $errors->first('value_added_tax') }}</small>
                     </div>
@@ -69,6 +71,8 @@
                         'class' => 'form-control',
                         'required' => 'required',
                         'step' => '0.01',
+                        'min' => '0',
+                        'max' => '100',
                     ]) !!}
                     <small class="text-danger">{{ $errors->first('sales_tax') }}</small>
                 </div>
@@ -106,6 +110,7 @@
                         'class' => 'form-control',
                         'required' => 'required',
                         'step' => '0.01',
+                        'min' => '0',
                     ]) !!}
                     <small class="text-danger">{{ $errors->first('discount') }}</small>
                 </div>
