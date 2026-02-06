@@ -68,6 +68,7 @@ return [
     'office_commission' => 'دخان المكتب',
     'settle_delivery_policy' => 'تسوية البوليصة',
     'transfer_to_agent' => 'تحويل لمندوب',
+    'transfer_to_vault' => 'تحويل لخزنه',
     'from_dashboard' => 'من لوحة التحكم',
 
     'cars'       => 'السيارات',

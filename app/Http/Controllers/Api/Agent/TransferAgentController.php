@@ -50,10 +50,10 @@ class TransferAgentController extends Controller
             $data["transfered_type"] = "App\Models\Agent";
             $data["transfered_id"] = $request->agent_id;
             $moneyTransfer = MoneyTransfer::create($data);
-            
+
             $agent->wallet = $agent->wallet - $request->value;
             $agent->save();
-            
+
             $transAgent = Agent::find($request->agent_id);
             if($transAgent)
             {
@@ -72,7 +72,7 @@ class TransferAgentController extends Controller
                 $Vault->amount += $request->value;
                 $Vault->save();
             }
-            
+
 
             $this->saveLogActivity($agent->id, Agent::class, $moneyTransfer->id, MoneyTransfer::class);
 

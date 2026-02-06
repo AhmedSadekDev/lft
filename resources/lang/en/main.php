@@ -73,6 +73,7 @@ return [
     'office_commission' => 'Office Commission',
     'settle_delivery_policy' => 'Settle Delivery Policy',
     'transfer_to_agent' => 'Transfer to Agent',
+    'transfer_to_vault' => 'Transfer to Vault',
     'from_dashboard' => 'From Dashboard',
     
     // ------------------ Main ------------------
