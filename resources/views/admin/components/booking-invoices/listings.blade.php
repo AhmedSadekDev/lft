@@ -71,7 +71,7 @@
                         </div>
                         <div class="col-sm-6 col-md-4">
                             <h4>
-                                {{ __('admin.shipping_agent') . ': ' . $booking->shippingAgent ? $booking->shippingAgent->title : "" }}
+                                {{ __('admin.shipping_agent') . ': ' . ($booking->shippingAgent ? $booking->shippingAgent->title : "") }}
                             </h4>
                         </div>
                     </div>
@@ -207,7 +207,7 @@
                 <div>
                     <div class="col-md-12">
                         @include('admin.components.booking-services.table', ['booking_services' => $booking->untaxed_services, 'expensesServices' => $booking->expenses])
-                        
+
                     </div>
                 </div>
             </div>
