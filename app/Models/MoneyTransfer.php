@@ -15,6 +15,7 @@ class MoneyTransfer extends Model
     const deliveryPolicy = 3;
     const settle = 4;
     const officeCommission = 5; // دخان المكتب
+    const carPayment = 7; // سداد سيارة
 
     protected $guarded = [];
 

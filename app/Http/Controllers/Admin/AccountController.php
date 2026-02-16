@@ -1339,6 +1339,251 @@ class AccountController extends Controller
     }
 
     /**
+     * عرض صفحة السداد للسيارة
+     */
+    public function showCarPaymentForm($carId)
+    {
+        $car = Car::findOrFail($carId);
+
+        // جلب جميع النقلات (delivery policies) للسيارة التي لها رصيد مستحق
+        $unpaidShipments = collect();
+        $deliveryPolicies = DeliveryPolicy::where('car_id', $carId)
+            ->with(['money_transfer', 'extraExpenses', 'payingCars', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        foreach ($deliveryPolicies as $policy) {
+            $cost = $policy->cost ?? 0;
+            $financialCustody = $policy->money_transfer->value ?? 0;
+            $extraExpenses = $policy->extraExpenses->sum('value') ?? 0;
+            $payments = $policy->payingCars->sum('value') ?? 0;
+
+            // حساب المتبقي
+            $remain = $cost
+                ? $cost - $financialCustody + $extraExpenses - $payments
+                : $extraExpenses + $payments - $financialCustody;
+
+            // إضافة النقلة فقط إذا كان لديها رصيد مستحق
+            if ($remain > 0) {
+                $containerNumbers = $policy->booking_containers
+                    ? implode(', ', $policy->booking_containers->pluck('container_no')->filter()->toArray())
+                    : '';
+
+                $unpaidShipments->push([
+                    'id' => $policy->id,
+                    'container_numbers' => $containerNumbers,
+                    'date' => $policy->date ?? $policy->created_at,
+                    'cost' => $cost,
+                    'financial_custody' => $financialCustody,
+                    'extra_expenses' => $extraExpenses,
+                    'paid' => $payments,
+                    'remaining' => $remain,
+                    'departure' => $policy->booking_containers->first()->departure->title ?? '',
+                    'loading' => $policy->booking_containers->first()->loading->title ?? '',
+                    'aging' => $policy->booking_containers->first()->aging->title ?? '',
+                ]);
+            }
+        }
+
+        // حساب الرصيد المستحق الإجمالي
+        $currentBalance = $unpaidShipments->sum('remaining');
+
+        return view('admin.accounts.car-payment', compact('car', 'unpaidShipments', 'currentBalance'));
+    }
+
+    /**
+     * معالجة السداد للسيارة
+     */
+    public function processCarPayment(Request $request, $carId)
+    {
+        $request->validate([
+            'payment_date' => 'required|date',
+            'notes' => 'nullable|string|max:1000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'shipment_ids' => 'required|string', // comma-separated IDs
+        ]);
+
+        $car = Car::findOrFail($carId);
+        $vault = Vault::first();
+
+        if (!$vault) {
+            return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
+        }
+
+        $shipmentIds = array_filter(explode(',', $request->shipment_ids));
+
+        if (empty($shipmentIds)) {
+            return redirect()->back()->with('error', 'يجب تحديد نقلات على الأقل');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $totalPaymentAmount = 0;
+            $processedShipments = [];
+
+            foreach ($shipmentIds as $shipmentId) {
+                $policy = DeliveryPolicy::with(['money_transfer', 'extraExpenses', 'payingCars'])
+                    ->findOrFail($shipmentId);
+
+                if ($policy->car_id != $carId) {
+                    continue; // Skip if not for this car
+                }
+
+                $cost = $policy->cost ?? 0;
+                $financialCustody = $policy->money_transfer->value ?? 0;
+                $extraExpenses = $policy->extraExpenses->sum('value') ?? 0;
+                $paidTotal = $policy->payingCars->sum('value') ?? 0;
+
+                // حساب المتبقي
+                $remaining = $cost
+                    ? $cost - $financialCustody + $extraExpenses - $paidTotal
+                    : $extraExpenses + $paidTotal - $financialCustody;
+
+                if ($remaining > 0) {
+                    // إنشاء سداد للنقلة
+                    $paymentData = [
+                        'delivery_policy_id' => $policy->id,
+                        'car_id' => $car->id,
+                        'value' => $remaining,
+                        'user_id' => auth()->id(),
+                    ];
+
+                    if ($request->hasFile('image')) {
+                        $imageName = time() . '_car_payment_' . $policy->id . '.' . $request->image->extension();
+                        $imagePath = $request->image->storeAs('car_payments', $imageName, 'public');
+                        $paymentData['image'] = "storage/" . $imagePath;
+                    }
+
+                    $payingCar = Payingcar::create($paymentData);
+
+                    // تحديث التاريخ إذا كان متوفر
+                    if ($request->payment_date) {
+                        $payingCar->created_at = $request->payment_date;
+                        $payingCar->save();
+                    }
+
+                    // تسجيل معاملة MoneyTransfer
+                    MoneyTransfer::create([
+                        'value' => $remaining,
+                        'transfered_type' => 'App\Models\Payingcar',
+                        'transfered_id' => $payingCar->id,
+                        'transferer_type' => 'App\Models\User',
+                        'transferer_id' => auth()->id(),
+                        'type' => 7, // carPayment
+                    ]);
+
+                    // خصم من الخزنة
+                    $vault->amount = ($vault->amount ?? 0) - $remaining;
+                    $vault->save();
+
+                    // تسجيل معاملة الخزنة
+                    VaultTransaction::create([
+                        'name' => 'سداد نقلة - ' . $car->car_number,
+                        'amount' => $remaining,
+                        'type' => 0, // منصرف
+                    ]);
+
+                    $totalPaymentAmount += $remaining;
+                    $processedShipments[] = $policy->id;
+                }
+            }
+
+            if ($totalPaymentAmount == 0) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'لا توجد مبالغ مستحقة في النقلات المحددة');
+            }
+
+            DB::commit();
+
+            $message = 'تم تسجيل السداد بنجاح. المبلغ الإجمالي: ' . number_format($totalPaymentAmount, 2) . ' جنيه (' . count($processedShipments) . ' نقلة)';
+
+            return redirect()->route('accounts.car.payment', $carId)
+                ->with('success', $message)
+                ->with('processed_shipments', $processedShipments);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'حدث خطأ أثناء تسجيل السداد: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * تصدير بيان السداد للسيارة إلى PDF
+     */
+    public function exportCarPaymentPDF(Request $request, $carId)
+    {
+        $car = Car::findOrFail($carId);
+        $shipmentIds = $request->get('shipment_ids', '');
+
+        if (empty($shipmentIds)) {
+            return redirect()->back()->with('error', 'يجب تحديد نقلات');
+        }
+
+        $shipmentIdsArray = array_filter(explode(',', $shipmentIds));
+        $deliveryPolicies = DeliveryPolicy::whereIn('id', $shipmentIdsArray)
+            ->where('car_id', $carId)
+            ->with(['money_transfer', 'extraExpenses', 'payingCars', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging'])
+            ->get();
+
+        $totalAmount = 0;
+        $shipmentsData = [];
+
+        foreach ($deliveryPolicies as $policy) {
+            $cost = $policy->cost ?? 0;
+            $financialCustody = $policy->money_transfer->value ?? 0;
+            $extraExpenses = $policy->extraExpenses->sum('value') ?? 0;
+            $payments = $policy->payingCars->sum('value') ?? 0;
+
+            $remain = $cost
+                ? $cost - $financialCustody + $extraExpenses - $payments
+                : $extraExpenses + $payments - $financialCustody;
+
+            if ($remain > 0) {
+                $containerNumbers = $policy->booking_containers
+                    ? implode(', ', $policy->booking_containers->pluck('container_no')->filter()->toArray())
+                    : '';
+
+                $shipmentsData[] = [
+                    'id' => $policy->id,
+                    'container_numbers' => $containerNumbers,
+                    'date' => $policy->date ?? $policy->created_at,
+                    'cost' => $cost,
+                    'financial_custody' => $financialCustody,
+                    'extra_expenses' => $extraExpenses,
+                    'paid' => $payments,
+                    'remaining' => $remain,
+                    'departure' => $policy->booking_containers->first()->departure->title ?? '',
+                    'loading' => $policy->booking_containers->first()->loading->title ?? '',
+                    'aging' => $policy->booking_containers->first()->aging->title ?? '',
+                ];
+
+                $totalAmount += $remain;
+            }
+        }
+
+        $html = view('admin.accounts.car-payment-pdf', compact('car', 'shipmentsData', 'totalAmount'))->render();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font' => 'dejavusans',
+            'directionality' => 'rtl',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'margin_header' => 6,
+            'margin_footer' => 6
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $fileName = 'بيان_سداد_نقلات_' . $car->car_number . '_' . date('Y-m-d') . '.pdf';
+
+        return $mpdf->Output($fileName, 'D');
+    }
+
+    /**
      * عرض تقرير الموقف المالي - الشركات المدينة
      */
     public function financialPositionReport(Request $request)

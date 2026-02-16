@@ -45,6 +45,9 @@ use App\Models\BookingContainer;
                     <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#filterModalExport">
                         {{ __('admin.export_shipments') }}
                     </button>
+                    <a href="{{ route('accounts.car.payment', $car->id) }}" class="btn btn-success">
+                        <i class="fas fa-money-bill-wave"></i> سداد
+                    </a>
 
                     <!-- Modal -->
                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"

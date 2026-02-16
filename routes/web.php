@@ -453,6 +453,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     // كشف حساب السيارات
     Route::get('accounts/car/{carId}/statement', [AccountController::class, 'carStatement'])->name('accounts.car.statement');
     Route::get('accounts/car/{carId}/statement/export-excel', [AccountController::class, 'exportCarExcel'])->name('accounts.car.statement.export.excel');
+    Route::get('accounts/car/{carId}/payment', [AccountController::class, 'showCarPaymentForm'])->name('accounts.car.payment');
+    Route::post('accounts/car/{carId}/payment', [AccountController::class, 'processCarPayment'])->name('accounts.car.payment.process');
+    Route::get('accounts/car/{carId}/payment/export-pdf', [AccountController::class, 'exportCarPaymentPDF'])->name('accounts.car.payment.export.pdf');
     Route::get('accounts/car/{carId}/statement/export-pdf', [AccountController::class, 'exportCarPDF'])->name('accounts.car.statement.export.pdf');
 
     // تقرير الموقف المالي - الشركات المدينة
