@@ -64,7 +64,7 @@
         <div class="card-body">
             <!-- معلومات الشركة -->
             <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3">
                     <div class="card bg-light border-0 shadow-sm h-100">
                         <div class="card-body">
                             <h5 class="font-weight-bold text-primary mb-3">
@@ -76,7 +76,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3">
                     <div class="card text-white h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                         <div class="card-body">
                             <h5 class="font-weight-bold mb-3">
@@ -120,19 +120,19 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#filterModal">
-                <i class="fas fa-filter"></i> فلتر
-            </button>
-
-            <!-- جدول كشف الحساب الموحد -->
             <div class="d-flex justify-content-between align-items-center mb-3">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
+                    <i class="fas fa-filter"></i> فلتر
+                </button>
                 <h5 class="font-weight-bold mb-0">
                     <i class="fas fa-calendar-alt text-primary mr-2"></i>
                     الحساب في الفترة من {{ $fromDate }} الى {{ $toDate }}
                 </h5>
             </div>
-            <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
-                <table class="table table-bordered table-hover table-striped" id="statementTable" style="font-size: 13px; margin-bottom: 0;">
+
+            <!-- جدول كشف الحساب -->
+            <div class="table-responsive" style="max-height: 600px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px;">
+                <table class="table table-bordered table-hover table-striped mb-0" id="statementTable" style="font-size: 13px;">
                     <thead class="thead-dark" style="position: sticky; top: 0; z-index: 10;">
                         <tr class="text-center">
                             <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 120px;">التاريخ</th>
@@ -159,11 +159,8 @@
                         @forelse ($transactions as $index => $transaction)
                             @php
                                 $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
-                                $paymentDetails = $transaction['payment_details'] ?? collect();
-                                $hasPaymentDetails = isset($transaction['payment_details']) && (
-                                    (is_array($paymentDetails) && count($paymentDetails) > 0) ||
-                                    (is_object($paymentDetails) && method_exists($paymentDetails, 'count') && $paymentDetails->count() > 0)
-                                );
+                                $paymentDetails = $transaction['payment_details'] ?? [];
+                                $hasPaymentDetails = isset($transaction['payment_details']) && is_array($paymentDetails) && count($paymentDetails) > 0;
                             @endphp
                             <tr class="{{ $hasPaymentDetails ? 'payment-row cursor-pointer' : '' }}"
                                 @if($hasPaymentDetails)
@@ -177,21 +174,21 @@
                                     <small class="text-muted">{{ $date->format('H:i') }}</small>
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['previous_debit'] > 0)
+                                    @if(($transaction['previous_debit'] ?? 0) > 0)
                                         <span class="text-danger font-weight-bold">{{ number_format($transaction['previous_debit'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['previous_credit'] > 0)
+                                    @if(($transaction['previous_credit'] ?? 0) > 0)
                                         <span class="text-success font-weight-bold">{{ number_format($transaction['previous_credit'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['booking_number'])
+                                    @if(!empty($transaction['booking_number']))
                                         <span class="badge badge-secondary">{{ $transaction['booking_number'] }}</span>
                                     @else
                                         <span class="text-muted">-</span>
@@ -201,60 +198,60 @@
                                     @if($hasPaymentDetails)
                                         <span class="badge badge-info badge-pill">
                                             <i class="fas fa-money-bill-wave mr-1"></i>
-                                            {{ $transaction['type_label'] }}
-                                            @if($transaction['payment_count'] > 1)
+                                            {{ $transaction['type_label'] ?? 'سداد' }}
+                                            @if(isset($transaction['payment_count']) && $transaction['payment_count'] > 1)
                                                 ({{ $transaction['payment_count'] }} فواتير)
                                             @endif
                                         </span>
-                                    @elseif($transaction['type'] == 'invoice')
+                                    @elseif(($transaction['type'] ?? '') == 'invoice')
                                         <span class="badge badge-danger badge-pill">
                                             <i class="fas fa-file-invoice mr-1"></i>
-                                            {{ $transaction['type_label'] }}
+                                            {{ $transaction['type_label'] ?? 'فاتورة نقل' }}
                                         </span>
-                                    @elseif($transaction['type'] == 'opening_balance')
+                                    @elseif(($transaction['type'] ?? '') == 'opening_balance')
                                         <span class="badge badge-warning badge-pill">
                                             <i class="fas fa-wallet mr-1"></i>
-                                            {{ $transaction['type_label'] }}
+                                            {{ $transaction['type_label'] ?? 'رصيد افتتاحي' }}
                                         </span>
-                                    @elseif($transaction['type'] == 'carried_forward')
+                                    @elseif(($transaction['type'] ?? '') == 'carried_forward')
                                         <span class="badge badge-secondary badge-pill">
                                             <i class="fas fa-arrow-right mr-1"></i>
-                                            {{ $transaction['type_label'] }}
+                                            {{ $transaction['type_label'] ?? 'رصيد مرحّل' }}
                                         </span>
                                     @else
-                                        <span class="badge badge-light">{{ $transaction['type_label'] }}</span>
+                                        <span class="badge badge-light">{{ $transaction['type_label'] ?? '-' }}</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['discount'] > 0)
+                                    @if(($transaction['discount'] ?? 0) > 0)
                                         <span class="text-warning font-weight-bold">{{ number_format($transaction['discount'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['tax'] > 0)
+                                    @if(($transaction['tax'] ?? 0) > 0)
                                         <span class="text-info font-weight-bold">{{ number_format($transaction['tax'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['attachment_statement'])
+                                    @if(!empty($transaction['attachment_statement']))
                                         <span class="text-primary">{{ $transaction['attachment_statement'] }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['transportation'] > 0)
+                                    @if(($transaction['transportation'] ?? 0) > 0)
                                         <span class="font-weight-bold">{{ number_format($transaction['transportation'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['total'] > 0)
+                                    @if(($transaction['total'] ?? 0) > 0)
                                         <span class="text-danger font-weight-bold" style="font-size: 1.1em;">{{ number_format($transaction['total'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
@@ -264,19 +261,19 @@
                                     @if($hasPaymentDetails)
                                         <span class="font-weight-bold text-success" style="font-size: 1.1em;">
                                             <i class="fas fa-check-circle mr-1"></i>
-                                            {{ number_format($transaction['paid'], 2) }}
-                                            @if($transaction['payment_count'] > 1)
+                                            {{ number_format($transaction['paid'] ?? 0, 2) }}
+                                            @if(isset($transaction['payment_count']) && $transaction['payment_count'] > 1)
                                                 <i class="fas fa-info-circle ml-1" title="اضغط لعرض التفاصيل"></i>
                                             @endif
                                         </span>
-                                    @elseif($transaction['paid'] > 0)
+                                    @elseif(($transaction['paid'] ?? 0) > 0)
                                         <span class="text-success font-weight-bold">{{ number_format($transaction['paid'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="text-center" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">
-                                    @if($transaction['notes'])
+                                    @if(!empty($transaction['notes']))
                                         <span class="text-muted" title="{{ $transaction['notes'] }}">
                                             {{ mb_strlen($transaction['notes']) > 30 ? mb_substr($transaction['notes'], 0, 30) . '...' : $transaction['notes'] }}
                                         </span>
@@ -285,7 +282,7 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($transaction['current_debit'] > 0)
+                                    @if(($transaction['current_debit'] ?? 0) > 0)
                                         <span class="text-danger font-weight-bold" style="font-size: 1.1em;">{{ number_format($transaction['current_debit'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
@@ -295,12 +292,12 @@
                                     @if($hasPaymentDetails)
                                         <span class="font-weight-bold text-success" style="font-size: 1.1em;">
                                             <i class="fas fa-arrow-down mr-1"></i>
-                                            {{ number_format($transaction['current_credit'], 2) }}
-                                            @if($transaction['payment_count'] > 1)
+                                            {{ number_format($transaction['current_credit'] ?? 0, 2) }}
+                                            @if(isset($transaction['payment_count']) && $transaction['payment_count'] > 1)
                                                 <i class="fas fa-info-circle ml-1" title="اضغط لعرض التفاصيل"></i>
                                             @endif
                                         </span>
-                                    @elseif($transaction['current_credit'] > 0)
+                                    @elseif(($transaction['current_credit'] ?? 0) > 0)
                                         <span class="text-success font-weight-bold" style="font-size: 1.1em;">{{ number_format($transaction['current_credit'], 2) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
@@ -316,7 +313,7 @@
                                             <div class="modal-header bg-success text-white">
                                                 <h5 class="modal-title font-weight-bold">
                                                     <i class="fas fa-money-bill mr-2"></i>
-                                                    تفاصيل السداد - {{ number_format($transaction['paid'], 2) }} ج.م
+                                                    تفاصيل السداد - {{ number_format($transaction['paid'] ?? 0, 2) }} ج.م
                                                 </h5>
                                                 <button type="button" class="close text-white" data-dismiss="modal">
                                                     <span>&times;</span>
@@ -327,62 +324,44 @@
                                                     <table class="table table-bordered table-hover">
                                                         <thead class="thead-light">
                                                             <tr>
-                                                                <th>#</th>
-                                                                <th>رقم الفاتورة</th>
-                                                                <th>رقم الطلب</th>
-                                                                <th>المبلغ</th>
-                                                                <th>نوع السداد</th>
-                                                                <th>البنك</th>
-                                                                <th>ملاحظات</th>
+                                                                <th class="text-center">#</th>
+                                                                <th class="text-center">رقم الفاتورة</th>
+                                                                <th class="text-center">رقم الطلب</th>
+                                                                <th class="text-center">المبلغ</th>
+                                                                <th class="text-center">نوع السداد</th>
+                                                                <th class="text-center">البنك</th>
+                                                                <th class="text-center">ملاحظات</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @if($hasPaymentDetails && isset($transaction['payment_details']))
-                                                                @php
-                                                                    $details = $transaction['payment_details'];
-                                                                    // التأكد من أن $details هي array
-                                                                    if (is_object($details) && method_exists($details, 'toArray')) {
-                                                                        $details = $details->toArray();
-                                                                    } elseif (!is_array($details)) {
-                                                                        $details = [];
-                                                                    }
-                                                                @endphp
-                                                                @if(count($details) > 0)
-                                                                    @foreach($details as $detailIndex => $detail)
-                                                                        <tr>
-                                                                            <td class="text-center">{{ $detailIndex + 1 }}</td>
-                                                                            <td class="text-center">
-                                                                                <span class="badge badge-info">{{ $detail['invoice_number'] ?? '-' }}</span>
-                                                                            </td>
-                                                                            <td class="text-center">
-                                                                                <span class="badge badge-secondary">{{ $detail['booking_number'] ?? '-' }}</span>
-                                                                            </td>
-                                                                            <td class="text-center font-weight-bold text-success" style="font-size: 1.1em;">
-                                                                                {{ number_format($detail['value'] ?? 0, 2) }} ج.م
-                                                                            </td>
-                                                                            <td class="text-center">
-                                                                                @if(($detail['payment_type'] ?? '') == 'check')
-                                                                                    <span class="badge badge-warning badge-pill">
-                                                                                        <i class="fas fa-money-check mr-1"></i>شيك
-                                                                                    </span>
-                                                                                @else
-                                                                                    <span class="badge badge-primary badge-pill">
-                                                                                        <i class="fas fa-university mr-1"></i>تحويل بنكي
-                                                                                    </span>
-                                                                                @endif
-                                                                            </td>
-                                                                            <td class="text-center">{{ $detail['bank_name'] ?? '-' }}</td>
-                                                                            <td class="text-center">{{ $detail['notes'] ?? '-' }}</td>
-                                                                        </tr>
-                                                                    @endforeach
-                                                                @else
+                                                            @if($hasPaymentDetails && is_array($paymentDetails) && count($paymentDetails) > 0)
+                                                                @foreach($paymentDetails as $detailIndex => $detail)
                                                                     <tr>
-                                                                        <td colspan="7" class="text-center text-muted py-4">
-                                                                            <i class="fas fa-info-circle fa-2x mb-2"></i><br>
-                                                                            لا توجد تفاصيل متاحة
+                                                                        <td class="text-center">{{ $detailIndex + 1 }}</td>
+                                                                        <td class="text-center">
+                                                                            <span class="badge badge-info">{{ $detail['invoice_number'] ?? '-' }}</span>
                                                                         </td>
+                                                                        <td class="text-center">
+                                                                            <span class="badge badge-secondary">{{ $detail['booking_number'] ?? '-' }}</span>
+                                                                        </td>
+                                                                        <td class="text-center font-weight-bold text-success" style="font-size: 1.1em;">
+                                                                            {{ number_format($detail['value'] ?? 0, 2) }} ج.م
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            @if(($detail['payment_type'] ?? '') == 'check')
+                                                                                <span class="badge badge-warning badge-pill">
+                                                                                    <i class="fas fa-money-check mr-1"></i>شيك
+                                                                                </span>
+                                                                            @else
+                                                                                <span class="badge badge-primary badge-pill">
+                                                                                    <i class="fas fa-university mr-1"></i>تحويل بنكي
+                                                                                </span>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td class="text-center">{{ $detail['bank_name'] ?? '-' }}</td>
+                                                                        <td class="text-center">{{ $detail['notes'] ?? '-' }}</td>
                                                                     </tr>
-                                                                @endif
+                                                                @endforeach
                                                             @else
                                                                 <tr>
                                                                     <td colspan="7" class="text-center text-muted py-4">
@@ -395,7 +374,7 @@
                                                         <tfoot>
                                                             <tr class="table-success font-weight-bold">
                                                                 <td colspan="3" class="text-right">الإجمالي:</td>
-                                                                <td class="text-success">{{ number_format($transaction['paid'], 2) }} ج.م</td>
+                                                                <td class="text-center text-success">{{ number_format($transaction['paid'] ?? 0, 2) }} ج.م</td>
                                                                 <td colspan="3"></td>
                                                             </tr>
                                                         </tfoot>
@@ -411,7 +390,10 @@
                             @endif
                         @empty
                             <tr>
-                                <td colspan="15" class="text-center py-5">لا توجد حركات في هذه الفترة</td>
+                                <td colspan="15" class="text-center py-5">
+                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">لا توجد حركات في هذه الفترة</h5>
+                                </td>
                             </tr>
                         @endforelse
 
@@ -422,8 +404,6 @@
                                 $totalPreviousCredit = $transactions->sum('previous_credit');
                                 $totalCurrentDebit = $transactions->sum('current_debit');
                                 $totalCurrentCredit = $transactions->sum('current_credit');
-                                // استخدام $finalBalance المحسوب بشكل صحيح من الكنترولر
-                                // الرصيد النهائي = الرصيد المرحّل + إجمالي الفواتير - إجمالي المدفوعات
                                 $finalRunningBalance = $finalBalance;
                             @endphp
                             <tr class="table-info font-weight-bold">
@@ -460,6 +440,7 @@
     }
     #statementTable {
         direction: rtl;
+        width: 100%;
     }
     #statementTable thead th {
         font-weight: 600;
@@ -467,6 +448,7 @@
         white-space: nowrap;
         background-color: #343a40 !important;
         color: #fff !important;
+        border: 1px solid #495057 !important;
     }
     #statementTable tbody tr {
         transition: all 0.2s;
@@ -477,7 +459,8 @@
     #statementTable tbody td {
         text-align: center;
         vertical-align: middle;
-        padding: 8px 4px;
+        padding: 10px 8px;
+        border: 1px solid #dee2e6;
     }
     .badge {
         font-size: 11px;
@@ -508,26 +491,20 @@
     }
     .table-responsive {
         border-radius: 8px;
-        overflow: hidden;
-    }
-    .table-bordered {
-        border: 1px solid #dee2e6;
-    }
-    .table-bordered thead th {
-        border: 1px solid #495057;
-    }
-    .table-bordered tbody td {
-        border: 1px solid #dee2e6;
     }
 </style>
 
 @push('js')
 <script>
     $(document).ready(function() {
-        // إضافة scroll للجدول
-        $('.table-responsive').on('scroll', function() {
-            $(this).find('thead').css('transform', 'translateY(' + this.scrollTop + 'px)');
-        });
+        // التأكد من أن الجدول يعمل بشكل صحيح
+        if ($('#statementTable').length) {
+            // إضافة scroll للجدول
+            $('.table-responsive').on('scroll', function() {
+                var scrollTop = this.scrollTop;
+                $(this).find('thead').css('transform', 'translateY(' + scrollTop + 'px)');
+            });
+        }
     });
 </script>
 @endpush
