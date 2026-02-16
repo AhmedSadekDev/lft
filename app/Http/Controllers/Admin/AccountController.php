@@ -21,11 +21,13 @@ use App\Exports\CarStatementExport;
 use App\Exports\FinancialPositionExport;
 use App\Exports\ProfitLossReportExport;
 use App\Models\BookingContrainerExtraCosts;
+use App\Http\Traits\ImagesTrait;
 use Maatwebsite\Excel\Facades\Excel;
 use Mpdf\Mpdf;
 
 class AccountController extends Controller
 {
+    use ImagesTrait;
     public function __construct()
     {
         // Clear permission cache to ensure new permissions are recognized
@@ -1451,8 +1453,8 @@ class AccountController extends Controller
 
                     if ($request->hasFile('image')) {
                         $imageName = time() . '_car_payment_' . $policy->id . '.' . $request->image->extension();
-                        $imagePath = $request->image->storeAs('car_payments', $imageName, 'public');
-                        $paymentData['image'] = "storage/" . $imagePath;
+                        $this->uploadImage($request->image, $imageName, 'banks');
+                        $paymentData['image'] = 'Admin/images/banks/' . $imageName;
                     }
 
                     $payingCar = Payingcar::create($paymentData);
