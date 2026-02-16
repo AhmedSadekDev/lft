@@ -249,14 +249,14 @@ class AccountController extends Controller
                     'id' => $payment->id,
                     'invoice_number' => $payment->invoice->invoice_number ?? '',
                     'booking_number' => $payment->invoice->booking->booking_number ?? '',
-                    'value' => $payment->value,
+                    'value' => floatval($payment->value),
                     'notes' => $notes,
-                    'payment_type' => $payment->payment_type,
+                    'payment_type' => $payment->payment_type ?? 'bank_transfer',
                     'bank_name' => $payment->bank ? $payment->bank->name : ($payment->check_bank_name ?? ''),
                     'check_number' => $payment->check_number ?? '',
                     'date' => $payment->created_at,
                 ];
-            });
+            })->values(); // تحويل إلى array indexed
 
             // الحصول على ملاحظات السداد (من أول سداد في اليوم)
             $firstPayment = $dayPayments->first();
@@ -292,7 +292,7 @@ class AccountController extends Controller
                 'current_debit' => 0,
                 'current_credit' => $totalPaymentValue,
                 'running_balance' => $currentBalance,
-                'payment_details' => $paymentDetails, // تفاصيل السداد
+                'payment_details' => $paymentDetails->toArray(), // تفاصيل السداد (تحويل إلى array)
                 'payment_count' => $dayPayments->count(), // عدد الفواتير
             ]);
         }

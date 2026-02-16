@@ -132,7 +132,11 @@
                         @forelse ($transactions as $index => $transaction)
                             @php
                                 $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
-                                $hasPaymentDetails = isset($transaction['payment_details']) && $transaction['payment_details']->count() > 0;
+                                $paymentDetails = $transaction['payment_details'] ?? collect();
+                                $hasPaymentDetails = isset($transaction['payment_details']) && (
+                                    (is_array($paymentDetails) && count($paymentDetails) > 0) || 
+                                    (is_object($paymentDetails) && method_exists($paymentDetails, 'count') && $paymentDetails->count() > 0)
+                                );
                             @endphp
                             <tr class="{{ $hasPaymentDetails ? 'payment-row cursor-pointer' : '' }}"
                                 @if($hasPaymentDetails)
@@ -221,23 +225,32 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach($transaction['payment_details'] as $detailIndex => $detail)
+                                                            @if($hasPaymentDetails)
+                                                                @php
+                                                                    $details = is_array($paymentDetails) ? $paymentDetails : $paymentDetails->toArray();
+                                                                @endphp
+                                                                @foreach($details as $detailIndex => $detail)
+                                                                    <tr>
+                                                                        <td>{{ $detailIndex + 1 }}</td>
+                                                                        <td>{{ $detail['invoice_number'] ?? '-' }}</td>
+                                                                        <td>{{ $detail['booking_number'] ?? '-' }}</td>
+                                                                        <td class="font-weight-bold text-success">{{ number_format($detail['value'] ?? 0, 2) }} ج.م</td>
+                                                                        <td>
+                                                                            @if(($detail['payment_type'] ?? '') == 'check')
+                                                                                <span class="badge badge-warning">شيك</span>
+                                                                            @else
+                                                                                <span class="badge badge-primary">تحويل بنكي</span>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td>{{ $detail['bank_name'] ?? '-' }}</td>
+                                                                        <td>{{ $detail['notes'] ?? '-' }}</td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            @else
                                                                 <tr>
-                                                                    <td>{{ $detailIndex + 1 }}</td>
-                                                                    <td>{{ $detail['invoice_number'] }}</td>
-                                                                    <td>{{ $detail['booking_number'] }}</td>
-                                                                    <td class="font-weight-bold text-success">{{ number_format($detail['value'], 2) }} ج.م</td>
-                                                                    <td>
-                                                                        @if($detail['payment_type'] == 'check')
-                                                                            <span class="badge badge-warning">شيك</span>
-                                                                        @else
-                                                                            <span class="badge badge-primary">تحويل بنكي</span>
-                                                                        @endif
-                                                                    </td>
-                                                                    <td>{{ $detail['bank_name'] ?: '-' }}</td>
-                                                                    <td>{{ $detail['notes'] ?: '-' }}</td>
+                                                                    <td colspan="7" class="text-center text-muted">لا توجد تفاصيل متاحة</td>
                                                                 </tr>
-                                                            @endforeach
+                                                            @endif
                                                         </tbody>
                                                         <tfoot>
                                                             <tr class="table-success font-weight-bold">
