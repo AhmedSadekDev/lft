@@ -1,356 +1,204 @@
 @extends('layouts.admin')
 @section('content')
     <style>
-        body {
-            text-align: start;
-        }
-
-        .card-title {
-            font-family: "bold";
-            color: #144d99;
-            font-size: 1.5rem;
-            margin-bottom: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .title_name {
-            font-family: "semibold";
-        }
-
-        .booking-info-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            padding: 2rem;
+        .booking-header {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
             margin-bottom: 2rem;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .booking-info-card h2 {
-            color: white;
-            margin-bottom: 1.5rem;
+        .booking-header h1 {
+            color: #144d99;
             font-size: 1.75rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
         }
 
-        .data {
+        .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            list-style: none;
-            padding: 0;
-            margin: 0;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
-        .data li {
-            background: white;
-            padding: 1.25rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border-right: 4px solid #144d99;
-            transition: all 0.3s ease;
+        .info-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-right: 3px solid #144d99;
         }
 
-        .data li:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-        }
-
-        .data li h4 {
-            font-family: "semibold";
+        .info-item label {
+            display: block;
             color: #6c757d;
-            margin-bottom: 0.5rem;
             font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .data li p {
-            font-family: "regular";
-            color: #212529;
-            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
-            margin: 0;
         }
 
-        .data li .value {
+        .info-item .value {
+            color: #212529;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .section-title {
             color: #144d99;
             font-size: 1.25rem;
-        }
-
-        h3 {
-            font-family: "bold";
+            font-weight: bold;
             margin-bottom: 1rem;
-            color: #144d99;
-        }
-
-        .card-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 1.5rem;
-            border-bottom: 2px solid #e4e6ef;
-            background: #f8f9fa;
+            gap: 0.5rem;
         }
 
-        .card-body {
+        .section-title i {
+            font-size: 1.1rem;
+        }
+
+        .card-custom {
+            border: 1px solid #e4e6ef;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            background: #fff;
+        }
+
+        .card-header-custom {
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e4e6ef;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .card-body-custom {
             padding: 1.5rem;
         }
 
         .delivery-policies-table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-radius: 8px;
-            overflow: hidden;
+            border-collapse: collapse;
         }
 
         .delivery-policies-table thead {
-            background: linear-gradient(135deg, #144d99 0%, #1e5ba8 100%);
+            background: #144d99;
             color: white;
         }
 
         .delivery-policies-table thead th {
-            padding: 1.25rem 1rem;
+            padding: 0.75rem 1rem;
             text-align: right;
             font-weight: 600;
-            font-size: 0.95rem;
-            border: none;
-            white-space: nowrap;
-        }
-
-        .delivery-policies-table thead th:first-child {
-            border-top-right-radius: 8px;
-        }
-
-        .delivery-policies-table thead th:last-child {
-            border-top-left-radius: 8px;
+            font-size: 0.9rem;
         }
 
         .delivery-policies-table tbody td {
-            padding: 1rem;
+            padding: 0.75rem 1rem;
             border-bottom: 1px solid #e4e6ef;
-            background-color: white;
-            vertical-align: middle;
-        }
-
-        .delivery-policies-table tbody tr:last-child td:first-child {
-            border-bottom-right-radius: 8px;
-        }
-
-        .delivery-policies-table tbody tr:last-child td:last-child {
-            border-bottom-left-radius: 8px;
         }
 
         .delivery-policies-table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .badge {
-            font-size: 0.85rem;
-            padding: 0.5rem 0.75rem;
-            font-weight: 600;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .info-item i {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            margin-left: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .section-card {
-            border: none;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .section-card .card-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #6c757d;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            color: #dee2e6;
-            margin-bottom: 1rem;
+            background: #f8f9fa;
         }
 
         @media (max-width: 768px) {
-            .data {
+            .info-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .delivery-policies-table {
-                font-size: 0.875rem;
-            }
-
-            .delivery-policies-table thead th,
-            .delivery-policies-table tbody td {
-                padding: 0.75rem 0.5rem;
             }
         }
     </style>
 
     <div class="container">
         @include('layouts.includes.breadcrumb', ['page' => __('main.transportations')])
-        <!--begin::Card-->
 
         <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-            <!-- Booking Header Card -->
-            <div class="booking-info-card" style="direction:rtl">
-                <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <!-- Booking Header -->
+            <div class="booking-header" style="direction:rtl">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <div>
-                        <h2 class="mb-3">
-                            <i class="fas fa-building mr-2"></i>
+                        <h1>
+                            <i class="fas fa-building text-primary mr-2"></i>
                             {{ __('main.company') }}: {{ $booking->company->name }}
-                        </h2>
-                        <div class="d-flex flex-wrap gap-3">
+                        </h1>
+                        <div class="info-grid">
                             <div class="info-item">
-                                <i class="fas fa-hashtag"></i>
-                                <div>
-                                    <small style="opacity: 0.9;">{{ __('admin.booking_number') }}</small>
-                                    <div style="font-size: 1.1rem; font-weight: 600;">
-                                        {{ $booking->booking_number ?? __('main.not_found') }}
-                                    </div>
-                                </div>
+                                <label>{{ __('admin.booking_number') }}</label>
+                                <div class="value">{{ $booking->booking_number ?? __('main.not_found') }}</div>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-file-alt"></i>
-                                <div>
-                                    <small style="opacity: 0.9;">{{ __('admin.certificate_number') }}</small>
-                                    <div style="font-size: 1.1rem; font-weight: 600;">
-                                        {{ $booking->certificate_number ?? __('main.not_found') }}
-                                    </div>
-                                </div>
+                                <label>{{ __('admin.certificate_number') }}</label>
+                                <div class="value">{{ $booking->certificate_number ?? __('main.not_found') }}</div>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-boxes"></i>
-                                <div>
-                                    <small style="opacity: 0.9;">{{ __('admin.containers_number') }}</small>
-                                    <div style="font-size: 1.1rem; font-weight: 600;">
-                                        {{ $booking->bookingContainers->count() }}
-                                    </div>
-                                </div>
+                                <label>{{ __('admin.shipping_agent') }}</label>
+                                <div class="value">{{ $booking->shippingAgent?->title ?? __('main.not_found') }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>{{ __('admin.responsible_employee') }}</label>
+                                <div class="value">{{ $booking->employee_name ?? __('main.not_found') }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>{{ __('admin.type_of_action') }}</label>
+                                <div class="value">{{ __('actions.' . TypeOfAction($booking->type_of_action)) ?? __('main.not_found') }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>{{ __('admin.containers_number') }}</label>
+                                <div class="value">{{ $booking->bookingContainers->count() }}</div>
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('bookings.index') }}" class="btn btn-light btn-sm">
-                        <i class="fas fa-arrow-right mr-2"></i>
-                        {{ __('main.back') }}
-                    </a>
+                    <div class="mt-3 mt-md-0">
+                        <a href="{{ route('bookings.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            {{ __('main.back') }}
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Booking Details Card -->
-            <div class="card section-card">
-                <div class="card-header">
-                    <h1 class="card-title">
-                        <i class="fas fa-info-circle text-primary mr-2"></i>
-                        {{ __('admin.booking_inforamtion') }}
-                    </h1>
-                </div>
-                <div class="card-body" style="direction:rtl">
-                    <ul class="data">
-                        <li>
-                            <h4><i class="fas fa-ship mr-2 text-primary"></i>{{ __('admin.shipping_agent') }}</h4>
-                            <p class="value">{{ $booking->shippingAgent?->title ?? __('main.not_found') }}</p>
-                        </li>
-                        <li>
-                            <h4><i class="fas fa-user-tie mr-2 text-primary"></i>{{ __('admin.responsible_employee') }}</h4>
-                            <p class="value">{{ $booking->employee_name ?? __('main.not_found') }}</p>
-                        </li>
-                        <li>
-                            <h4><i class="fas fa-tasks mr-2 text-primary"></i>{{ __('admin.type_of_action') }}</h4>
-                            <p class="value">{{ __('actions.' . TypeOfAction($booking->type_of_action)) ?? __('main.not_found') }}</p>
-                        </li>
-                        <li>
-                            <h4><i class="fas fa-building mr-2 text-primary"></i>{{ __('main.company') }}</h4>
-                            <p class="value">{{ $booking->company?->name ?? __('main.not_found') }}</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="card section-card">
-                <div class="card-header">
-                    <h1 class="card-title">
-                        <i class="fas fa-boxes text-primary mr-2"></i>
+            <!-- Containers Section -->
+            <div class="card card-custom">
+                <div class="card-header-custom">
+                    <h2 class="section-title">
+                        <i class="fas fa-boxes text-primary"></i>
                         {{ __('main.containers') }}
-                        <span class="badge badge-primary ml-2">
-                            {{ $booking->bookingContainers->count() }}
-                        </span>
-                    </h1>
+                        <span class="badge badge-primary">{{ $booking->bookingContainers->count() }}</span>
+                    </h2>
                 </div>
-                <div class="card-body p-0" style="direction:rtl">
-                    <div class="form-group p-3">
-                        @include('admin.components.booking-containers.table')
-                    </div>
+                <div class="card-body-custom" style="direction:rtl">
+                    @include('admin.components.booking-containers.table')
                 </div>
             </div>
 
-
-            <div class="card section-card">
-                <div class="card-header">
-                    <h1 class="card-title">
-                        <i class="fas fa-concierge-bell text-primary mr-2"></i>
+            <!-- Services Section -->
+            <div class="card card-custom">
+                <div class="card-header-custom">
+                    <h2 class="section-title">
+                        <i class="fas fa-concierge-bell text-primary"></i>
                         {{ __('main.services') }}
-                        <span class="badge badge-primary ml-2">
-                            {{ $booking->bookingServices?->count() ?? 0 }}
-                        </span>
-                    </h1>
+                        <span class="badge badge-primary">{{ $booking->bookingServices?->count() ?? 0 }}</span>
+                    </h2>
                 </div>
-                <div class="card-body p-0" style="direction:rtl">
-                    <div class="form-group p-3">
-                        <div class="col-md-12">
-                            @include('admin.components.booking-services.table', [
-                                'booking_services' => $booking->bookingServices ?? collect(),
-                                'expensesServices' => $booking->expenses ?? collect(),
-                                'booking' => $booking,
-                            ])
-                        </div>
-                    </div>
+                <div class="card-body-custom" style="direction:rtl">
+                    @include('admin.components.booking-services.table', [
+                        'booking_services' => $booking->bookingServices ?? collect(),
+                        'expensesServices' => $booking->expenses ?? collect(),
+                        'booking' => $booking,
+                    ])
                 </div>
             </div>
 
-
-
-            <div class="card section-card">
-                <div class="card-header">
-                    <h1 class="card-title">
-                        <i class="fas fa-file-invoice-dollar text-primary mr-2"></i>
+            <!-- Delivery Policies Section -->
+            <div class="card card-custom">
+                <div class="card-header-custom">
+                    <h2 class="section-title">
+                        <i class="fas fa-file-invoice-dollar text-primary"></i>
                         {{ __('main.delivery_policies') }}
-                        <span class="badge badge-primary ml-2">
-                            {{ $deliveryPolices->count() ?? 0 }}
-                        </span>
-                    </h1>
+                        <span class="badge badge-primary">{{ $deliveryPolices->count() ?? 0 }}</span>
+                    </h2>
                 </div>
-                <div class="card-body" style="direction:rtl">
+                <div class="card-body-custom" style="direction:rtl">
                     @if($deliveryPolices && $deliveryPolices->count() > 0)
                         <div class="table-responsive">
                             <table class="delivery-policies-table" id="deliveryPoliciesTable">
@@ -378,7 +226,7 @@
                                             <td>{{ $policy->booking_containers->first()->loading->title ?? __('main.not_found') }}</td>
                                             <td>{{ $policy->booking_containers->first()->aging->title ?? __('main.not_found') }}</td>
                                             <td>
-                                                <span class="font-weight-bold text-success" style="font-size: 1.1rem;">
+                                                <span class="font-weight-bold text-success">
                                                     {{ number_format($policy->money_transfer->value ?? 0, 2) }} {{ __('main.currency') }}
                                                 </span>
                                             </td>
@@ -389,16 +237,14 @@
                             </table>
                         </div>
                     @else
-                        <div class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <h5 class="mt-3 mb-2">{{ __('main.no_data_available') }}</h5>
-                            <p class="text-muted">{{ __('alerts.no_data_found') }}</p>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            {{ __('main.no_data_available') }}
                         </div>
                     @endif
                 </div>
             </div>
         </div>
-        <!--end::Card-->
     </div>
 @endsection
 
