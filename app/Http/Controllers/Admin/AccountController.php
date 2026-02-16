@@ -292,7 +292,7 @@ class AccountController extends Controller
                 'current_debit' => 0,
                 'current_credit' => $totalPaymentValue,
                 'running_balance' => $currentBalance,
-                'payment_details' => $paymentDetails->toArray(), // تفاصيل السداد (تحويل إلى array)
+                'payment_details' => $paymentDetails, // تفاصيل السداد (تم تحويله إلى array في السطر 259)
                 'payment_count' => $dayPayments->count(), // عدد الفواتير
             ]);
         }
