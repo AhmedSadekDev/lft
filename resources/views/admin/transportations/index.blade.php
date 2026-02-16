@@ -157,6 +157,12 @@
     <script>
         $(document).ready(function() {
             if ($('#transportationsTable').length) {
+                // Destroy existing DataTable if it exists
+                if ($.fn.DataTable.isDataTable('#transportationsTable')) {
+                    $('#transportationsTable').DataTable().destroy();
+                }
+                
+                // Initialize DataTable
                 $('#transportationsTable').DataTable({
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Arabic.json"
