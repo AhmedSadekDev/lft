@@ -196,16 +196,53 @@ class AccountController extends Controller
             ]);
         }
 
-        // إضافة المدفوعات
-        foreach ($payments as $payment) {
-            $currentBalance = ($transactions->last()['running_balance'] ?? ($carriedForwardBalance)) - $payment->value;
+        // تجميع المدفوعات حسب التاريخ
+        $groupedPayments = $payments->groupBy(function ($payment) {
+            return Carbon::parse($payment->created_at)->format('Y-m-d');
+        });
 
-            // الحصول على ملاحظات السداد
+        // إضافة المدفوعات المجمعة
+        foreach ($groupedPayments as $date => $dayPayments) {
+            $totalPaymentValue = $dayPayments->sum('value');
+            $currentBalance = ($transactions->last()['running_balance'] ?? ($carriedForwardBalance)) - $totalPaymentValue;
+
+            // جمع تفاصيل السداد
+            $paymentDetails = $dayPayments->map(function ($payment) {
+                // الحصول على ملاحظات السداد
+                $notes = '';
+                if ($payment->notes) {
+                    $notes = $payment->notes;
+                } elseif ($payment->bank_id) {
+                    $bank = \App\Models\Bank::find($payment->bank_id);
+                    if ($bank) {
+                        $notes = 'تحويل ' . $bank->name;
+                    } else {
+                        $notes = 'سداد';
+                    }
+                } else {
+                    $notes = 'قام العميل بسداد';
+                }
+
+                return [
+                    'id' => $payment->id,
+                    'invoice_number' => $payment->invoice->invoice_number ?? '',
+                    'booking_number' => $payment->invoice->booking->booking_number ?? '',
+                    'value' => $payment->value,
+                    'notes' => $notes,
+                    'payment_type' => $payment->payment_type,
+                    'bank_name' => $payment->bank ? $payment->bank->name : ($payment->check_bank_name ?? ''),
+                    'check_number' => $payment->check_number ?? '',
+                    'date' => $payment->created_at,
+                ];
+            });
+
+            // الحصول على ملاحظات السداد (من أول سداد في اليوم)
+            $firstPayment = $dayPayments->first();
             $notes = '';
-            if ($payment->notes) {
-                $notes = $payment->notes;
-            } elseif ($payment->bank_id) {
-                $bank = \App\Models\Bank::find($payment->bank_id);
+            if ($firstPayment->notes) {
+                $notes = $firstPayment->notes;
+            } elseif ($firstPayment->bank_id) {
+                $bank = \App\Models\Bank::find($firstPayment->bank_id);
                 if ($bank) {
                     $notes = 'تحويل ' . $bank->name;
                 } else {
@@ -216,11 +253,11 @@ class AccountController extends Controller
             }
 
             $transactions->push([
-                'date' => $payment->created_at,
+                'date' => Carbon::parse($date),
                 'type' => 'payment',
                 'type_label' => 'قام العميل بسداد',
                 'booking_number' => '',
-                'invoice_number' => $payment->invoice->invoice_number ?? '',
+                'invoice_number' => $dayPayments->count() > 1 ? 'متعدد (' . $dayPayments->count() . ' فاتورة)' : ($firstPayment->invoice->invoice_number ?? ''),
                 'previous_debit' => 0, // سيتم حسابه بعد الترتيب
                 'previous_credit' => 0, // سيتم حسابه بعد الترتيب
                 'discount' => 0,
@@ -228,11 +265,13 @@ class AccountController extends Controller
                 'attachment_statement' => '',
                 'transportation' => 0,
                 'total' => 0,
-                'paid' => $payment->value,
+                'paid' => $totalPaymentValue,
                 'notes' => $notes,
                 'current_debit' => 0,
-                'current_credit' => $payment->value,
+                'current_credit' => $totalPaymentValue,
                 'running_balance' => $currentBalance,
+                'payment_details' => $paymentDetails, // تفاصيل السداد
+                'payment_count' => $dayPayments->count(), // عدد الفواتير
             ]);
         }
 
@@ -408,6 +447,7 @@ class AccountController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'payment_date' => 'required|date',
             'payment_type' => 'required|in:bank_transfer,check',
+            'payment_target' => 'required|in:invoices,opening_balance',
             'bank_id' => 'required_if:payment_type,bank_transfer|nullable|exists:banks,id',
             'check_bank_name' => 'required_if:payment_type,check|nullable|string|max:255',
             'check_number' => 'required_if:payment_type,check|nullable|string|max:255',
@@ -426,6 +466,32 @@ class AccountController extends Controller
         DB::beginTransaction();
 
         try {
+            // إذا كان السداد للرصيد الافتتاحي
+            if ($request->payment_target === 'opening_balance') {
+                $openingBalance = $company->opening_balance ?? 0;
+
+                if ($openingBalance <= 0) {
+                    return redirect()->back()->with('error', 'لا يوجد رصيد افتتاحي لسداده');
+                }
+
+                if ($paymentAmount > $openingBalance) {
+                    return redirect()->back()->with('error', 'المبلغ أكبر من الرصيد الافتتاحي. الرصيد الافتتاحي: ' . number_format($openingBalance, 2) . ' جنيه');
+                }
+
+                // خصم المبلغ من الرصيد الافتتاحي
+                $company->opening_balance = $openingBalance - $paymentAmount;
+                $company->save();
+
+                // تسجيل السداد في log (اختياري - يمكن إضافة جدول منفصل لسداد الرصيد الافتتاحي)
+                // يمكن إضافة جدول opening_balance_payments إذا لزم الأمر
+
+                DB::commit();
+
+                return redirect()->route('accounts.statement', $companyId)
+                    ->with('success', 'تم سداد الرصيد الافتتاحي بنجاح. المبلغ: ' . number_format($paymentAmount, 2) . ' جنيه');
+            }
+
+            // السداد للفواتير (الكود الأصلي)
             $remainingPayment = $paymentAmount;
             $processedInvoices = [];
             $invoiceCount = 0;
@@ -752,7 +818,7 @@ class AccountController extends Controller
             $query->where('company_id', $company->id);
         })
         ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
-        ->with('invoice.booking')
+        ->with(['invoice.booking', 'bank'])
         ->orderBy('created_at', 'desc')
         ->get();
     }
