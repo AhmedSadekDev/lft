@@ -256,7 +256,7 @@ class AccountController extends Controller
                     'check_number' => $payment->check_number ?? '',
                     'date' => $payment->created_at,
                 ];
-            })->values(); // تحويل إلى array indexed
+            })->values()->toArray(); // تحويل إلى array indexed
 
             // الحصول على ملاحظات السداد (من أول سداد في اليوم)
             $firstPayment = $dayPayments->first();
