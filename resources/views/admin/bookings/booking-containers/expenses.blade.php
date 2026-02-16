@@ -72,7 +72,8 @@
                 cancelButtonText: "{{ __('alerts.cancel') }}",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = '{{ url("/dashboard/expenses") }}/' + id;
+                    var url = '{{ route("expenses.destroy", ":id") }}';
+                    url = url.replace(':id', id);
                     var token = '{{ csrf_token() }}';
                     $.ajaxSetup({
                         headers: {

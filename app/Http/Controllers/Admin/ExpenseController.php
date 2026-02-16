@@ -60,6 +60,12 @@ class ExpenseController extends Controller
                 // التحقق من أن العهدة لم يتم تسويتها
                 if ($deliveryPolicy->is_settled == 1) {
                     DB::rollBack();
+                    if (request()->ajax() || request()->wantsJson()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => __('main.delivery_policy is settled')
+                        ], 400);
+                    }
                     return back()->with('error', __('main.delivery_policy is settled'));
                 }
 
@@ -89,11 +95,26 @@ class ExpenseController extends Controller
 
             DB::commit();
 
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => __('alerts.deleted_successfully')
+                ], 200);
+            }
+
             return back()->with('success', __('alerts.deleted_successfully'));
         } catch (\Exception $Exception) {
             if (DB::transactionLevel() > 0) {
                 DB::rollBack();
             }
+            
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $Exception->getMessage()
+                ], 500);
+            }
+            
             return back()->with('error', $Exception->getMessage());
         }
     }
