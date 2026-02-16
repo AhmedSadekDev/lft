@@ -19,6 +19,8 @@ use App\Models\Image;
 use App\Models\Factory;
 use App\Models\ServiceCategory;
 use App\Models\shippingAgent;
+use App\Models\MoneyTransfer;
+use App\Models\Agent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\NewBooking;
@@ -407,6 +409,123 @@ class BookingController extends Controller
         ];
 
         return view('admin.bookings.container_policies', $input);
+    }
+
+    public function delete_delivery_policy($id)
+    {
+        try {
+            $delivery_policy = DeliveryPolicy::with([
+                'money_transfer',
+                'car_expenses',
+                'extraExpenses',
+                'payingCars',
+                'booking_containers'
+            ])->findOrFail($id);
+
+            if ($delivery_policy->is_settled == 1) {
+                if (request()->ajax() || request()->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => __('main.delivery_policy is settled')
+                    ], 400);
+                }
+                return back()->with('error', __('main.delivery_policy is settled'));
+            }
+
+            DB::beginTransaction();
+
+            // الحصول على المندوب من money_transfer
+            $agent = null;
+            if ($delivery_policy->money_transfer && $delivery_policy->money_transfer->transferer_type === 'App\Models\Agent') {
+                $agent = \App\Models\Agent::find($delivery_policy->money_transfer->transferer_id);
+            }
+
+            // حساب المبلغ الذي يجب إرجاعه (القيمة - دخان المكتب)
+            $valueToRefund = (float) ($delivery_policy->money_transfer?->value ?? 0);
+            $officeCommission = (float) ($delivery_policy->office_commission ?? 0);
+            $actualRefund = $valueToRefund - $officeCommission; // المبلغ الفعلي الذي تم خصمه
+
+            // حذف جميع المصروفات المرتبطة بالبوليصة (car_expenses)
+            foreach ($delivery_policy->car_expenses as $expense) {
+                // حذف صورة المصروف إن وجدت
+                if ($expense->image_agent_expenses) {
+                    $path = public_path('Admin/images/expenses/' . $expense->image_agent_expenses);
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
+                }
+                $expense->delete();
+            }
+
+            // حذف جميع المصروفات الإضافية المرتبطة بالبوليصة
+            foreach ($delivery_policy->extraExpenses as $extraExpense) {
+                $extraExpense->delete();
+            }
+
+            // حذف جميع سجلات السداد المرتبطة بالبوليصة
+            foreach ($delivery_policy->payingCars as $payingCar) {
+                // حذف صورة السداد إن وجدت
+                if ($payingCar->image) {
+                    $path = public_path($payingCar->image);
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
+                }
+                // حذف money_transfer المرتبط بالسداد
+                $payingCar->moneyTransfers()->delete();
+                $payingCar->delete();
+            }
+
+            // إرجاع الفلوس للمندوب
+            if ($actualRefund > 0 && $agent) {
+                $agent->update(['wallet' => $agent->wallet + $actualRefund]);
+            }
+
+            // حذف الصورة المرتبطة بالبوليصة
+            if ($delivery_policy->image) {
+                $delivery_policy->image()->delete();
+            }
+
+            // فصل البوليصة عن الحاويات
+            $delivery_policy->booking_containers()->detach();
+
+            // حذف معاملة العهدة (type 3)
+            if ($delivery_policy->money_transfer) {
+                $delivery_policy->money_transfer()->delete();
+            }
+
+            // حذف معاملة دخان المكتب (type 5) إن وجدت
+            MoneyTransfer::where('delivery_policy_id', $delivery_policy->id)
+                ->where('type', 5)
+                ->delete();
+
+            // حذف البوليصة نفسها
+            $delivery_policy->delete();
+
+            DB::commit();
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => __('alerts.deleted_successfully')
+                ], 200);
+            }
+
+            return back()->with('success', __('alerts.deleted_successfully'));
+        } catch (\Exception $Exception) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $Exception->getMessage()
+                ], 500);
+            }
+
+            return back()->with('error', $Exception->getMessage());
+        }
     }
     public function deletePaper(Request $request, BookingPaper $booking)
     {

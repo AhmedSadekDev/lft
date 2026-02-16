@@ -128,7 +128,7 @@
         }
 
         .info-card-value {
-            color: white;
+            color: rgba(255,255,255,0.9);
             font-size: 1.25rem;
             font-weight: bold;
         }
