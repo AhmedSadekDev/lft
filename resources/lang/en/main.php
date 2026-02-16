@@ -67,7 +67,7 @@ return [
     "Total_invoice_before_tax" => 'Total invoice before tax',
     "Total_invoice_after_tax" => 'Total invoice after tax',
     'download_all_invoices' => 'Download Invoices',
-    
+
     // Delivery Policy
     'custody_transfer' => 'Custody Transfer',
     'office_commission' => 'Office Commission',
@@ -75,7 +75,7 @@ return [
     'transfer_to_agent' => 'Transfer to Agent',
     'transfer_to_vault' => 'Transfer to Vault',
     'from_dashboard' => 'From Dashboard',
-    
+
     // ------------------ Main ------------------
 
 ];
