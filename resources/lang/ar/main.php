@@ -114,7 +114,10 @@ return [
     "General_tax" => 'ضريبة عامة',
     "Total_invoice_before_tax" => 'إجمالي الفاتورة قبل الضريبة',
     'Total_invoice_after_tax' => 'اجمالي الفاتورة بعد الضريبة',
-    'download_all_invoices' => 'تحميل الفواتير'
+    'download_all_invoices' => 'تحميل الفواتير',
+    'no_data_available' => 'لا توجد بيانات متاحة',
+    'currency' => 'ج.م',
+    'container_not_written_yet' => 'لم يتم كتابه رقم الحاويه بعد'
 
 
 ];

@@ -107,14 +107,14 @@ class ExpenseController extends Controller
             if (DB::transactionLevel() > 0) {
                 DB::rollBack();
             }
-            
+
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => $Exception->getMessage()
                 ], 500);
             }
-            
+
             return back()->with('error', $Exception->getMessage());
         }
     }

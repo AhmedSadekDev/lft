@@ -67,6 +67,12 @@ return [
     "Total_invoice_before_tax" => 'Total invoice before tax',
     "Total_invoice_after_tax" => 'Total invoice after tax',
     'download_all_invoices' => 'Download Invoices',
+    'no_data_available' => 'No data available',
+    'currency' => 'EGP',
+    'container_not_written_yet' => 'Container number not written yet',
+    'not_found' => 'Not found',
+    'delivery_policies' => 'Delivery Policies',
+    'date' => 'Date',
 
     // Delivery Policy
     'custody_transfer' => 'Custody Transfer',
