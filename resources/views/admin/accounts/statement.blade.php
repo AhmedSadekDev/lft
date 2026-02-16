@@ -134,7 +134,7 @@
                                 $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
                                 $paymentDetails = $transaction['payment_details'] ?? collect();
                                 $hasPaymentDetails = isset($transaction['payment_details']) && (
-                                    (is_array($paymentDetails) && count($paymentDetails) > 0) || 
+                                    (is_array($paymentDetails) && count($paymentDetails) > 0) ||
                                     (is_object($paymentDetails) && method_exists($paymentDetails, 'count') && $paymentDetails->count() > 0)
                                 );
                             @endphp

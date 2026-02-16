@@ -200,7 +200,7 @@
                                 @if($company->opening_balance && $company->opening_balance > 0)
                                     الرصيد الافتتاحي: {{ number_format($company->opening_balance, 2) }} جنيه
                                 @else
-                                    الحد الأقصى: {{ number_format($currentBalance, 2) }} جنيه
+                                    الرصيد المستحق: {{ number_format($currentBalance, 2) }} جنيه
                                 @endif
                             </small>
                         </div>
@@ -434,8 +434,8 @@
             // إخفاء قسم الفواتير
             $('#invoices_section').hide();
             $('#opening_balance_section').show();
-
-            // تحديث hint المبلغ
+            
+            // تحديث hint المبلغ ووضع حد أقصى للرصيد الافتتاحي
             if (openingBalance > 0) {
                 $('#amount_hint').text('الرصيد الافتتاحي: ' + openingBalance.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' جنيه');
                 $('#amount_input').attr('max', openingBalance);
@@ -443,7 +443,7 @@
                 $('#amount_hint').text('لا يوجد رصيد افتتاحي');
                 $('#amount_input').removeAttr('max');
             }
-
+            
             // إزالة required من invoice_ids
             $('#invoice_ids_input').val('');
             $('.invoice-checkbox').prop('checked', false);
@@ -452,10 +452,10 @@
             // إظهار قسم الفواتير
             $('#invoices_section').show();
             $('#opening_balance_section').hide();
-
-            // تحديث hint المبلغ
-            $('#amount_hint').text('الحد الأقصى: ' + currentBalance.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' جنيه');
-            $('#amount_input').attr('max', currentBalance);
+            
+            // تحديث hint المبلغ وإزالة الحد الأقصى (لأن السداد للفواتير يمكن أن يكون لأي مبلغ)
+            $('#amount_hint').text('الرصيد المستحق: ' + currentBalance.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' جنيه (يمكن إدخال أي مبلغ)');
+            $('#amount_input').removeAttr('max'); // إزالة الحد الأقصى للسماح بأي مبلغ
         }
     }
 
