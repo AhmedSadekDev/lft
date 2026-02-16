@@ -33,6 +33,12 @@
                             {{ __('admin.import') }}
                         </button>
                     </div>
+                    <div class="float-left ml-2">
+                        <a href="{{ route('companyTransportations.export', request()->all()) }}" class="btn btn-info">
+                            <i class="fas fa-file-excel"></i>
+                            {{ __('admin.export') }}
+                        </a>
+                    </div>
                     <!--end::Button-->
                 </div>
                 <div class="mt-3">
