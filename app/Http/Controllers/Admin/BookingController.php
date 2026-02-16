@@ -463,8 +463,9 @@ class BookingController extends Controller
                     }
                 }
             }
+            }
             // If no containers data in request, keep existing containers unchanged (only update booking details)
-            
+
             if ($request->hasFile('image')) {
 
                 // Create new paper
