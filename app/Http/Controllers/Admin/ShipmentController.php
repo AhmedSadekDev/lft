@@ -186,10 +186,10 @@ class ShipmentController extends Controller
 
     public function destroy($id)
     {
-        $shipment = Shipment::findOrFail($id);
+        $shipment = DeliveryPolicy::findOrFail($id);
 
         $shipment->delete();
 
-        return response()->json(['staus' => true, 'msg' => __('alerts.deleted_successfully')], 200);
+        return response()->json(['status' => true, 'msg' => __('alerts.deleted_successfully')], 200);
     }
 }
