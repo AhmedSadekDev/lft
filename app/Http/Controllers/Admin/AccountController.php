@@ -12,6 +12,7 @@ use App\Models\AgentExpense;
 use App\Models\MoneyTransfer;
 use App\Models\Vault;
 use App\Models\VaultTransaction;
+use App\Models\BankTrnsaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -510,7 +511,7 @@ class AccountController extends Controller
                 if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
                     $bank = \App\Models\Bank::findOrFail($request->bank_id);
                     $vault = \App\Models\Vault::first();
-                    
+
                     if (!$vault) {
                         DB::rollBack();
                         return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
@@ -557,7 +558,7 @@ class AccountController extends Controller
             if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
                 $bank = \App\Models\Bank::findOrFail($request->bank_id);
                 $vault = \App\Models\Vault::first();
-                
+
                 if (!$vault) {
                     DB::rollBack();
                     return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
