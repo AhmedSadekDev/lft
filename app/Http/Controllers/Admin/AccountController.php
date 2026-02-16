@@ -68,6 +68,11 @@ class AccountController extends Controller
         // جلب جميع الفواتير في الفترة المحددة
         $invoices = $this->getInvoicesInPeriod($company, $fromDate, $toDate);
 
+        // التأكد من أن $invoices هي collection
+        if (!is_a($invoices, \Illuminate\Support\Collection::class)) {
+            $invoices = collect($invoices ?? []);
+        }
+
         // حساب إجمالي الفواتير في الفترة
         $totalInvoices = $this->calculateTotalInvoices($invoices);
 
@@ -79,6 +84,11 @@ class AccountController extends Controller
 
         // جلب تفاصيل السداد
         $payments = $this->getPaymentsInPeriod($company, $fromDate, $toDate);
+
+        // التأكد من أن $payments هي collection
+        if (!is_a($payments, \Illuminate\Support\Collection::class)) {
+            $payments = collect($payments ?? []);
+        }
 
         // إنشاء قائمة موحدة بجميع الحركات (فواتير + سداد) مرتبة حسب التاريخ
         $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company);
@@ -162,44 +172,56 @@ class AccountController extends Controller
             ]);
         }
 
-        // إضافة الفواتير
-        foreach ($invoices as $invoice) {
-            $invoiceObj = \App\Models\Invoice::find($invoice['id']);
-            if (!$invoiceObj) continue;
+        // إضافة الفواتير (إذا كانت موجودة)
+        if ($invoices && is_iterable($invoices)) {
+            foreach ($invoices as $invoice) {
+                // التحقق من أن $invoice هو array وليس object
+                $invoiceId = is_array($invoice) ? ($invoice['id'] ?? null) : ($invoice->id ?? null);
+                if (!$invoiceId) continue;
 
-            $transportationTotal = $invoiceObj->transportation_total_before_vat ?? 0;
-            $vatAmount = $invoiceObj->value_added_tax_amount ?? 0;
-            $discountAmount = $invoiceObj->discount_amount ?? 0;
-            $totalInvoice = $invoice['total'];
-            $paidAmount = $invoice['paid'];
+                $invoiceObj = \App\Models\Invoice::find($invoiceId);
+                if (!$invoiceObj) continue;
 
-            $currentBalance = ($transactions->last()['running_balance'] ?? ($carriedForwardBalance)) + $totalInvoice;
+                $transportationTotal = $invoiceObj->transportation_total_before_vat ?? 0;
+                $vatAmount = $invoiceObj->value_added_tax_amount ?? 0;
+                $discountAmount = $invoiceObj->discount_amount ?? 0;
+                $totalInvoice = is_array($invoice) ? ($invoice['total'] ?? 0) : ($invoice->total ?? 0);
+                $paidAmount = is_array($invoice) ? ($invoice['paid'] ?? 0) : ($invoice->paid ?? 0);
+                $invoiceDate = is_array($invoice) ? ($invoice['date'] ?? now()) : ($invoice->date ?? now());
+                $bookingNumber = is_array($invoice) ? ($invoice['booking_number'] ?? '') : ($invoice->booking_number ?? '');
+                $invoiceNumber = is_array($invoice) ? ($invoice['invoice_number'] ?? '') : ($invoice->invoice_number ?? '');
 
-            $transactions->push([
-                'date' => $invoice['date'],
-                'type' => 'invoice',
-                'type_label' => 'فاتورة نقل',
-                'booking_number' => $invoice['booking_number'],
-                'invoice_number' => $invoice['invoice_number'],
-                'previous_debit' => 0, // سيتم حسابه بعد الترتيب
-                'previous_credit' => 0, // سيتم حسابه بعد الترتيب
-                'discount' => $discountAmount,
-                'tax' => $vatAmount,
-                'attachment_statement' => '',
-                'transportation' => $transportationTotal,
-                'total' => $totalInvoice,
-                'paid' => 0,
-                'notes' => '',
-                'current_debit' => $totalInvoice,
-                'current_credit' => 0,
-                'running_balance' => $currentBalance,
-            ]);
+                $currentBalance = ($transactions->last()['running_balance'] ?? ($carriedForwardBalance)) + $totalInvoice;
+
+                $transactions->push([
+                    'date' => $invoiceDate,
+                    'type' => 'invoice',
+                    'type_label' => 'فاتورة نقل',
+                    'booking_number' => $bookingNumber,
+                    'invoice_number' => $invoiceNumber,
+                    'previous_debit' => 0, // سيتم حسابه بعد الترتيب
+                    'previous_credit' => 0, // سيتم حسابه بعد الترتيب
+                    'discount' => $discountAmount,
+                    'tax' => $vatAmount,
+                    'attachment_statement' => '',
+                    'transportation' => $transportationTotal,
+                    'total' => $totalInvoice,
+                    'paid' => 0,
+                    'notes' => '',
+                    'current_debit' => $totalInvoice,
+                    'current_credit' => 0,
+                    'running_balance' => $currentBalance,
+                ]);
+            }
         }
 
-        // تجميع المدفوعات حسب التاريخ
-        $groupedPayments = $payments->groupBy(function ($payment) {
-            return Carbon::parse($payment->created_at)->format('Y-m-d');
-        });
+        // تجميع المدفوعات حسب التاريخ (فقط إذا كانت موجودة)
+        $groupedPayments = collect();
+        if ($payments && $payments->count() > 0) {
+            $groupedPayments = $payments->groupBy(function ($payment) {
+                return Carbon::parse($payment->created_at)->format('Y-m-d');
+            });
+        }
 
         // إضافة المدفوعات المجمعة
         foreach ($groupedPayments as $date => $dayPayments) {
