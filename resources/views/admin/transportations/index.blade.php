@@ -161,7 +161,7 @@
                 if ($.fn.DataTable.isDataTable('#transportationsTable')) {
                     $('#transportationsTable').DataTable().destroy();
                 }
-                
+
                 // Initialize DataTable
                 $('#transportationsTable').DataTable({
                     "language": {
