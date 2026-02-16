@@ -232,6 +232,32 @@
         transform: translateY(-1px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
+    /* تعطيل DataTable */
+    .dataTables_wrapper {
+        display: none !important;
+    }
+    .dataTables_filter,
+    .dataTables_length,
+    .dataTables_info,
+    .dataTables_paginate {
+        display: none !important;
+    }
 </style>
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        // منع تهيئة DataTable على أي جدول في هذه الصفحة
+        if ($.fn.DataTable) {
+            // تعطيل DataTable على جميع الجداول في هذه الصفحة
+            $('.table').each(function() {
+                if ($.fn.DataTable.isDataTable(this)) {
+                    $(this).DataTable().destroy();
+                }
+            });
+        }
+    });
+</script>
+@endpush
 
 @endsection
