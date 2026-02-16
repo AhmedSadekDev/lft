@@ -176,9 +176,9 @@
 
                                 <td>
                                     @if($hasPaymentDetails)
-                                        <button type="button" 
-                                                class="btn btn-sm btn-info" 
-                                                data-toggle="modal" 
+                                        <button type="button"
+                                                class="btn btn-sm btn-info"
+                                                data-toggle="modal"
                                                 data-target="#transactionDetailsModal{{ $index }}"
                                                 title="عرض تفاصيل السداد">
                                             <i class="fas fa-eye"></i> تفاصيل
@@ -188,91 +188,6 @@
                                     @endif
                                 </td>
                             </tr>
-
-                            @if($hasPaymentDetails)
-                                <!-- Modal تفاصيل العملية -->
-                                <div class="modal fade" id="transactionDetailsModal{{ $index }}" tabindex="-1" role="dialog">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title font-weight-bold">
-                                                    <i class="fas fa-info-circle mr-2"></i>
-                                                    تفاصيل السداد - {{ number_format($transaction['paid'] ?? 0, 2) }} ج.م
-                                                </h5>
-                                                <button type="button" class="close text-white" data-dismiss="modal">
-                                                    <span>&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered table-hover">
-                                                        <thead class="thead-light">
-                                                            <tr>
-                                                                <th class="text-center">#</th>
-                                                                <th class="text-center">رقم الفاتورة</th>
-                                                                <th class="text-center">رقم الطلب</th>
-                                                                <th class="text-center">المبلغ</th>
-                                                                <th class="text-center">نوع السداد</th>
-                                                                <th class="text-center">البنك</th>
-                                                                <th class="text-center">ملاحظات</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @if($hasPaymentDetails && is_array($paymentDetails) && count($paymentDetails) > 0)
-                                                                @foreach($paymentDetails as $detailIndex => $detail)
-                                                                    <tr>
-                                                                        <td class="text-center">{{ $detailIndex + 1 }}</td>
-                                                                        <td class="text-center">
-                                                                            <span class="badge badge-info">{{ $detail['invoice_number'] ?? '-' }}</span>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            <span class="badge badge-secondary">{{ $detail['booking_number'] ?? '-' }}</span>
-                                                                        </td>
-                                                                        <td class="text-center font-weight-bold text-success" style="font-size: 1.1em;">
-                                                                            {{ number_format($detail['value'] ?? 0, 2) }} ج.م
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            @if(($detail['payment_type'] ?? '') == 'check')
-                                                                                <span class="badge badge-warning badge-pill">
-                                                                                    <i class="fas fa-money-check mr-1"></i>شيك
-                                                                                </span>
-                                                                            @else
-                                                                                <span class="badge badge-primary badge-pill">
-                                                                                    <i class="fas fa-university mr-1"></i>تحويل بنكي
-                                                                                </span>
-                                                                            @endif
-                                                                        </td>
-                                                                        <td class="text-center">{{ $detail['bank_name'] ?? '-' }}</td>
-                                                                        <td class="text-center">{{ $detail['notes'] ?? '-' }}</td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            @else
-                                                                <tr>
-                                                                    <td colspan="7" class="text-center text-muted py-4">
-                                                                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i><br>
-                                                                        لا توجد تفاصيل متاحة
-                                                                    </td>
-                                                                </tr>
-                                                            @endif
-                                                        </tbody>
-                                                        <tfoot>
-                                                            <tr class="table-success font-weight-bold">
-                                                                <td colspan="3" class="text-right">الإجمالي:</td>
-                                                                <td class="text-center text-success">{{ number_format($transaction['paid'] ?? 0, 2) }} ج.م</td>
-                                                                <td colspan="3"></td>
-                                                            </tr>
-                                                        </tfoot>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-
                         @empty
                             <tr>
                                 <td colspan="9" class="py-4 text-muted">
@@ -288,6 +203,96 @@
     </div>
 </div>
 
+<!-- Modals تفاصيل العمليات -->
+@foreach($transactions as $index => $transaction)
+    @php
+        $paymentDetails = $transaction['payment_details'] ?? [];
+        $hasPaymentDetails = isset($transaction['payment_details']) && is_array($paymentDetails) && count($paymentDetails) > 0;
+    @endphp
+    @if($hasPaymentDetails)
+        <!-- Modal تفاصيل العملية -->
+        <div class="modal fade" id="transactionDetailsModal{{ $index }}" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title font-weight-bold">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            تفاصيل السداد - {{ number_format($transaction['paid'] ?? 0, 2) }} ج.م
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">رقم الفاتورة</th>
+                                        <th class="text-center">رقم الطلب</th>
+                                        <th class="text-center">المبلغ</th>
+                                        <th class="text-center">نوع السداد</th>
+                                        <th class="text-center">البنك</th>
+                                        <th class="text-center">ملاحظات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if($hasPaymentDetails && is_array($paymentDetails) && count($paymentDetails) > 0)
+                                        @foreach($paymentDetails as $detailIndex => $detail)
+                                            <tr>
+                                                <td class="text-center">{{ $detailIndex + 1 }}</td>
+                                                <td class="text-center">
+                                                    <span class="badge badge-info">{{ $detail['invoice_number'] ?? '-' }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge badge-secondary">{{ $detail['booking_number'] ?? '-' }}</span>
+                                                </td>
+                                                <td class="text-center font-weight-bold text-success" style="font-size: 1.1em;">
+                                                    {{ number_format($detail['value'] ?? 0, 2) }} ج.م
+                                                </td>
+                                                <td class="text-center">
+                                                    @if(($detail['payment_type'] ?? '') == 'check')
+                                                        <span class="badge badge-warning badge-pill">
+                                                            <i class="fas fa-money-check mr-1"></i>شيك
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-primary badge-pill">
+                                                            <i class="fas fa-university mr-1"></i>تحويل بنكي
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">{{ $detail['bank_name'] ?? '-' }}</td>
+                                                <td class="text-center">{{ $detail['notes'] ?? '-' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">
+                                                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i><br>
+                                                لا توجد تفاصيل متاحة
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-success font-weight-bold">
+                                        <td colspan="3" class="text-right">الإجمالي:</td>
+                                        <td class="text-center text-success">{{ number_format($transaction['paid'] ?? 0, 2) }} ج.م</td>
+                                        <td colspan="3"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
 
 <!-- Modal الفلتر -->
 <div class="modal fade" id="filterModal">
