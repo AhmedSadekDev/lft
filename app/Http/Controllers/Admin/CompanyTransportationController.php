@@ -172,10 +172,10 @@ class CompanyTransportationController extends Controller
     public function export(Request $request)
     {
         $companyId = $request->get('company_id');
-        $fileName = $companyId 
+        $fileName = $companyId
             ? 'transportations_' . Company::find($companyId)?->name . '.xlsx'
             : 'transportations.xlsx';
-        
+
         return Excel::download(new CompanyTransportationExport($companyId), $fileName);
     }
 }

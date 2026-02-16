@@ -1,5 +1,25 @@
 @extends('layouts.admin')
 @section('content')
+    <style>
+        #transportationsTable {
+            direction: rtl;
+        }
+        #transportationsTable thead th {
+            background-color: #f7f8fa;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+        #transportationsTable tbody tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s;
+        }
+        .empty-state {
+            padding: 40px 20px;
+        }
+        .empty-state i {
+            opacity: 0.5;
+        }
+    </style>
     <div class="container">
         @include('layouts.includes.breadcrumb', ['page' => __('main.transportations')])
         <!--begin::Card-->
@@ -48,62 +68,85 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="table table-responsive-sm" id="table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">{{ __('main.container') }}</th>
-                            <th scope="col">{{ __('main.company') }}</th>
-                            <th scope="col">{{ __('admin.departure_location') }}</th>
-                            <th scope="col">{{ __('admin.loading_location') }}</th>
-                            <th scope="col">{{ __('admin.aging_location') }}</th>
-                            <th scope="col">{{ __('admin.price') }}</th>
-                            <th scope="col">{{ 'note' }}</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($transportations as $transportation)
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped" id="transportationsTable">
+                        <thead class="thead-light">
                             <tr>
-                                <th scope="row">
-                                    {{ $transportation->id }}
-                                </th>
-                                <td>
-                                    {{ $transportation->company_name }}
-                                </td>
-                                <td>
-                                    {{ $transportation->container_type ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $transportation->Departure->title ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $transportation->Loading->title ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $transportation->Aging->title ?? '' }}
-                                </td>
-                                <td>
-                                    {{ $transportation->price }}
-                                </td>
-                                <td>
-                                    @if (auth()->user()->hasPermissionTo('transportations.update'))
-                                        <a href="{{ route('companyTransportations.edit', ['companyTransportation' => $transportation->id, 'company_id' => isset(request()->company_id) && !is_null(request()->company_id) ? request()->company_id : null]) }}"
-                                            class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3">
-                                            <i class="fas fa-edit text-primary"></i>
-                                        </a>
-                                    @endif
-                                    @if (auth()->user()->hasPermissionTo('transportations.delete'))
-                                        <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
-                                            onclick="Delete('{{ $transportation->id }}')">
-                                            <i class="fas fa-trash text-danger"></i>
-                                        </button>
-                                    @endif
-                                </td>
+                                <th scope="col" style="width: 50px;">#</th>
+                                <th scope="col">{{ __('main.company') }}</th>
+                                <th scope="col">{{ __('main.container') }}</th>
+                                <th scope="col">{{ __('admin.departure_location') }}</th>
+                                <th scope="col">{{ __('admin.loading_location') }}</th>
+                                <th scope="col">{{ __('admin.aging_location') }}</th>
+                                <th scope="col" style="text-align: left;">{{ __('admin.price') }}</th>
+                                <th scope="col" style="width: 120px; text-align: center;">{{ __('admin.actions') }}</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse ($transportations as $transportation)
+                                <tr>
+                                    <th scope="row" class="font-weight-bold">
+                                        {{ $transportation->id }}
+                                    </th>
+                                    <td>
+                                        <span class="font-weight-bold text-primary">
+                                            {{ $transportation->company_name ?? __('main.not_found') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-info badge-pill">
+                                            {{ $transportation->container_type ?? __('main.not_found') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-map-marker-alt text-danger mr-1"></i>
+                                        {{ $transportation->Departure->title ?? __('main.not_found') }}
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-map-marker-alt text-success mr-1"></i>
+                                        {{ $transportation->Loading->title ?? __('main.not_found') }}
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-map-marker-alt text-warning mr-1"></i>
+                                        {{ $transportation->Aging->title ?? __('main.not_found') }}
+                                    </td>
+                                    <td>
+                                        <span class="font-weight-bold text-success" style="font-size: 1.1rem;">
+                                            {{ number_format($transportation->price ?? 0, 2) }} {{ __('main.currency') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            @if (auth()->user()->hasPermissionTo('transportations.update'))
+                                                <a href="{{ route('companyTransportations.edit', ['companyTransportation' => $transportation->id, 'company_id' => isset(request()->company_id) && !is_null(request()->company_id) ? request()->company_id : null]) }}"
+                                                    class="btn btn-icon btn-light btn-hover-primary btn-sm mr-2"
+                                                    title="{{ __('admin.edit') }}">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                </a>
+                                            @endif
+                                            @if (auth()->user()->hasPermissionTo('transportations.delete'))
+                                                <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
+                                                    onclick="Delete('{{ $transportation->id }}')"
+                                                    title="{{ __('admin.delete') }}">
+                                                    <i class="fas fa-trash text-danger"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                            <h5 class="text-muted">{{ __('main.no_data_available') }}</h5>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <!--end::Card-->
@@ -112,10 +155,22 @@
 @endsection
 @push('js')
     <script>
-        (function($) {
-            "use strict";
-            s
-        })(jQuery);
+        $(document).ready(function() {
+            if ($('#transportationsTable').length) {
+                $('#transportationsTable').DataTable({
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Arabic.json"
+                    },
+                    "order": [[0, "desc"]],
+                    "pageLength": 10,
+                    "responsive": true,
+                    "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    "columnDefs": [
+                        { "orderable": false, "targets": [7] } // Disable sorting on actions column
+                    ]
+                });
+            }
+        });
 
         function Delete(id) {
             Swal.fire({
