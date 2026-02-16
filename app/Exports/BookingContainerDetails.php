@@ -21,7 +21,7 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
     public function collection()
     {
         return BookingContainer::whereIn('id', $this->ids)
-            ->with(['container', 'delivery_policies.money_transfer', 'delivery_policies'])
+            ->with(['container', 'delivery_policies.money_transfer', 'delivery_policies', 'departure', 'loading', 'aging'])
             ->get()
             ->map(function ($item) {
                 switch ($item->booking->type_of_action) {
@@ -65,24 +65,6 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
 
                 $firstPolicy = $item->delivery_policies->first();
 
-                // عهدة السيارة (type 3)
-                $carCustody = optional(optional($firstPolicy)->money_transfer)->value ?? 0;
-
-                // دخان المكتب (type 5) - office commission
-                $officeCommission = 0;
-                if ($firstPolicy) {
-                    $officeCommissionTransfer = \App\Models\MoneyTransfer::where('delivery_policy_id', $firstPolicy->id)
-                        ->where('type', \App\Models\MoneyTransfer::officeCommission)
-                        ->first();
-                    $officeCommission = $officeCommissionTransfer?->value ?? ($firstPolicy->office_commission ?? 0);
-                }
-
-                // المسدد (عهدة السيارة)
-                $paidAmount = $firstPolicy && $firstPolicy->payingCar ? $firstPolicy->payingCar->value : 0;
-
-                // المتبقي من تكلفة النقل
-                $remainingAmount = $item->price - $paidAmount;
-
                 return [
                     'id' => $item->booking_id,
                     'date' => $item->created_at ?? $item->updated_at,
@@ -95,21 +77,18 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
                     'container_type' => $containerType,
                     'container_size' => $containerSize,
                     'container_type_and_size' => $containerTypeAndSize,
-                    'office_commission' => $officeCommission, // دخان المكتب
-                    'car_custody' => $carCustody, // عهدة السيارة
                     'type_of_sail' => $typePolicy,
                     'sail_name' => $item->booking->shippingAgent->title ?? '',
                     'sail_of_number' => $item->sail_of_number,
                     'car' => optional(optional($firstPolicy)->car)->car_number ?? '',
                     'drive' => optional(optional($firstPolicy)->driver)->name ?? '',
                     'drive_phone' => optional(optional($firstPolicy)->driver)->phone ?? '',
-                    // خروج: تاريخ الخروج من أول بوليصة
-                    'departure' => optional($firstPolicy)->date ?? null,
-                    'loading' => $item->Loading ? $item->Loading->title : null,
-                    'aging_id' => $item->Aging ? $item->Aging->title : null,
-                    'total' => $item->price,
-                    'paid_amount' => $paidAmount, // المسدد (عهدة السيارة)
-                    'remaining_amount' => $remainingAmount // المتبقي من تكلفة النقل
+                    // خروج: ميناء الخروج (departure title)
+                    'departure' => $item->departure ? $item->departure->title : null,
+                    // تاريخ الخروج من أول بوليصة
+                    'departure_date' => optional($firstPolicy)->date ?? null,
+                    'loading' => $item->loading ? $item->loading->title : null,
+                    'aging_id' => $item->aging ? $item->aging->title : null,
                 ];
             });
     }
@@ -130,8 +109,6 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
             'نوع الحاوية',
             'حجم الحاوية (المقاس)',
             'نوع و حجم الحاوية',
-            'دخان المكتب',
-            'عهدة السيارة',
             'نوع البوليصة',
             'الخط الملاحى',
             'السيل الملاحى',
@@ -139,11 +116,9 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
             'السائق',
             'رقم هاتف السائق',
             'خروج',
+            'تاريخ الخروج',
             'تحميل',
             'تعتيق',
-            'التكلفه',
-            'المسدد (عهدة السيارة)',
-            'المتبقي من تكلفة النقل'
         ];
     }
 }

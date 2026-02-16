@@ -306,12 +306,15 @@ class BookingController extends Controller
             ));
 
             // Handle containers update - preserve existing containers and their data (expenses, container_no, etc.)
+            // IMPORTANT: Do NOT delete existing containers to preserve expenses and container_no
             $existingContainers = $booking->bookingContainers->sortBy('id')->values();
             $requestContainers = $request->get('containers', []);
-            
+
             // Check if request has container arrays (from thirdStep views) or nested arrays (from form view)
             $hasContainerArrays = $request->has('container_no') || $request->has('sail_of_numbers');
-            
+
+            // Only update containers if containers data is provided in request
+            if (!empty($requestContainers) || $hasContainerArrays) {
             if ($hasContainerArrays) {
                 // Handle arrays format (from thirdStep/outbound.blade.php or thirdStep/inbound.blade.php)
                 $containerNos = $request->get('container_no', []);
@@ -326,29 +329,29 @@ class BookingController extends Controller
                     if ($containerIndex < count($containerNos)) {
                         // Update existing container with new data, but preserve container_no if not provided
                         $updateData = [];
-                        
+
                         if (isset($containerIds[$containerIndex])) {
                             $updateData['container_id'] = $containerIds[$containerIndex];
                         }
-                        
+
                         // Only update container_no if provided and not empty
                         if (isset($containerNos[$containerIndex]) && !empty($containerNos[$containerIndex])) {
                             $updateData['container_no'] = $containerNos[$containerIndex];
                         }
-                        
+
                         // Only update sail_of_number if provided and not empty
                         if (isset($sailOfNumbers[$containerIndex]) && !empty($sailOfNumbers[$containerIndex])) {
                             $updateData['sail_of_number'] = $sailOfNumbers[$containerIndex];
                         }
-                        
+
                         if (isset($arrivalDates[$containerIndex])) {
                             $updateData['arrival_date'] = $arrivalDates[$containerIndex];
                         }
-                        
+
                         if (isset($branches[$containerIndex])) {
                             $updateData['branch_id'] = $branches[$containerIndex];
                         }
-                        
+
                         if (!empty($updateData)) {
                             $existingContainer->update($updateData);
                         }
@@ -377,7 +380,7 @@ class BookingController extends Controller
                         $hasExpenses = $containerToDelete->expenses->count() > 0;
                         $hasDeliveryPolicies = $containerToDelete->delivery_policies->count() > 0;
                         $hasPapers = $containerToDelete->bookingPapers->count() > 0;
-                        
+
                         if (!$hasExpenses && !$hasDeliveryPolicies && !$hasPapers) {
                             $containerToDelete->delete();
                         }
@@ -388,12 +391,12 @@ class BookingController extends Controller
                 // Update existing containers instead of deleting them
                 $containerIndex = 0;
                 $totalRequestContainers = 0;
-                
+
                 // Calculate total containers from request (sum of containers_count)
                 foreach ($requestContainers as $containerGroup) {
                     $totalRequestContainers += $containerGroup['containers_count'] ?? 1;
                 }
-                
+
                 // Update existing containers
                 foreach ($existingContainers as $existingContainer) {
                     // Find matching container group in request
@@ -407,36 +410,36 @@ class BookingController extends Controller
                                 'arrival_date' => $containerGroup['arrival_date'] ?? $existingContainer->arrival_date,
                                 'branch_id' => $containerGroup['branch_id'] ?? $existingContainer->branch_id,
                             ];
-                            
+
                             // Only update container_no if explicitly provided in request
                             if (isset($containerGroup['container_no']) && !empty($containerGroup['container_no'])) {
                                 $updateData['container_no'] = $containerGroup['container_no'];
                             }
-                            
+
                             // Only update sail_of_number if explicitly provided in request
                             if (isset($containerGroup['sail_of_number']) && !empty($containerGroup['sail_of_number'])) {
                                 $updateData['sail_of_number'] = $containerGroup['sail_of_number'];
                             }
-                            
+
                             $existingContainer->update($updateData);
                             $matched = true;
                             break;
                         }
                     }
-                    
+
                     // If no match found and container has expenses/delivery policies, keep it
                     if (!$matched) {
                         $hasExpenses = $existingContainer->expenses->count() > 0;
                         $hasDeliveryPolicies = $existingContainer->delivery_policies->count() > 0;
                         $hasPapers = $existingContainer->bookingPapers->count() > 0;
-                        
+
                         // Only delete if container has no expenses, delivery policies, or papers
                         if (!$hasExpenses && !$hasDeliveryPolicies && !$hasPapers) {
                             $existingContainer->delete();
                         }
                     }
                 }
-                
+
                 // Create new containers from request
                 foreach ($requestContainers as $containerGroup) {
                     $containersCount = $containerGroup['containers_count'] ?? 1;
@@ -446,7 +449,7 @@ class BookingController extends Controller
                             return $container->container_id == ($containerGroup['container_id'] ?? null) &&
                                    $container->branch_id == ($containerGroup['branch_id'] ?? null);
                         });
-                        
+
                         if (!$exists) {
                             BookingContainer::create([
                                 'booking_id'    => $booking->id,
@@ -454,11 +457,12 @@ class BookingController extends Controller
                                 'arrival_date'  => $containerGroup['arrival_date'] ?? null,
                                 'branch_id'     => $containerGroup['branch_id'] ?? null,
                                 'container_no'  => $containerGroup['container_no'] ?? null,
-                                'sail_of_number'=> $containerGroup['sail_of_number'] ?? null,
-                            ]);
-                        }
-                    }
+                        'sail_of_number'=> $containerGroup['sail_of_number'] ?? null,
+                    ]);
                 }
+            }
+            }
+            // If no containers data in request, keep existing containers unchanged (only update booking details)
             }
             if ($request->hasFile('image')) {
 
