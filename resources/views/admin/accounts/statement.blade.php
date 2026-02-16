@@ -337,30 +337,58 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @if($hasPaymentDetails)
+                                                            @if($hasPaymentDetails && isset($transaction['payment_details']))
                                                                 @php
-                                                                    $details = is_array($paymentDetails) ? $paymentDetails : $paymentDetails->toArray();
+                                                                    $details = $transaction['payment_details'];
+                                                                    // التأكد من أن $details هي array
+                                                                    if (is_object($details) && method_exists($details, 'toArray')) {
+                                                                        $details = $details->toArray();
+                                                                    } elseif (!is_array($details)) {
+                                                                        $details = [];
+                                                                    }
                                                                 @endphp
-                                                                @foreach($details as $detailIndex => $detail)
+                                                                @if(count($details) > 0)
+                                                                    @foreach($details as $detailIndex => $detail)
+                                                                        <tr>
+                                                                            <td class="text-center">{{ $detailIndex + 1 }}</td>
+                                                                            <td class="text-center">
+                                                                                <span class="badge badge-info">{{ $detail['invoice_number'] ?? '-' }}</span>
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                <span class="badge badge-secondary">{{ $detail['booking_number'] ?? '-' }}</span>
+                                                                            </td>
+                                                                            <td class="text-center font-weight-bold text-success" style="font-size: 1.1em;">
+                                                                                {{ number_format($detail['value'] ?? 0, 2) }} ج.م
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                @if(($detail['payment_type'] ?? '') == 'check')
+                                                                                    <span class="badge badge-warning badge-pill">
+                                                                                        <i class="fas fa-money-check mr-1"></i>شيك
+                                                                                    </span>
+                                                                                @else
+                                                                                    <span class="badge badge-primary badge-pill">
+                                                                                        <i class="fas fa-university mr-1"></i>تحويل بنكي
+                                                                                    </span>
+                                                                                @endif
+                                                                            </td>
+                                                                            <td class="text-center">{{ $detail['bank_name'] ?? '-' }}</td>
+                                                                            <td class="text-center">{{ $detail['notes'] ?? '-' }}</td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                @else
                                                                     <tr>
-                                                                        <td>{{ $detailIndex + 1 }}</td>
-                                                                        <td>{{ $detail['invoice_number'] ?? '-' }}</td>
-                                                                        <td>{{ $detail['booking_number'] ?? '-' }}</td>
-                                                                        <td class="font-weight-bold text-success">{{ number_format($detail['value'] ?? 0, 2) }} ج.م</td>
-                                                                        <td>
-                                                                            @if(($detail['payment_type'] ?? '') == 'check')
-                                                                                <span class="badge badge-warning">شيك</span>
-                                                                            @else
-                                                                                <span class="badge badge-primary">تحويل بنكي</span>
-                                                                            @endif
+                                                                        <td colspan="7" class="text-center text-muted py-4">
+                                                                            <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+                                                                            لا توجد تفاصيل متاحة
                                                                         </td>
-                                                                        <td>{{ $detail['bank_name'] ?? '-' }}</td>
-                                                                        <td>{{ $detail['notes'] ?? '-' }}</td>
                                                                     </tr>
-                                                                @endforeach
+                                                                @endif
                                                             @else
                                                                 <tr>
-                                                                    <td colspan="7" class="text-center text-muted">لا توجد تفاصيل متاحة</td>
+                                                                    <td colspan="7" class="text-center text-muted py-4">
+                                                                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i><br>
+                                                                        لا توجد تفاصيل متاحة
+                                                                    </td>
                                                                 </tr>
                                                             @endif
                                                         </tbody>
