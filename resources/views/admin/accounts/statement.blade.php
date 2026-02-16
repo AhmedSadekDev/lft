@@ -103,29 +103,34 @@
             </button>
 
             <!-- جدول كشف الحساب الموحد -->
-            <h5 class="font-weight-bold mt-4 mb-3">الحساب في الفترة من {{ $fromDate }} الى {{ $toDate }}</h5>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover" style="font-size: 12px;">
-                    <thead class="thead-dark">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="font-weight-bold mb-0">
+                    <i class="fas fa-calendar-alt text-primary mr-2"></i>
+                    الحساب في الفترة من {{ $fromDate }} الى {{ $toDate }}
+                </h5>
+            </div>
+            <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                <table class="table table-bordered table-hover table-striped" id="statementTable" style="font-size: 13px; margin-bottom: 0;">
+                    <thead class="thead-dark" style="position: sticky; top: 0; z-index: 10;">
                         <tr class="text-center">
-                            <th rowspan="2" style="vertical-align: middle;">التاريخ</th>
-                            <th colspan="2" style="border-bottom: 2px solid #fff;">حساب سابق</th>
-                            <th rowspan="2" style="vertical-align: middle;">رقم الطلب</th>
-                            <th rowspan="2" style="vertical-align: middle;">نوع العملية</th>
-                            <th rowspan="2" style="vertical-align: middle;">خصم على الفاتورة</th>
-                            <th rowspan="2" style="vertical-align: middle;">الضريبة</th>
-                            <th rowspan="2" style="vertical-align: middle;">بيان ملحق</th>
-                            <th rowspan="2" style="vertical-align: middle;">فاتورة النقل</th>
-                            <th rowspan="2" style="vertical-align: middle;">القيمة الاجمالية</th>
-                            <th rowspan="2" style="vertical-align: middle;">تم دفع</th>
-                            <th rowspan="2" style="vertical-align: middle;">ملاحظات</th>
-                            <th colspan="2" style="border-bottom: 2px solid #fff;">الحساب الحالي</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 120px;">التاريخ</th>
+                            <th colspan="2" style="border-bottom: 2px solid #fff; background-color: #343a40; color: #fff;">حساب سابق</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 100px;">رقم الطلب</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 120px;">نوع العملية</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 100px;">خصم</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 100px;">الضريبة</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 100px;">بيان ملحق</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 100px;">فاتورة النقل</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 120px;">القيمة الاجمالية</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 120px;">تم دفع</th>
+                            <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 150px;">ملاحظات</th>
+                            <th colspan="2" style="border-bottom: 2px solid #fff; background-color: #343a40; color: #fff;">الحساب الحالي</th>
                         </tr>
-                        <tr class="text-center">
-                            <th>مدين</th>
-                            <th>دائن</th>
-                            <th>مدين</th>
-                            <th>دائن</th>
+                        <tr class="text-center" style="background-color: #343a40; color: #fff;">
+                            <th style="background-color: #495057; min-width: 100px;">مدين</th>
+                            <th style="background-color: #495057; min-width: 100px;">دائن</th>
+                            <th style="background-color: #495057; min-width: 100px;">مدين</th>
+                            <th style="background-color: #495057; min-width: 100px;">دائن</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -145,53 +150,138 @@
                                     style="cursor: pointer;"
                                     title="اضغط لعرض تفاصيل السداد"
                                 @endif>
-                                <td class="text-center">{{ $date->format('Y-m-d') }}<br><small>{{ $date->format('H:i') }}</small></td>
-                                <td class="text-center">{{ $transaction['previous_debit'] > 0 ? number_format($transaction['previous_debit'], 2) : '-' }}</td>
-                                <td class="text-center">{{ $transaction['previous_credit'] > 0 ? number_format($transaction['previous_credit'], 2) : '-' }}</td>
-                                <td class="text-center">{{ $transaction['booking_number'] ?: '-' }}</td>
+                                <td class="text-center" style="white-space: nowrap;">
+                                    <strong>{{ $date->format('Y-m-d') }}</strong><br>
+                                    <small class="text-muted">{{ $date->format('H:i') }}</small>
+                                </td>
+                                <td class="text-center">
+                                    @if($transaction['previous_debit'] > 0)
+                                        <span class="text-danger font-weight-bold">{{ number_format($transaction['previous_debit'], 2) }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($transaction['previous_credit'] > 0)
+                                        <span class="text-success font-weight-bold">{{ number_format($transaction['previous_credit'], 2) }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($transaction['booking_number'])
+                                        <span class="badge badge-secondary">{{ $transaction['booking_number'] }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 <td class="text-center">
                                     @if($hasPaymentDetails)
-                                        <span class="badge badge-info">
+                                        <span class="badge badge-info badge-pill">
+                                            <i class="fas fa-money-bill-wave mr-1"></i>
                                             {{ $transaction['type_label'] }}
                                             @if($transaction['payment_count'] > 1)
                                                 ({{ $transaction['payment_count'] }} فواتير)
                                             @endif
                                         </span>
+                                    @elseif($transaction['type'] == 'invoice')
+                                        <span class="badge badge-danger badge-pill">
+                                            <i class="fas fa-file-invoice mr-1"></i>
+                                            {{ $transaction['type_label'] }}
+                                        </span>
+                                    @elseif($transaction['type'] == 'opening_balance')
+                                        <span class="badge badge-warning badge-pill">
+                                            <i class="fas fa-wallet mr-1"></i>
+                                            {{ $transaction['type_label'] }}
+                                        </span>
+                                    @elseif($transaction['type'] == 'carried_forward')
+                                        <span class="badge badge-secondary badge-pill">
+                                            <i class="fas fa-arrow-right mr-1"></i>
+                                            {{ $transaction['type_label'] }}
+                                        </span>
                                     @else
-                                        {{ $transaction['type_label'] }}
+                                        <span class="badge badge-light">{{ $transaction['type_label'] }}</span>
                                     @endif
                                 </td>
-                                <td class="text-center">{{ $transaction['discount'] > 0 ? number_format($transaction['discount'], 2) : '-' }}</td>
-                                <td class="text-center">{{ $transaction['tax'] > 0 ? number_format($transaction['tax'], 2) : '-' }}</td>
-                                <td class="text-center">{{ $transaction['attachment_statement'] ?: '-' }}</td>
-                                <td class="text-center">{{ $transaction['transportation'] > 0 ? number_format($transaction['transportation'], 2) : '-' }}</td>
-                                <td class="text-center">{{ $transaction['total'] > 0 ? number_format($transaction['total'], 2) : '-' }}</td>
+                                <td class="text-center">
+                                    @if($transaction['discount'] > 0)
+                                        <span class="text-warning font-weight-bold">{{ number_format($transaction['discount'], 2) }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($transaction['tax'] > 0)
+                                        <span class="text-info font-weight-bold">{{ number_format($transaction['tax'], 2) }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($transaction['attachment_statement'])
+                                        <span class="text-primary">{{ $transaction['attachment_statement'] }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($transaction['transportation'] > 0)
+                                        <span class="font-weight-bold">{{ number_format($transaction['transportation'], 2) }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($transaction['total'] > 0)
+                                        <span class="text-danger font-weight-bold" style="font-size: 1.1em;">{{ number_format($transaction['total'], 2) }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 <td class="text-center">
                                     @if($hasPaymentDetails)
-                                        <span class="font-weight-bold text-success">
+                                        <span class="font-weight-bold text-success" style="font-size: 1.1em;">
+                                            <i class="fas fa-check-circle mr-1"></i>
                                             {{ number_format($transaction['paid'], 2) }}
                                             @if($transaction['payment_count'] > 1)
                                                 <i class="fas fa-info-circle ml-1" title="اضغط لعرض التفاصيل"></i>
                                             @endif
                                         </span>
+                                    @elseif($transaction['paid'] > 0)
+                                        <span class="text-success font-weight-bold">{{ number_format($transaction['paid'], 2) }}</span>
                                     @else
-                                        {{ $transaction['paid'] > 0 ? number_format($transaction['paid'], 2) : '-' }}
+                                        <span class="text-muted">-</span>
                                     @endif
                                 </td>
-                                <td class="text-center">{{ $transaction['notes'] ?: '-' }}</td>
-                                <td class="text-center {{ $transaction['current_debit'] > 0 ? 'text-danger font-weight-bold' : '' }}">
-                                    {{ $transaction['current_debit'] > 0 ? number_format($transaction['current_debit'], 2) : '-' }}
+                                <td class="text-center" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">
+                                    @if($transaction['notes'])
+                                        <span class="text-muted" title="{{ $transaction['notes'] }}">
+                                            {{ mb_strlen($transaction['notes']) > 30 ? mb_substr($transaction['notes'], 0, 30) . '...' : $transaction['notes'] }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
                                 </td>
-                                <td class="text-center {{ $transaction['current_credit'] > 0 ? 'text-success font-weight-bold' : '' }}">
+                                <td class="text-center">
+                                    @if($transaction['current_debit'] > 0)
+                                        <span class="text-danger font-weight-bold" style="font-size: 1.1em;">{{ number_format($transaction['current_debit'], 2) }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
                                     @if($hasPaymentDetails)
-                                        <span class="font-weight-bold text-success">
+                                        <span class="font-weight-bold text-success" style="font-size: 1.1em;">
+                                            <i class="fas fa-arrow-down mr-1"></i>
                                             {{ number_format($transaction['current_credit'], 2) }}
                                             @if($transaction['payment_count'] > 1)
                                                 <i class="fas fa-info-circle ml-1" title="اضغط لعرض التفاصيل"></i>
                                             @endif
                                         </span>
+                                    @elseif($transaction['current_credit'] > 0)
+                                        <span class="text-success font-weight-bold" style="font-size: 1.1em;">{{ number_format($transaction['current_credit'], 2) }}</span>
                                     @else
-                                        {{ $transaction['current_credit'] > 0 ? number_format($transaction['current_credit'], 2) : '-' }}
+                                        <span class="text-muted">-</span>
                                     @endif
                                 </td>
                             </tr>
@@ -311,11 +401,68 @@
 
 <style>
     .payment-row:hover {
-        background-color: #f0f8ff !important;
+        background-color: #e8f5e9 !important;
         transition: background-color 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .cursor-pointer {
         cursor: pointer;
     }
+    #statementTable {
+        direction: rtl;
+    }
+    #statementTable thead th {
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+    }
+    #statementTable tbody tr {
+        transition: all 0.2s;
+    }
+    #statementTable tbody tr:hover:not(.table-info):not(.table-warning) {
+        background-color: #f8f9fa !important;
+    }
+    #statementTable tbody td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 8px 4px;
+    }
+    .badge {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+    .table-info {
+        background-color: #d1ecf1 !important;
+    }
+    .table-warning {
+        background-color: #fff3cd !important;
+    }
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    .card-header .card-title h3 {
+        color: white;
+    }
+    .card-header .btn {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+    .card-header .btn:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        color: white;
+    }
 </style>
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        // إضافة scroll للجدول
+        $('.table-responsive').on('scroll', function() {
+            $(this).find('thead').css('transform', 'translateY(' + this.scrollTop + 'px)');
+        });
+    });
+</script>
+@endpush
 @endsection

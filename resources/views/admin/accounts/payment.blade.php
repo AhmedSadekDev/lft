@@ -434,7 +434,7 @@
             // إخفاء قسم الفواتير
             $('#invoices_section').hide();
             $('#opening_balance_section').show();
-            
+
             // تحديث hint المبلغ ووضع حد أقصى للرصيد الافتتاحي
             if (openingBalance > 0) {
                 $('#amount_hint').text('الرصيد الافتتاحي: ' + openingBalance.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' جنيه');
@@ -443,7 +443,7 @@
                 $('#amount_hint').text('لا يوجد رصيد افتتاحي');
                 $('#amount_input').removeAttr('max');
             }
-            
+
             // إزالة required من invoice_ids
             $('#invoice_ids_input').val('');
             $('.invoice-checkbox').prop('checked', false);
@@ -452,7 +452,7 @@
             // إظهار قسم الفواتير
             $('#invoices_section').show();
             $('#opening_balance_section').hide();
-            
+
             // تحديث hint المبلغ وإزالة الحد الأقصى (لأن السداد للفواتير يمكن أن يكون لأي مبلغ)
             $('#amount_hint').text('الرصيد المستحق: ' + currentBalance.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' جنيه (يمكن إدخال أي مبلغ)');
             $('#amount_input').removeAttr('max'); // إزالة الحد الأقصى للسماح بأي مبلغ
