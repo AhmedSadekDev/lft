@@ -298,7 +298,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     // ----------------- Transportation -----------------
     Route::get('companyTransportations/export', [CompanyTransportationController::class, 'export'])->name('companyTransportations.export');
     Route::post('companyTransportations/import', [CompanyTransportationController::class, 'import'])->name('companyTransportations.import');
-    Route::resource('companyTransportations', CompanyTransportationController::class);
+    Route::resource('companyTransportations', CompanyTransportationController::class)->except(['show']);
     Route::resource('{company}/companyServices', CompanyServicesController::class)->except('show');
     Route::post('{company}/companyServices/import', [CompanyServicesController::class, 'import'])->name('companyServices.import');
     // ----------------- \Transportation -----------------
