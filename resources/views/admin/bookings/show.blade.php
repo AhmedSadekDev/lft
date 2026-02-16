@@ -1,5 +1,8 @@
 @extends('layouts.admin')
 @section('content')
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
         body {
             background: #f5f7fa;
@@ -53,6 +56,11 @@
             padding: 1rem;
             border-radius: 12px;
             backdrop-filter: blur(10px);
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            font-style: normal;
+            font-weight: 900;
         }
 
         .info-cards {
@@ -101,6 +109,13 @@
             font-size: 1.5rem;
             margin-bottom: 1rem;
             color: white;
+        }
+
+        .info-card-icon i {
+            display: block !important;
+            line-height: 1 !important;
+            font-style: normal;
+            font-weight: 900;
         }
 
         .info-card-label {
@@ -158,11 +173,14 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-radius: 10px;
-            display: flex;
+            display: inline-flex !important;
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            line-height: 1 !important;
+            font-style: normal;
+            font-weight: 900;
         }
 
         .section-badge {
@@ -322,7 +340,7 @@
 
                                 <div class="info-card">
                                     <div class="info-card-icon">
-                                        <i class="fas fa-file-certificate"></i>
+                                        <i class="fas fa-file-alt"></i>
                                     </div>
                                     <div class="info-card-label">{{ __('admin.certificate_number') }}</div>
                                     <div class="info-card-value">{{ $booking->certificate_number ?? __('main.not_found') }}</div>
