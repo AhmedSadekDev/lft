@@ -131,9 +131,9 @@
             </div>
 
             <!-- جدول كشف الحساب -->
-            <div class="table-responsive" style="max-height: 600px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px;">
+            <div class="table-responsive" style="border: 1px solid #dee2e6; border-radius: 8px;">
                 <table class="table table-bordered table-hover table-striped mb-0" id="statementTable" style="font-size: 13px;">
-                    <thead class="thead-dark" style="position: sticky; top: 0; z-index: 10;">
+                    <thead class="thead-dark" style="position: sticky; top: 0; z-index: 10; background-color: #343a40 !important;">
                         <tr class="text-center">
                             <th rowspan="2" style="vertical-align: middle; background-color: #343a40; color: #fff; min-width: 120px;">التاريخ</th>
                             <th colspan="2" style="border-bottom: 2px solid #fff; background-color: #343a40; color: #fff;">حساب سابق</th>
@@ -441,6 +441,13 @@
     #statementTable {
         direction: rtl;
         width: 100%;
+        margin-bottom: 0 !important;
+    }
+    #statementTable thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: #343a40 !important;
     }
     #statementTable thead th {
         font-weight: 600;
@@ -449,9 +456,15 @@
         background-color: #343a40 !important;
         color: #fff !important;
         border: 1px solid #495057 !important;
+        position: sticky;
+        top: 0;
+    }
+    #statementTable tbody {
+        display: table-row-group;
     }
     #statementTable tbody tr {
         transition: all 0.2s;
+        display: table-row;
     }
     #statementTable tbody tr:hover:not(.table-info):not(.table-warning) {
         background-color: #f8f9fa !important;
@@ -461,6 +474,7 @@
         vertical-align: middle;
         padding: 10px 8px;
         border: 1px solid #dee2e6;
+        display: table-cell;
     }
     .badge {
         font-size: 11px;
@@ -491,6 +505,29 @@
     }
     .table-responsive {
         border-radius: 8px;
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+    /* إزالة أي pagination غير ضروري */
+    .dataTables_wrapper {
+        display: none !important;
+    }
+    /* التأكد من أن الـ modal لا يفتح تلقائياً */
+    .modal:not(.show) {
+        display: none !important;
+    }
+    .modal.show {
+        display: block !important;
+    }
+    /* التأكد من أن جميع الصفوف ظاهرة */
+    #statementTable tbody tr {
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+    }
+    /* إزالة أي overflow يخفي المحتوى */
+    .table-responsive {
+        max-height: none !important;
     }
 </style>
 
@@ -499,12 +536,19 @@
     $(document).ready(function() {
         // التأكد من أن الجدول يعمل بشكل صحيح
         if ($('#statementTable').length) {
-            // إضافة scroll للجدول
-            $('.table-responsive').on('scroll', function() {
-                var scrollTop = this.scrollTop;
-                $(this).find('thead').css('transform', 'translateY(' + scrollTop + 'px)');
+            // التأكد من أن جميع الصفوف ظاهرة
+            $('#statementTable tbody tr').each(function() {
+                $(this).css('display', 'table-row');
             });
         }
+        
+        // التأكد من أن الـ modal لا يفتح تلقائياً
+        $('.modal').removeClass('show');
+        
+        // منع فتح الـ modal تلقائياً
+        $('.modal').on('show.bs.modal', function() {
+            // السماح بفتح الـ modal فقط عند النقر
+        });
     });
 </script>
 @endpush
