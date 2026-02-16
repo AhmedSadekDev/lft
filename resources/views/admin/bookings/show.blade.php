@@ -485,6 +485,12 @@
     <script>
         $(document).ready(function() {
             if ($('#deliveryPoliciesTable').length) {
+                // Destroy existing DataTable if it exists
+                if ($.fn.DataTable.isDataTable('#deliveryPoliciesTable')) {
+                    $('#deliveryPoliciesTable').DataTable().destroy();
+                }
+
+                // Initialize DataTable
                 $('#deliveryPoliciesTable').DataTable({
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Arabic.json"
