@@ -239,11 +239,15 @@ use App\Models\BookingContainer;
                                 $cost = $shipment->cost ?? 0;
                                 $financialCustody = $shipment->money_transfer->value ?? 0;
                                 $extraExpenses = $shipment->extraExpenses->sum('value') ?? 0;
-                                $payerValue = ($shipment->payingCars->sum('value') ?? 0) + $financialCustody;
+                                $payments = $shipment->payingCars->sum('value') ?? 0;
+                                $payerValue = $payments + $financialCustody;
 
+                                // حساب المتبقي:
+                                // إذا كان هناك cost: المتبقي = cost - العهدة + المصروفات الإضافية - المدفوعات
+                                // إذا لم يكن هناك cost: المتبقي = المصروفات الإضافية + المدفوعات - العهدة (لأن العهدة دين على السيارة)
                                 $remain = $cost
-                                    ? $cost - $financialCustody + $extraExpenses - $shipment->payingCars->sum('value')
-                                    : $financialCustody + $extraExpenses - $shipment->payingCars->sum('value');
+                                    ? $cost - $financialCustody + $extraExpenses - $payments
+                                    : $extraExpenses + $payments - $financialCustody;
                                 $booking_id = $containerNumbers ? BookingContainer::where('container_no', $containerNumbers)->first() ? BookingContainer::where('container_no', $containerNumbers)->first()->booking_id : "" : "";
                             @endphp
 

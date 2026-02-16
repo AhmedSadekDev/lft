@@ -40,10 +40,14 @@ class ShipmentExport implements FromCollection, ShouldAutoSize, WithHeadings
             $cost = is_numeric($deliveryPolicy->cost) ? (float)$deliveryPolicy->cost : 0;
             $financialCustody = $deliveryPolicy->money_transfer->value ?? 0;
             $extraExpense = $deliveryPolicy->extraExpenses->sum('value') ?? 0;
-            $thePayer = $deliveryPolicy->payingCars->sum('value') + (int) $financialCustody;
+            $payments = $deliveryPolicy->payingCars->sum('value') ?? 0;
+            $thePayer = $payments + (int) $financialCustody;
+            // حساب المتبقي:
+            // إذا كان هناك cost: المتبقي = cost - العهدة + المصروفات الإضافية - المدفوعات
+            // إذا لم يكن هناك cost: المتبقي = المصروفات الإضافية + المدفوعات - العهدة (لأن العهدة دين على السيارة)
             $remain = $cost 
-                ? (($cost - $financialCustody + $extraExpense) - $deliveryPolicy->payingCars->sum('value')) 
-                : ($financialCustody + $extraExpense - $deliveryPolicy->payingCars->sum('value'));
+                ? ($cost - $financialCustody + $extraExpense - $payments)
+                : ($extraExpense + $payments - $financialCustody);
 
             return [
                 'id' => $deliveryPolicy->id,
