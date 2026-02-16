@@ -10,7 +10,7 @@
     <div class="card shadow-sm border-0">
 
         <!-- Header -->
-        <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <h4 class="mb-0">
                 <i class="fas fa-file-invoice mr-2"></i>
                 كشف حساب - {{ $company->name }}
@@ -28,8 +28,8 @@
                 </a>
 
                 <a href="{{ route('accounts.payment',$company->id) }}"
-                   class="btn btn-success btn-sm">
-                    <i class="fas fa-money-bill-wave"></i> سداد
+                   class="btn btn-light btn-sm">
+                    <i class="fas fa-money-bill-wave text-success"></i> سداد
                 </a>
             </div>
         </div>
@@ -110,7 +110,7 @@
             <!-- جدول -->
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped text-center">
-                    <thead class="thead-dark">
+                    <thead style="background:#1f2a44; color:#fff;">
                         <tr>
                             <th>التاريخ</th>
                             <th>رقم الطلب</th>
@@ -123,20 +123,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($transactions as $index => $transaction)
+                        @forelse($transactions as $transaction)
+
                             @php
-                                $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
-                                $paymentDetails = $transaction['payment_details'] ?? [];
-                                $hasPaymentDetails = isset($transaction['payment_details']) && is_array($paymentDetails) && count($paymentDetails) > 0;
+                                $date = \Carbon\Carbon::parse($transaction['date']);
                             @endphp
 
-                            <tr class="{{ $hasPaymentDetails ? 'payment-row cursor-pointer' : '' }}"
-                                @if($hasPaymentDetails)
-                                    data-toggle="modal"
-                                    data-target="#paymentDetailsModal{{ $index }}"
-                                    style="cursor: pointer;"
-                                    title="اضغط لعرض تفاصيل السداد"
-                                @endif>
+                            <tr>
                                 <td>
                                     {{ $date->format('Y-m-d') }}
                                     <br>
@@ -148,22 +141,10 @@
                                 <td>{{ $transaction['booking_number'] ?? '-' }}</td>
 
                                 <td>
-                                    @if($hasPaymentDetails)
-                                        <span class="badge badge-info">
-                                            <i class="fas fa-money-bill-wave mr-1"></i>
-                                            {{ $transaction['type_label'] ?? 'سداد' }}
-                                            @if(isset($transaction['payment_count']) && $transaction['payment_count'] > 1)
-                                                ({{ $transaction['payment_count'] }} فواتير)
-                                            @endif
-                                        </span>
-                                    @elseif($transaction['type'] == 'invoice')
-                                        <span class="badge badge-danger">
-                                            <i class="fas fa-file-invoice mr-1"></i>فاتورة
-                                        </span>
+                                    @if($transaction['type'] == 'invoice')
+                                        <span class="badge badge-danger">فاتورة</span>
                                     @elseif($transaction['type'] == 'payment')
-                                        <span class="badge badge-success">
-                                            <i class="fas fa-money-bill mr-1"></i>سداد
-                                        </span>
+                                        <span class="badge badge-success">سداد</span>
                                     @else
                                         <span class="badge badge-secondary">
                                             {{ $transaction['type_label'] ?? '-' }}
@@ -176,15 +157,7 @@
                                 </td>
 
                                 <td class="text-success font-weight-bold">
-                                    @if($hasPaymentDetails)
-                                        <i class="fas fa-check-circle mr-1"></i>
-                                        {{ number_format($transaction['paid'] ?? 0,2) }}
-                                        @if(isset($transaction['payment_count']) && $transaction['payment_count'] > 1)
-                                            <i class="fas fa-info-circle ml-1" title="اضغط لعرض التفاصيل"></i>
-                                        @endif
-                                    @else
-                                        {{ number_format($transaction['paid'] ?? 0,2) }}
-                                    @endif
+                                    {{ number_format($transaction['paid'] ?? 0,2) }}
                                 </td>
 
                                 <td>
@@ -192,108 +165,13 @@
                                 </td>
 
                                 <td>
-                                    @if($hasPaymentDetails)
-                                        <i class="fas fa-arrow-down mr-1"></i>
-                                        {{ number_format($transaction['current_credit'] ?? 0,2) }}
-                                    @else
-                                        {{ number_format($transaction['current_credit'] ?? 0,2) }}
-                                    @endif
+                                    {{ number_format($transaction['current_credit'] ?? 0,2) }}
                                 </td>
 
                                 <td>
-                                    @if(!empty($transaction['notes']))
-                                        <span title="{{ $transaction['notes'] }}">
-                                            {{ mb_strlen($transaction['notes']) > 30 ? mb_substr($transaction['notes'], 0, 30) . '...' : $transaction['notes'] }}
-                                        </span>
-                                    @else
-                                        -
-                                    @endif
+                                    {{ $transaction['notes'] ?? '-' }}
                                 </td>
                             </tr>
-
-                            @if($hasPaymentDetails)
-                                <!-- Modal تفاصيل السداد -->
-                                <div class="modal fade" id="paymentDetailsModal{{ $index }}" tabindex="-1" role="dialog">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title font-weight-bold">
-                                                    <i class="fas fa-money-bill mr-2"></i>
-                                                    تفاصيل السداد - {{ number_format($transaction['paid'] ?? 0, 2) }} ج.م
-                                                </h5>
-                                                <button type="button" class="close text-white" data-dismiss="modal">
-                                                    <span>&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered table-hover">
-                                                        <thead class="thead-light">
-                                                            <tr>
-                                                                <th class="text-center">#</th>
-                                                                <th class="text-center">رقم الفاتورة</th>
-                                                                <th class="text-center">رقم الطلب</th>
-                                                                <th class="text-center">المبلغ</th>
-                                                                <th class="text-center">نوع السداد</th>
-                                                                <th class="text-center">البنك</th>
-                                                                <th class="text-center">ملاحظات</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @if($hasPaymentDetails && is_array($paymentDetails) && count($paymentDetails) > 0)
-                                                                @foreach($paymentDetails as $detailIndex => $detail)
-                                                                    <tr>
-                                                                        <td class="text-center">{{ $detailIndex + 1 }}</td>
-                                                                        <td class="text-center">
-                                                                            <span class="badge badge-info">{{ $detail['invoice_number'] ?? '-' }}</span>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            <span class="badge badge-secondary">{{ $detail['booking_number'] ?? '-' }}</span>
-                                                                        </td>
-                                                                        <td class="text-center font-weight-bold text-success" style="font-size: 1.1em;">
-                                                                            {{ number_format($detail['value'] ?? 0, 2) }} ج.م
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            @if(($detail['payment_type'] ?? '') == 'check')
-                                                                                <span class="badge badge-warning badge-pill">
-                                                                                    <i class="fas fa-money-check mr-1"></i>شيك
-                                                                                </span>
-                                                                            @else
-                                                                                <span class="badge badge-primary badge-pill">
-                                                                                    <i class="fas fa-university mr-1"></i>تحويل بنكي
-                                                                                </span>
-                                                                            @endif
-                                                                        </td>
-                                                                        <td class="text-center">{{ $detail['bank_name'] ?? '-' }}</td>
-                                                                        <td class="text-center">{{ $detail['notes'] ?? '-' }}</td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            @else
-                                                                <tr>
-                                                                    <td colspan="7" class="text-center text-muted py-4">
-                                                                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i><br>
-                                                                        لا توجد تفاصيل متاحة
-                                                                    </td>
-                                                                </tr>
-                                                            @endif
-                                                        </tbody>
-                                                        <tfoot>
-                                                            <tr class="table-success font-weight-bold">
-                                                                <td colspan="3" class="text-right">الإجمالي:</td>
-                                                                <td class="text-center text-success">{{ number_format($transaction['paid'] ?? 0, 2) }} ج.م</td>
-                                                                <td colspan="3"></td>
-                                                            </tr>
-                                                        </tfoot>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
 
                         @empty
                             <tr>
@@ -336,23 +214,24 @@
 </div>
 
 <style>
-    .payment-row:hover {
-        background-color: #e8f5e9 !important;
-        transition: background-color 0.2s;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        padding: 1rem 1.5rem;
     }
-    .cursor-pointer {
-        cursor: pointer;
+    .card-header h4 {
+        color: white !important;
+        font-weight: bold;
+    }
+    .card-header .btn-light {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        color: #333 !important;
+    }
+    .card-header .btn-light:hover {
+        background-color: #fff !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 </style>
-
-@push('js')
-<script>
-    $(document).ready(function() {
-        // التأكد من أن الـ modal لا يفتح تلقائياً
-        $('.modal').removeClass('show');
-    });
-</script>
-@endpush
 
 @endsection
