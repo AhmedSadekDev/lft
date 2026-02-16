@@ -39,24 +39,24 @@ class ShipmentController extends Controller
         }
 
         $shipments = $shipments->where('car_id', $id)->get();
-        
-        
+
+
         // Create an empty collection to store unique shipments and their total money transfer values
         $uniqueShipments = collect();
         $totalMoneyTransferByBookingContainer = collect();
-        
+
         // Create a set to track booking container IDs that have been seen
         $seenBookingContainerIds = collect();
-        
+
         // Loop through the shipments collection
         foreach ($shipments as $shipment) {
             // Get the booking_containers for the current shipment
             $bookingContainers = $shipment->booking_containers;
             $bookingContainerIds = $bookingContainers->pluck('id')->sort()->values()->toJson();
-        
+
             // Flag to check if all booking containers in this shipment are unique
             $isUniqueShipment = true;
-        
+
             // Loop through the booking_containers
             foreach ($bookingContainers as $bookingContainer) {
                 // Check if the bookingContainer ID already exists in the seen set
@@ -65,21 +65,21 @@ class ShipmentController extends Controller
                     break; // No need to check further if we found a duplicate
                 }
             }
-        
+
             // If the shipment is unique, add it to the uniqueShipments collection
             if ($isUniqueShipment) {
                 $uniqueShipments->push($shipment);
-        
+
                 // Add the bookingContainer IDs to the seen set
                 foreach ($bookingContainers as $bookingContainer) {
                     $seenBookingContainerIds->push($bookingContainer->id);
                 }
-        
+
                 // Initialize the total for this set of booking containers if it doesn't exist
                 if (!$totalMoneyTransferByBookingContainer->has($bookingContainerIds)) {
                     $totalMoneyTransferByBookingContainer->put($bookingContainerIds, 0);
                 }
-        
+
                 // Add the money_transfer value to the total for this set of booking containers
                 $totalMoneyTransferByBookingContainer[$bookingContainerIds] += $shipment->money_transfer->value;
             } else {
@@ -89,13 +89,13 @@ class ShipmentController extends Controller
                 }
             }
         }
-        
-        $shipments = $uniqueShipments; 
+
+        $shipments = $uniqueShipments;
 
         return view('admin.shipments.index', compact('car', 'shipments', 'totalMoneyTransferByBookingContainer'));
     }
-    
-    
+
+
     public function payments(Request $request, $id)
     {
         $car = Car::findOrfail($id);
@@ -110,7 +110,7 @@ class ShipmentController extends Controller
         }
 
         $shipments = $shipments->where('car_id', $id)->get();
-        
+
         return view('admin.shipments.payments', compact('car', 'shipments'));
     }
 
@@ -149,7 +149,7 @@ class ShipmentController extends Controller
             'addition' => 'nullable|numeric'
         ]);
         $data['user_id'] = auth()->user()->id;
-        
+
         if($request->hasFile('image')) {
             $imageName = time() . '_transaction.' . $request->image->extension();
             $this->uploadImage($request->image, $imageName, 'banks');

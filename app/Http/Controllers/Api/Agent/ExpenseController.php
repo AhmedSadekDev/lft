@@ -93,7 +93,7 @@ class ExpenseController extends Controller
             ]);
 
             $agent = auth()->guard('agent')->user();
-            $expense = AgentExpense::with('delivery_policy.money_transfer')->findOrFail($request->id);
+            $expense = AgentExpense::findOrFail($request->id);
 
             if ($expense->agent_id !== $agent->id) {
                 return $this->returnError(403, __('main.not_allowed'));
@@ -101,27 +101,8 @@ class ExpenseController extends Controller
 
             DB::beginTransaction();
 
-            // إذا كان المصروف مرتبط بعهدة، إرجاع القيمة للعهدة
-            if ($expense->delivery_policy_id && $expense->delivery_policy) {
-                $deliveryPolicy = $expense->delivery_policy;
-
-                // التحقق من أن العهدة لم يتم تسويتها
-                if ($deliveryPolicy->is_settled == 1) {
-                    DB::rollBack();
-                    return $this->returnError(200, __('main.delivery_policy is settled'));
-                }
-
-                // إرجاع القيمة للعهدة عن طريق زيادة قيمة money_transfer
-                if ($deliveryPolicy->money_transfer) {
-                    $moneyTransfer = $deliveryPolicy->money_transfer;
-                    $moneyTransfer->update([
-                        'value' => $moneyTransfer->value + $expense->value
-                    ]);
-                }
-            } else {
-                // إذا لم يكن مرتبط بعهدة، إرجاع القيمة للمحفظة
-                $agent->update(['wallet' => $agent->wallet + $expense->value]);
-            }
+            // إرجاع القيمة للمحفظة دائماً
+            $agent->update(['wallet' => $agent->wallet + $expense->value]);
 
             // delete image file if exists
             if ($expense->image_agent_expenses) {
