@@ -6,25 +6,25 @@
 
     <!--begin::Card-->
     <div class="card card-custom shadow-sm">
-        <div class="card-header border-0 py-4">
+        <div class="card-header border-0 py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <div class="card-title">
-                <h3 class="card-label font-weight-bolder text-dark">
-                    <i class="fas fa-file-invoice text-primary mr-2"></i>
+                <h3 class="card-label font-weight-bolder text-white">
+                    <i class="fas fa-file-invoice mr-2"></i>
                     كشف حساب - {{ $company->name }}
                 </h3>
             </div>
             <div class="card-toolbar">
                 <a href="{{ route('accounts.statement.export.excel', ['companyId' => $company->id, 'from' => $fromDate, 'to' => $toDate]) }}"
-                   class="btn btn-primary font-weight-bold shadow-sm mr-2">
-                    <i class="fas fa-file-excel"></i> تصدير Excel
+                   class="btn btn-light font-weight-bold shadow-sm mr-2">
+                    <i class="fas fa-file-excel text-success"></i> تصدير Excel
                 </a>
                 <a href="{{ route('accounts.statement.export.pdf', ['companyId' => $company->id, 'from' => $fromDate, 'to' => $toDate]) }}"
-                   class="btn btn-danger font-weight-bold shadow-sm mr-2">
-                    <i class="fas fa-file-pdf"></i> تصدير PDF
+                   class="btn btn-light font-weight-bold shadow-sm mr-2">
+                    <i class="fas fa-file-pdf text-danger"></i> تصدير PDF
                 </a>
                 <a href="{{ route('accounts.payment', $company->id) }}"
-                   class="btn btn-success font-weight-bold shadow-sm">
-                    <i class="fas fa-money-bill"></i> سداد
+                   class="btn btn-light font-weight-bold shadow-sm">
+                    <i class="fas fa-money-bill text-success"></i> سداد
                 </a>
             </div>
         </div>
@@ -465,6 +465,8 @@
         font-weight: 600;
         text-align: center;
         white-space: nowrap;
+        background-color: #343a40 !important;
+        color: #fff !important;
     }
     #statementTable tbody tr {
         transition: all 0.2s;
@@ -488,20 +490,34 @@
         background-color: #fff3cd !important;
     }
     .card-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     }
     .card-header .card-title h3 {
-        color: white;
+        color: white !important;
     }
-    .card-header .btn {
-        background-color: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
+    .card-header .btn-light {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        color: #333 !important;
     }
-    .card-header .btn:hover {
-        background-color: rgba(255, 255, 255, 0.3);
-        color: white;
+    .card-header .btn-light:hover {
+        background-color: #fff !important;
+        color: #333 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+    .table-bordered thead th {
+        border: 1px solid #495057;
+    }
+    .table-bordered tbody td {
+        border: 1px solid #dee2e6;
     }
 </style>
 
