@@ -34,8 +34,8 @@ class ShipmentExport implements FromCollection, ShouldAutoSize, WithHeadings
 
         return $query->get()->map(function ($deliveryPolicy) {
             $carNumber = $deliveryPolicy->car->car_number ?? '';
-            $containerNumbers = $deliveryPolicy->booking_containers 
-                ? implode(', ', $deliveryPolicy->booking_containers->pluck('container_no')->toArray() ?? []) 
+            $containerNumbers = $deliveryPolicy->booking_containers
+                ? implode(', ', $deliveryPolicy->booking_containers->pluck('container_no')->toArray() ?? [])
                 : '';
             $cost = is_numeric($deliveryPolicy->cost) ? (float)$deliveryPolicy->cost : 0;
             $financialCustody = $deliveryPolicy->money_transfer->value ?? 0;
@@ -45,7 +45,7 @@ class ShipmentExport implements FromCollection, ShouldAutoSize, WithHeadings
             // حساب المتبقي:
             // إذا كان هناك cost: المتبقي = cost - العهدة + المصروفات الإضافية - المدفوعات
             // إذا لم يكن هناك cost: المتبقي = المصروفات الإضافية + المدفوعات - العهدة (لأن العهدة دين على السيارة)
-            $remain = $cost 
+            $remain = $cost
                 ? ($cost - $financialCustody + $extraExpense - $payments)
                 : ($extraExpense + $payments - $financialCustody);
 
