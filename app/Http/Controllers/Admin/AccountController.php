@@ -493,10 +493,12 @@ class AccountController extends Controller
                 $openingBalance = $company->opening_balance ?? 0;
 
                 if ($openingBalance <= 0) {
+                    DB::rollBack();
                     return redirect()->back()->with('error', 'لا يوجد رصيد افتتاحي لسداده');
                 }
 
                 if ($paymentAmount > $openingBalance) {
+                    DB::rollBack();
                     return redirect()->back()->with('error', 'المبلغ أكبر من الرصيد الافتتاحي. الرصيد الافتتاحي: ' . number_format($openingBalance, 2) . ' جنيه');
                 }
 
@@ -504,8 +506,41 @@ class AccountController extends Controller
                 $company->opening_balance = $openingBalance - $paymentAmount;
                 $company->save();
 
-                // تسجيل السداد في log (اختياري - يمكن إضافة جدول منفصل لسداد الرصيد الافتتاحي)
-                // يمكن إضافة جدول opening_balance_payments إذا لزم الأمر
+                // إذا كان السداد من بنك، تحديث رصيد البنك والخزنة
+                if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
+                    $bank = \App\Models\Bank::findOrFail($request->bank_id);
+                    $vault = \App\Models\Vault::first();
+                    
+                    if (!$vault) {
+                        DB::rollBack();
+                        return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
+                    }
+
+                    // إضافة المبلغ للبنك
+                    $bank->amount = ($bank->amount ?? 0) + $paymentAmount;
+                    $bank->save();
+
+                    // إضافة المبلغ للخزنة
+                    $vault->amount = ($vault->amount ?? 0) + $paymentAmount;
+                    $vault->save();
+
+                    // تسجيل معاملة البنك
+                    \App\Models\BankTrnsaction::create([
+                        'bank_id' => $bank->id,
+                        'user_id' => auth()->id(),
+                        'name' => 'سداد الرصيد الافتتاحي - ' . $company->name,
+                        'type' => 1, // 1 = إيداع
+                        'amount' => $paymentAmount,
+                    ]);
+
+                    // تسجيل معاملة الخزنة
+                    \App\Models\VaultTransaction::create([
+                        'bank_id' => $bank->id,
+                        'name' => 'سداد الرصيد الافتتاحي - ' . $company->name,
+                        'amount' => $paymentAmount,
+                        'type' => 0, // 0 = إيداع
+                    ]);
+                }
 
                 DB::commit();
 
@@ -517,6 +552,42 @@ class AccountController extends Controller
             $remainingPayment = $paymentAmount;
             $processedInvoices = [];
             $invoiceCount = 0;
+
+            // إذا كان السداد من بنك، تحديث رصيد البنك والخزنة
+            if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
+                $bank = \App\Models\Bank::findOrFail($request->bank_id);
+                $vault = \App\Models\Vault::first();
+                
+                if (!$vault) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
+                }
+
+                // إضافة المبلغ للبنك
+                $bank->amount = ($bank->amount ?? 0) + $paymentAmount;
+                $bank->save();
+
+                // إضافة المبلغ للخزنة
+                $vault->amount = ($vault->amount ?? 0) + $paymentAmount;
+                $vault->save();
+
+                // تسجيل معاملة البنك
+                \App\Models\BankTrnsaction::create([
+                    'bank_id' => $bank->id,
+                    'user_id' => auth()->id(),
+                    'name' => 'سداد فواتير - ' . $company->name,
+                    'type' => 1, // 1 = إيداع
+                    'amount' => $paymentAmount,
+                ]);
+
+                // تسجيل معاملة الخزنة
+                \App\Models\VaultTransaction::create([
+                    'bank_id' => $bank->id,
+                    'name' => 'سداد فواتير - ' . $company->name,
+                    'amount' => $paymentAmount,
+                    'type' => 0, // 0 = إيداع
+                ]);
+            }
 
             // إذا تم تحديد فواتير محددة
             if ($request->invoice_ids) {
