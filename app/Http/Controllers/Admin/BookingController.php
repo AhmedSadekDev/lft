@@ -457,13 +457,14 @@ class BookingController extends Controller
                                 'arrival_date'  => $containerGroup['arrival_date'] ?? null,
                                 'branch_id'     => $containerGroup['branch_id'] ?? null,
                                 'container_no'  => $containerGroup['container_no'] ?? null,
-                        'sail_of_number'=> $containerGroup['sail_of_number'] ?? null,
-                    ]);
+                                'sail_of_number'=> $containerGroup['sail_of_number'] ?? null,
+                            ]);
+                        }
+                    }
                 }
             }
-            }
             // If no containers data in request, keep existing containers unchanged (only update booking details)
-            }
+            
             if ($request->hasFile('image')) {
 
                 // Create new paper
