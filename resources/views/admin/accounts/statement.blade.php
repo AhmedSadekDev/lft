@@ -65,36 +65,58 @@
             <!-- معلومات الشركة -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <h5 class="font-weight-bold">معلومات الشركة</h5>
-                    <p><strong>الاسم:</strong> {{ $company->name }}</p>
-                    <p><strong>البريد:</strong> {{ $company->email }}</p>
-                    <p><strong>الهاتف:</strong> {{ $company->phone }}</p>
+                    <div class="card bg-light border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="font-weight-bold text-primary mb-3">
+                                <i class="fas fa-building mr-2"></i>معلومات الشركة
+                            </h5>
+                            <p class="mb-2"><strong>الاسم:</strong> <span class="text-dark">{{ $company->name }}</span></p>
+                            <p class="mb-2"><strong>البريد:</strong> <span class="text-dark">{{ $company->email ?? '-' }}</span></p>
+                            <p class="mb-0"><strong>الهاتف:</strong> <span class="text-dark">{{ $company->phone ?? '-' }}</span></p>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 text-right">
-                    <h5 class="font-weight-bold">ملخص الحساب</h5>
-                    @if($company->opening_balance && $company->opening_balance != 0)
-                    <p><strong>الرصيد الافتتاحي:</strong>
-                        <span class="text-{{ $company->opening_balance >= 0 ? 'danger' : 'success' }}">
-                            {{ number_format($company->opening_balance, 2) }}
-                        </span>
-                    </p>
-                    @endif
-                    <p><strong>الرصيد المرحّل:</strong>
-                        <span class="text-{{ $carriedForwardBalance >= 0 ? 'danger' : 'success' }}">
-                            {{ number_format($carriedForwardBalance, 2) }}
-                        </span>
-                    </p>
-                    <p><strong>إجمالي الفواتير:</strong>
-                        <span class="text-danger">{{ number_format($totalInvoices, 2) }}</span>
-                    </p>
-                    <p><strong>إجمالي السداد:</strong>
-                        <span class="text-success">{{ number_format($totalPayments, 2) }}</span>
-                    </p>
-                    <p><strong>الرصيد النهائي المستحق:</strong>
-                        <span class="text-{{ $finalBalance >= 0 ? 'danger' : 'success' }} font-weight-bold">
-                            {{ number_format($finalBalance, 2) }}
-                        </span>
-                    </p>
+                <div class="col-md-6">
+                    <div class="card text-white h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <div class="card-body">
+                            <h5 class="font-weight-bold mb-3">
+                                <i class="fas fa-chart-line mr-2"></i>ملخص الحساب
+                            </h5>
+                            @if($company->opening_balance && $company->opening_balance != 0)
+                            <p class="mb-2">
+                                <strong>الرصيد الافتتاحي:</strong>
+                                <span class="float-left font-weight-bold" style="font-size: 1.1em;">
+                                    {{ number_format($company->opening_balance, 2) }} ج.م
+                                </span>
+                            </p>
+                            @endif
+                            <p class="mb-2">
+                                <strong>الرصيد المرحّل:</strong>
+                                <span class="float-left font-weight-bold" style="font-size: 1.1em;">
+                                    {{ number_format($carriedForwardBalance, 2) }} ج.م
+                                </span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>إجمالي الفواتير:</strong>
+                                <span class="float-left font-weight-bold text-warning" style="font-size: 1.1em;">
+                                    {{ number_format($totalInvoices, 2) }} ج.م
+                                </span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>إجمالي السداد:</strong>
+                                <span class="float-left font-weight-bold text-success" style="font-size: 1.1em;">
+                                    {{ number_format($totalPayments, 2) }} ج.م
+                                </span>
+                            </p>
+                            <hr class="my-2" style="border-color: rgba(255,255,255,0.3);">
+                            <p class="mb-0">
+                                <strong>الرصيد النهائي المستحق:</strong>
+                                <span class="float-left font-weight-bold" style="font-size: 1.3em;">
+                                    {{ number_format($finalBalance, 2) }} ج.م
+                                </span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
