@@ -10,7 +10,14 @@
         </tr>
     </thead>
     <tbody style="font-family: 'Cairo', sans-serif; font-size: 0.7rem; text-align: center; vertical-align: middle;">
-        @foreach ($items as $key => $item)
+        @if(!empty($empty_message) && (isset($items) && count($items) === 0))
+            <tr>
+                <td style="padding: 10px 8px; border-bottom: 1px solid #dee2e6;">1</td>
+                <td style="padding: 10px 8px; text-align: center; border-bottom: 1px solid #dee2e6; color: #6c757d;">لا يوجد إيصالات</td>
+                <td style="padding: 10px 8px; border-bottom: 1px solid #dee2e6;">-</td>
+            </tr>
+        @else
+        @foreach ($items ?? [] as $key => $item)
             @if ($item instanceof \App\Models\BookingContainer)
                 @include('admin.components.booking-invoices.printing.table.container-row', [
                     'booking_container' => $item,
@@ -30,5 +37,6 @@
                 ])
             @endif
         @endforeach
+        @endif
     </tbody>
 </table>

@@ -94,7 +94,7 @@ class BookingInvoiceController extends Controller
             );
             $invoice = Invoice::create($invoice_data);
             DB::commit();
-            return redirect()->route('bookings.index')->with('success', __('alerts.added_successfully'));
+            return redirect()->route('bookings.show', $booking)->with('success', __('alerts.added_successfully'));
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -226,7 +226,9 @@ class BookingInvoiceController extends Controller
 
         foreach ($receiptGroups as $groupKey => $services) {
             $totalPrice = $services->sum('price');
-            $allNotes = $services->filter(function($s) { return !empty($s->note); })->pluck('note')->toArray();
+            $allNotes = $services->filter(function ($s) {
+                return !empty($s->note);
+            })->pluck('note')->toArray();
 
             // Create a grouped service object
             $groupedService = (object)[
@@ -253,7 +255,7 @@ class BookingInvoiceController extends Controller
             'lpr_limit' => $lpr_limit,
             'booking' => $booking,
             'attachment_rows' => $attachment_rows
-        ])->render();
+        ]);
     }
 
     /**
@@ -326,11 +328,7 @@ class BookingInvoiceController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             \Illuminate\Support\Facades\Log::error($th);
-            if (!$th->getMessage()) {
-                redirect()->back()->with('error', $th->getResponse()?->getData());
-            } elseif ($th->getMessage()) {
-                redirect()->back()->with('error', $th->getMessage());
-            }
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 

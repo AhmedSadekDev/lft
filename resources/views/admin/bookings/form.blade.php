@@ -244,7 +244,7 @@
 
                 <div class="containers-divs">
 
-                    <div class="row   px-4 py-4 mt-4 mb-4 containers-div" id="containers">
+                    <div class="row px-4 py-4 mt-4 mb-4 containers-div booking-container-block" id="containers">
 
                         <div class="row align-items-center justify-content-between container-1 col-xl-12 ">
 
@@ -253,7 +253,7 @@
                                     {!! Form::label('branch_id', __('admin.branch')) !!}
                                     <select name="containers[0][branch_id]" id="branch_id" class="form-control"
                                         required>
-                                        <option disabled">{{ __('admin.select') }}</option>
+                                        <option value="" disabled>{{ __('admin.select') }}</option>
                                         @foreach ($branches as $id => $name)
                                             <option value="{{ $id }}"
                                                 {{ old('containers.0.branch_id') == $id || $branchId == $id ? 'selected class=selected' : '' }}>
@@ -280,7 +280,7 @@
                                         <option value="to_be_disabled">{{ __('admin.select') }}</option>
                                         @foreach ($containers_type->all() as $id => $name)
                                             <option value="{{ $id }}"
-                                                {{ old('containers.0.container_id') == $id || $group[0]->branch_id == $id ? 'selected class=selected' : '' }}>
+                                                {{ old('containers.0.container_id') == $id || (isset($group[0]) && $group[0]->container_id == $id) ? 'selected' : '' }}>
                                                 {{ $name }}
                                             </option>
                                         @endforeach
@@ -407,7 +407,7 @@
             @empty
 
                 <div class="containers-divs">
-                    <div class="row   px-4 py-4 mt-4 mb-4 containers-div" id="containers">
+                    <div class="row px-4 py-4 mt-4 mb-4 containers-div booking-container-block" id="containers">
 
                         <div class="row align-items-center justify-content-between container-1 col-xl-12 ">
 
@@ -560,7 +560,12 @@
                 </div>
             @endforelse
 
-            {!! Form::submit(__('admin.submit'), ['class' => 'btn btn-success font-weight-bolder text-uppercase px-9 py-4']) !!}
+            <div class="booking-submit-wrap">
+                <button type="submit" class="booking-submit-btn">
+                    <i class="fas fa-check"></i>
+                    {{ __('admin.submit') }}
+                </button>
+            </div>
             {!! Form::close() !!}
 
         </div>
@@ -571,19 +576,27 @@
     <script>
         var company_employees = {!! json_encode($company_employees) !!};
 
-        $('#company_id').on('change', loadEmployees);
+        $('#company_id').on('change', function() { loadEmployees($(this).val()); });
 
-        function loadEmployees() {
-            var company_id = $('#company_id').val();
-
-            $('#employee_id option').remove();
-            $('#employee_id').append(
+        function loadEmployees(company_id) {
+            company_id = company_id || $('#company_id').val();
+            var $empSelect = $('#employee_id');
+            if (!$empSelect.length) return;
+            $empSelect.find('option').remove();
+            $empSelect.append(
                 '<option value="to_be_disabled" disabled="disabled" selected="selected">{{ __('admin.select') }}</option>'
             );
             var available_employees = company_employees[company_id];
-            for (const emp in available_employees) {
-                $('#employee_id').append(`<option value="${emp}">${available_employees[emp]}</option>`)
+            if (available_employees) {
+                for (const emp in available_employees) {
+                    $empSelect.append('<option value="' + emp + '">' + available_employees[emp] + '</option>');
+                }
             }
+        }
+
+        function companyEmployee(companyId) {
+            if (!companyId) return;
+            loadEmployees(companyId);
         }
 
         $(document).ready(function () {
@@ -668,6 +681,11 @@
 
         @if (isset($booking) || !is_null(old('company_id')))
             companyEmployee(`{{ $booking->company_id ?? old('company_id') }}`);
+            @if (isset($booking) && $booking->employee_id)
+            $('#employee_id').val('{{ $booking->employee_id }}');
+            @elseif (old('employee_id'))
+            $('#employee_id').val('{{ old('employee_id') }}');
+            @endif
         @endif
 
         // @if (

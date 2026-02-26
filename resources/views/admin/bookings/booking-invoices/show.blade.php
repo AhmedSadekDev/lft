@@ -416,10 +416,16 @@
                         'document_title' => __('admin.attachments'),
                     ])
                     <div style="margin-bottom: .3rem;">
-                        @if(count($attachment_rows) > 0)
+                        @if(isset($attachment_rows) && count($attachment_rows) > 0)
                             @include('admin.components.booking-invoices.printing.table.layout', [
                                 'items' => $attachment_rows,
                                 'is_attachments' => true,
+                            ])
+                        @else
+                            @include('admin.components.booking-invoices.printing.table.layout', [
+                                'items' => [],
+                                'is_attachments' => true,
+                                'empty_message' => true,
                             ])
                         @endif
                     </div>

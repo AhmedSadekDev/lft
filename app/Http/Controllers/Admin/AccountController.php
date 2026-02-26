@@ -22,6 +22,10 @@ use App\Exports\FinancialPositionExport;
 use App\Exports\ProfitLossReportExport;
 use App\Models\BookingContrainerExtraCosts;
 use App\Http\Traits\ImagesTrait;
+use App\Models\Bank;
+use App\Models\Booking;
+use App\Models\BookingContainer;
+use App\Models\Invoice;
 use Maatwebsite\Excel\Facades\Excel;
 use Mpdf\Mpdf;
 
@@ -182,7 +186,7 @@ class AccountController extends Controller
                 $invoiceId = is_array($invoice) ? ($invoice['id'] ?? null) : ($invoice->id ?? null);
                 if (!$invoiceId) continue;
 
-                $invoiceObj = \App\Models\Invoice::find($invoiceId);
+                $invoiceObj = Invoice::find($invoiceId);
                 if (!$invoiceObj) continue;
 
                 $transportationTotal = $invoiceObj->transportation_total_before_vat ?? 0;
@@ -238,7 +242,7 @@ class AccountController extends Controller
                 if ($payment->notes) {
                     $notes = $payment->notes;
                 } elseif ($payment->bank_id) {
-                    $bank = \App\Models\Bank::find($payment->bank_id);
+                    $bank = Bank::find($payment->bank_id);
                     if ($bank) {
                         $notes = 'تحويل ' . $bank->name;
                     } else {
@@ -267,7 +271,7 @@ class AccountController extends Controller
             if ($firstPayment->notes) {
                 $notes = $firstPayment->notes;
             } elseif ($firstPayment->bank_id) {
-                $bank = \App\Models\Bank::find($firstPayment->bank_id);
+                $bank = Bank::find($firstPayment->bank_id);
                 if ($bank) {
                     $notes = 'تحويل ' . $bank->name;
                 } else {
@@ -426,7 +430,7 @@ class AccountController extends Controller
     public function showPaymentForm($companyId)
     {
         $company = Company::findOrFail($companyId);
-        $banks = \App\Models\Bank::orderBy('name')->get();
+        $banks = Bank::orderBy('name')->get();
 
         // حساب الرصيد المستحق الحالي
         $currentBalance = $this->calculateCurrentBalance($company);
@@ -511,8 +515,8 @@ class AccountController extends Controller
 
                 // إذا كان السداد من بنك، تحديث رصيد البنك والخزنة
                 if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
-                    $bank = \App\Models\Bank::findOrFail($request->bank_id);
-                    $vault = \App\Models\Vault::first();
+                    $bank = Bank::findOrFail($request->bank_id);
+                    $vault = Vault::first();
 
                     if (!$vault) {
                         DB::rollBack();
@@ -528,7 +532,7 @@ class AccountController extends Controller
                     $vault->save();
 
                     // تسجيل معاملة البنك
-                    \App\Models\BankTrnsaction::create([
+                    BankTrnsaction::create([
                         'bank_id' => $bank->id,
                         'user_id' => auth()->id(),
                         'name' => 'سداد الرصيد الافتتاحي - ' . $company->name,
@@ -537,7 +541,7 @@ class AccountController extends Controller
                     ]);
 
                     // تسجيل معاملة الخزنة
-                    \App\Models\VaultTransaction::create([
+                    VaultTransaction::create([
                         'bank_id' => $bank->id,
                         'name' => 'سداد الرصيد الافتتاحي - ' . $company->name,
                         'amount' => $paymentAmount,
@@ -558,8 +562,8 @@ class AccountController extends Controller
 
             // إذا كان السداد من بنك، تحديث رصيد البنك والخزنة
             if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
-                $bank = \App\Models\Bank::findOrFail($request->bank_id);
-                $vault = \App\Models\Vault::first();
+                $bank = Bank::findOrFail($request->bank_id);
+                $vault = Vault::first();
 
                 if (!$vault) {
                     DB::rollBack();
@@ -575,7 +579,7 @@ class AccountController extends Controller
                 $vault->save();
 
                 // تسجيل معاملة البنك
-                \App\Models\BankTrnsaction::create([
+                BankTrnsaction::create([
                     'bank_id' => $bank->id,
                     'user_id' => auth()->id(),
                     'name' => 'سداد فواتير - ' . $company->name,
@@ -584,7 +588,7 @@ class AccountController extends Controller
                 ]);
 
                 // تسجيل معاملة الخزنة
-                \App\Models\VaultTransaction::create([
+                VaultTransaction::create([
                     'bank_id' => $bank->id,
                     'name' => 'سداد فواتير - ' . $company->name,
                     'amount' => $paymentAmount,
@@ -599,7 +603,7 @@ class AccountController extends Controller
 
                 if (count($invoiceIds) > 0) {
                     // جلب الفواتير المحددة
-                    $invoices = \App\Models\Invoice::whereIn('id', $invoiceIds)
+                    $invoices = Invoice::whereIn('id', $invoiceIds)
                         ->whereHas('booking', function($query) use ($companyId) {
                             $query->where('company_id', $companyId);
                         })
@@ -1165,46 +1169,24 @@ class AccountController extends Controller
         foreach ($deliveryPolicies as $policy) {
             $custodyAmount = $policy->money_transfer->value ?? 0;
             $runningBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) + $custodyAmount;
-
-            // جلب الحاويات المرتبطة
+            // عدم إظهار الايصالات/العهدة في الكشف — نحدّث الرصيد فقط ولا نضيف صف
             $containers = $policy->booking_containers;
-            foreach ($containers as $container) {
-                $transactions->push([
-                    'date' => $policy->created_at,
-                    'type' => 'delivery_policy',
-                    'type_label' => 'عهدة',
-                    'previous_balance' => 0,
-                    'service' => 'نقل',
-                    'description' => $policy->address ?? '',
-                    'container_no' => $container->container_no ?? $container->sail_of_number ?? '',
-                    'departure' => $container->departure ? $container->departure->title : '',
-                    'destination' => $container->loading ? $container->loading->title : '',
-                    'aging' => $container->aging ? $container->aging->title : '',
-                    'value' => $container->price ?? 0,
-                    'custody' => $custodyAmount / ($containers->count() > 0 ? $containers->count() : 1),
-                    'total1' => $container->price ?? 0,
-                    'total2' => $custodyAmount / ($containers->count() > 0 ? $containers->count() : 1),
-                    'debit_credit' => 'مدين',
-                    'running_total' => $runningBalance,
-                    'running_balance' => $runningBalance,
-                ]);
-            }
 
-            // إضافة المصاريف الإضافية المرتبطة بـ delivery policy
+            // إضافة المصاريف الإضافية المرتبطة بـ delivery policy فقط
             $extraExpenses = $policy->extraExpenses;
             foreach ($extraExpenses as $extraExpense) {
-                $runningBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) - $extraExpense->value;
+                $runningBalance = $runningBalance - $extraExpense->value;
 
                 // جلب الحاوية المرتبطة (إن وجدت)
                 $container = null;
                 if ($extraExpense->booking_container_id) {
-                    $container = \App\Models\BookingContainer::with(['departure', 'loading', 'aging'])
+                    $container = BookingContainer::with(['departure', 'loading', 'aging'])
                         ->find($extraExpense->booking_container_id);
                 } else {
                     // إذا لم تكن مرتبطة بحاوية، استخدم أول حاوية من delivery policy
                     $firstContainer = $containers->first();
                     if ($firstContainer) {
-                        $container = \App\Models\BookingContainer::with(['departure', 'loading', 'aging'])
+                        $container = BookingContainer::with(['departure', 'loading', 'aging'])
                             ->find($firstContainer->id);
                     }
                 }
@@ -1870,7 +1852,7 @@ class AccountController extends Controller
         $companyId = $request->company_id;
 
         // جلب الطلبات في الفترة المحددة
-        $bookings = \App\Models\Booking::query()
+        $bookings = Booking::query()
             ->whereHas('invoice', function ($query) use ($fromDate, $toDate) {
                 $query->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59']);
             })
@@ -1970,7 +1952,7 @@ class AccountController extends Controller
         $companyId = $request->company_id;
 
         // جلب الطلبات في الفترة المحددة
-        $bookings = \App\Models\Booking::query()
+        $bookings = Booking::query()
             ->whereHas('invoice', function ($query) use ($fromDate, $toDate) {
                 $query->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59']);
             })
@@ -2042,7 +2024,7 @@ class AccountController extends Controller
         $companyId = $request->company_id;
 
         // جلب الطلبات في الفترة المحددة
-        $bookings = \App\Models\Booking::query()
+        $bookings = Booking::query()
             ->whereHas('invoice', function ($query) use ($fromDate, $toDate) {
                 $query->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59']);
             })
