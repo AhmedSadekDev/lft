@@ -47,9 +47,9 @@ class NewBooking extends Notification
         $subject = 'إشعار حجز جديد';
         $count = (string) $this->booking->bookingContainers->count();
 
-        // Prepare main booking data
-        $factoryName = $this->booking->factory_name ?? 'غير محدد';
-        $employeeName = $this->booking->employee_name ?? 'غير محدد';
+        // Prepare main booking data (factory and employee from relations; fallback to columns)
+        $factoryName = $this->booking->factory?->name ?? $this->booking->factory_name ?? 'غير محدد';
+        $employeeName = $this->booking->employee?->name ?? $this->booking->employee_name ?? 'غير محدد';
         $shippingAgentTitle = $this->booking->shippingAgent ? $this->booking->shippingAgent->title : 'غير محدد';
         $certificateNumber = $this->booking->certificate_number ?? 'غير محدد';
         $typeOfAction = function_exists('TypeOfAction')
@@ -69,8 +69,8 @@ class NewBooking extends Notification
         // Build containers rows
         $containersRows = '';
         foreach ($this->booking->bookingContainers as $container) {
-            $containerNumber = $container->container_number ?? '-';
-            $containerSize = $container->container ? $container->container->type : '-';
+            $containerNumber = $container->container_no ?? $container->container_number ?? '-';
+            $containerSize = $container->container ? ($container->container->full_name ?? $container->container->size ?? $container->container->type) : '-';
             $arrivalDate = $container->arrival_date ?? '-';
 
             $containerNumberEsc = htmlspecialchars($containerNumber, ENT_QUOTES, 'UTF-8');
