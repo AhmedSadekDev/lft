@@ -25,7 +25,7 @@ class CarController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Car::with(['deliveryPolicies', 'payingcars']);
+        $query = Car::with(['deliveryPolicies' => fn ($q) => $q->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars']), 'payingcars']);
 
         // تطبيق البحث إذا كان موجود
         if ($request->filled('search')) {

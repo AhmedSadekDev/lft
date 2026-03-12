@@ -71,6 +71,24 @@ class Invoice extends Model
         return intval(explode('-', $max_invoice_number)[2] ?? '000');
     }
 
+    /**
+     * Get next invoice number for company (format: YYYY-MM-DD-XXX-NNN, sequence resets each day).
+     */
+    public static function getNextInvoiceNumberForCompany(int $company_id): string
+    {
+        $year = date('Y');
+        $month = date('m');
+        $day = date('d');
+        $companyPart = invoiceNumberTrim($company_id);
+
+        $count = self::whereHas('booking', fn ($q) => $q->where('company_id', $company_id))
+            ->whereDate('created_at', date('Y-m-d'))
+            ->count();
+
+        $sequence = $count + 1;
+        return "{$year}-{$month}-{$day}-{$companyPart}-" . invoiceNumberTrim($sequence);
+    }
+
 
    public function getInvoiceTotalBeforeTaxAttribute()
     {

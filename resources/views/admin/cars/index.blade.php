@@ -79,7 +79,9 @@
                             <th scope="col" style="width: 80px;">#</th>
                             <th scope="col">{{ __('admin.car_number') }}</th>
                             <th scope="col">تاريخ آخر نقلة</th>
-                            <th scope="col" class="text-primary">إجمالي حساب السيارة</th>
+                            <th scope="col" class="text-info">الإجمالي</th>
+                            <th scope="col" class="text-success">المسدد</th>
+                            <th scope="col" class="text-primary">المتبقي</th>
                             <th scope="col" style="width: 120px;">الإجراءات</th>
                         </tr>
                     </thead>
@@ -105,13 +107,28 @@
                                         {{ optional($car->deliveryPolicies()->latest()->first())->date ?? "لا توجد نقلة" }}
                                     </small>
                                 </td>
+                                @php
+                                    $totalCost = $car->deliveryPolicies->sum(fn ($p) => (float) ($p->cost ?? 0));
+                                    $totalPaid = $car->payingcars->sum('value');
+                                    $remaining = 0;
+                                    foreach ($car->deliveryPolicies as $policy) {
+                                        $cost = (float) ($policy->cost ?? 0);
+                                        $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
+                                        $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
+                                        $netCustody = $custodyGiven - $custodySettled;
+                                        $extra = (float) ($policy->extraExpenses->sum('value') ?? 0);
+                                        $paid = (float) ($policy->payingCars->sum('value') ?? 0);
+                                        $remaining += $cost ? ($cost - $netCustody + $extra - $paid) : ($extra + $paid - $netCustody);
+                                    }
+                                @endphp
                                 <td class="text-center align-middle">
-                                    @php
-                                        $totalCost = $car->deliveryPolicies->sum('cost');
-                                        $totalPaid = $car->payingcars->sum('value');
-                                        $remaining = $totalCost - $totalPaid;
-                                    @endphp
-                                    <strong class="font-weight-bold {{ $remaining >= 0 ? 'text-success' : 'text-danger' }}">
+                                    <strong class="text-info">{{ number_format($totalCost, 2) }} ج.م</strong>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <strong class="text-success">{{ number_format($totalPaid, 2) }} ج.م</strong>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <strong class="font-weight-bold {{ $remaining >= 0 ? 'text-danger' : 'text-success' }}">
                                         {{ number_format($remaining, 2) }} ج.م
                                     </strong>
                                 </td>
@@ -143,7 +160,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="fas fa-car fa-3x mb-3"></i>
                                         <p class="font-weight-bold">لا توجد سيارات</p>

@@ -14,7 +14,7 @@
                 </h3>
             </div>
             <div class="card-toolbar">
-                <a href="{{ route('shipments.index', $car->id) }}"
+                <a href="{{ route('accounts.car.statement', $car->id) }}"
                    class="btn btn-primary font-weight-bold shadow-sm">
                     <i class="fas fa-file-invoice"></i> كشف الحساب
                 </a>
@@ -48,9 +48,14 @@
                 </div>
                 <div class="col-md-6">
                     <h5 class="font-weight-bold">معلومات الحساب</h5>
-                    <p><strong>الرصيد المستحق:</strong>
+                    <p><strong>الرصيد المستحق (نقلات غير مسددة):</strong>
                         <span class="text-danger font-weight-bold" style="font-size: 1.2em">
                             {{ number_format($currentBalance, 2) }} جنيه
+                        </span>
+                    </p>
+                    <p><strong>الرصيد النهائي (مطابق لكشف الحساب):</strong>
+                        <span class="font-weight-bold {{ isset($finalBalance) && $finalBalance >= 0 ? 'text-danger' : 'text-success' }}" style="font-size: 1.1em">
+                            {{ number_format($finalBalance ?? 0, 2) }} جنيه
                         </span>
                     </p>
                 </div>
@@ -176,7 +181,7 @@
                                 طباعة بيان السداد PDF
                             </a>
                         @endif
-                        <a href="{{ route('shipments.index', $car->id) }}" class="btn btn-secondary btn-lg font-weight-bold ml-2">
+                        <a href="{{ route('accounts.car.statement', $car->id) }}" class="btn btn-secondary btn-lg font-weight-bold ml-2">
                             <i class="fas fa-times mr-2"></i>
                             إلغاء
                         </a>

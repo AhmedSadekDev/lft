@@ -30,9 +30,7 @@ class BookingInvoiceController extends Controller
     public function create(Request $request, Booking $booking)
     {
         $company = $booking->company;
-        $invoice_number = date("Y") . '-'
-            . invoiceNumberTrim($company->id) . '-'
-            . invoiceNumberTrim(count($company->invoices) + 1);
+        $invoice_number = Invoice::getNextInvoiceNumberForCompany($company->id);
 
         $transportation_total = $booking->transportation_total_price;
         $taxed_services_total = $booking->taxed_services_total_price;

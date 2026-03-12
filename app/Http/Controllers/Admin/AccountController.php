@@ -979,7 +979,7 @@ class AccountController extends Controller
     }
 
     /**
-     * عرض كشف حساب لسيارة معينة
+     * عرض كشف حساب لسيارة معينة (نفس منطق صفحة السداد: تكلفة - عهدة + مصروفات إضافية - دفعات)
      */
     public function carStatement(Request $request, $carId)
     {
@@ -988,17 +988,30 @@ class AccountController extends Controller
         $fromDate = $request->from ?? Carbon::now()->startOfYear()->format('Y-m-d');
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
 
-        // حساب الرصيد المرحّل من الفترة السابقة
+        // حساب الرصيد المرحّل (مجموع المتبقي لكل نقلة قبل من)
         $carriedForwardBalance = $this->calculateCarCarriedForwardBalance($car, $fromDate);
 
-        // جلب جميع الحركات في الفترة المحددة
-        $transactions = $this->buildCarTransactionsList($car, $fromDate, $toDate, $carriedForwardBalance);
+        // جلب النقلات في الفترة للإجماليات
+        $policiesInPeriod = DeliveryPolicy::where('car_id', $car->id)
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
 
-        // حساب الإجماليات
-        $totalValue = $transactions->where('type', '!=', 'payment')->sum('value');
-        $totalCustody = $transactions->where('type', '!=', 'payment')->sum('custody');
-        $totalPayments = $transactions->where('type', 'payment')->sum('value');
-        $finalBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance);
+        $totalValue = $policiesInPeriod->sum(fn ($p) => (float) ($p->cost ?? 0));
+        $totalCustody = $policiesInPeriod->sum(fn ($p) => (float) (($p->money_transfer?->value ?? 0) - ($p->settled_money_transfer?->value ?? 0)));
+        $totalPayments = Payingcar::where('car_id', $car->id)
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->sum('value');
+
+        // الرصيد النهائي = مجموع المتبقي لجميع النقلات حتى نهاية الفترة (نفس معادلة صفحة السداد)
+        $allPoliciesToDate = DeliveryPolicy::where('car_id', $car->id)
+            ->where('created_at', '<=', $toDate . ' 23:59:59')
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+        $finalBalance = $allPoliciesToDate->sum(fn ($p) => $this->getDeliveryPolicyRemaining($p));
+
+        // بناء قائمة الحركات للعرض
+        $transactions = $this->buildCarTransactionsList($car, $fromDate, $toDate, $carriedForwardBalance);
 
         return view('admin.accounts.car-statement', compact(
             'car',
@@ -1023,17 +1036,24 @@ class AccountController extends Controller
         $fromDate = $request->from ?? Carbon::now()->startOfYear()->format('Y-m-d');
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
 
-        // حساب الرصيد المرحّل
         $carriedForwardBalance = $this->calculateCarCarriedForwardBalance($car, $fromDate);
 
-        // بناء قائمة الحركات
-        $transactions = $this->buildCarTransactionsList($car, $fromDate, $toDate, $carriedForwardBalance);
+        $policiesInPeriod = DeliveryPolicy::where('car_id', $car->id)
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+        $totalValue = $policiesInPeriod->sum(fn ($p) => (float) ($p->cost ?? 0));
+        $totalCustody = $policiesInPeriod->sum(fn ($p) => (float) (($p->money_transfer?->value ?? 0) - ($p->settled_money_transfer?->value ?? 0)));
+        $totalPayments = Payingcar::where('car_id', $car->id)
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->sum('value');
+        $allPoliciesToDate = DeliveryPolicy::where('car_id', $car->id)
+            ->where('created_at', '<=', $toDate . ' 23:59:59')
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+        $finalBalance = $allPoliciesToDate->sum(fn ($p) => $this->getDeliveryPolicyRemaining($p));
 
-        // حساب الإجماليات
-        $totalValue = $transactions->where('type', '!=', 'payment')->sum('value');
-        $totalCustody = $transactions->where('type', '!=', 'payment')->sum('custody');
-        $totalPayments = $transactions->where('type', 'payment')->sum('value');
-        $finalBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance);
+        $transactions = $this->buildCarTransactionsList($car, $fromDate, $toDate, $carriedForwardBalance);
 
         $fileName = 'كشف_حساب_سيارة_' . $car->car_number . '_' . $fromDate . '_' . $toDate . '.xlsx';
 
@@ -1053,17 +1073,24 @@ class AccountController extends Controller
         $fromDate = $request->from ?? Carbon::now()->startOfYear()->format('Y-m-d');
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
 
-        // حساب الرصيد المرحّل
         $carriedForwardBalance = $this->calculateCarCarriedForwardBalance($car, $fromDate);
 
-        // بناء قائمة الحركات
-        $transactions = $this->buildCarTransactionsList($car, $fromDate, $toDate, $carriedForwardBalance);
+        $policiesInPeriod = DeliveryPolicy::where('car_id', $car->id)
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+        $totalValue = $policiesInPeriod->sum(fn ($p) => (float) ($p->cost ?? 0));
+        $totalCustody = $policiesInPeriod->sum(fn ($p) => (float) (($p->money_transfer?->value ?? 0) - ($p->settled_money_transfer?->value ?? 0)));
+        $totalPayments = Payingcar::where('car_id', $car->id)
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->sum('value');
+        $allPoliciesToDate = DeliveryPolicy::where('car_id', $car->id)
+            ->where('created_at', '<=', $toDate . ' 23:59:59')
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+        $finalBalance = $allPoliciesToDate->sum(fn ($p) => $this->getDeliveryPolicyRemaining($p));
 
-        // حساب الإجماليات
-        $totalValue = $transactions->where('type', '!=', 'payment')->sum('value');
-        $totalCustody = $transactions->where('type', '!=', 'payment')->sum('custody');
-        $totalPayments = $transactions->where('type', 'payment')->sum('value');
-        $finalBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance);
+        $transactions = $this->buildCarTransactionsList($car, $fromDate, $toDate, $carriedForwardBalance);
 
         $html = view('admin.accounts.car-statement-pdf', compact(
             'car',
@@ -1098,42 +1125,46 @@ class AccountController extends Controller
     }
 
     /**
-     * حساب الرصيد المرحّل للسيارة
+     * حساب المتبقي لنقلة: تكلفة - صافي العهدة + مصروفات إضافية - دفعات
+     * صافي العهدة = العهدة المُعطاة - العهدة المُسددة (إن وُجدت تسوية)
      */
-    private function calculateCarCarriedForwardBalance($car, $fromDate)
+    private function getDeliveryPolicyRemaining($policy)
     {
-        // حساب إجمالي العهدة من delivery policies قبل تاريخ البداية
-        $totalCustody = DeliveryPolicy::where('car_id', $car->id)
-            ->whereHas('money_transfer', function ($query) {
-                $query->where('type', MoneyTransfer::deliveryPolicy);
-            })
-            ->whereDate('created_at', '<', $fromDate)
-            ->with('money_transfer')
-            ->get()
-            ->sum(function ($policy) {
-                return $policy->money_transfer->value ?? 0;
-            });
-
-        // حساب إجمالي المصاريف قبل تاريخ البداية
-        $totalExpenses = AgentExpense::whereHas('bookingContainer.delivery_policies', function ($query) use ($car) {
-            $query->where('car_id', $car->id);
-        })->whereDate('agent_expenses.created_at', '<', $fromDate)->sum('value');
-
-        // حساب إجمالي الدفعات قبل تاريخ البداية
-        $totalPayments = Payingcar::where('car_id', $car->id)
-            ->whereDate('created_at', '<', $fromDate)
-            ->sum('value');
-
-        // الرصيد المرحّل = العهدة - المصاريف - الدفعات
-        return $totalCustody - $totalExpenses - $totalPayments;
+        $cost = (float) ($policy->cost ?? 0);
+        $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
+        $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
+        $netCustody = $custodyGiven - $custodySettled;
+        $extraExpenses = (float) ($policy->extraExpenses->sum('value') ?? 0);
+        $payments = (float) ($policy->payingCars->sum('value') ?? 0);
+        return $cost
+            ? $cost - $netCustody + $extraExpenses - $payments
+            : $extraExpenses + $payments - $netCustody;
     }
 
     /**
-     * بناء قائمة الحركات لكشف حساب السيارة
+     * حساب الرصيد المرحّل للسيارة (نفس منطق السداد: مجموع المتبقي لكل نقلة قبل تاريخ البداية)
+     */
+    private function calculateCarCarriedForwardBalance($car, $fromDate)
+    {
+        $policies = DeliveryPolicy::where('car_id', $car->id)
+            ->whereDate('created_at', '<', $fromDate)
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+
+        $balance = 0;
+        foreach ($policies as $policy) {
+            $balance += $this->getDeliveryPolicyRemaining($policy);
+        }
+        return $balance;
+    }
+
+    /**
+     * بناء قائمة الحركات لكشف حساب السيارة (نفس معادلة السداد: تكلفة - عهدة + مصروفات إضافية - دفعات)
      */
     private function buildCarTransactionsList($car, $fromDate, $toDate, $carriedForwardBalance)
     {
         $transactions = collect();
+        $runningBalance = $carriedForwardBalance;
 
         // إضافة الرصيد المرحّل
         if ($carriedForwardBalance != 0) {
@@ -1159,38 +1190,52 @@ class AccountController extends Controller
             ]);
         }
 
-        // جلب delivery policies في الفترة
         $deliveryPolicies = DeliveryPolicy::where('car_id', $car->id)
             ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
-            ->with(['money_transfer', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging', 'extraExpenses', 'car', 'driver'])
+            ->with(['money_transfer', 'settled_money_transfer', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging', 'extraExpenses', 'payingCars'])
             ->orderBy('created_at', 'asc')
             ->get();
 
         foreach ($deliveryPolicies as $policy) {
-            $custodyAmount = $policy->money_transfer->value ?? 0;
-            $runningBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) + $custodyAmount;
-            // عدم إظهار الايصالات/العهدة في الكشف — نحدّث الرصيد فقط ولا نضيف صف
+            $cost = (float) ($policy->cost ?? 0);
+            $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
+            $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
+            $custodyAmount = $custodyGiven - $custodySettled;
             $containers = $policy->booking_containers;
+            $firstContainer = $containers->first();
+            $container = $firstContainer ? BookingContainer::with(['departure', 'loading', 'aging'])->find($firstContainer->id) : null;
 
-            // إضافة المصاريف الإضافية المرتبطة بـ delivery policy فقط
-            $extraExpenses = $policy->extraExpenses;
-            foreach ($extraExpenses as $extraExpense) {
-                $runningBalance = $runningBalance - $extraExpense->value;
+            // صف النقلة: تكلفة وعهدة (الرصيد += تكلفة - عهدة)
+            $runningBalance += $cost - $custodyAmount;
+            $transactions->push([
+                'date' => $policy->created_at,
+                'type' => 'delivery_policy',
+                'type_label' => 'نقلة',
+                'previous_balance' => 0,
+                'service' => 'نقلة',
+                'description' => 'نقلة',
+                'container_no' => $container ? ($container->container_no ?? $container->sail_of_number ?? '') : '',
+                'departure' => $container && $container->departure ? $container->departure->title : '',
+                'destination' => $container && $container->loading ? $container->loading->title : '',
+                'aging' => $container && $container->aging ? $container->aging->title : '',
+                'value' => $cost,
+                'custody' => $custodyAmount,
+                'total1' => $cost,
+                'total2' => $custodyAmount,
+                'debit_credit' => ($cost - $custodyAmount) >= 0 ? 'مدين' : 'دائن',
+                'running_total' => $runningBalance,
+                'running_balance' => $runningBalance,
+            ]);
 
-                // جلب الحاوية المرتبطة (إن وجدت)
+            // مصروفات إضافية للنقلة (الرصيد += قيمة المصروف)
+            foreach ($policy->extraExpenses as $extraExpense) {
+                $runningBalance += $extraExpense->value;
                 $container = null;
                 if ($extraExpense->booking_container_id) {
-                    $container = BookingContainer::with(['departure', 'loading', 'aging'])
-                        ->find($extraExpense->booking_container_id);
-                } else {
-                    // إذا لم تكن مرتبطة بحاوية، استخدم أول حاوية من delivery policy
-                    $firstContainer = $containers->first();
-                    if ($firstContainer) {
-                        $container = BookingContainer::with(['departure', 'loading', 'aging'])
-                            ->find($firstContainer->id);
-                    }
+                    $container = BookingContainer::with(['departure', 'loading', 'aging'])->find($extraExpense->booking_container_id);
+                } elseif ($firstContainer) {
+                    $container = BookingContainer::with(['departure', 'loading', 'aging'])->find($firstContainer->id);
                 }
-
                 $transactions->push([
                     'date' => $extraExpense->created_at,
                     'type' => 'extra_expense',
@@ -1206,6 +1251,30 @@ class AccountController extends Controller
                     'custody' => 0,
                     'total1' => 0,
                     'total2' => $extraExpense->value,
+                    'debit_credit' => 'مدين',
+                    'running_total' => $runningBalance,
+                    'running_balance' => $runningBalance,
+                ]);
+            }
+
+            // دفعات النقلة (الرصيد -= قيمة الدفعة)
+            foreach ($policy->payingCars as $payment) {
+                $runningBalance -= $payment->value;
+                $transactions->push([
+                    'date' => $payment->created_at,
+                    'type' => 'payment',
+                    'type_label' => 'دفعة',
+                    'previous_balance' => 0,
+                    'service' => 'دفعة',
+                    'description' => $payment->notes ?? '',
+                    'container_no' => '',
+                    'departure' => '',
+                    'destination' => '',
+                    'aging' => '',
+                    'value' => 0,
+                    'custody' => 0,
+                    'total1' => 0,
+                    'total2' => $payment->value,
                     'debit_credit' => 'دائن',
                     'running_total' => $runningBalance,
                     'running_balance' => $runningBalance,
@@ -1213,112 +1282,6 @@ class AccountController extends Controller
             }
         }
 
-        // جلب المصاريف في الفترة
-        $expenses = AgentExpense::where(function ($query) use ($car, $fromDate, $toDate) {
-            $query->whereHas('delivery_policy', function ($q) use ($car) {
-                $q->where('car_id', $car->id);
-            })
-            ->orWhereHas('bookingContainer.delivery_policies', function ($q) use ($car) {
-                $q->where('car_id', $car->id);
-            });
-        })
-        ->whereBetween('agent_expenses.created_at', [$fromDate, $toDate . ' 23:59:59'])
-        ->with(['bookingContainer.departure', 'bookingContainer.loading', 'bookingContainer.aging', 'service', 'delivery_policy'])
-        ->orderBy('agent_expenses.created_at', 'asc')
-        ->get();
-
-        foreach ($expenses as $expense) {
-            $runningBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) - $expense->value;
-
-            $container = $expense->bookingContainer;
-            $transactions->push([
-                'date' => $expense->created_at,
-                'type' => 'expense',
-                'type_label' => 'مصروف',
-                'previous_balance' => 0,
-                'service' => $expense->service->name ?? 'مصروف',
-                'description' => $expense->notes ?? '',
-                'container_no' => $container ? ($container->container_no ?? $container->sail_of_number ?? '') : '',
-                'departure' => $container && $container->departure ? $container->departure->title : '',
-                'destination' => $container && $container->loading ? $container->loading->title : '',
-                'aging' => $container && $container->aging ? $container->aging->title : '',
-                'value' => 0,
-                'custody' => 0,
-                'total1' => 0,
-                'total2' => $expense->value,
-                'debit_credit' => 'دائن',
-                'running_total' => $runningBalance,
-                'running_balance' => $runningBalance,
-            ]);
-        }
-
-        // جلب المصاريف الإضافية المرتبطة بالحاويات مباشرة (وليس delivery policy)
-        $extraExpensesFromContainers = BookingContrainerExtraCosts::whereHas('booking_container.delivery_policies', function ($query) use ($car) {
-            $query->where('car_id', $car->id);
-        })
-        ->whereNull('delivery_policy_id')
-        ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
-        ->with(['booking_container.departure', 'booking_container.loading', 'booking_container.aging'])
-        ->orderBy('created_at', 'asc')
-        ->get();
-
-        foreach ($extraExpensesFromContainers as $extraExpense) {
-            $runningBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) - $extraExpense->value;
-
-            $container = $extraExpense->booking_container;
-            $transactions->push([
-                'date' => $extraExpense->created_at,
-                'type' => 'extra_expense',
-                'type_label' => 'مصروف إضافي',
-                'previous_balance' => 0,
-                'service' => 'مصروف إضافي',
-                'description' => $extraExpense->name ?? 'مصروف إضافي',
-                'container_no' => $container ? ($container->container_no ?? $container->sail_of_number ?? '') : '',
-                'departure' => $container && $container->departure ? $container->departure->title : '',
-                'destination' => $container && $container->loading ? $container->loading->title : '',
-                'aging' => $container && $container->aging ? $container->aging->title : '',
-                'value' => 0,
-                'custody' => 0,
-                'total1' => 0,
-                'total2' => $extraExpense->value,
-                'debit_credit' => 'دائن',
-                'running_total' => $runningBalance,
-                'running_balance' => $runningBalance,
-            ]);
-        }
-
-        // جلب الدفعات في الفترة
-        $payments = Payingcar::where('car_id', $car->id)
-            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
-            ->with('delivery_policy')
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        foreach ($payments as $payment) {
-            $runningBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) - $payment->value;
-
-            $transactions->push([
-                'date' => $payment->created_at,
-                'type' => 'payment',
-                'type_label' => 'دفعة',
-                'previous_balance' => 0,
-                'service' => 'دفعة',
-                'description' => $payment->notes ?? '',
-                'container_no' => '',
-                'departure' => '',
-                'destination' => '',
-                'aging' => '',
-                'value' => 0,
-                'custody' => 0,
-                'total1' => 0,
-                'total2' => $payment->value,
-                'debit_credit' => 'دائن',
-                'running_total' => $runningBalance,
-                'running_balance' => $runningBalance,
-            ]);
-        }
-
-        // ترتيب حسب التاريخ
         return $transactions->sortBy('date')->values();
     }
 
@@ -1332,17 +1295,19 @@ class AccountController extends Controller
         // جلب جميع النقلات (delivery policies) للسيارة التي لها رصيد مستحق
         $unpaidShipments = collect();
         $deliveryPolicies = DeliveryPolicy::where('car_id', $carId)
-            ->with(['money_transfer', 'extraExpenses', 'payingCars', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging'])
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging'])
             ->orderBy('created_at', 'desc')
             ->get();
 
         foreach ($deliveryPolicies as $policy) {
             $cost = $policy->cost ?? 0;
-            $financialCustody = $policy->money_transfer->value ?? 0;
+            $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
+            $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
+            $financialCustody = $custodyGiven - $custodySettled;
             $extraExpenses = $policy->extraExpenses->sum('value') ?? 0;
             $payments = $policy->payingCars->sum('value') ?? 0;
 
-            // حساب المتبقي
+            // حساب المتبقي (صافي العهدة = عهدة - عهدة مسددة)
             $remain = $cost
                 ? $cost - $financialCustody + $extraExpenses - $payments
                 : $extraExpenses + $payments - $financialCustody;
@@ -1369,10 +1334,16 @@ class AccountController extends Controller
             }
         }
 
-        // حساب الرصيد المستحق الإجمالي
+        // الرصيد المستحق (نقلات غير مسددة فقط - نفس المنطق أعلاه)
         $currentBalance = $unpaidShipments->sum('remaining');
 
-        return view('admin.accounts.car-payment', compact('car', 'unpaidShipments', 'currentBalance'));
+        // الرصيد النهائي (مجموع المتبقي لجميع النقلات - يطابق كشف الحساب)
+        $allPolicies = DeliveryPolicy::where('car_id', $car->id)
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+        $finalBalance = $allPolicies->sum(fn ($p) => $this->getDeliveryPolicyRemaining($p));
+
+        return view('admin.accounts.car-payment', compact('car', 'unpaidShipments', 'currentBalance', 'finalBalance'));
     }
 
     /**
@@ -1407,7 +1378,7 @@ class AccountController extends Controller
             $processedShipments = [];
 
             foreach ($shipmentIds as $shipmentId) {
-                $policy = DeliveryPolicy::with(['money_transfer', 'extraExpenses', 'payingCars'])
+                $policy = DeliveryPolicy::with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
                     ->findOrFail($shipmentId);
 
                 if ($policy->car_id != $carId) {
@@ -1415,11 +1386,13 @@ class AccountController extends Controller
                 }
 
                 $cost = $policy->cost ?? 0;
-                $financialCustody = $policy->money_transfer->value ?? 0;
+                $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
+                $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
+                $financialCustody = $custodyGiven - $custodySettled;
                 $extraExpenses = $policy->extraExpenses->sum('value') ?? 0;
                 $paidTotal = $policy->payingCars->sum('value') ?? 0;
 
-                // حساب المتبقي
+                // حساب المتبقي (صافي العهدة)
                 $remaining = $cost
                     ? $cost - $financialCustody + $extraExpenses - $paidTotal
                     : $extraExpenses + $paidTotal - $financialCustody;
@@ -1506,7 +1479,7 @@ class AccountController extends Controller
         $shipmentIdsArray = array_filter(explode(',', $shipmentIds));
         $deliveryPolicies = DeliveryPolicy::whereIn('id', $shipmentIdsArray)
             ->where('car_id', $carId)
-            ->with(['money_transfer', 'extraExpenses', 'payingCars', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging'])
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging'])
             ->get();
 
         $totalAmount = 0;
@@ -1514,7 +1487,9 @@ class AccountController extends Controller
 
         foreach ($deliveryPolicies as $policy) {
             $cost = $policy->cost ?? 0;
-            $financialCustody = $policy->money_transfer->value ?? 0;
+            $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
+            $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
+            $financialCustody = $custodyGiven - $custodySettled;
             $extraExpenses = $policy->extraExpenses->sum('value') ?? 0;
             $payments = $policy->payingCars->sum('value') ?? 0;
 
