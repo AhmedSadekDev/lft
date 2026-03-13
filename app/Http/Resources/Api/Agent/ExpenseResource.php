@@ -22,7 +22,7 @@ class ExpenseResource extends JsonResource
 			"date" => $this->created_at ?? "",
 			"value" => $this->value,
 			"image" => $image,
-			"booking_id" => $this->booking_id ?? $this->bookingContainer?->booking_id ?? null,
+			"booking_number" => $this->booking?->booking_number ?? $this->bookingContainer?->booking?->booking_number ?? null,
 		];
     }
 }

@@ -23,6 +23,10 @@ class AgentExpense extends Model
     }
     
 
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
     public function bookingContainer()
     {
         return $this->belongsTo(BookingContainer::class);
