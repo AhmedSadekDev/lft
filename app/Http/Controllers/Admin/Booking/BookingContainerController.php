@@ -24,20 +24,28 @@ class BookingContainerController extends Controller
         $referer = request()->server('HTTP_REFERER');
         session(['booking_containers_edit_referrer' => $referer]);
 
-        // sending view data
-        $company_prices = $booking
-            ->company
-            ->transportations()
-            ->select(
-                "container_id",
-                "departure_id",
-                "aging_id",
-                "loading_id",
-                "price"
-            )
-            ->get()
-            ->groupBy('container_id')
-            ->toArray();
+        // قائمة أسعار النقل للشركة (مجمّعة حسب نوع الحاوية) — بنية ثابتة لـ JSON/JS
+        $company_prices = [];
+        if ($booking->company) {
+            $company_prices = $booking->company
+                ->transportations()
+                ->select(
+                    'container_id',
+                    'departure_id',
+                    'aging_id',
+                    'loading_id',
+                    'price'
+                )
+                ->get()
+                ->groupBy('container_id')
+                ->map(fn ($rows) => $rows->map(fn ($row) => [
+                    'departure_id' => $row->departure_id,
+                    'loading_id' => $row->loading_id,
+                    'aging_id' => $row->aging_id,
+                    'price' => $row->price,
+                ])->values())
+                ->toArray();
+        }
 
         $factories = Factory::whereHas('branches')
             ->with('branches')

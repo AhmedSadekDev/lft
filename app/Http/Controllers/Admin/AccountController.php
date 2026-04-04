@@ -1376,6 +1376,7 @@ class AccountController extends Controller
         try {
             $totalPaymentAmount = 0;
             $processedShipments = [];
+            $processedShipmentAmounts = [];
 
             foreach ($shipmentIds as $shipmentId) {
                 $policy = DeliveryPolicy::with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
@@ -1443,6 +1444,7 @@ class AccountController extends Controller
 
                     $totalPaymentAmount += $remaining;
                     $processedShipments[] = $policy->id;
+                    $processedShipmentAmounts[] = $remaining;
                 }
             }
 
@@ -1457,7 +1459,8 @@ class AccountController extends Controller
 
             return redirect()->route('accounts.car.payment', $carId)
                 ->with('success', $message)
-                ->with('processed_shipments', $processedShipments);
+                ->with('processed_shipments', $processedShipments)
+                ->with('processed_shipment_amounts', $processedShipmentAmounts);
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'حدث خطأ أثناء تسجيل السداد: ' . $e->getMessage());
@@ -1476,16 +1479,29 @@ class AccountController extends Controller
             return redirect()->back()->with('error', 'يجب تحديد نقلات');
         }
 
-        $shipmentIdsArray = array_filter(explode(',', $shipmentIds));
+        $shipmentIdsArray = array_values(array_filter(array_map('trim', explode(',', $shipmentIds))));
+        $amountsParam = $request->get('amounts', '');
+        $amountsArray = $amountsParam !== ''
+            ? array_values(array_filter(array_map('trim', explode(',', $amountsParam)), fn ($v) => $v !== ''))
+            : [];
+
+        $useReceiptAmounts = count($amountsArray) === count($shipmentIdsArray) && count($shipmentIdsArray) > 0;
+
         $deliveryPolicies = DeliveryPolicy::whereIn('id', $shipmentIdsArray)
             ->where('car_id', $carId)
             ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging'])
-            ->get();
+            ->get()
+            ->keyBy('id');
 
         $totalAmount = 0;
         $shipmentsData = [];
 
-        foreach ($deliveryPolicies as $policy) {
+        foreach ($shipmentIdsArray as $index => $policyId) {
+            $policy = $deliveryPolicies->get((int) $policyId);
+            if (!$policy) {
+                continue;
+            }
+
             $cost = $policy->cost ?? 0;
             $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
             $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
@@ -1497,7 +1513,33 @@ class AccountController extends Controller
                 ? $cost - $financialCustody + $extraExpenses - $payments
                 : $extraExpenses + $payments - $financialCustody;
 
-            if ($remain > 0) {
+            $firstContainer = $policy->booking_containers?->first();
+
+            if ($useReceiptAmounts) {
+                $receiptAmount = (float) str_replace(',', '.', $amountsArray[$index] ?? '0');
+                if ($receiptAmount <= 0) {
+                    continue;
+                }
+
+                $containerNumbers = $policy->booking_containers
+                    ? implode(', ', $policy->booking_containers->pluck('container_no')->filter()->toArray())
+                    : '';
+
+                $shipmentsData[] = [
+                    'id' => $policy->id,
+                    'container_numbers' => $containerNumbers,
+                    'date' => $policy->date ?? $policy->created_at,
+                    'cost' => $cost,
+                    'financial_custody' => $financialCustody,
+                    'extra_expenses' => $extraExpenses,
+                    'paid' => $payments,
+                    'remaining' => $receiptAmount,
+                    'departure' => $firstContainer?->departure?->title ?? '',
+                    'loading' => $firstContainer?->loading?->title ?? '',
+                    'aging' => $firstContainer?->aging?->title ?? '',
+                ];
+                $totalAmount += $receiptAmount;
+            } elseif ($remain > 0) {
                 $containerNumbers = $policy->booking_containers
                     ? implode(', ', $policy->booking_containers->pluck('container_no')->filter()->toArray())
                     : '';
@@ -1511,9 +1553,9 @@ class AccountController extends Controller
                     'extra_expenses' => $extraExpenses,
                     'paid' => $payments,
                     'remaining' => $remain,
-                    'departure' => $policy->booking_containers->first()->departure->title ?? '',
-                    'loading' => $policy->booking_containers->first()->loading->title ?? '',
-                    'aging' => $policy->booking_containers->first()->aging->title ?? '',
+                    'departure' => $firstContainer?->departure?->title ?? '',
+                    'loading' => $firstContainer?->loading?->title ?? '',
+                    'aging' => $firstContainer?->aging?->title ?? '',
                 ];
 
                 $totalAmount += $remain;
@@ -1767,38 +1809,52 @@ class AccountController extends Controller
      }
 
     /**
+     * الموقف المالي للسيارة حتى تاريخ التقرير (نفس منطق كشف الحساب: متبقي كل نقلة)
+     */
+    private function getCarFinancialPositionUpToDate(Car $car, string $reportDate): array
+    {
+        $policies = DeliveryPolicy::where('car_id', $car->id)
+            ->where('created_at', '<=', $reportDate . ' 23:59:59')
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+
+        $balance = $policies->sum(fn ($p) => $this->getDeliveryPolicyRemaining($p));
+
+        return [
+            'total_cost' => $policies->sum(fn ($p) => (float) ($p->cost ?? 0)),
+            'total_net_custody' => $policies->sum(fn ($p) => (float) (($p->money_transfer?->value ?? 0) - ($p->settled_money_transfer?->value ?? 0))),
+            'total_extra_expenses' => $policies->sum(fn ($p) => (float) $p->extraExpenses->sum('value')),
+            'total_payments' => $policies->sum(fn ($p) => (float) $p->payingCars->sum('value')),
+            'balance' => $balance,
+        ];
+    }
+
+    /**
      * عرض تقرير الموقف المالي - السيارات
      */
     public function carsFinancialPositionReport(Request $request)
     {
         $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
 
-        // جلب جميع السيارات
-        $cars = Car::with(['deliveryPolicies', 'payingcars'])
+        $cars = Car::query()
             ->orderBy('car_number')
             ->get();
 
         $carsWithDebts = collect();
 
         foreach ($cars as $car) {
-            // حساب الرصيد المستحق حتى تاريخ التقرير
-            $totalCost = $car->deliveryPolicies()
-                ->whereDate('created_at', '<=', $reportDate)
-                ->sum('cost');
-
-            $totalPaid = $car->payingcars()
-                ->whereDate('created_at', '<=', $reportDate)
-                ->sum('value');
-
-            $balance = $totalCost - $totalPaid;
+            $snapshot = $this->getCarFinancialPositionUpToDate($car, $reportDate);
+            $balance = $snapshot['balance'];
 
             // إضافة السيارة فقط إذا كان لديها رصيد مستحق (مدين)
             if ($balance > 0) {
                 $carsWithDebts->push([
                     'id' => $car->id,
                     'car_number' => $car->car_number,
-                    'total_cost' => $totalCost,
-                    'total_paid' => $totalPaid,
+                    'total_cost' => $snapshot['total_cost'],
+                    'total_net_custody' => $snapshot['total_net_custody'],
+                    'total_extra_expenses' => $snapshot['total_extra_expenses'],
+                    'total_payments' => $snapshot['total_payments'],
                     'balance' => $balance,
                 ]);
             }

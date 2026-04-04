@@ -175,7 +175,15 @@
                             تسجيل السداد
                         </button>
                         @if(session('processed_shipments'))
-                            <a href="{{ route('accounts.car.payment.export.pdf', ['carId' => $car->id, 'shipment_ids' => implode(',', session('processed_shipments'))]) }}"
+                            @php
+                                $receiptIds = session('processed_shipments', []);
+                                $receiptAmounts = session('processed_shipment_amounts', []);
+                                $receiptQuery = ['carId' => $car->id, 'shipment_ids' => implode(',', $receiptIds)];
+                                if (count($receiptAmounts) === count($receiptIds) && count($receiptIds) > 0) {
+                                    $receiptQuery['amounts'] = implode(',', array_map(static fn ($v) => (string) (float) $v, $receiptAmounts));
+                                }
+                            @endphp
+                            <a href="{{ route('accounts.car.payment.export.pdf', $receiptQuery) }}"
                                class="btn btn-danger btn-lg font-weight-bold ml-2">
                                 <i class="fas fa-file-pdf mr-2"></i>
                                 طباعة بيان السداد PDF

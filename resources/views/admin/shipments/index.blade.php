@@ -126,49 +126,6 @@ use App\Models\BookingContainer;
                         </div>
                     </div>
 
-                    <!-- Modal Create Payment -->
-                    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="createModalLabel">{{ __('Pay') }}</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        X
-                                    </button>
-                                </div>
-                                <form action="{{ route('car_payments.store') }}" method="POST"
-                                    enctype="multipart/form-data">
-                                    @csrf
-                                    <input type="hidden" name="delivery_policy_id" id="deliveryPolicyInput">
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="value">{{ __('admin.value') }}</label>
-                                                    <input id="value" class="form-control" type="number"
-                                                        name="value">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="image">{{ __('admin.image') }}</label>
-                                                    <input id="image" class="form-control" type="file"
-                                                        name="image">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-dismiss="modal">{{ __('admin.close') }}</button>
-                                        <button type="submit" class="btn btn-primary">{{ __('admin.save') }}</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Modal Edit Payment -->
                     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
                         aria-hidden="true">
@@ -220,7 +177,6 @@ use App\Models\BookingContainer;
                             <th scope="col">{{ __('admin.costing') }}</th>
                             <th scope="col">{{ __('admin.financial_custody') }}</th>
                             <th scope="col">{{ __('main.extra_expense') }}</th>
-                            <th scope="col">{{ __('the_payer') }}</th>
                             <th scope="col">{{ __('the_rest') }}</th>
                             <th scope="col">{{ __('admin.departure') }}</th>
                             <th scope="col">{{ __('admin.loading') }}</th>
@@ -243,7 +199,6 @@ use App\Models\BookingContainer;
                                 $financialCustody = $shipment->money_transfer->value ?? 0;
                                 $extraExpenses = $shipment->extraExpenses->sum('value') ?? 0;
                                 $payments = $shipment->payingCars->sum('value') ?? 0;
-                                $payerValue = $payments + $financialCustody;
 
                                 // حساب المتبقي:
                                 // إذا كان هناك cost: المتبقي = cost - العهدة + المصروفات الإضافية - المدفوعات
@@ -279,26 +234,12 @@ use App\Models\BookingContainer;
                                         0
                                     @endif
                                 </td>
-                                <td>
-                                    <a target="_blank" href="{{ route('car_payments.index', $shipment->id) }}">
-                                        {{ $payerValue }}
-                                    </a>
-                                </td>
                                 <td>{{ $remain }}</td>
                                 <td>{{ $shipment->booking_containers->first()->departure->title ?? '' }}</td>
                                 <td>{{ $shipment->booking_containers->first()->loading->title ?? '' }}</td>
                                 <td>{{ $shipment->booking_containers->first()->aging->title ?? '' }}</td>
                                 <td>
                                     <div class="row">
-                                        @if ($remain)
-                                            <div class="col-md-3">
-                                                <a class="btn btn-icon btn-light btn-sm mx-3 pay-btn"
-                                                   data-id="{{ $shipment->id }}" href="#" data-toggle="modal"
-                                                   data-target="#createModal">
-                                                    {{ __('Pay') }}
-                                                </a>
-                                            </div>
-                                        @endif
                                         <div class="col-md-3">
                                             <button data-toggle="modal" data-target="#editModal"
                                                     data-url="{{ route('shipments.update', $shipment->id) }}"
@@ -327,10 +268,6 @@ use App\Models\BookingContainer;
 
 @push('js')
     <script>
-        $(document).on('click', '.pay-btn', function() {
-            $('#deliveryPolicyInput').val($(this).data('id'));
-        });
-
         $(document).on('click', '.edit-btn', function() {
             $('#cost').val($(this).data('cost'));
             $('#editForm').attr('action', $(this).data('url'));

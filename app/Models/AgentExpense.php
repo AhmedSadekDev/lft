@@ -17,6 +17,29 @@ class AgentExpense extends Model
 
     protected $imageFolder = 'agent_expenses';
 
+    protected static function booted(): void
+    {
+        static::saving(function (AgentExpense $expense) {
+            if ($expense->booking_container_id) {
+                $bookingId = BookingContainer::query()
+                    ->whereKey($expense->booking_container_id)
+                    ->value('booking_id');
+                if ($bookingId !== null) {
+                    $expense->booking_id = $bookingId;
+                }
+            } elseif ($expense->delivery_policy_id) {
+                $policy = DeliveryPolicy::query()
+                    ->with(['booking_containers:id,booking_id'])
+                    ->find($expense->delivery_policy_id);
+                $container = $policy?->booking_containers->first();
+                if ($container) {
+                    $expense->booking_container_id = $expense->booking_container_id ?: $container->id;
+                    $expense->booking_id = $container->booking_id;
+                }
+            }
+        });
+    }
+
     public function getCreatedAtAttribute($value)
     {
         return date('Y-m-d', strtotime($value));

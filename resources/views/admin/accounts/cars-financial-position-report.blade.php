@@ -69,7 +69,9 @@
                             <th class="text-center" style="width: 60px; border: 1px solid rgba(255,255,255,0.3);">#</th>
                             <th style="border: 1px solid rgba(255,255,255,0.3);">رقم السيارة</th>
                             <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">إجمالي التكلفة</th>
-                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">إجمالي المدفوع</th>
+                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">صافي العهدة</th>
+                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">مصروفات إضافية</th>
+                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">إجمالي الدفعات</th>
                             <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">الرصيد المستحق</th>
                             <th class="text-center" style="width: 100px; border: 1px solid rgba(255,255,255,0.3);">الإجراءات</th>
                         </tr>
@@ -89,7 +91,13 @@
                                 <span class="text-dark">{{ number_format($car['total_cost'], 2) }} ج.م</span>
                             </td>
                             <td class="text-center align-middle">
-                                <span class="text-success font-weight-bold">{{ number_format($car['total_paid'], 2) }} ج.م</span>
+                                <span class="text-info">{{ number_format($car['total_net_custody'], 2) }} ج.م</span>
+                            </td>
+                            <td class="text-center align-middle">
+                                <span class="text-dark">{{ number_format($car['total_extra_expenses'], 2) }} ج.م</span>
+                            </td>
+                            <td class="text-center align-middle">
+                                <span class="text-success font-weight-bold">{{ number_format($car['total_payments'], 2) }} ج.م</span>
                             </td>
                             <td class="text-center align-middle">
                                 <span class="badge badge-danger badge-pill" style="font-size: 13px; padding: 6px 12px;">
@@ -106,7 +114,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="8" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
                                     <p class="font-weight-bold">لا توجد سيارات مدينة في هذا التاريخ</p>
@@ -118,12 +126,21 @@
                     @if($carsWithDebts->count() > 0)
                     <tfoot>
                         <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-top: 3px solid #DC143C;">
-                            <td colspan="3" class="text-right font-weight-bold align-middle" style="font-size: 16px;">
+                            <td colspan="2" class="text-right font-weight-bold align-middle" style="font-size: 16px;">
                                 <i class="fas fa-calculator mr-2 text-primary"></i>الإجمالي:
+                            </td>
+                            <td class="text-center align-middle font-weight-bold">
+                                {{ number_format($carsWithDebts->sum('total_cost'), 2) }} ج.م
+                            </td>
+                            <td class="text-center align-middle font-weight-bold">
+                                {{ number_format($carsWithDebts->sum('total_net_custody'), 2) }} ج.م
+                            </td>
+                            <td class="text-center align-middle font-weight-bold">
+                                {{ number_format($carsWithDebts->sum('total_extra_expenses'), 2) }} ج.م
                             </td>
                             <td class="text-center align-middle">
                                 <span class="text-success font-weight-bold" style="font-size: 15px;">
-                                    {{ number_format($carsWithDebts->sum('total_paid'), 2) }} ج.م
+                                    {{ number_format($carsWithDebts->sum('total_payments'), 2) }} ج.م
                                 </span>
                             </td>
                             <td class="text-center align-middle">
