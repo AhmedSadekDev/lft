@@ -210,6 +210,7 @@ return [
     'service'                   => 'Service',
     'service_type'              => 'Service Type',
     'receipt_image'             => 'Receipt Image',
+    'no_receipt_image'          => 'No image',
     'add_note'                  => 'Add Note',
     'extensions_fees'           => 'Extensions Fees',
     // -----------  Invoice Services  ------------

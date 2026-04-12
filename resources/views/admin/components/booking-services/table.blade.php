@@ -46,15 +46,15 @@
                     {{ $service->price }}
                 </td>
                 <td>
-                    @if($service->image && $service->getRawOriginal('image'))
-                        <a href="{{ $service->image }}" target="_blank" style="display: inline-block;">
+                    @if(filled($service->getRawOriginal('image')) && $service->image)
+                        <a href="{{ $service->image }}" target="_blank" rel="noopener" style="display: inline-block;">
                             <img src="{{ $service->image }}" alt="Receipt"
                                  style="max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid #e0e0e0;"
                                  onmouseover="this.style.borderColor='#007bff'"
                                  onmouseout="this.style.borderColor='#e0e0e0'">
                         </a>
                     @else
-                        <span class="text-muted">-</span>
+                        <span class="text-muted">{{ __('admin.no_receipt_image') }}</span>
                     @endif
                 </td>
                 <td>
@@ -93,15 +93,21 @@
                         {{ $expense->value }}
                     </td>
                     <td>
-                        @if(isset($expense->image) && $expense->image)
-                            <a href="{{ $expense->image }}" target="_blank" style="display: inline-block;">
-                                <img src="{{ $expense->image }}" alt="Receipt"
+                        @php
+                            $agentReceiptFile = $expense->getRawOriginal('image_agent_expenses');
+                            $agentReceiptUrl = filled($agentReceiptFile)
+                                ? asset('Admin/images/expenses/' . $agentReceiptFile)
+                                : null;
+                        @endphp
+                        @if($agentReceiptUrl)
+                            <a href="{{ $agentReceiptUrl }}" target="_blank" rel="noopener" style="display: inline-block;">
+                                <img src="{{ $agentReceiptUrl }}" alt="Receipt"
                                      style="max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid #e0e0e0;"
                                      onmouseover="this.style.borderColor='#007bff'"
                                      onmouseout="this.style.borderColor='#e0e0e0'">
                             </a>
                         @else
-                            <span class="text-muted">-</span>
+                            <span class="text-muted">{{ __('admin.no_receipt_image') }}</span>
                         @endif
                     </td>
                     <td>

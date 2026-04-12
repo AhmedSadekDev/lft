@@ -227,6 +227,7 @@ return [
     'service'                   => 'الخدمة',
     'service_type'              => 'نوع الخدمة',
     'receipt_image'             => 'صورة الإيصال',
+    'no_receipt_image'          => 'لا توجد صورة',
     'add_note'                  => 'إضافة ملاحظات',
     'extensions_fees'           => 'إجمالى الملحقات',
     // -----------  Invoice Services  ------------

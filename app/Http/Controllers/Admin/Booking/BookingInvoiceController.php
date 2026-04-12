@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Booking;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InvoiceRequest;
+use App\Mappers\ServiceCategoryStatusMapper;
 use App\Models\Booking;
 use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Collection;
@@ -123,6 +124,7 @@ class BookingInvoiceController extends Controller
         $lpr_limit = 8;
 
         $booking = $booking_invoice->booking;
+        $booking->loadMissing(['expenses.service.serviceCategory']);
 
         // Get taxed services and separate receipts (ايصالات) from them
         $taxedServices = $booking->getTaxedServices()->get();
@@ -240,7 +242,22 @@ class BookingInvoiceController extends Controller
             $groupedReceiptServices->push($groupedService);
         }
 
-        $attachment_rows = $groupedReceiptServices;
+        // مصروفات الوكلاء (التطبيق/الداش) المدخلة في إجمالي «غير الضريبية» — نفس منطق Booking::getUntaxedServicesTotalPriceAttribute
+        $invoiceableAgentExpenses = $booking->expenses()
+            ->whereHas('service.serviceCategory', function ($q) {
+                $q->where('service_status', ServiceCategoryStatusMapper::UNTAXED);
+            })
+            ->orderBy('id')
+            ->get();
+
+        $agentExpenseRows = $invoiceableAgentExpenses->map(fn ($expense) => (object) [
+            'type' => 'agent_expense_attachment',
+            'expense' => $expense,
+        ]);
+
+        $attachment_rows = $groupedReceiptServices->concat($agentExpenseRows);
+
+        $agentExpensesAttachmentTotal = $invoiceableAgentExpenses->sum('value');
 
         return view('admin.bookings.booking-invoices.show', [
             'invoice' => $booking_invoice,
@@ -252,7 +269,8 @@ class BookingInvoiceController extends Controller
             'mpr_limit' => $mpr_limit,
             'lpr_limit' => $lpr_limit,
             'booking' => $booking,
-            'attachment_rows' => $attachment_rows
+            'attachment_rows' => $attachment_rows,
+            'agent_expenses_attachment_total' => $agentExpensesAttachmentTotal,
         ]);
     }
 

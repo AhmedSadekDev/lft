@@ -36,6 +36,12 @@
                     'key' => $key + 1,
                 ])
             @endif
+            @if (is_object($item) && isset($item->type) && $item->type === 'agent_expense_attachment' && isset($item->expense))
+                @include('admin.components.booking-invoices.printing.table.agent-expense-receipt-row', [
+                    'expense' => $item->expense,
+                    'key' => $key + 1,
+                ])
+            @endif
         @endforeach
         @endif
     </tbody>

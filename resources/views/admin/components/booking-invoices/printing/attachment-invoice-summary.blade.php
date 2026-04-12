@@ -23,6 +23,9 @@
             }
         }
 
+        // مصروفات الوكلاء (التطبيق) ضمن «غير الضريبية» — نفس منطق إنشاء الفاتورة
+        $allReceiptServicesTotal += (float) ($agent_expenses_attachment_total ?? 0);
+
         // مجموع الفاتورة العادية بعد الضريبة (النقل + الخدمات الخاضعة للضريبة غير الإيصالات + الضريبة)
         $normalInvoiceTotal = $invoice->invoice_total_after_tax ?? 0;
     @endphp

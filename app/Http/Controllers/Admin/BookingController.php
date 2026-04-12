@@ -230,6 +230,8 @@ class BookingController extends Controller
      */
     public function show(Booking $booking)
     {
+        $booking->loadCount(['bookingServices', 'expenses']);
+
         $input = [
             'booking'      => $booking,
             'containers'   => $booking->bookingContainers->mapWithKeys(function ($container) {

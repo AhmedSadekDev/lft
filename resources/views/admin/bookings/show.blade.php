@@ -335,7 +335,7 @@
                     <span class="booking-section-icon booking-section-icon--teal"><i class="fas fa-concierge-bell"></i></span>
                     {{ __('main.services') }}
                 </h2>
-                <span class="booking-section-badge">{{ $booking->bookingServices?->count() ?? 0 }}</span>
+                <span class="booking-section-badge">{{ $booking->booking_services_count + $booking->expenses_count }}</span>
             </div>
             <div class="booking-section-body" style="direction:rtl">
                 @include('admin.components.booking-services.table', [

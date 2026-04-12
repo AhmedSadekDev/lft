@@ -26,9 +26,23 @@ class BookingService extends Model
         'updated_by',
     ];
 
-    public function getImageAttribute($value)
+    /**
+     * رابط صورة الإيصال (مجلد public disk: storage/app/public/services)
+     */
+    public function getImageAttribute($value): ?string
     {
-        return asset('/storage/' . $this->imageFolder . '/' . $value);
+        $filename = $value ?? $this->attributes['image'] ?? null;
+        if ($filename === null || $filename === '') {
+            return null;
+        }
+        if (is_string($filename) && preg_match('#^https?://#i', $filename)) {
+            return $filename;
+        }
+        $folder = trim($this->imageFolder ?? 'services', '/');
+        $name = basename(str_replace('\\', '/', $filename));
+        $relative = $folder . '/' . $name;
+
+        return asset('storage/' . $relative);
     }
 
     public function service()
