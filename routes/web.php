@@ -290,7 +290,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
         'booking-invoices',
         BookingInvoiceController::class,
         [
-            'only' => ['show', 'edit', 'update'],
+            'only' => ['show', 'edit', 'update', 'destroy'],
         ]
     );
     // ----------------- \Invoices -----------------
@@ -445,6 +445,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('accounts/{companyId}/statement/export-pdf', [AccountController::class, 'exportPDF'])->name('accounts.statement.export.pdf');
     Route::get('accounts/{companyId}/payment', [AccountController::class, 'showPaymentForm'])->name('accounts.payment');
     Route::post('accounts/{companyId}/payment', [AccountController::class, 'processPayment'])->name('accounts.payment.process');
+    Route::delete('accounts/{companyId}/payment/{paymentId}', [AccountController::class, 'destroyPayment'])->name('accounts.payment.destroy');
+    Route::delete('accounts/{companyId}/payment-group', [AccountController::class, 'destroyPaymentGroup'])->name('accounts.payment.group.destroy');
 
     // صفحة الشيكات
     Route::get('accounts/checks', [AccountController::class, 'checksIndex'])->name('accounts.checks.index');

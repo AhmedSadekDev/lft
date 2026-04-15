@@ -7,6 +7,7 @@ use App\Models\Vault;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Models\BankTrnsaction;
+use App\Models\InvoicePayment;
 use App\Models\companyInvoices;
 use App\Http\Traits\ImagesTrait;
 use App\Models\VaultTransaction;
@@ -352,10 +353,42 @@ class BankTransactionController extends Controller
 
     public function destroy($id)
     {
-        $shipment = BankTrnsaction::findOrFail($id);
+        $transaction = BankTrnsaction::findOrFail($id);
 
-        $shipment->delete();
+        DB::beginTransaction();
 
-        return response()->json(['staus' => true, 'msg' => __('alerts.deleted_successfully')], 200);
+        try {
+            // حذف سداد شركة من شاشة البنك يجب أن يرجع الأثر على كشف الشركة
+            if ((int) $transaction->type === 0 && !is_null($transaction->company_id)) {
+                $bank = Bank::find($transaction->bank_id);
+                if ($bank) {
+                    $bank->amount = ($bank->amount ?? 0) + (float) $transaction->amount;
+                    $bank->save();
+                }
+
+                $relatedPaymentsCount = InvoicePayment::where('bank_transaction_id', $transaction->id)->count();
+
+                if ($relatedPaymentsCount > 0) {
+                    // حذف السداد المرتبط من invoice_payments ليعود كمبلغ مستحق
+                    InvoicePayment::where('bank_transaction_id', $transaction->id)->delete();
+                } elseif (!is_null($transaction->company_id) && str_contains((string) $transaction->name, 'سداد الرصيد الافتتاحي')) {
+                    // سداد رصيد افتتاحي: إرجاع الرصيد الافتتاحي مرة أخرى
+                    $company = Company::find($transaction->company_id);
+                    if ($company) {
+                        $company->opening_balance = ($company->opening_balance ?? 0) + (float) $transaction->amount;
+                        $company->save();
+                    }
+                }
+            }
+
+            $transaction->delete();
+
+            DB::commit();
+
+            return response()->json(['staus' => true, 'msg' => __('alerts.deleted_successfully')], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['staus' => false, 'msg' => $e->getMessage()], 500);
+        }
     }
 }

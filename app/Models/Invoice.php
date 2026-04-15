@@ -74,20 +74,25 @@ class Invoice extends Model
     }
 
     /**
-     * تنسيق رقم الفاتورة: السنة + رقم الشركة (3 أرقام) + تسلسل (3 أرقام)، يُعاد التسلسل كل سنة تقويمية.
+     * تنسيق رقم الفاتورة: YYYY-MM-####.
+     * يبدأ التسلسل من 5001 لكل شهر، ويزيد حسب آخر فاتورة بنفس الشهر.
      */
     public static function getNextInvoiceNumberForCompany(int $company_id): string
     {
         $year = date('Y');
-        $companyPart = invoiceNumberTrim($company_id);
+        $month = date('m');
+        $prefix = "{$year}-{$month}-";
 
-        $count = self::whereHas('booking', fn ($q) => $q->where('company_id', $company_id))
-            ->whereYear('created_at', (int) $year)
-            ->count();
+        $lastNumber = self::where('invoice_number', 'like', $prefix . '%')
+            ->orderByRaw("CAST(SUBSTRING_INDEX(invoice_number, '-', -1) AS UNSIGNED) DESC")
+            ->value('invoice_number');
 
-        $sequence = $count + 1;
+        $nextSequence = 5001;
+        if (!empty($lastNumber) && preg_match('/^' . preg_quote($prefix, '/') . '(\d+)$/', $lastNumber, $matches)) {
+            $nextSequence = ((int) $matches[1]) + 1;
+        }
 
-        return "{$year}-{$companyPart}-" . invoiceNumberTrim($sequence);
+        return $prefix . $nextSequence;
     }
 
 

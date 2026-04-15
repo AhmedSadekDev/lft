@@ -117,7 +117,7 @@
                                     {{ $item->amount }}
                                 </td>
                                 <td>
-                                    {{ $item->date }}
+                                    {{ $item->date ?? optional($item->created_at)->format('Y-m-d') }}
                                 </td>
                                 <td>
                                     {{ $item->user ? $item->user->name : '' }}

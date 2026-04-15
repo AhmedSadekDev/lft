@@ -21,6 +21,16 @@ class BankTrnsaction extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function invoicePayments()
+    {
+        return $this->hasMany(InvoicePayment::class, 'bank_transaction_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     public function getTypeNameAttribute()
     {
         return $this->type == 1 ? __('main.credit') : __("main.debit");

@@ -336,9 +336,24 @@
 </head>
 
 <body>
+    @php
+        $hasPayments = $invoice->invoicePayments()->exists();
+    @endphp
     <div class="buttons-container">
         <button class="btn print-btn" onclick="printDiv('printableArea')">📄 طباعة الفاتورة</button>
         <button class="btn print-btn" onclick="printDiv('printableAreaAttachments')">📎 طباعة الملحقات</button>
+        @if (!$hasPayments)
+            <form method="POST"
+                  action="{{ route('booking-invoices.destroy', ['booking_invoice' => $invoice->id]) }}"
+                  style="display:inline-block;"
+                  onsubmit="return confirm('هل أنت متأكد من حذف الفاتورة؟');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn print-btn" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%);">
+                    🗑️ حذف الفاتورة
+                </button>
+            </form>
+        @endif
     </div>
 
     <div class="invoices-container">

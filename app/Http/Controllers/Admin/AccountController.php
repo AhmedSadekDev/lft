@@ -39,7 +39,7 @@ class AccountController extends Controller
 
         $this->middleware('permission:accounts.index')->only('index');
         $this->middleware('permission:accounts.index')->only('statement');
-        $this->middleware('permission:accounts.create')->only(['showPaymentForm', 'processPayment']);
+        $this->middleware('permission:accounts.create')->only(['showPaymentForm', 'processPayment', 'destroyPayment', 'destroyPaymentGroup']);
     }
 
     /**
@@ -477,7 +477,7 @@ class AccountController extends Controller
             'payment_date' => 'required|date',
             'payment_type' => 'required|in:bank_transfer,check',
             'payment_target' => 'required|in:invoices,opening_balance',
-            'bank_id' => 'required_if:payment_type,bank_transfer|nullable|exists:banks,id',
+            'bank_id' => 'required_if:payment_type,bank_transfer,check|nullable|exists:banks,id',
             'check_bank_name' => 'required_if:payment_type,check|nullable|string|max:255',
             'check_number' => 'required_if:payment_type,check|nullable|string|max:255',
             'check_value' => 'required_if:payment_type,check|nullable|numeric|min:0.01',
@@ -513,39 +513,23 @@ class AccountController extends Controller
                 $company->opening_balance = $openingBalance - $paymentAmount;
                 $company->save();
 
-                // إذا كان السداد من بنك، تحديث رصيد البنك والخزنة
-                if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
+                // إذا كان السداد مرتبط ببنك، تحديث رصيد البنك فقط (بدون الخزنة)
+                if ($request->bank_id) {
                     $bank = Bank::findOrFail($request->bank_id);
-                    $vault = Vault::first();
-
-                    if (!$vault) {
-                        DB::rollBack();
-                        return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
-                    }
-
-                    // إضافة المبلغ للبنك
+                    
+                    // إضافة المبلغ إلى البنك
                     $bank->amount = ($bank->amount ?? 0) + $paymentAmount;
                     $bank->save();
-
-                    // إضافة المبلغ للخزنة
-                    $vault->amount = ($vault->amount ?? 0) + $paymentAmount;
-                    $vault->save();
 
                     // تسجيل معاملة البنك
                     BankTrnsaction::create([
                         'bank_id' => $bank->id,
+                        'company_id' => $company->id,
                         'user_id' => auth()->id(),
                         'name' => 'سداد الرصيد الافتتاحي - ' . $company->name,
                         'type' => 1, // 1 = إيداع
                         'amount' => $paymentAmount,
-                    ]);
-
-                    // تسجيل معاملة الخزنة
-                    VaultTransaction::create([
-                        'bank_id' => $bank->id,
-                        'name' => 'سداد الرصيد الافتتاحي - ' . $company->name,
-                        'amount' => $paymentAmount,
-                        'type' => 0, // 0 = إيداع
+                        'date' => $request->payment_date ?? now()->format('Y-m-d'),
                     ]);
                 }
 
@@ -559,41 +543,28 @@ class AccountController extends Controller
             $remainingPayment = $paymentAmount;
             $processedInvoices = [];
             $invoiceCount = 0;
+            $bankTransactionId = null;
 
-            // إذا كان السداد من بنك، تحديث رصيد البنك والخزنة
-            if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
+            // إذا كان السداد مرتبط ببنك، تحديث رصيد البنك فقط (بدون الخزنة)
+            if ($request->bank_id) {
                 $bank = Bank::findOrFail($request->bank_id);
-                $vault = Vault::first();
-
-                if (!$vault) {
-                    DB::rollBack();
-                    return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
-                }
-
-                // إضافة المبلغ للبنك
+                
+                // إضافة المبلغ إلى البنك
                 $bank->amount = ($bank->amount ?? 0) + $paymentAmount;
                 $bank->save();
 
-                // إضافة المبلغ للخزنة
-                $vault->amount = ($vault->amount ?? 0) + $paymentAmount;
-                $vault->save();
-
                 // تسجيل معاملة البنك
-                BankTrnsaction::create([
+                $bankTransaction = BankTrnsaction::create([
                     'bank_id' => $bank->id,
+                    'company_id' => $company->id,
                     'user_id' => auth()->id(),
                     'name' => 'سداد فواتير - ' . $company->name,
                     'type' => 1, // 1 = إيداع
                     'amount' => $paymentAmount,
+                    'date' => $request->payment_date ?? now()->format('Y-m-d'),
                 ]);
 
-                // تسجيل معاملة الخزنة
-                VaultTransaction::create([
-                    'bank_id' => $bank->id,
-                    'name' => 'سداد فواتير - ' . $company->name,
-                    'amount' => $paymentAmount,
-                    'type' => 0, // 0 = إيداع
-                ]);
+                $bankTransactionId = $bankTransaction->id;
             }
 
             // إذا تم تحديد فواتير محددة
@@ -626,7 +597,7 @@ class AccountController extends Controller
                             $paymentValue = min($remainingAmount, $remainingPayment);
 
                             // تسجيل السداد
-                            $paymentData = $this->preparePaymentData($request, $company, $invoice, $paymentValue);
+                            $paymentData = $this->preparePaymentData($request, $company, $invoice, $paymentValue, $bankTransactionId);
 
                             $payment = InvoicePayment::create($paymentData);
 
@@ -670,7 +641,7 @@ class AccountController extends Controller
                         $paymentValue = min($remainingAmount, $remainingPayment);
 
                         // تسجيل السداد
-                        $paymentData = $this->preparePaymentData($request, $company, $invoice, $paymentValue);
+                        $paymentData = $this->preparePaymentData($request, $company, $invoice, $paymentValue, $bankTransactionId);
 
                         $payment = InvoicePayment::create($paymentData);
 
@@ -703,9 +674,149 @@ class AccountController extends Controller
     }
 
     /**
+     * حذف سداد مسجل وإرجاعه كمبلغ مستحق مرة أخرى
+     */
+    public function destroyPayment(Request $request, $companyId, $paymentId)
+    {
+        $company = Company::findOrFail($companyId);
+
+        $payment = InvoicePayment::with(['invoice.booking', 'bank'])
+            ->where('id', $paymentId)
+            ->whereHas('invoice.booking', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })
+            ->firstOrFail();
+
+        DB::beginTransaction();
+
+        try {
+            // عند حذف سداد من كشف الحساب: خصم المبلغ من البنك وحذف/تحديث عملية البنك المرتبطة
+            if ($payment->bank_id) {
+                $bank = $payment->bank;
+
+                if ($bank) {
+                    $bank->amount = ($bank->amount ?? 0) - (float) $payment->value;
+                    $bank->save();
+                }
+
+                // تعديل/حذف العملية البنكية الأصلية المرتبطة بالسداد
+                if (!is_null($payment->bank_transaction_id)) {
+                    $bankTransaction = BankTrnsaction::find($payment->bank_transaction_id);
+                    if ($bankTransaction) {
+                        $newAmount = ((float) $bankTransaction->amount) - ((float) $payment->value);
+                        if ($newAmount <= 0) {
+                            $bankTransaction->delete();
+                        } else {
+                            $bankTransaction->amount = $newAmount;
+                            $bankTransaction->save();
+                        }
+                    }
+                }
+            }
+
+            $payment->delete();
+
+            DB::commit();
+
+            return redirect()->route('accounts.statement', [
+                'companyId' => $company->id,
+                'from' => $request->get('from'),
+                'to' => $request->get('to'),
+            ])->with('success', 'تم حذف عملية السداد بنجاح، وتم إعادة المبلغ كمستحق على الشركة');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'حدث خطأ أثناء حذف عملية السداد: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * حذف عملية سداد كاملة (مجموعة دفعات) وإرجاعها كمبالغ مستحقة
+     */
+    public function destroyPaymentGroup(Request $request, $companyId)
+    {
+        $company = Company::findOrFail($companyId);
+
+        $paymentIdsRaw = $request->input('payment_ids', '');
+        $paymentIds = collect(explode(',', (string) $paymentIdsRaw))
+            ->map(fn ($id) => (int) trim($id))
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        if ($paymentIds->isEmpty()) {
+            return redirect()->back()->with('error', 'لا توجد عمليات سداد صالحة للحذف');
+        }
+
+        $payments = InvoicePayment::with(['invoice.booking', 'bank'])
+            ->whereIn('id', $paymentIds)
+            ->whereHas('invoice.booking', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })
+            ->get();
+
+        if ($payments->isEmpty()) {
+            return redirect()->back()->with('error', 'لم يتم العثور على عمليات السداد المطلوبة');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $bankTransactionDeductions = [];
+
+            foreach ($payments as $payment) {
+                // عند حذف السداد من كشف الحساب: خصم من البنك
+                if ($payment->bank_id) {
+                    $bank = $payment->bank;
+
+                    if ($bank) {
+                        $bank->amount = ($bank->amount ?? 0) - (float) $payment->value;
+                        $bank->save();
+                    }
+
+                    if (!is_null($payment->bank_transaction_id)) {
+                        if (!isset($bankTransactionDeductions[$payment->bank_transaction_id])) {
+                            $bankTransactionDeductions[$payment->bank_transaction_id] = 0.0;
+                        }
+                        $bankTransactionDeductions[$payment->bank_transaction_id] += (float) $payment->value;
+                    }
+                }
+
+                $payment->delete();
+            }
+
+            // تعديل/حذف سجلات البنك المرتبطة بنفس عمليات السداد المحذوفة
+            foreach ($bankTransactionDeductions as $bankTransactionId => $deductedAmount) {
+                $bankTransaction = BankTrnsaction::find($bankTransactionId);
+                if (!$bankTransaction) {
+                    continue;
+                }
+
+                $newAmount = ((float) $bankTransaction->amount) - (float) $deductedAmount;
+                if ($newAmount <= 0) {
+                    $bankTransaction->delete();
+                } else {
+                    $bankTransaction->amount = $newAmount;
+                    $bankTransaction->save();
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('accounts.statement', [
+                'companyId' => $company->id,
+                'from' => $request->get('from'),
+                'to' => $request->get('to'),
+            ])->with('success', 'تم حذف عملية السداد بالكامل وإعادة المبالغ كمستحق على الشركة');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'حدث خطأ أثناء حذف عملية السداد: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * إعداد بيانات السداد
      */
-    private function preparePaymentData($request, $company, $invoice, $paymentValue)
+    private function preparePaymentData($request, $company, $invoice, $paymentValue, $bankTransactionId = null)
     {
         $paymentData = [
             'invoice_id' => $invoice->id,
@@ -715,9 +826,13 @@ class AccountController extends Controller
             'payment_type' => $request->payment_type,
         ];
 
-        // إضافة بيانات البنك للتحويل البنكي
-        if ($request->payment_type === 'bank_transfer') {
+        // إضافة بيانات البنك للتحويل البنكي والشيك
+        if (in_array($request->payment_type, ['bank_transfer', 'check'])) {
             $paymentData['bank_id'] = $request->bank_id;
+        }
+
+        if (!is_null($bankTransactionId)) {
+            $paymentData['bank_transaction_id'] = $bankTransactionId;
         }
 
         // إضافة بيانات الشيك

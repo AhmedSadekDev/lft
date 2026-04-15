@@ -354,8 +354,34 @@ class BookingInvoiceController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(Invoice $booking_invoice)
     {
-        //
+        DB::beginTransaction();
+        try {
+            if ($booking_invoice->invoicePayments()->exists()) {
+                DB::rollBack();
+                return redirect()
+                    ->back()
+                    ->with('error', 'لا يمكن حذف الفاتورة بعد تسجيل أي عملية سداد عليها');
+            }
+
+            $booking = $booking_invoice->booking;
+            $booking_invoice->delete();
+            DB::commit();
+
+            if ($booking) {
+                return redirect()
+                    ->route('bookings.show', $booking->id)
+                    ->with('success', __('alerts.deleted_successfully'));
+            }
+
+            return redirect()
+                ->route('bookings.index')
+                ->with('success', __('alerts.deleted_successfully'));
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error($th);
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

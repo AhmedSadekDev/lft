@@ -26,4 +26,9 @@ class InvoicePayment extends Model
     {
         return $this->belongsTo(Bank::class);
     }
+
+    public function bankTransaction()
+    {
+        return $this->belongsTo(BankTrnsaction::class, 'bank_transaction_id');
+    }
 }

@@ -114,6 +114,7 @@
                         <tr>
                             <th>التاريخ</th>
                             <th>رقم الطلب</th>
+                            <th>رقم الفاتورة</th>
                             <th>نوع العملية</th>
                             <th>الإجمالي</th>
                             <th>تم دفع</th>
@@ -121,6 +122,7 @@
                             <th>دائن</th>
                             <th>ملاحظات</th>
                             <th>تفاصيل</th>
+                            <th>الإجراء</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -141,6 +143,8 @@
                                 </td>
 
                                 <td>{{ $transaction['booking_number'] ?? '-' }}</td>
+
+                                <td>{{ $transaction['invoice_number'] ?? '-' }}</td>
 
                                 <td>
                                     @if($transaction['type'] == 'invoice')
@@ -187,10 +191,38 @@
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
+
+                                <td>
+                                    @if(($transaction['type'] ?? '') === 'payment' && $hasPaymentDetails)
+                                        @php
+                                            $paymentIds = collect($paymentDetails)
+                                                ->pluck('id')
+                                                ->filter()
+                                                ->implode(',');
+                                        @endphp
+                                        @if(!empty($paymentIds))
+                                            <form method="POST"
+                                                  action="{{ route('accounts.payment.group.destroy', ['companyId' => $company->id, 'from' => $fromDate, 'to' => $toDate]) }}"
+                                                  onsubmit="return confirm('هل أنت متأكد من حذف عملية السداد بالكامل؟ سيتم إعادة المبالغ كمستحق على الشركة.');"
+                                                  class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <input type="hidden" name="payment_ids" value="{{ $paymentIds }}">
+                                                <button type="submit" class="btn btn-sm btn-danger" title="حذف عملية السداد بالكامل">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="py-4 text-muted">
+                                <td colspan="11" class="py-4 text-muted">
                                     لا توجد بيانات
                                 </td>
                             </tr>
