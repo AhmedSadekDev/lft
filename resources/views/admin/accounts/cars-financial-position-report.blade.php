@@ -45,14 +45,14 @@
                                     <div class="mb-2">
                                         <i class="fas fa-car fa-lg mb-2"></i>
                                     </div>
-                                    <div class="font-weight-bold" style="font-size: 14px; opacity: 0.9;">عدد السيارات المدينة</div>
+                                    <div class="font-weight-bold" style="font-size: 14px; opacity: 0.9;">عدد السيارات (رصيد غير صفر)</div>
                                     <div class="font-weight-bold" style="font-size: 18px;">{{ $carsWithDebts->count() }}</div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-2">
                                         <i class="fas fa-money-bill-wave fa-lg mb-2"></i>
                                     </div>
-                                    <div class="font-weight-bold" style="font-size: 14px; opacity: 0.9;">إجمالي المديونية</div>
+                                    <div class="font-weight-bold" style="font-size: 14px; opacity: 0.9;">صافي إجمالي الرصيد</div>
                                     <div class="font-weight-bold" style="font-size: 22px; color: #fff;">{{ number_format($totalDebts, 2) }} ج.م</div>
                                 </div>
                             </div>
@@ -68,12 +68,7 @@
                         <tr style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff;">
                             <th class="text-center" style="width: 60px; border: 1px solid rgba(255,255,255,0.3);">#</th>
                             <th style="border: 1px solid rgba(255,255,255,0.3);">رقم السيارة</th>
-                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">إجمالي التكلفة</th>
-                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">صافي العهدة</th>
-                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">مصروفات إضافية</th>
-                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">إجمالي الدفعات</th>
                             <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">الرصيد المستحق</th>
-                            <th class="text-center" style="width: 100px; border: 1px solid rgba(255,255,255,0.3);">الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,36 +83,18 @@
                                 </span>
                             </td>
                             <td class="text-center align-middle">
-                                <span class="text-dark">{{ number_format($car['total_cost'], 2) }} ج.م</span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="text-info">{{ number_format($car['total_net_custody'], 2) }} ج.م</span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="text-dark">{{ number_format($car['total_extra_expenses'], 2) }} ج.م</span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="text-success font-weight-bold">{{ number_format($car['total_payments'], 2) }} ج.م</span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="badge badge-danger badge-pill" style="font-size: 13px; padding: 6px 12px;">
-                                    {{ number_format($car['balance'], 2) }} ج.م
+                                @php $b = (float) $car['balance']; @endphp
+                                <span class="badge badge-pill font-weight-bold {{ $b >= 0 ? 'badge-danger' : 'badge-info' }}" style="font-size: 13px; padding: 6px 12px;">
+                                    {{ $b < 0 ? '-' : '' }}{{ number_format(abs($b), 2) }} ج.م
                                 </span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <a href="{{ route('accounts.car.statement', $car['id']) }}?from={{ \Carbon\Carbon::parse($reportDate)->startOfYear()->format('Y-m-d') }}&to={{ $reportDate }}"
-                                   class="btn btn-sm btn-primary btn-icon" title="كشف حساب"
-                                   style="width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-file-invoice"></i>
-                                </a>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5">
+                            <td colspan="3" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
-                                    <p class="font-weight-bold">لا توجد سيارات مدينة في هذا التاريخ</p>
+                                    <p class="font-weight-bold">لا توجد سيارات برصيد غير صفر في هذا التاريخ</p>
                                 </div>
                             </td>
                         </tr>
@@ -127,28 +104,14 @@
                     <tfoot>
                         <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-top: 3px solid #DC143C;">
                             <td colspan="2" class="text-right font-weight-bold align-middle" style="font-size: 16px;">
-                                <i class="fas fa-calculator mr-2 text-primary"></i>الإجمالي:
-                            </td>
-                            <td class="text-center align-middle font-weight-bold">
-                                {{ number_format($carsWithDebts->sum('total_cost'), 2) }} ج.م
-                            </td>
-                            <td class="text-center align-middle font-weight-bold">
-                                {{ number_format($carsWithDebts->sum('total_net_custody'), 2) }} ج.م
-                            </td>
-                            <td class="text-center align-middle font-weight-bold">
-                                {{ number_format($carsWithDebts->sum('total_extra_expenses'), 2) }} ج.م
+                                <i class="fas fa-calculator mr-2 text-primary"></i>صافي الإجمالي:
                             </td>
                             <td class="text-center align-middle">
-                                <span class="text-success font-weight-bold" style="font-size: 15px;">
-                                    {{ number_format($carsWithDebts->sum('total_payments'), 2) }} ج.م
+                                @php $tb = (float) $totalDebts; @endphp
+                                <span class="badge font-weight-bold {{ $tb >= 0 ? 'badge-danger' : 'badge-info' }}" style="font-size: 16px; padding: 8px 16px;">
+                                    {{ $tb < 0 ? '-' : '' }}{{ number_format(abs($tb), 2) }} ج.م
                                 </span>
                             </td>
-                            <td class="text-center align-middle">
-                                <span class="badge badge-danger" style="font-size: 16px; padding: 8px 16px;">
-                                    {{ number_format($totalDebts, 2) }} ج.م
-                                </span>
-                            </td>
-                            <td></td>
                         </tr>
                     </tfoot>
                     @endif

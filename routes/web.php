@@ -443,6 +443,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('accounts/{companyId}/statement', [AccountController::class, 'statement'])->name('accounts.statement');
     Route::get('accounts/{companyId}/statement/export-excel', [AccountController::class, 'exportExcel'])->name('accounts.statement.export.excel');
     Route::get('accounts/{companyId}/statement/export-pdf', [AccountController::class, 'exportPDF'])->name('accounts.statement.export.pdf');
+    Route::get('accounts/{companyId}/statement/payment-receipt', [AccountController::class, 'companyStatementPaymentReceiptPrint'])->name('accounts.statement.payment-receipt');
+    Route::get('accounts/{companyId}/statement/payment-receipt-pdf', [AccountController::class, 'companyStatementPaymentReceiptPdf'])->name('accounts.statement.payment-receipt-pdf');
     Route::get('accounts/{companyId}/payment', [AccountController::class, 'showPaymentForm'])->name('accounts.payment');
     Route::post('accounts/{companyId}/payment', [AccountController::class, 'processPayment'])->name('accounts.payment.process');
     Route::delete('accounts/{companyId}/payment/{paymentId}', [AccountController::class, 'destroyPayment'])->name('accounts.payment.destroy');
@@ -454,6 +456,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     // كشف حساب السيارات
     Route::get('accounts/car/{carId}/statement', [AccountController::class, 'carStatement'])->name('accounts.car.statement');
+    Route::get('accounts/car/{carId}/statement/payment-receipt', [AccountController::class, 'carPaymentGroupReceiptPrint'])->name('accounts.car.statement.payment-receipt');
+    Route::get('accounts/car/{carId}/statement/payment-receipt-pdf', [AccountController::class, 'carPaymentGroupReceiptPdf'])->name('accounts.car.statement.payment-receipt-pdf');
     Route::get('accounts/car/{carId}/statement/export-excel', [AccountController::class, 'exportCarExcel'])->name('accounts.car.statement.export.excel');
     Route::get('accounts/car/{carId}/payment', [AccountController::class, 'showCarPaymentForm'])->name('accounts.car.payment');
     Route::post('accounts/car/{carId}/payment', [AccountController::class, 'processCarPayment'])->name('accounts.car.payment.process');

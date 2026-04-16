@@ -242,17 +242,26 @@
         $hasPaymentDetails = isset($transaction['payment_details']) && is_array($paymentDetails) && count($paymentDetails) > 0;
     @endphp
     @if($hasPaymentDetails)
+        @php
+            $paymentIdsForReceipt = collect($paymentDetails)->pluck('id')->filter()->implode(',');
+            $companyReceiptPrintUrl = $paymentIdsForReceipt !== ''
+                ? route('accounts.statement.payment-receipt', ['companyId' => $company->id, 'payment_ids' => $paymentIdsForReceipt])
+                : null;
+            $companyReceiptPdfUrl = $paymentIdsForReceipt !== ''
+                ? route('accounts.statement.payment-receipt-pdf', ['companyId' => $company->id, 'payment_ids' => $paymentIdsForReceipt])
+                : null;
+        @endphp
         <!-- Modal تفاصيل العملية -->
         <div class="modal fade" id="transactionDetailsModal{{ $index }}" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-xl" role="document" style="max-width: 1100px;">
                 <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title font-weight-bold">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            تفاصيل السداد - {{ number_format($transaction['paid'] ?? 0, 2) }} ج.م
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title font-weight-bold mb-0">
+                            <i class="fas fa-info-circle ml-2"></i>
+                            تفاصيل السداد — {{ number_format($transaction['paid'] ?? 0, 2) }} ج.م
                         </h5>
-                        <button type="button" class="close text-white" data-dismiss="modal">
-                            <span>&times;</span>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -308,7 +317,7 @@
                                     @endif
                                 </tbody>
                                 <tfoot>
-                                    <tr class="table-success font-weight-bold">
+                                    <tr class="table-info font-weight-bold">
                                         <td colspan="3" class="text-right">الإجمالي:</td>
                                         <td class="text-center text-success">{{ number_format($transaction['paid'] ?? 0, 2) }} ج.م</td>
                                         <td colspan="3"></td>
@@ -316,9 +325,41 @@
                                 </tfoot>
                             </table>
                         </div>
+
+                        @if($companyReceiptPrintUrl)
+                            <h6 class="font-weight-bold mt-4 mb-2">
+                                <i class="fas fa-file-invoice ml-1"></i> بيان السداد للطباعة
+                            </h6>
+                            <p class="text-muted small mb-2">يُحمَّل عند فتح النافذة؛ نفس تنسيق بيان السداد القابل للطباعة أو التحميل PDF.</p>
+                            <iframe id="companyPaymentReceiptIframe{{ $index }}"
+                                    class="company-payment-receipt-iframe w-100 border rounded"
+                                    title="بيان سداد"
+                                    data-src="{{ $companyReceiptPrintUrl }}"
+                                    style="height: 420px; min-height: 280px; background: #fff;"></iframe>
+                        @endif
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                    <div class="modal-footer flex-column align-items-stretch pt-3">
+                        @if($companyReceiptPdfUrl)
+                            <a href="{{ $companyReceiptPdfUrl }}"
+                               class="btn font-weight-bold shadow-sm text-white border-0 company-statement-payment-pdf-btn w-100 text-center mb-2"
+                               title="تحميل بيان السداد PDF"
+                               dir="rtl">
+                                <i class="fas fa-file-pdf ml-2"></i>
+                                طباعة بيان السداد PDF
+                            </a>
+                            <button type="button"
+                                    class="btn btn-primary font-weight-bold js-print-company-statement-receipt mb-2"
+                                    data-iframe-index="{{ $index }}">
+                                <i class="fas fa-print ml-1"></i> طباعة البيان
+                            </button>
+                            <a href="{{ $companyReceiptPrintUrl }}"
+                               class="btn btn-outline-primary font-weight-bold mb-2"
+                               target="_blank"
+                               rel="noopener">
+                                <i class="fas fa-external-link-alt ml-1"></i> فتح في نافذة جديدة
+                            </a>
+                        @endif
+                        <button type="button" class="btn btn-secondary font-weight-bold align-self-center" data-dismiss="modal">إغلاق</button>
                     </div>
                 </div>
             </div>
@@ -387,20 +428,67 @@
         background-color: #138496;
         border-color: #117a8b;
     }
+    .company-statement-payment-pdf-btn {
+        background-color: #f84d5f !important;
+        color: #fff !important;
+        border-radius: 10px !important;
+        padding: 10px 22px !important;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+    }
+    .company-statement-payment-pdf-btn:hover {
+        background-color: #e63d52 !important;
+        color: #fff !important;
+        text-decoration: none;
+    }
 </style>
 
 @push('js')
 <script>
+    function printCompanyStatementReceipt(index) {
+        var iframe = document.getElementById('companyPaymentReceiptIframe' + index);
+        if (!iframe || !iframe.contentWindow) {
+            return;
+        }
+        try {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+        } catch (e) {
+            var src = iframe.getAttribute('src');
+            if (src) {
+                window.open(src, '_blank');
+            }
+        }
+    }
+
     $(document).ready(function() {
-        // منع تهيئة DataTable على أي جدول في هذه الصفحة
         if ($.fn.DataTable) {
-            // تعطيل DataTable على جميع الجداول في هذه الصفحة
             $('.table').each(function() {
                 if ($.fn.DataTable.isDataTable(this)) {
                     $(this).DataTable().destroy();
                 }
             });
         }
+    });
+
+    $(document).on('shown.bs.modal', '[id^="transactionDetailsModal"]', function (e) {
+        var $modal = $(e.target);
+        var $iframe = $modal.find('iframe.company-payment-receipt-iframe');
+        if (!$iframe.length || $iframe.data('loaded')) {
+            return;
+        }
+        var src = $iframe.data('src');
+        if (src) {
+            $iframe.attr('src', src).data('loaded', true);
+        }
+    });
+
+    $(document).on('click', '.js-print-company-statement-receipt', function () {
+        var idx = $(this).data('iframe-index');
+        printCompanyStatementReceipt(idx);
     });
 </script>
 @endpush
