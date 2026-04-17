@@ -429,6 +429,7 @@
                 <div class="invoice" style="overflow: visible;">
                     @include('admin.components.booking-invoices.printing.letterhead', [
                         'document_title' => __('admin.attachments'),
+                        'attachment_print' => true,
                     ])
                     <div style="margin-bottom: .3rem;">
                         @if(isset($attachment_rows) && count($attachment_rows) > 0)

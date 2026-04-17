@@ -119,79 +119,65 @@
     <table class="main-table">
         <thead>
             <tr>
-                <th rowspan="2" class="num" style="vertical-align: middle; width: 7%;">التاريخ</th>
-                <th colspan="2" class="num" style="border-bottom: 2px solid #fff; width: 9%;">حساب سابق</th>
-                <th rowspan="2" style="vertical-align: middle; width: 6%;">رقم الطلب</th>
-                <th rowspan="2" style="vertical-align: middle; width: 8%;">نوع العملية</th>
-                <th rowspan="2" class="num" style="vertical-align: middle; width: 6%;">خصم على الفاتورة</th>
-                <th rowspan="2" class="num" style="vertical-align: middle; width: 6%;">الضريبة</th>
-                <th rowspan="2" style="vertical-align: middle; width: 7%;">بيان ملحق</th>
-                <th rowspan="2" class="num" style="vertical-align: middle; width: 7%;">فاتورة النقل</th>
-                <th rowspan="2" class="num" style="vertical-align: middle; width: 7%;">القيمة الاجمالية</th>
-                <th rowspan="2" class="num" style="vertical-align: middle; width: 6%;">تم دفع</th>
-                <th rowspan="2" style="vertical-align: middle; width: 9%;">ملاحظات</th>
-                <th colspan="2" class="num" style="border-bottom: 2px solid #fff; width: 11%;">الحساب الحالي</th>
-            </tr>
-            <tr>
-                <th class="num" style="padding: 5px 4px;">مدين</th>
-                <th class="num" style="padding: 5px 4px;">دائن</th>
-                <th class="num" style="padding: 5px 4px;">مدين</th>
-                <th class="num" style="padding: 5px 4px;">دائن</th>
+                <th class="date-cell" style="width: 9%;">التاريخ</th>
+                <th class="num" style="width: 11%;">الرصيد</th>
+                <th style="width: 10%;">رقم الفاتورة</th>
+                <th style="width: 10%;">نوع العملية</th>
+                <th class="num" style="width: 8%;">خصم على الفاتورة</th>
+                <th class="num" style="width: 8%;">الضريبة</th>
+                <th style="width: 10%;">بيان ملحق</th>
+                <th class="num" style="width: 9%;">فاتورة النقل</th>
+                <th class="num" style="width: 9%;">القيمة الاجمالية</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($transactions ?? [] as $transaction)
                 @php
                     $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
+                    $invNo = trim((string) ($transaction['invoice_number'] ?? ''));
+                    $bookNo = trim((string) ($transaction['booking_number'] ?? ''));
+                    $displayRef = $invNo !== '' ? $invNo : ($bookNo !== '' ? $bookNo : '-');
+                    $rb = (float) ($transaction['running_balance'] ?? 0);
                 @endphp
                 <tr>
-                    <td class="date-cell">{{ $date->format('Y-m-d') }} {{ $date->format('H:i') }}</td>
-                    <td class="num">{{ $transaction['previous_debit'] > 0 ? number_format($transaction['previous_debit'], 2) : '-' }}</td>
-                    <td class="num">{{ $transaction['previous_credit'] > 0 ? number_format($transaction['previous_credit'], 2) : '-' }}</td>
-                    <td class="text-wrap">{{ $transaction['booking_number'] ?: '-' }}</td>
+                    <td class="date-cell">{{ $date->format('Y-m-d') }}</td>
+                    <td class="num">
+                        @if($rb >= 0)
+                            <span class="text-danger">مدين {{ number_format(abs($rb), 2) }}</span>
+                        @else
+                            <span class="text-success">دائن {{ number_format(abs($rb), 2) }}</span>
+                        @endif
+                    </td>
+                    <td class="text-wrap">{{ $displayRef }}</td>
                     <td class="text-wrap">{{ $transaction['type_label'] }}</td>
-                    <td class="num">{{ $transaction['discount'] > 0 ? number_format($transaction['discount'], 2) : '-' }}</td>
-                    <td class="num">{{ $transaction['tax'] > 0 ? number_format($transaction['tax'], 2) : '-' }}</td>
+                    <td class="num">{{ ($transaction['discount'] ?? 0) > 0 ? number_format($transaction['discount'], 2) : '-' }}</td>
+                    <td class="num">{{ ($transaction['tax'] ?? 0) > 0 ? number_format($transaction['tax'], 2) : '-' }}</td>
                     <td class="text-wrap">{{ $transaction['attachment_statement'] ?: '-' }}</td>
-                    <td class="num">{{ $transaction['transportation'] > 0 ? number_format($transaction['transportation'], 2) : '-' }}</td>
-                    <td class="num">{{ $transaction['total'] > 0 ? number_format($transaction['total'], 2) : '-' }}</td>
-                    <td class="num">{{ $transaction['paid'] > 0 ? number_format($transaction['paid'], 2) : '-' }}</td>
-                    <td class="text-wrap">{{ $transaction['notes'] ?: '-' }}</td>
-                    <td class="num {{ $transaction['current_debit'] > 0 ? 'text-danger' : '' }}">
-                        {{ $transaction['current_debit'] > 0 ? number_format($transaction['current_debit'], 2) : '-' }}
-                    </td>
-                    <td class="num {{ $transaction['current_credit'] > 0 ? 'text-success' : '' }}">
-                        {{ $transaction['current_credit'] > 0 ? number_format($transaction['current_credit'], 2) : '-' }}
-                    </td>
+                    <td class="num">{{ ($transaction['transportation'] ?? 0) > 0 ? number_format($transaction['transportation'], 2) : '-' }}</td>
+                    <td class="num">{{ ($transaction['total'] ?? 0) > 0 ? number_format($transaction['total'], 2) : '-' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="15" style="text-align: center; padding: 20px;">لا توجد حركات في هذه الفترة</td>
+                    <td colspan="9" style="text-align: center; padding: 20px;">لا توجد حركات في هذه الفترة</td>
                 </tr>
             @endforelse
 
             @if(isset($transactions) && $transactions->count() > 0)
-                @php
-                    $totalPreviousDebit = $transactions->sum('previous_debit');
-                    $totalPreviousCredit = $transactions->sum('previous_credit');
-                    $totalCurrentDebit = $transactions->sum('current_debit');
-                    $totalCurrentCredit = $transactions->sum('current_credit');
-                    $finalRunningBalance = $transactions->last()['running_balance'] ?? $finalBalance;
-                @endphp
                 <tr class="summary-row">
-                    <td colspan="2" style="text-align: right; padding-right: 10px; font-size: 9pt;">الحساب النهائي يوم {{ $toDate }}</td>
-                    <td class="num" style="color: #1976d2; font-weight: bold;">{{ number_format($totalPreviousDebit, 2) }}</td>
-                    <td class="num" style="color: #1976d2; font-weight: bold;">{{ number_format($totalPreviousCredit, 2) }}</td>
-                    <td colspan="8"></td>
-                    <td class="num" style="color: #1976d2; font-weight: bold;">{{ number_format($totalCurrentDebit, 2) }}</td>
-                    <td class="num" style="color: #1976d2; font-weight: bold;">{{ number_format($totalCurrentCredit, 2) }}</td>
+                    <td colspan="4" style="text-align: right; padding-right: 10px; font-size: 9pt;">ملخص الفترة</td>
+                    <td colspan="2" style="text-align: center; font-size: 8.5pt;">
+                        فواتير: {{ number_format($totalInvoices ?? 0, 2) }} — سداد: {{ number_format($totalPayments ?? 0, 2) }}
+                    </td>
+                    <td colspan="3" style="text-align: center; font-size: 8.5pt;">
+                        الرصيد المرحّل: {{ number_format($carriedForwardBalance ?? 0, 2) }}
+                    </td>
                 </tr>
                 <tr class="final-balance-row">
-                    <td colspan="12" style="text-align: right; padding-right: 10px; font-size: 9.5pt;">الرصيد النهائي المستحق</td>
-                    <td class="final-balance-amount num" style="text-align: center; font-size: 10pt;">
-                        {{ number_format(abs($finalRunningBalance), 2) }}
+                    <td colspan="7" style="text-align: right; padding-right: 10px; font-size: 9.5pt;">الرصيد النهائي المستحق (يوم {{ $toDate }})</td>
+                    <td colspan="2" class="num final-balance-amount" style="text-align: center; font-size: 10pt;">
+                        {{ number_format(abs($finalBalance ?? 0), 2) }}
+                        <span style="display: inline-block; margin-right: 6px; font-weight: bold; {{ ($finalBalance ?? 0) >= 0 ? 'color: #d32f2f;' : 'color: #388e3c;' }}">{{ ($finalBalance ?? 0) >= 0 ? 'مدين' : 'دائن' }}</span>
                     </td>
-                    <td class="num" style="text-align: center; color: #d32f2f; font-weight: bold; font-size: 9pt;">{{ $finalRunningBalance >= 0 ? 'مدين' : 'دائن' }}</td>
                 </tr>
             @endif
         </tbody>

@@ -44,6 +44,7 @@ use App\Http\Controllers\Admin\VaultTransactionController;
 use App\Http\Controllers\Admin\CompanyTransportationController;
 use App\Http\Controllers\Admin\Booking\BookingInvoiceController;
 use App\Http\Controllers\Admin\Booking\BookingServiceController;
+use App\Http\Controllers\Admin\Booking\BookingAgentExpenseController;
 use App\Http\Controllers\Admin\Booking\BookingContainerController;
 use App\Http\Controllers\BookingContaBookingContrainerExtraCostsController;
 use App\Http\Controllers\InvoicePaymentController;
@@ -266,6 +267,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
                 ['only' => ['create', 'store', 'edit', 'update']]
             );
             // ----------------- \Booking Services -----------------
+            Route::get('agent-expenses/{agent_expense}/edit', [BookingAgentExpenseController::class, 'edit'])
+                ->name('booking-agent-expenses.edit');
+            Route::put('agent-expenses/{agent_expense}', [BookingAgentExpenseController::class, 'update'])
+                ->name('booking-agent-expenses.update');
 
             // ----------------- Booking Invoices -----------------
             Route::resource(

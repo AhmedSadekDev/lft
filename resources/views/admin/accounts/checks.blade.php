@@ -59,7 +59,6 @@
                             <th>رقم الشيك</th>
                             <th>اسم البنك</th>
                             <th>الشركة</th>
-                            <th>رقم الفاتورة</th>
                             <th>القيمة</th>
                             <th>تاريخ الاستحقاق</th>
                             <th>الحالة</th>
@@ -73,7 +72,6 @@
                                 <td><strong>{{ $check->check_number }}</strong></td>
                                 <td>{{ $check->check_bank_name }}</td>
                                 <td>{{ $check->company->name ?? ($check->invoice->booking->company->name ?? '-') }}</td>
-                                <td>{{ $check->invoice->invoice_number ?? '-' }}</td>
                                 <td class="font-weight-bold">{{ number_format($check->value, 2) }} ج.م</td>
                                 <td>
                                     <span class="{{ $check->check_due_date < now() && !$check->check_paid_at ? 'text-danger font-weight-bold' : '' }}">
@@ -104,7 +102,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center">لا توجد شيكات</td>
+                                <td colspan="8" class="text-center">لا توجد شيكات</td>
                             </tr>
                         @endforelse
                     </tbody>

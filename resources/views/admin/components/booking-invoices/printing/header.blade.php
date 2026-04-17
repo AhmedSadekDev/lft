@@ -21,7 +21,7 @@
             </div>
             <div style="display: flex; align-items: center; gap: 4px;">
                 <span style="color: #fff; font-weight: 600; font-size: 11px;">التاريخ:</span>
-                <span style="color: #fff; font-size: 11px;">{{ $invoice->created_at ?? "" }}</span>
+                <span style="color: #fff; font-size: 11px;">{{ optional($invoice->created_at)->format('d-m-Y') }}</span>
             </div>
         </div>
     </div>
