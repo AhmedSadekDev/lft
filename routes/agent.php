@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Agent\BookingContainerActionController;
 use App\Http\Controllers\Api\Agent\BookingContainerAssignmentController;
 use App\Http\Controllers\Api\Agent\BookingPaperController;
 use App\Http\Controllers\Api\Agent\CityController;
+use App\Http\Controllers\Api\Agent\WalletController;
 use App\Http\Controllers\Api\Agent\YardController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,8 +48,8 @@ Route::group(['middleware' => 'localization'], function () {
 
 
         //wallet
-        Route::get('wallets', [\App\Http\Controllers\Api\Agent\WalletController::class, 'index']);
-        Route::post('charge-cars-wallet', [\App\Http\Controllers\Api\Agent\WalletController::class, 'chargeCarWallet']);
+        Route::get('wallets', [WalletController::class, 'index']);
+        Route::post('charge-cars-wallet', [WalletController::class, 'chargeCarWallet']);
 
 
         //fetch_profile
