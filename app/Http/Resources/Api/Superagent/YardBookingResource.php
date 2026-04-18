@@ -23,9 +23,10 @@ class YardBookingResource extends JsonResource
             $superagent_booking_containers = $superagent->superagent_booking_containers()->get();
         }
 
-        // Get all containers for this booking (show all containers, not just assigned ones)
-        // Similar to LoadingYardResource which shows all containers in the yard
-        $bookingContainers = $this->bookingContainers()->get();
+        // حاويات ما زالت في الساحة (قبل تأكيد التحميل؛ بعده status = 2 ولا تُعاد هنا)
+        $bookingContainers = $this->bookingContainers()
+            ->whereIn('booking_containers.status', [0, 1])
+            ->get();
 
         return [
             "id" => $this->id,
