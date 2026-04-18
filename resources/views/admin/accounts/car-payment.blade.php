@@ -39,6 +39,70 @@
             </div>
         @endif
 
+        @if(session('payment_group_uuid'))
+            @php
+                $receiptPrintUrl = route('accounts.car.statement.payment-receipt', [
+                    'carId' => $car->id,
+                    'group' => session('payment_group_uuid'),
+                ]);
+                $receiptIds = session('processed_shipments', []);
+                $receiptAmounts = session('processed_shipment_amounts', []);
+                $receiptPdfQuery = ['carId' => $car->id, 'shipment_ids' => implode(',', $receiptIds)];
+                if (count($receiptAmounts) === count($receiptIds) && count($receiptIds) > 0) {
+                    $receiptPdfQuery['amounts'] = implode(',', array_map(static fn ($v) => (string) (float) $v, $receiptAmounts));
+                }
+            @endphp
+            <div class="mx-3 mb-0">
+                <div class="card border-info shadow-sm">
+                    <div class="card-header bg-info text-white font-weight-bold py-3">
+                        <i class="fas fa-file-invoice mr-2"></i> بيان سداد نقلات (معاينة وطباعة — نفس شكل كشف الحساب)
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            المعاينة أدناه مطابقة لبيان السداد في كشف الحساب. استخدم «طباعة البيان» أو «فتح في نافذة جديدة» ثم طباعة من المتصفح.
+                        </p>
+                        <iframe id="carPaymentPageReceiptIframe"
+                                class="w-100 border rounded"
+                                title="بيان سداد نقلات"
+                                data-src="{{ $receiptPrintUrl }}"
+                                style="height: 480px; min-height: 320px; background: #fff;"></iframe>
+                        <div class="d-flex flex-wrap align-items-center mt-3">
+                            <button type="button" class="btn btn-primary font-weight-bold js-print-car-payment-page-receipt ml-2 mb-2">
+                                <i class="fas fa-print ml-1"></i> طباعة البيان
+                            </button>
+                            <a href="{{ $receiptPrintUrl }}"
+                               class="btn btn-outline-primary font-weight-bold ml-2 mb-2"
+                               target="_blank"
+                               rel="noopener">
+                                <i class="fas fa-external-link-alt ml-1"></i> فتح في نافذة جديدة
+                            </a>
+                            @if(count($receiptIds) > 0)
+                                <a href="{{ route('accounts.car.payment.export.pdf', $receiptPdfQuery) }}"
+                                   class="btn btn-outline-danger font-weight-bold ml-2 mb-2">
+                                    <i class="fas fa-file-pdf ml-1"></i> تحميل PDF
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @elseif(session('processed_shipments'))
+            @php
+                $receiptIds = session('processed_shipments', []);
+                $receiptAmounts = session('processed_shipment_amounts', []);
+                $receiptPdfQuery = ['carId' => $car->id, 'shipment_ids' => implode(',', $receiptIds)];
+                if (count($receiptAmounts) === count($receiptIds) && count($receiptIds) > 0) {
+                    $receiptPdfQuery['amounts'] = implode(',', array_map(static fn ($v) => (string) (float) $v, $receiptAmounts));
+                }
+            @endphp
+            <div class="alert alert-light border m-3 mb-0">
+                <a href="{{ route('accounts.car.payment.export.pdf', $receiptPdfQuery) }}"
+                   class="btn btn-danger font-weight-bold">
+                    <i class="fas fa-file-pdf mr-2"></i> طباعة بيان السداد PDF
+                </a>
+            </div>
+        @endif
+
         <div class="card-body">
             <!-- معلومات السيارة والحساب -->
             <div class="row mb-4">
@@ -112,8 +176,11 @@
                         </table>
                     </div>
                     <div class="alert alert-info mt-3">
-                        <strong>المجموع المحدد:</strong> <span id="selected_total" class="font-weight-bold">0.00</span> ج.م
+                        <strong>أقصى متبقي للنقلات المحددة:</strong> <span id="selected_total" class="font-weight-bold">0.00</span> ج.م
                         <span id="selected_count" class="ml-3">(0 نقلة)</span>
+                        <div class="small text-muted mt-2">
+                            يمكنك إدخال مبلغ أقل في حقل «المبلغ» أدناه لسداد جزئي (توزيع تلقائي من الأقدم للأحدث بين النقلات المحددة).
+                        </div>
                     </div>
                 </div>
             @else
@@ -128,6 +195,23 @@
                 <input type="hidden" name="shipment_ids" id="shipment_ids_input" value="">
 
                 <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="font-weight-bold required-field">المبلغ <span class="text-danger">*</span></label>
+                            <input type="number"
+                                   name="amount"
+                                   id="amount_input"
+                                   class="form-control @error('amount') is-invalid @enderror"
+                                   step="0.01"
+                                   min="0.01"
+                                   value="{{ old('amount') }}"
+                                   required>
+                            @error('amount')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted" id="amount_hint">اختر نقلاتاً لعرض أقصى مبلغ يمكن سداده منها.</small>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="font-weight-bold required-field">تاريخ السداد <span class="text-danger">*</span></label>
@@ -174,21 +258,6 @@
                             <i class="fas fa-check-circle mr-2"></i>
                             تسجيل السداد
                         </button>
-                        @if(session('processed_shipments'))
-                            @php
-                                $receiptIds = session('processed_shipments', []);
-                                $receiptAmounts = session('processed_shipment_amounts', []);
-                                $receiptQuery = ['carId' => $car->id, 'shipment_ids' => implode(',', $receiptIds)];
-                                if (count($receiptAmounts) === count($receiptIds) && count($receiptIds) > 0) {
-                                    $receiptQuery['amounts'] = implode(',', array_map(static fn ($v) => (string) (float) $v, $receiptAmounts));
-                                }
-                            @endphp
-                            <a href="{{ route('accounts.car.payment.export.pdf', $receiptQuery) }}"
-                               class="btn btn-danger btn-lg font-weight-bold ml-2">
-                                <i class="fas fa-file-pdf mr-2"></i>
-                                طباعة بيان السداد PDF
-                            </a>
-                        @endif
                         <a href="{{ route('accounts.car.statement', $car->id) }}" class="btn btn-secondary btn-lg font-weight-bold ml-2">
                             <i class="fas fa-times mr-2"></i>
                             إلغاء
@@ -203,6 +272,30 @@
 @push('js')
 <script>
     $(document).ready(function() {
+        var $receiptIframe = $('#carPaymentPageReceiptIframe');
+        if ($receiptIframe.length) {
+            var src = $receiptIframe.data('src');
+            if (src) {
+                $receiptIframe.attr('src', src);
+            }
+        }
+
+        $(document).on('click', '.js-print-car-payment-page-receipt', function () {
+            var iframe = document.getElementById('carPaymentPageReceiptIframe');
+            if (!iframe || !iframe.contentWindow) {
+                return;
+            }
+            try {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            } catch (e) {
+                var fallback = iframe.getAttribute('src');
+                if (fallback) {
+                    window.open(fallback, '_blank');
+                }
+            }
+        });
+
         // تحديد/إلغاء تحديد الكل
         $('#select_all').on('change', function() {
             $('.shipment-checkbox').prop('checked', this.checked);
@@ -233,9 +326,16 @@
             $('#selected_total').text(total.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
             $('#selected_count').text('(' + count + ' نقلة)');
             $('#shipment_ids_input').val(selectedIds.join(','));
+            if (total > 0) {
+                $('#amount_input').val(parseFloat(total.toFixed(2)));
+                $('#amount_hint').text('أقصى مبلغ يمكن سداده من النقلات المحددة: ' + total.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ج.م (يمكن تقليل المبلغ لسداد جزئي).');
+            } else {
+                $('#amount_input').val('');
+                $('#amount_hint').text('اختر نقلاتاً لعرض أقصى مبلغ يمكن سداده منها.');
+            }
         }
 
-        // منع إرسال النموذج بدون تحديد نقلات
+        // منع إرسال النموذج بدون تحديد نقلات أو مبلغ غير صالح
         $('form').on('submit', function(e) {
             var selectedIds = $('#shipment_ids_input').val();
             if (!selectedIds || selectedIds.trim() === '') {
@@ -244,6 +344,25 @@
                     icon: 'error',
                     title: 'خطأ',
                     text: 'يجب تحديد نقلات على الأقل'
+                });
+                return false;
+            }
+            var maxTotal = 0;
+            $('.shipment-checkbox:checked').each(function() {
+                maxTotal += parseFloat($(this).data('remaining')) || 0;
+            });
+            var amount = parseFloat($('#amount_input').val());
+            if (!amount || amount < 0.01) {
+                e.preventDefault();
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل مبلغاً صحيحاً (0.01 على الأقل)' });
+                return false;
+            }
+            if (amount - maxTotal > 0.009) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'المبلغ أكبر من إجمالي المتبقي للنقلات المحددة (' + maxTotal.toFixed(2) + ' ج.م)'
                 });
                 return false;
             }

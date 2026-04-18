@@ -26,7 +26,7 @@
 
     <div style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); padding: 8px 12px; border-radius: 6px; margin-top: 4px; box-shadow: 0 4px 12px rgba(220, 20, 60, 0.25);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الفاتورة الضريبية:</span>
+            <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الفاتورة:</span>
             <span style="font-weight: 700; color: #fff; font-size: 16px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format($invoice->invoice_total_after_discount ?? 0, 2) }} ج.م</span>
         </div>
     </div>

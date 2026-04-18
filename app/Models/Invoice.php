@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Invoice extends Model
 {
@@ -62,36 +61,65 @@ class Invoice extends Model
         return Booking::hydrate([$this->booking_json])->first();
     }
 
-    public static function getMaxCompanyInvoiceNumber($company_id)
+    /**
+     * الجزء الأوسط في رقم الفاتورة (ثلاثة أرقام): private_company_id إن وُجد، وإلا معرف الشركة.
+     */
+    protected static function companyInvoiceSerialSegment(int $company_id): string
     {
-        $max_invoice_number = self::where('invoice_number', 'like', '%-' . invoiceNumberTrim($company_id) . '-%')
-            ->select(DB::raw('MAX(invoice_number) as max_invoice_number'))
-            ->first()
-            ->max_invoice_number ?? '0000-000-000';
-        $parts = explode('-', $max_invoice_number);
+        $company = Company::query()->find($company_id);
+        if ($company !== null) {
+            $key = $company->private_company_id ?? $company->id;
 
-        return intval(end($parts) ?: '0');
+            return invoiceNumberTrim((int) $key);
+        }
+
+        return invoiceNumberTrim($company_id);
     }
 
     /**
-     * تنسيق رقم الفاتورة: السنة + رقم الشركة (3 أرقام) + تسلسل (3 أرقام)، يُعاد التسلسل كل سنة تقويمية.
+     * أعلى تسلسل فاتورة (الجزء الأخير) لنفس السنة YYYY والجزء الأوسط XXX في تنسيق YYYY-XXX-###.
+     */
+    protected static function maxInvoiceSequenceForSegment(string $companyTrim, string $year): int
+    {
+        $pattern = '^' . $year . '-' . $companyTrim . '-[0-9]{3}$';
+
+        $lastNumber = self::whereRaw('invoice_number REGEXP ?', [$pattern])
+            ->orderByRaw('CAST(SUBSTRING_INDEX(invoice_number, "-", -1) AS UNSIGNED) DESC')
+            ->value('invoice_number');
+
+        if (!empty($lastNumber) && preg_match('/^' . preg_quote($year, '/') . '-' . preg_quote($companyTrim, '/') . '-(\d{3})$/', $lastNumber, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return 0;
+    }
+
+    /**
+     * أعلى تسلسل فاتورة لهذه الشركة في السنة الحالية (الجزء الأخير من YYYY-XXX-###).
+     * لا يطابق الفواتير القديمة ذات تنسيق آخر.
+     */
+    public static function getMaxCompanyInvoiceNumber($company_id): int
+    {
+        return self::maxInvoiceSequenceForSegment(
+            self::companyInvoiceSerialSegment($company_id),
+            date('Y')
+        );
+    }
+
+    /**
+     * تنسيق رقم الفاتورة: YYYY-XXX-### (سنة، ثم معرف الشركة بثلاثة أرقام، ثم مسلسل الفاتورة بثلاثة أرقام لكل شركة في السنة).
+     * مثال: 2026-006-001، 2026-006-002.
      */
     public static function getNextInvoiceNumberForCompany(int $company_id): string
     {
         $year = date('Y');
-        $companyPart = invoiceNumberTrim($company_id);
+        $companyTrim = self::companyInvoiceSerialSegment($company_id);
+        $nextSequence = self::maxInvoiceSequenceForSegment($companyTrim, $year) + 1;
 
-        $count = self::whereHas('booking', fn ($q) => $q->where('company_id', $company_id))
-            ->whereYear('created_at', (int) $year)
-            ->count();
-
-        $sequence = $count + 1;
-
-        return "{$year}-{$companyPart}-" . invoiceNumberTrim($sequence);
+        return $year . '-' . $companyTrim . '-' . str_pad((string) $nextSequence, 3, '0', STR_PAD_LEFT);
     }
 
-
-   public function getInvoiceTotalBeforeTaxAttribute()
+    public function getInvoiceTotalBeforeTaxAttribute()
     {
         // حساب مجموع الخدمات الخاضعة للضريبة غير الإيصالات
         $nonReceiptTaxedServicesTotal = 0;

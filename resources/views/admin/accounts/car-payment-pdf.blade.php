@@ -66,9 +66,49 @@
             border-top: 2px solid #333;
             padding-top: 20px;
         }
+        .print-toolbar {
+            background: #17a2b8;
+            color: #fff;
+            padding: 12px 16px;
+            margin: -8px -8px 20px -8px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .print-toolbar button {
+            background: #fff;
+            color: #117a8b;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .print-toolbar button:hover {
+            background: #e8f8fb;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                padding-top: 0;
+            }
+        }
     </style>
 </head>
 <body>
+    @if(!empty($showPrintChrome))
+    <div class="print-toolbar no-print">
+        <span style="font-weight: bold;">بيان سداد نقلات — معاينة وطباعة</span>
+        <div>
+            <button type="button" onclick="window.print()">طباعة</button>
+            <button type="button" onclick="window.close()">إغلاق النافذة</button>
+        </div>
+    </div>
+    @endif
     <div class="header">
         <h1>بيان سداد نقلات</h1>
         <p>رقم السيارة: {{ $car->car_number }}</p>

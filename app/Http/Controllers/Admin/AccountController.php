@@ -15,6 +15,7 @@ use App\Models\VaultTransaction;
 use App\Models\BankTrnsaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Exports\AccountStatementExport;
 use App\Exports\CarStatementExport;
@@ -37,9 +38,8 @@ class AccountController extends Controller
         // Clear permission cache to ensure new permissions are recognized
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $this->middleware('permission:accounts.index')->only('index');
-        $this->middleware('permission:accounts.index')->only('statement');
-        $this->middleware('permission:accounts.create')->only(['showPaymentForm', 'processPayment']);
+        $this->middleware('permission:accounts.index')->only(['index', 'statement', 'checksIndex', 'markCheckAsPaid']);
+        $this->middleware('permission:accounts.create')->only(['showPaymentForm', 'processPayment', 'destroyPayment', 'destroyPaymentGroup']);
     }
 
     /**
@@ -239,7 +239,7 @@ class AccountController extends Controller
             $paymentDetails = $dayPayments->map(function ($payment) {
                 // الحصول على ملاحظات السداد
                 $notes = '';
-                if ($payment->notes) {
+                if ($payment->notes && strpos(ltrim($payment->notes), '{') !== 0) {
                     $notes = $payment->notes;
                 } elseif ($payment->bank_id) {
                     $bank = Bank::find($payment->bank_id);
@@ -252,10 +252,15 @@ class AccountController extends Controller
                     $notes = 'قام العميل بسداد';
                 }
 
+                $invNo = $payment->invoice ? ($payment->invoice->invoice_number ?? '') : '';
+                $bookNo = $payment->invoice && $payment->invoice->booking
+                    ? ($payment->invoice->booking->booking_number ?? '')
+                    : '';
+
                 return [
                     'id' => $payment->id,
-                    'invoice_number' => $payment->invoice->invoice_number ?? '',
-                    'booking_number' => $payment->invoice->booking->booking_number ?? '',
+                    'invoice_number' => $invNo !== '' ? $invNo : ($payment->payment_type === 'check' && $payment->check_number ? ('شيك ' . $payment->check_number) : ''),
+                    'booking_number' => $bookNo,
                     'value' => floatval($payment->value),
                     'notes' => $notes,
                     'payment_type' => $payment->payment_type ?? 'bank_transfer',
@@ -281,12 +286,18 @@ class AccountController extends Controller
                 $notes = 'قام العميل بسداد';
             }
 
+            $firstInv = $firstPayment->invoice;
+            $firstInvNo = $firstInv ? ($firstInv->invoice_number ?? '') : '';
+            if ($firstInvNo === '' && $firstPayment->payment_type === 'check' && $firstPayment->check_number) {
+                $firstInvNo = 'شيك ' . $firstPayment->check_number;
+            }
+
             $transactions->push([
                 'date' => Carbon::parse($date),
                 'type' => 'payment',
                 'type_label' => 'قام العميل بسداد',
                 'booking_number' => '',
-                'invoice_number' => $dayPayments->count() > 1 ? 'متعدد (' . $dayPayments->count() . ' فاتورة)' : ($firstPayment->invoice->invoice_number ?? ''),
+                'invoice_number' => $dayPayments->count() > 1 ? 'متعدد (' . $dayPayments->count() . ' فاتورة)' : $firstInvNo,
                 'previous_debit' => 0, // سيتم حسابه بعد الترتيب
                 'previous_credit' => 0, // سيتم حسابه بعد الترتيب
                 'discount' => 0,
@@ -406,15 +417,15 @@ class AccountController extends Controller
 
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'format' => 'A4',
+            'format' => 'A4-L',
             'default_font' => 'dejavusans',
             'directionality' => 'rtl',
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10,
-            'margin_bottom' => 10,
-            'margin_header' => 6,
-            'margin_footer' => 6
+            'margin_left' => 6,
+            'margin_right' => 6,
+            'margin_top' => 8,
+            'margin_bottom' => 8,
+            'margin_header' => 4,
+            'margin_footer' => 4,
         ]);
 
         $mpdf->WriteHTML($html);
@@ -422,6 +433,122 @@ class AccountController extends Controller
         $fileName = 'كشف_حساب_' . $company->name . '_' . $fromDate . '_' . $toDate . '.pdf';
 
         return $mpdf->Output($fileName, 'D');
+    }
+
+    /**
+     * معاينة وطباعة بيان سداد لمجموعة دفعات (من كشف حساب الشركة)
+     */
+    public function companyStatementPaymentReceiptPrint(Request $request, $companyId)
+    {
+        $company = Company::findOrFail($companyId);
+        $payments = $this->resolveCompanyStatementPaymentsFromIds((int) $companyId, (string) $request->query('payment_ids', ''));
+        [$rows, $totalAmount] = $this->buildCompanyPaymentReceiptRows($payments);
+        $showPrintChrome = true;
+
+        return view('admin.accounts.company-payment-receipt', compact('company', 'rows', 'totalAmount', 'showPrintChrome'));
+    }
+
+    /**
+     * تحميل بيان سداد لمجموعة دفعات كـ PDF
+     */
+    public function companyStatementPaymentReceiptPdf(Request $request, $companyId)
+    {
+        $company = Company::findOrFail($companyId);
+        $payments = $this->resolveCompanyStatementPaymentsFromIds((int) $companyId, (string) $request->query('payment_ids', ''));
+        [$rows, $totalAmount] = $this->buildCompanyPaymentReceiptRows($payments);
+
+        $html = view('admin.accounts.company-payment-receipt', compact('company', 'rows', 'totalAmount'))->render();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4-L',
+            'default_font' => 'dejavusans',
+            'directionality' => 'rtl',
+            'margin_left' => 6,
+            'margin_right' => 6,
+            'margin_top' => 8,
+            'margin_bottom' => 8,
+            'margin_header' => 4,
+            'margin_footer' => 4,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $fileName = 'بيان_سداد_' . $company->id . '_' . date('Y-m-d') . '.pdf';
+
+        return $mpdf->Output($fileName, 'D');
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, \App\Models\InvoicePayment>
+     */
+    private function resolveCompanyStatementPaymentsFromIds(int $companyId, string $paymentIdsRaw)
+    {
+        $ids = collect(explode(',', $paymentIdsRaw))
+            ->map(fn ($v) => (int) trim((string) $v))
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty() || $ids->count() > 200) {
+            abort(404);
+        }
+
+        $payments = InvoicePayment::whereIn('id', $ids)
+            ->with(['invoice.booking', 'bank'])
+            ->orderBy('id')
+            ->get();
+
+        if ($payments->count() !== $ids->count()) {
+            abort(404);
+        }
+
+        foreach ($payments as $payment) {
+            if (!$payment->invoice || !$payment->invoice->booking) {
+                abort(404);
+            }
+            if ((int) $payment->invoice->booking->company_id !== $companyId) {
+                abort(404);
+            }
+        }
+
+        return $payments;
+    }
+
+    /**
+     * @return array{0: array<int, array<string, mixed>>, 1: float}
+     */
+    private function buildCompanyPaymentReceiptRows($payments): array
+    {
+        $rows = [];
+        $total = 0.0;
+
+        foreach ($payments as $payment) {
+            $notes = '';
+            if ($payment->notes) {
+                $notes = $payment->notes;
+            } elseif ($payment->bank_id) {
+                $bank = $payment->bank ?? Bank::find($payment->bank_id);
+                $notes = $bank ? 'تحويل ' . $bank->name : 'سداد';
+            } else {
+                $notes = 'قام العميل بسداد';
+            }
+
+            $val = (float) $payment->value;
+            $total += $val;
+
+            $rows[] = [
+                'invoice_number' => $payment->invoice->invoice_number ?? '',
+                'booking_number' => $payment->invoice->booking->booking_number ?? '',
+                'value' => $val,
+                'payment_type' => $payment->payment_type ?? 'bank_transfer',
+                'bank_name' => $payment->bank ? $payment->bank->name : ($payment->check_bank_name ?? ''),
+                'notes' => $notes,
+                'date' => $payment->created_at,
+            ];
+        }
+
+        return [$rows, $total];
     }
 
     /**
@@ -477,7 +604,7 @@ class AccountController extends Controller
             'payment_date' => 'required|date',
             'payment_type' => 'required|in:bank_transfer,check',
             'payment_target' => 'required|in:invoices,opening_balance',
-            'bank_id' => 'required_if:payment_type,bank_transfer|nullable|exists:banks,id',
+            'bank_id' => 'required_if:payment_type,bank_transfer,check|nullable|exists:banks,id',
             'check_bank_name' => 'required_if:payment_type,check|nullable|string|max:255',
             'check_number' => 'required_if:payment_type,check|nullable|string|max:255',
             'check_value' => 'required_if:payment_type,check|nullable|numeric|min:0.01',
@@ -513,39 +640,23 @@ class AccountController extends Controller
                 $company->opening_balance = $openingBalance - $paymentAmount;
                 $company->save();
 
-                // إذا كان السداد من بنك، تحديث رصيد البنك والخزنة
-                if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
+                // الشيك لا يُسجّل على الحساب البنكي إلا بعد «تم الاستحقاق» من صفحة الشيكات
+                if ($request->bank_id && $request->payment_type !== 'check') {
                     $bank = Bank::findOrFail($request->bank_id);
-                    $vault = Vault::first();
 
-                    if (!$vault) {
-                        DB::rollBack();
-                        return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
-                    }
-
-                    // إضافة المبلغ للبنك
+                    // إضافة المبلغ إلى البنك
                     $bank->amount = ($bank->amount ?? 0) + $paymentAmount;
                     $bank->save();
-
-                    // إضافة المبلغ للخزنة
-                    $vault->amount = ($vault->amount ?? 0) + $paymentAmount;
-                    $vault->save();
 
                     // تسجيل معاملة البنك
                     BankTrnsaction::create([
                         'bank_id' => $bank->id,
+                        'company_id' => $company->id,
                         'user_id' => auth()->id(),
                         'name' => 'سداد الرصيد الافتتاحي - ' . $company->name,
                         'type' => 1, // 1 = إيداع
                         'amount' => $paymentAmount,
-                    ]);
-
-                    // تسجيل معاملة الخزنة
-                    VaultTransaction::create([
-                        'bank_id' => $bank->id,
-                        'name' => 'سداد الرصيد الافتتاحي - ' . $company->name,
-                        'amount' => $paymentAmount,
-                        'type' => 0, // 0 = إيداع
+                        'date' => $request->payment_date ?? now()->format('Y-m-d'),
                     ]);
                 }
 
@@ -555,45 +666,47 @@ class AccountController extends Controller
                     ->with('success', 'تم سداد الرصيد الافتتاحي بنجاح. المبلغ: ' . number_format($paymentAmount, 2) . ' جنيه');
             }
 
-            // السداد للفواتير (الكود الأصلي)
+            // شيك على فواتير: سجل واحد بالقيمة الإجمالية — لا يُضاف للبنك إلا عند «تم الاستحقاق»
+            if ($request->payment_type === 'check') {
+                $paymentData = $this->prepareCompanyCheckPaymentData($request, $company, $paymentAmount);
+                $payment = InvoicePayment::create($paymentData);
+                if ($request->payment_date) {
+                    $payment->created_at = $request->payment_date;
+                    $payment->save();
+                }
+
+                DB::commit();
+
+                return redirect()->route('accounts.statement', $companyId)
+                    ->with('success', 'تم تسجيل الشيك بقيمته الإجمالية. سيُضاف المبلغ للحساب البنكي عند الضغط على «تم الاستحقاق» من صفحة الشيكات.');
+            }
+
+            // السداد للفواتير (تحويل بنكي)
             $remainingPayment = $paymentAmount;
             $processedInvoices = [];
             $invoiceCount = 0;
+            $bankTransactionId = null;
 
-            // إذا كان السداد من بنك، تحديث رصيد البنك والخزنة
-            if ($request->payment_type === 'bank_transfer' && $request->bank_id) {
+            // إذا كان السداد مرتبط ببنك، تحديث رصيد البنك فقط (بدون الخزنة)
+            if ($request->bank_id) {
                 $bank = Bank::findOrFail($request->bank_id);
-                $vault = Vault::first();
-
-                if (!$vault) {
-                    DB::rollBack();
-                    return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
-                }
-
-                // إضافة المبلغ للبنك
+                
+                // إضافة المبلغ إلى البنك
                 $bank->amount = ($bank->amount ?? 0) + $paymentAmount;
                 $bank->save();
 
-                // إضافة المبلغ للخزنة
-                $vault->amount = ($vault->amount ?? 0) + $paymentAmount;
-                $vault->save();
-
                 // تسجيل معاملة البنك
-                BankTrnsaction::create([
+                $bankTransaction = BankTrnsaction::create([
                     'bank_id' => $bank->id,
+                    'company_id' => $company->id,
                     'user_id' => auth()->id(),
                     'name' => 'سداد فواتير - ' . $company->name,
                     'type' => 1, // 1 = إيداع
                     'amount' => $paymentAmount,
+                    'date' => $request->payment_date ?? now()->format('Y-m-d'),
                 ]);
 
-                // تسجيل معاملة الخزنة
-                VaultTransaction::create([
-                    'bank_id' => $bank->id,
-                    'name' => 'سداد فواتير - ' . $company->name,
-                    'amount' => $paymentAmount,
-                    'type' => 0, // 0 = إيداع
-                ]);
+                $bankTransactionId = $bankTransaction->id;
             }
 
             // إذا تم تحديد فواتير محددة
@@ -626,7 +739,7 @@ class AccountController extends Controller
                             $paymentValue = min($remainingAmount, $remainingPayment);
 
                             // تسجيل السداد
-                            $paymentData = $this->preparePaymentData($request, $company, $invoice, $paymentValue);
+                            $paymentData = $this->preparePaymentData($request, $company, $invoice, $paymentValue, $bankTransactionId);
 
                             $payment = InvoicePayment::create($paymentData);
 
@@ -670,7 +783,7 @@ class AccountController extends Controller
                         $paymentValue = min($remainingAmount, $remainingPayment);
 
                         // تسجيل السداد
-                        $paymentData = $this->preparePaymentData($request, $company, $invoice, $paymentValue);
+                        $paymentData = $this->preparePaymentData($request, $company, $invoice, $paymentValue, $bankTransactionId);
 
                         $payment = InvoicePayment::create($paymentData);
 
@@ -703,9 +816,157 @@ class AccountController extends Controller
     }
 
     /**
+     * حذف سداد مسجل وإرجاعه كمبلغ مستحق مرة أخرى
+     */
+    public function destroyPayment(Request $request, $companyId, $paymentId)
+    {
+        $company = Company::findOrFail($companyId);
+
+        $payment = InvoicePayment::with(['invoice.booking', 'bank'])
+            ->where('id', $paymentId)
+            ->where(function ($q) use ($companyId) {
+                $q->whereHas('invoice.booking', function ($query) use ($companyId) {
+                    $query->where('company_id', $companyId);
+                })->orWhere(function ($q2) use ($companyId) {
+                    $q2->whereNull('invoice_id')->where('company_id', $companyId);
+                });
+            })
+            ->firstOrFail();
+
+        DB::beginTransaction();
+
+        try {
+            // عند حذف سداد من كشف الحساب: خصم المبلغ من البنك وحذف/تحديث عملية البنك المرتبطة
+            if ($payment->bank_id) {
+                $bank = $payment->bank;
+
+                if ($bank) {
+                    $bank->amount = ($bank->amount ?? 0) - (float) $payment->value;
+                    $bank->save();
+                }
+
+                // تعديل/حذف العملية البنكية الأصلية المرتبطة بالسداد
+                if (!is_null($payment->bank_transaction_id)) {
+                    $bankTransaction = BankTrnsaction::find($payment->bank_transaction_id);
+                    if ($bankTransaction) {
+                        $newAmount = ((float) $bankTransaction->amount) - ((float) $payment->value);
+                        if ($newAmount <= 0) {
+                            $bankTransaction->delete();
+                        } else {
+                            $bankTransaction->amount = $newAmount;
+                            $bankTransaction->save();
+                        }
+                    }
+                }
+            }
+
+            $payment->delete();
+
+            DB::commit();
+
+            return redirect()->route('accounts.statement', [
+                'companyId' => $company->id,
+                'from' => $request->get('from'),
+                'to' => $request->get('to'),
+            ])->with('success', 'تم حذف عملية السداد بنجاح، وتم إعادة المبلغ كمستحق على الشركة');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'حدث خطأ أثناء حذف عملية السداد: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * حذف عملية سداد كاملة (مجموعة دفعات) وإرجاعها كمبالغ مستحقة
+     */
+    public function destroyPaymentGroup(Request $request, $companyId)
+    {
+        $company = Company::findOrFail($companyId);
+
+        $paymentIdsRaw = $request->input('payment_ids', '');
+        $paymentIds = collect(explode(',', (string) $paymentIdsRaw))
+            ->map(fn ($id) => (int) trim($id))
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        if ($paymentIds->isEmpty()) {
+            return redirect()->back()->with('error', 'لا توجد عمليات سداد صالحة للحذف');
+        }
+
+        $payments = InvoicePayment::with(['invoice.booking', 'bank'])
+            ->whereIn('id', $paymentIds)
+            ->where(function ($q) use ($companyId) {
+                $q->whereHas('invoice.booking', function ($query) use ($companyId) {
+                    $query->where('company_id', $companyId);
+                })->orWhere(function ($q2) use ($companyId) {
+                    $q2->whereNull('invoice_id')->where('company_id', $companyId);
+                });
+            })
+            ->get();
+
+        if ($payments->isEmpty()) {
+            return redirect()->back()->with('error', 'لم يتم العثور على عمليات السداد المطلوبة');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $bankTransactionDeductions = [];
+
+            foreach ($payments as $payment) {
+                // عند حذف السداد من كشف الحساب: خصم من البنك
+                if ($payment->bank_id) {
+                    $bank = $payment->bank;
+
+                    if ($bank) {
+                        $bank->amount = ($bank->amount ?? 0) - (float) $payment->value;
+                        $bank->save();
+                    }
+
+                    if (!is_null($payment->bank_transaction_id)) {
+                        if (!isset($bankTransactionDeductions[$payment->bank_transaction_id])) {
+                            $bankTransactionDeductions[$payment->bank_transaction_id] = 0.0;
+                        }
+                        $bankTransactionDeductions[$payment->bank_transaction_id] += (float) $payment->value;
+                    }
+                }
+
+                $payment->delete();
+            }
+
+            // تعديل/حذف سجلات البنك المرتبطة بنفس عمليات السداد المحذوفة
+            foreach ($bankTransactionDeductions as $bankTransactionId => $deductedAmount) {
+                $bankTransaction = BankTrnsaction::find($bankTransactionId);
+                if (!$bankTransaction) {
+                    continue;
+                }
+
+                $newAmount = ((float) $bankTransaction->amount) - (float) $deductedAmount;
+                if ($newAmount <= 0) {
+                    $bankTransaction->delete();
+                } else {
+                    $bankTransaction->amount = $newAmount;
+                    $bankTransaction->save();
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('accounts.statement', [
+                'companyId' => $company->id,
+                'from' => $request->get('from'),
+                'to' => $request->get('to'),
+            ])->with('success', 'تم حذف عملية السداد بالكامل وإعادة المبالغ كمستحق على الشركة');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'حدث خطأ أثناء حذف عملية السداد: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * إعداد بيانات السداد
      */
-    private function preparePaymentData($request, $company, $invoice, $paymentValue)
+    private function preparePaymentData($request, $company, $invoice, $paymentValue, $bankTransactionId = null)
     {
         $paymentData = [
             'invoice_id' => $invoice->id,
@@ -715,9 +976,13 @@ class AccountController extends Controller
             'payment_type' => $request->payment_type,
         ];
 
-        // إضافة بيانات البنك للتحويل البنكي
-        if ($request->payment_type === 'bank_transfer') {
+        // إضافة بيانات البنك للتحويل البنكي والشيك
+        if (in_array($request->payment_type, ['bank_transfer', 'check'])) {
             $paymentData['bank_id'] = $request->bank_id;
+        }
+
+        if (!is_null($bankTransactionId)) {
+            $paymentData['bank_transaction_id'] = $bankTransactionId;
         }
 
         // إضافة بيانات الشيك
@@ -767,11 +1032,11 @@ class AccountController extends Controller
     }
 
     /**
-     * تحديد الشيك كمستحق (خصم القيمة من حساب الشركة)
+     * تم الاستحقاق: إضافة المبلغ للحساب البنكي وتحويل الشيك إلى سدادات فعلية على الفواتير (بدون تكرار).
      */
     public function markCheckAsPaid($paymentId)
     {
-        $payment = InvoicePayment::findOrFail($paymentId);
+        $payment = InvoicePayment::with(['company', 'invoice.booking'])->findOrFail($paymentId);
 
         if ($payment->payment_type !== 'check') {
             return redirect()->back()->with('error', 'هذا السجل ليس شيك');
@@ -784,33 +1049,225 @@ class AccountController extends Controller
         DB::beginTransaction();
 
         try {
-            // تحديث تاريخ الاستحقاق
-            $payment->check_paid_at = now();
-            $payment->save();
-
-            // خصم القيمة من حساب الشركة (إنشاء سداد تلقائي)
+            $linkedToInvoice = (bool) $payment->invoice_id;
             $company = $payment->company;
-            if ($company && $payment->invoice) {
-                // إنشاء سداد جديد للفاتورة
-                InvoicePayment::create([
-                    'invoice_id' => $payment->invoice_id,
+            if (!$company) {
+                DB::rollBack();
+
+                return redirect()->back()->with('error', 'الشيك غير مرتبط بشركة');
+            }
+
+            $bankTransactionId = null;
+            if ($payment->bank_id) {
+                $bank = Bank::findOrFail($payment->bank_id);
+                $bank->amount = ((float) ($bank->amount ?? 0)) + (float) $payment->value;
+                $bank->save();
+
+                $bankTransaction = BankTrnsaction::create([
+                    'bank_id' => $bank->id,
                     'company_id' => $company->id,
-                    'value' => $payment->value,
-                    'payment_type' => 'bank_transfer',
                     'user_id' => auth()->id(),
-                    'notes' => 'استحقاق شيك رقم: ' . $payment->check_number,
-                    'image' => '',
-                    'created_at' => now(),
+                    'name' => 'استحقاق شيك رقم: ' . ($payment->check_number ?? ''),
+                    'type' => 1,
+                    'amount' => (float) $payment->value,
+                    'date' => now()->format('Y-m-d'),
                 ]);
+                $bankTransactionId = $bankTransaction->id;
+            }
+
+            $processed = [];
+            if ($linkedToInvoice) {
+                $payment->check_paid_at = now();
+                if ($bankTransactionId !== null) {
+                    $payment->bank_transaction_id = $bankTransactionId;
+                }
+                $payment->save();
+            } else {
+                $parsed = $this->parseCheckPaymentNotes($payment->notes);
+                $noteSuffix = (string) ($payment->check_number ?? '');
+                [$leftover, $processed] = $this->distributeClearedCheckToInvoices(
+                    $company,
+                    (float) $payment->value,
+                    $parsed['invoice_ids'],
+                    $bankTransactionId,
+                    $payment->created_at ? $payment->created_at->format('Y-m-d') : null,
+                    $payment->bank_id ? (int) $payment->bank_id : null,
+                    $noteSuffix
+                );
+                if ($leftover > 0.0001) {
+                    DB::rollBack();
+
+                    return redirect()->back()->with(
+                        'error',
+                        'لا يمكن استحقاق الشيك بالكامل: المتبقي على الفواتير أقل من قيمة الشيك بمقدار ' . number_format($leftover, 2) . ' ج.م'
+                    );
+                }
+                $payment->delete();
             }
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'تم استحقاق الشيك وخصم القيمة من حساب الشركة بنجاح');
+            $msg = 'تم استحقاق الشيك وتسجيل المبلغ على الحساب البنكي';
+            if ($linkedToInvoice) {
+                return redirect()->back()->with('success', $msg);
+            }
+
+            return redirect()->back()->with('success', $msg . (count($processed) ? ' (' . count($processed) . ' فاتورة)' : ''));
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()->with('error', 'حدث خطأ أثناء استحقاق الشيك: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * سدادات الشركة: مرتبطة بفاتورة أو سجل شيك/سداد على مستوى الشركة (invoice_id فارغ).
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     */
+    private function applyCompanyInvoicePaymentsScope($query, int $companyId): void
+    {
+        $query->where(function ($outer) use ($companyId) {
+            $outer->whereHas('invoice.booking', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            })->orWhere(function ($q) use ($companyId) {
+                $q->whereNull('invoice_id')->where('company_id', $companyId);
+            });
+        });
+    }
+
+    /**
+     * @return array{invoice_ids: array<int, int>, user_notes: ?string}
+     */
+    private function parseCheckPaymentNotes(?string $notes): array
+    {
+        $out = ['invoice_ids' => [], 'user_notes' => null];
+        if ($notes === null || $notes === '') {
+            return $out;
+        }
+        $decoded = json_decode($notes, true);
+        if (is_array($decoded) && isset($decoded['invoice_ids']) && is_array($decoded['invoice_ids'])) {
+            $out['invoice_ids'] = array_values(array_filter(array_map('intval', $decoded['invoice_ids'])));
+            $out['user_notes'] = isset($decoded['user_notes']) ? (string) $decoded['user_notes'] : null;
+
+            return $out;
+        }
+        $out['user_notes'] = $notes;
+
+        return $out;
+    }
+
+    private function prepareCompanyCheckPaymentData(Request $request, Company $company, float $paymentAmount): array
+    {
+        $meta = [];
+        if ($request->filled('invoice_ids')) {
+            $meta['invoice_ids'] = array_values(array_filter(array_map('intval', explode(',', (string) $request->invoice_ids))));
+        }
+        if ($request->filled('notes')) {
+            $meta['user_notes'] = (string) $request->notes;
+        }
+
+        $paymentData = [
+            'invoice_id' => null,
+            'company_id' => $company->id,
+            'value' => $paymentAmount,
+            'user_id' => auth()->id(),
+            'payment_type' => 'check',
+            'bank_id' => $request->bank_id,
+            'check_bank_name' => $request->check_bank_name,
+            'check_number' => $request->check_number,
+            'check_due_date' => $request->check_due_date,
+            'notes' => $meta !== [] ? json_encode($meta, JSON_UNESCAPED_UNICODE) : '',
+        ];
+
+        if ($request->hasFile('image')) {
+            $imageName = time() . '_payment.' . $request->image->extension();
+            $imagePath = $request->image->storeAs('invoice_payments', $imageName, 'public');
+            $paymentData['image'] = 'storage/' . $imagePath;
+        } else {
+            $paymentData['image'] = '';
+        }
+
+        return $paymentData;
+    }
+
+    /**
+     * توزيع مبلغ مستحق على فواتير الشركة (FIFO) بعد استحقاق الشيك في البنك.
+     *
+     * @return array{0: float, 1: list<string>}
+     */
+    private function distributeClearedCheckToInvoices(
+        Company $company,
+        float $amount,
+        array $preferredInvoiceIds,
+        ?int $bankTransactionId,
+        ?string $paymentDate,
+        ?int $bankId,
+        string $noteSuffix
+    ): array {
+        $remaining = $amount;
+        $processed = [];
+
+        $invoices = collect();
+        if ($preferredInvoiceIds !== []) {
+            $invoices = Invoice::whereIn('id', $preferredInvoiceIds)
+                ->whereHas('booking', function ($q) use ($company) {
+                    $q->where('company_id', $company->id);
+                })
+                ->with('booking')
+                ->get()
+                ->sortBy(function ($inv) use ($preferredInvoiceIds) {
+                    $pos = array_search((int) $inv->id, $preferredInvoiceIds, true);
+
+                    return $pos === false ? 999999 : $pos;
+                })
+                ->values();
+        }
+
+        if ($invoices->isEmpty()) {
+            $invoices = $company->bookings()
+                ->whereHas('invoice')
+                ->with('invoice')
+                ->orderBy('created_at', 'asc')
+                ->get()
+                ->map(fn ($b) => $b->invoice)
+                ->filter();
+        }
+
+        foreach ($invoices as $invoice) {
+            if ($remaining <= 0) {
+                break;
+            }
+            if (!$invoice) {
+                continue;
+            }
+            $invoiceTotal = $this->calculateInvoiceTotal($invoice);
+            $paidAmount = $this->calculatePaidAmount($invoice);
+            $remainingAmount = $invoiceTotal - $paidAmount;
+            if ($remainingAmount <= 0) {
+                continue;
+            }
+            $paymentValue = min($remainingAmount, $remaining);
+            $row = InvoicePayment::create([
+                'invoice_id' => $invoice->id,
+                'company_id' => $company->id,
+                'value' => $paymentValue,
+                'payment_type' => 'bank_transfer',
+                'user_id' => auth()->id(),
+                'bank_id' => $bankId,
+                'bank_transaction_id' => $bankTransactionId,
+                'image' => '',
+                'notes' => 'استحقاق شيك' . ($noteSuffix !== '' ? ' — ' . $noteSuffix : ''),
+            ]);
+            if ($paymentDate) {
+                $row->created_at = Carbon::parse($paymentDate);
+                $row->save();
+            }
+            $processed[] = $invoice->invoice_number ?? (string) $invoice->id;
+            $remaining -= $paymentValue;
+        }
+
+        return [$remaining, $processed];
     }
 
     /**
@@ -837,18 +1294,17 @@ class AccountController extends Controller
         }
 
         // حساب إجمالي السداد قبل تاريخ البداية (استبعاد الشيكات غير المستحقة)
-        $payments = InvoicePayment::whereHas('invoice.booking', function ($query) use ($company, $fromDate) {
-            $query->where('company_id', $company->id)
-                  ->whereDate('invoice_payments.created_at', '<', $fromDate);
-        })
-        ->where(function($query) {
-            $query->where('payment_type', '!=', 'check')
-                  ->orWhere(function($q) {
-                      $q->where('payment_type', 'check')
-                        ->whereNotNull('check_paid_at');
-                  });
-        })
-        ->sum('value');
+        $payments = InvoicePayment::query()
+            ->tap(fn ($q) => $this->applyCompanyInvoicePaymentsScope($q, (int) $company->id))
+            ->whereDate('created_at', '<', $fromDate)
+            ->where(function ($query) {
+                $query->where('payment_type', '!=', 'check')
+                    ->orWhere(function ($q) {
+                        $q->where('payment_type', 'check')
+                            ->whereNotNull('check_paid_at');
+                    });
+            })
+            ->sum('value');
 
         // إضافة الرصيد الافتتاحي
         $openingBalance = $company->opening_balance ?? 0;
@@ -895,18 +1351,17 @@ class AccountController extends Controller
      */
     private function calculateTotalPayments($company, $fromDate, $toDate)
     {
-        return InvoicePayment::whereHas('invoice.booking', function ($query) use ($company, $fromDate, $toDate) {
-            $query->where('company_id', $company->id)
-                  ->whereBetween('invoice_payments.created_at', [$fromDate, $toDate . ' 23:59:59']);
-        })
-        ->where(function($query) {
-            $query->where('payment_type', '!=', 'check')
-                  ->orWhere(function($q) {
-                      $q->where('payment_type', 'check')
-                        ->whereNotNull('check_paid_at');
-                  });
-        })
-        ->sum('value');
+        return InvoicePayment::query()
+            ->tap(fn ($q) => $this->applyCompanyInvoicePaymentsScope($q, (int) $company->id))
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->where(function ($query) {
+                $query->where('payment_type', '!=', 'check')
+                    ->orWhere(function ($q) {
+                        $q->where('payment_type', 'check')
+                            ->whereNotNull('check_paid_at');
+                    });
+            })
+            ->sum('value');
     }
 
     /**
@@ -914,13 +1369,12 @@ class AccountController extends Controller
      */
     private function getPaymentsInPeriod($company, $fromDate, $toDate)
     {
-        return InvoicePayment::whereHas('invoice.booking', function ($query) use ($company) {
-            $query->where('company_id', $company->id);
-        })
-        ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
-        ->with(['invoice.booking', 'bank'])
-        ->orderBy('created_at', 'desc')
-        ->get();
+        return InvoicePayment::query()
+            ->tap(fn ($q) => $this->applyCompanyInvoicePaymentsScope($q, (int) $company->id))
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->with(['invoice.booking', 'bank'])
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     /**
@@ -1106,15 +1560,15 @@ class AccountController extends Controller
 
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'format' => 'A4',
+            'format' => 'A4-L',
             'default_font' => 'dejavusans',
             'directionality' => 'rtl',
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10,
-            'margin_bottom' => 10,
-            'margin_header' => 6,
-            'margin_footer' => 6
+            'margin_left' => 6,
+            'margin_right' => 6,
+            'margin_top' => 8,
+            'margin_bottom' => 8,
+            'margin_header' => 4,
+            'margin_footer' => 4,
         ]);
 
         $mpdf->WriteHTML($html);
@@ -1164,7 +1618,6 @@ class AccountController extends Controller
     private function buildCarTransactionsList($car, $fromDate, $toDate, $carriedForwardBalance)
     {
         $transactions = collect();
-        $runningBalance = $carriedForwardBalance;
 
         // إضافة الرصيد المرحّل
         if ($carriedForwardBalance != 0) {
@@ -1187,6 +1640,7 @@ class AccountController extends Controller
                 'debit_credit' => $carriedForwardBalance >= 0 ? 'مدين' : 'دائن',
                 'running_total' => $carriedForwardBalance,
                 'running_balance' => $carriedForwardBalance,
+                'sort_tie' => 0,
             ]);
         }
 
@@ -1195,6 +1649,8 @@ class AccountController extends Controller
             ->with(['money_transfer', 'settled_money_transfer', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging', 'extraExpenses', 'payingCars'])
             ->orderBy('created_at', 'asc')
             ->get();
+
+        $sortTie = 0;
 
         foreach ($deliveryPolicies as $policy) {
             $cost = (float) ($policy->cost ?? 0);
@@ -1205,8 +1661,7 @@ class AccountController extends Controller
             $firstContainer = $containers->first();
             $container = $firstContainer ? BookingContainer::with(['departure', 'loading', 'aging'])->find($firstContainer->id) : null;
 
-            // صف النقلة: تكلفة وعهدة (الرصيد += تكلفة - عهدة)
-            $runningBalance += $cost - $custodyAmount;
+            $sortTie++;
             $transactions->push([
                 'date' => $policy->created_at,
                 'type' => 'delivery_policy',
@@ -1223,19 +1678,19 @@ class AccountController extends Controller
                 'total1' => $cost,
                 'total2' => $custodyAmount,
                 'debit_credit' => ($cost - $custodyAmount) >= 0 ? 'مدين' : 'دائن',
-                'running_total' => $runningBalance,
-                'running_balance' => $runningBalance,
+                'running_total' => 0,
+                'running_balance' => 0,
+                'sort_tie' => $sortTie,
             ]);
 
-            // مصروفات إضافية للنقلة (الرصيد += قيمة المصروف)
             foreach ($policy->extraExpenses as $extraExpense) {
-                $runningBalance += $extraExpense->value;
                 $container = null;
                 if ($extraExpense->booking_container_id) {
                     $container = BookingContainer::with(['departure', 'loading', 'aging'])->find($extraExpense->booking_container_id);
                 } elseif ($firstContainer) {
                     $container = BookingContainer::with(['departure', 'loading', 'aging'])->find($firstContainer->id);
                 }
+                $sortTie++;
                 $transactions->push([
                     'date' => $extraExpense->created_at,
                     'type' => 'extra_expense',
@@ -1252,14 +1707,17 @@ class AccountController extends Controller
                     'total1' => 0,
                     'total2' => $extraExpense->value,
                     'debit_credit' => 'مدين',
-                    'running_total' => $runningBalance,
-                    'running_balance' => $runningBalance,
+                    'running_total' => 0,
+                    'running_balance' => 0,
+                    'sort_tie' => $sortTie,
                 ]);
             }
 
-            // دفعات النقلة (الرصيد -= قيمة الدفعة)
             foreach ($policy->payingCars as $payment) {
-                $runningBalance -= $payment->value;
+                if (!empty($payment->payment_group_uuid)) {
+                    continue;
+                }
+                $sortTie++;
                 $transactions->push([
                     'date' => $payment->created_at,
                     'type' => 'payment',
@@ -1274,15 +1732,109 @@ class AccountController extends Controller
                     'value' => 0,
                     'custody' => 0,
                     'total1' => 0,
-                    'total2' => $payment->value,
+                    'total2' => (float) $payment->value,
                     'debit_credit' => 'دائن',
-                    'running_total' => $runningBalance,
-                    'running_balance' => $runningBalance,
+                    'running_total' => 0,
+                    'running_balance' => 0,
+                    'sort_tie' => $sortTie,
                 ]);
             }
         }
 
-        return $transactions->sortBy('date')->values();
+        $batched = Payingcar::where('car_id', $car->id)
+            ->whereNotNull('payment_group_uuid')
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->with(['delivery_policy.booking_containers'])
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->groupBy('payment_group_uuid')
+            ->sortBy(fn ($group) => $group->first()->created_at->timestamp);
+
+        foreach ($batched as $uuid => $payments) {
+            $payments = $payments->values();
+            $totalBatch = $payments->sum(fn ($p) => (float) $p->value);
+            $paymentDetails = $payments->map(function ($p) {
+                $policy = $p->delivery_policy;
+                $containerNos = $policy && $policy->booking_containers
+                    ? $policy->booking_containers->pluck('container_no')->filter()->implode(', ')
+                    : '';
+
+                return [
+                    'id' => $p->id,
+                    'delivery_policy_id' => $policy?->id,
+                    'container_numbers' => $containerNos !== '' ? $containerNos : '-',
+                    'value' => (float) $p->value,
+                    'notes' => '',
+                ];
+            })->values()->toArray();
+
+            $sortTie++;
+            $batchDate = $payments->first()->created_at;
+
+            $transactions->push([
+                'date' => $batchDate,
+                'type' => 'payment_group',
+                'type_label' => 'سداد',
+                'previous_balance' => 0,
+                'service' => 'سداد',
+                'description' => $payments->count() > 1
+                    ? 'سداد متعدد (' . $payments->count() . ' نقلة)'
+                    : 'سداد',
+                'container_no' => '',
+                'departure' => '',
+                'destination' => '',
+                'aging' => '',
+                'value' => 0,
+                'custody' => 0,
+                'total1' => 0,
+                'total2' => $totalBatch,
+                'debit_credit' => 'دائن',
+                'running_total' => 0,
+                'running_balance' => 0,
+                'sort_tie' => $sortTie,
+                'payment_details' => $paymentDetails,
+                'payment_count' => $payments->count(),
+                'payment_group_uuid' => (string) $uuid,
+            ]);
+        }
+
+        $sorted = $transactions->sortBy(function ($row) {
+            $d = $row['date'] instanceof Carbon ? $row['date'] : Carbon::parse($row['date']);
+
+            return sprintf('%s-%06d', $d->format('Y-m-d H:i:s'), (int) ($row['sort_tie'] ?? 0));
+        })->values();
+
+        return $this->recalculateCarStatementRunningBalances($sorted, $carriedForwardBalance);
+    }
+
+    /**
+     * إعادة حساب الرصيد التراكمي بعد ترتيب الحركات (نقلة / مصروف / دفعة / سداد مجمع)
+     */
+    private function recalculateCarStatementRunningBalances($transactions, float $carriedForwardBalance)
+    {
+        $running = (float) $carriedForwardBalance;
+
+        return $transactions->map(function ($row) use (&$running, $carriedForwardBalance) {
+            switch ($row['type']) {
+                case 'carried_forward':
+                    $running = (float) $carriedForwardBalance;
+                    break;
+                case 'delivery_policy':
+                    $running += (float) $row['value'] - (float) $row['custody'];
+                    break;
+                case 'extra_expense':
+                    $running += (float) $row['total2'];
+                    break;
+                case 'payment':
+                case 'payment_group':
+                    $running -= (float) $row['total2'];
+                    break;
+            }
+            $row['running_balance'] = $running;
+            $row['running_total'] = $running;
+
+            return $row;
+        })->values();
     }
 
     /**
@@ -1352,10 +1904,11 @@ class AccountController extends Controller
     public function processCarPayment(Request $request, $carId)
     {
         $request->validate([
+            'amount' => 'required|numeric|min:0.01',
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'shipment_ids' => 'required|string', // comma-separated IDs
+            'shipment_ids' => 'required|string', // comma-separated IDs (نطاق التوزيع)
         ]);
 
         $car = Car::findOrFail($carId);
@@ -1365,10 +1918,35 @@ class AccountController extends Controller
             return redirect()->back()->with('error', 'لا توجد خزنة في النظام');
         }
 
-        $shipmentIds = array_filter(explode(',', $request->shipment_ids));
+        $shipmentIds = collect(explode(',', (string) $request->shipment_ids))
+            ->map(fn ($id) => (int) trim($id))
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values();
 
-        if (empty($shipmentIds)) {
+        if ($shipmentIds->isEmpty()) {
             return redirect()->back()->with('error', 'يجب تحديد نقلات على الأقل');
+        }
+
+        $policies = DeliveryPolicy::query()
+            ->whereIn('id', $shipmentIds)
+            ->where('car_id', $carId)
+            ->orderBy('created_at', 'asc')
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
+            ->get();
+
+        if ($policies->count() !== $shipmentIds->count()) {
+            return redirect()->back()->with('error', 'يوجد نقلات غير صالحة أو لا تخص هذه السيارة');
+        }
+
+        $maxAllocatable = $policies->sum(fn ($p) => max(0.0, (float) $this->getDeliveryPolicyRemaining($p)));
+        $paymentAmount = round((float) $request->amount, 2);
+
+        if ($paymentAmount > $maxAllocatable + 0.01) {
+            return redirect()->back()->with(
+                'error',
+                'المبلغ أكبر من إجمالي المتبقي للنقلات المحددة. المتاح: ' . number_format($maxAllocatable, 2) . ' جنيه'
+            );
         }
 
         DB::beginTransaction();
@@ -1377,80 +1955,77 @@ class AccountController extends Controller
             $totalPaymentAmount = 0;
             $processedShipments = [];
             $processedShipmentAmounts = [];
+            $remainingPayment = $paymentAmount;
+            $paymentGroupUuid = (string) Str::uuid();
 
-            foreach ($shipmentIds as $shipmentId) {
-                $policy = DeliveryPolicy::with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars'])
-                    ->findOrFail($shipmentId);
-
-                if ($policy->car_id != $carId) {
-                    continue; // Skip if not for this car
+            foreach ($policies as $policy) {
+                if ($remainingPayment <= 0.00001) {
+                    break;
                 }
 
-                $cost = $policy->cost ?? 0;
-                $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
-                $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
-                $financialCustody = $custodyGiven - $custodySettled;
-                $extraExpenses = $policy->extraExpenses->sum('value') ?? 0;
-                $paidTotal = $policy->payingCars->sum('value') ?? 0;
-
-                // حساب المتبقي (صافي العهدة)
-                $remaining = $cost
-                    ? $cost - $financialCustody + $extraExpenses - $paidTotal
-                    : $extraExpenses + $paidTotal - $financialCustody;
-
-                if ($remaining > 0) {
-                    // إنشاء سداد للنقلة
-                    $paymentData = [
-                        'delivery_policy_id' => $policy->id,
-                        'car_id' => $car->id,
-                        'value' => $remaining,
-                        'user_id' => auth()->id(),
-                    ];
-
-                    if ($request->hasFile('image')) {
-                        $imageName = time() . '_car_payment_' . $policy->id . '.' . $request->image->extension();
-                        $this->uploadImage($request->image, $imageName, 'banks');
-                        $paymentData['image'] = 'Admin/images/banks/' . $imageName;
-                    }
-
-                    $payingCar = Payingcar::create($paymentData);
-
-                    // تحديث التاريخ إذا كان متوفر
-                    if ($request->payment_date) {
-                        $payingCar->created_at = $request->payment_date;
-                        $payingCar->save();
-                    }
-
-                    // تسجيل معاملة MoneyTransfer
-                    MoneyTransfer::create([
-                        'value' => $remaining,
-                        'transfered_type' => 'App\Models\Payingcar',
-                        'transfered_id' => $payingCar->id,
-                        'transferer_type' => 'App\Models\User',
-                        'transferer_id' => auth()->id(),
-                        'type' => 7, // carPayment
-                    ]);
-
-                    // خصم من الخزنة
-                    $vault->amount = ($vault->amount ?? 0) - $remaining;
-                    $vault->save();
-
-                    // تسجيل معاملة الخزنة
-                    VaultTransaction::create([
-                        'name' => 'سداد نقلة - ' . $car->car_number,
-                        'amount' => $remaining,
-                        'type' => 0, // منصرف
-                    ]);
-
-                    $totalPaymentAmount += $remaining;
-                    $processedShipments[] = $policy->id;
-                    $processedShipmentAmounts[] = $remaining;
+                $owing = (float) $this->getDeliveryPolicyRemaining($policy);
+                if ($owing <= 0.00001) {
+                    continue;
                 }
+
+                $payThis = min($owing, $remainingPayment);
+                if ($payThis <= 0.00001) {
+                    continue;
+                }
+
+                $paymentData = [
+                    'delivery_policy_id' => $policy->id,
+                    'car_id' => $car->id,
+                    'value' => $payThis,
+                    'user_id' => auth()->id(),
+                    'payment_group_uuid' => $paymentGroupUuid,
+                ];
+
+                if ($request->hasFile('image')) {
+                    $imageName = time() . '_car_payment_' . $policy->id . '.' . $request->image->extension();
+                    $this->uploadImage($request->image, $imageName, 'banks');
+                    $paymentData['image'] = 'Admin/images/banks/' . $imageName;
+                }
+
+                $payingCar = Payingcar::create($paymentData);
+
+                if ($request->payment_date) {
+                    $payingCar->created_at = Carbon::parse($request->payment_date)->endOfDay();
+                    $payingCar->save();
+                }
+
+                MoneyTransfer::create([
+                    'value' => $payThis,
+                    'transfered_type' => 'App\Models\Payingcar',
+                    'transfered_id' => $payingCar->id,
+                    'transferer_type' => 'App\Models\User',
+                    'transferer_id' => auth()->id(),
+                    'type' => 7, // carPayment
+                ]);
+
+                $vault->amount = ($vault->amount ?? 0) - $payThis;
+                $vault->save();
+
+                VaultTransaction::create([
+                    'name' => 'سداد نقلة - ' . $car->car_number,
+                    'amount' => $payThis,
+                    'type' => 0, // منصرف
+                ]);
+
+                $totalPaymentAmount += $payThis;
+                $processedShipments[] = $policy->id;
+                $processedShipmentAmounts[] = $payThis;
+                $remainingPayment -= $payThis;
             }
 
-            if ($totalPaymentAmount == 0) {
+            if ($totalPaymentAmount <= 0) {
                 DB::rollBack();
                 return redirect()->back()->with('error', 'لا توجد مبالغ مستحقة في النقلات المحددة');
+            }
+
+            if ($remainingPayment > 0.01) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'تعذر توزيع المبلغ بالكامل على النقلات المحددة');
             }
 
             DB::commit();
@@ -1460,11 +2035,145 @@ class AccountController extends Controller
             return redirect()->route('accounts.car.payment', $carId)
                 ->with('success', $message)
                 ->with('processed_shipments', $processedShipments)
-                ->with('processed_shipment_amounts', $processedShipmentAmounts);
+                ->with('processed_shipment_amounts', $processedShipmentAmounts)
+                ->with('payment_group_uuid', $paymentGroupUuid);
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'حدث خطأ أثناء تسجيل السداد: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * صفحة HTML لطباعة بيان سداد نقلات (مجموعة سداد واحدة من كشف الحساب)
+     */
+    public function carPaymentGroupReceiptPrint(Request $request, $carId)
+    {
+        $car = Car::findOrFail($carId);
+        $groupUuid = trim((string) $request->query('group', ''));
+        if ($groupUuid === '') {
+            abort(404);
+        }
+
+        $payingCars = Payingcar::where('car_id', $car->id)
+            ->where('payment_group_uuid', $groupUuid)
+            ->orderBy('id')
+            ->get();
+
+        if ($payingCars->isEmpty()) {
+            abort(404);
+        }
+
+        [$shipmentsData, $totalAmount] = $this->buildCarPaymentReceiptRowsFromPayingcars($car, $payingCars);
+        $showPrintChrome = true;
+
+        return view('admin.accounts.car-payment-pdf', compact('car', 'shipmentsData', 'totalAmount', 'showPrintChrome'));
+    }
+
+    /**
+     * تحميل بيان سداد نقلات كـ PDF لمجموعة سداد (نفس محتوى المعاينة)
+     */
+    public function carPaymentGroupReceiptPdf(Request $request, $carId)
+    {
+        $car = Car::findOrFail($carId);
+        $groupUuid = trim((string) $request->query('group', ''));
+        if ($groupUuid === '') {
+            abort(404);
+        }
+
+        $payingCars = Payingcar::where('car_id', $car->id)
+            ->where('payment_group_uuid', $groupUuid)
+            ->orderBy('id')
+            ->get();
+
+        if ($payingCars->isEmpty()) {
+            abort(404);
+        }
+
+        [$shipmentsData, $totalAmount] = $this->buildCarPaymentReceiptRowsFromPayingcars($car, $payingCars);
+
+        if (count($shipmentsData) === 0) {
+            abort(404);
+        }
+
+        $html = view('admin.accounts.car-payment-pdf', compact('car', 'shipmentsData', 'totalAmount'))->render();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font' => 'dejavusans',
+            'directionality' => 'rtl',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'margin_header' => 6,
+            'margin_footer' => 6,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $fileName = 'بيان_سداد_نقلات_' . $car->car_number . '_' . date('Y-m-d') . '.pdf';
+
+        return $mpdf->Output($fileName, 'D');
+    }
+
+    /**
+     * بناء صفوف بيان السداد من سجلات Payingcar (مبالغ هذا السداد لكل نقلة)
+     *
+     * @return array{0: array, 1: float}
+     */
+    private function buildCarPaymentReceiptRowsFromPayingcars(Car $car, $payingCars): array
+    {
+        $policyIds = $payingCars->pluck('delivery_policy_id')->filter()->unique()->values();
+        $policies = DeliveryPolicy::whereIn('id', $policyIds)
+            ->where('car_id', $car->id)
+            ->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars', 'booking_containers.departure', 'booking_containers.loading', 'booking_containers.aging'])
+            ->get()
+            ->keyBy('id');
+
+        $shipmentsData = [];
+        $totalAmount = 0.0;
+
+        foreach ($payingCars as $pc) {
+            $policy = $policies->get($pc->delivery_policy_id);
+            if (!$policy) {
+                continue;
+            }
+
+            $receiptAmount = (float) $pc->value;
+            if ($receiptAmount <= 0) {
+                continue;
+            }
+
+            $cost = $policy->cost ?? 0;
+            $custodyGiven = (float) ($policy->money_transfer?->value ?? 0);
+            $custodySettled = (float) ($policy->settled_money_transfer?->value ?? 0);
+            $financialCustody = $custodyGiven - $custodySettled;
+            $extraExpenses = (float) ($policy->extraExpenses->sum('value') ?? 0);
+            $payments = (float) ($policy->payingCars->sum('value') ?? 0);
+
+            $firstContainer = $policy->booking_containers?->first();
+            $containerNumbers = $policy->booking_containers
+                ? implode(', ', $policy->booking_containers->pluck('container_no')->filter()->toArray())
+                : '';
+
+            $shipmentsData[] = [
+                'id' => $policy->id,
+                'container_numbers' => $containerNumbers,
+                'date' => $policy->date ?? $policy->created_at,
+                'cost' => (float) $cost,
+                'financial_custody' => $financialCustody,
+                'extra_expenses' => $extraExpenses,
+                'paid' => $payments,
+                'remaining' => $receiptAmount,
+                'departure' => $firstContainer?->departure?->title ?? '',
+                'loading' => $firstContainer?->loading?->title ?? '',
+                'aging' => $firstContainer?->aging?->title ?? '',
+            ];
+            $totalAmount += $receiptAmount;
+        }
+
+        return [$shipmentsData, $totalAmount];
     }
 
     /**
@@ -1844,26 +2553,21 @@ class AccountController extends Controller
 
         foreach ($cars as $car) {
             $snapshot = $this->getCarFinancialPositionUpToDate($car, $reportDate);
-            $balance = $snapshot['balance'];
+            $balance = (float) $snapshot['balance'];
 
-            // إضافة السيارة فقط إذا كان لديها رصيد مستحق (مدين)
-            if ($balance > 0) {
+            // إظهار أي سيارة لها رصيد غير صفر (موجب = مستحق، سالب = رصيد زائد/دائن)
+            if (abs($balance) > 0.0001) {
                 $carsWithDebts->push([
-                    'id' => $car->id,
                     'car_number' => $car->car_number,
-                    'total_cost' => $snapshot['total_cost'],
-                    'total_net_custody' => $snapshot['total_net_custody'],
-                    'total_extra_expenses' => $snapshot['total_extra_expenses'],
-                    'total_payments' => $snapshot['total_payments'],
                     'balance' => $balance,
                 ]);
             }
         }
 
-        // ترتيب حسب المبلغ المستحق (من الأكبر للأصغر)
+        // ترتيب حسب الرصيد (من الأكبر للأصغر)
         $carsWithDebts = $carsWithDebts->sortByDesc('balance')->values();
 
-        // حساب الإجمالي
+        // صافي إجمالي الأرصدة (مجموع الموجب والسالب)
         $totalDebts = $carsWithDebts->sum('balance');
 
         return view('admin.accounts.cars-financial-position-report', compact(

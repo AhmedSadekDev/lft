@@ -1,6 +1,27 @@
 @extends("layouts.admin")
 
 @section("content")
+<style>
+    .car-statement-payment-pdf-btn {
+        background-color: #f84d5f !important;
+        color: #fff !important;
+        border-radius: 10px !important;
+        padding: 10px 22px !important;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+    }
+    .car-statement-payment-pdf-btn:hover {
+        background-color: #e63d52 !important;
+        color: #fff !important;
+        text-decoration: none;
+    }
+    .car-statement-payment-pdf-btn:focus {
+        box-shadow: 0 0 0 0.2rem rgba(248, 77, 95, 0.35);
+    }
+</style>
 <div class="container-fluid">
     @include("layouts.includes.breadcrumb", [ 'page' => 'كشف حساب سيارة - ' . $car->car_number ])
 
@@ -111,13 +132,18 @@
                             <th rowspan="2" style="vertical-align: middle; width: 6%;">الإجمالي</th>
                             <th rowspan="2" style="vertical-align: middle; width: 6%;">الإجمالي</th>
                             <th rowspan="2" style="vertical-align: middle; width: 6%;">مدين أو دائن</th>
-                            <th rowspan="2" style="vertical-align: middle; width: 10%;">اجمالي النقلة + حساب سابق</th>
+                            <th rowspan="2" style="vertical-align: middle; width: 9%;">اجمالي النقلة + حساب سابق</th>
+                            <th rowspan="2" style="vertical-align: middle; width: 6%;">تفاصيل</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($transactions as $transaction)
+                        @forelse ($transactions as $index => $transaction)
                             @php
                                 $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
+                                $paymentDetails = $transaction['payment_details'] ?? [];
+                                $hasPaymentDetails = ($transaction['type'] ?? '') === 'payment_group'
+                                    && is_array($paymentDetails)
+                                    && count($paymentDetails) > 0;
                             @endphp
                             <tr>
                                 <td class="text-center" style="font-size: 10px;">{{ $date->format('Y-m-d') }}<br><small>{{ $date->format('H:i') }}</small></td>
@@ -138,10 +164,23 @@
                                 <td class="text-center {{ $transaction['running_balance'] >= 0 ? 'text-danger' : 'text-success' }} font-weight-bold">
                                     {{ number_format($transaction['running_balance'], 2) }}
                                 </td>
+                                <td class="text-center align-middle">
+                                    @if($hasPaymentDetails)
+                                        <button type="button"
+                                                class="btn btn-sm btn-info"
+                                                data-toggle="modal"
+                                                data-target="#carPaymentDetailsModal{{ $index }}"
+                                                title="عرض تفاصيل السداد">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="14" class="text-center py-5">لا توجد حركات في هذه الفترة</td>
+                                <td colspan="15" class="text-center py-5">لا توجد حركات في هذه الفترة</td>
                             </tr>
                         @endforelse
 
@@ -157,18 +196,23 @@
                             @endphp
                             <tr class="table-info font-weight-bold">
                                 <td colspan="2" class="text-center">الحساب النهائي يوم {{ $toDate }}</td>
-                                <td colspan="10"></td>
+                                <td colspan="6" class="text-center"></td>
+                                <td class="text-center">{{ number_format($totalValue, 2) }}</td>
+                                <td class="text-center">{{ number_format($totalCustody, 2) }}</td>
                                 <td class="text-center">{{ number_format($total1, 2) }}</td>
                                 <td class="text-center">{{ number_format($total2, 2) }}</td>
+                                <td class="text-center">—</td>
                                 <td class="text-center {{ $finalRunningBalance >= 0 ? 'text-danger' : 'text-success' }}">
                                     {{ number_format(abs($finalRunningBalance), 2) }}
                                 </td>
+                                <td class="text-center">—</td>
                             </tr>
                             <tr class="table-warning font-weight-bold">
                                 <td colspan="13" class="text-center">الرصيد النهائي المستحق</td>
                                 <td class="text-center {{ $finalRunningBalance >= 0 ? 'text-danger' : 'text-success' }}">
                                     {{ number_format(abs($finalRunningBalance), 2) }}
                                 </td>
+                                <td class="text-center">—</td>
                             </tr>
                         @endif
                     </tbody>
@@ -177,4 +221,82 @@
         </div>
     </div>
 </div>
+
+@foreach($transactions as $index => $transaction)
+    @php
+        $paymentDetails = $transaction['payment_details'] ?? [];
+        $hasPaymentDetails = ($transaction['type'] ?? '') === 'payment_group'
+            && is_array($paymentDetails)
+            && count($paymentDetails) > 0;
+    @endphp
+    @if($hasPaymentDetails)
+        @php
+            $groupUuidForPdf = $transaction['payment_group_uuid'] ?? '';
+            $paymentReceiptPdfUrl = $groupUuidForPdf !== ''
+                ? route('accounts.car.statement.payment-receipt-pdf', ['carId' => $car->id, 'group' => $groupUuidForPdf])
+                : null;
+        @endphp
+        <div class="modal fade" id="carPaymentDetailsModal{{ $index }}" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title font-weight-bold mb-0">
+                            <i class="fas fa-info-circle ml-2"></i>
+                            تفاصيل السداد — {{ number_format($transaction['total2'] ?? 0, 2) }} ج.م
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="إغلاق">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">رقم النقلة</th>
+                                        <th class="text-center">رقم الحاوية</th>
+                                        <th class="text-center">المبلغ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($paymentDetails as $detailIndex => $detail)
+                                        <tr>
+                                            <td class="text-center">{{ $detailIndex + 1 }}</td>
+                                            <td class="text-center">
+                                                <span class="badge badge-secondary">{{ $detail['delivery_policy_id'] ?? '-' }}</span>
+                                            </td>
+                                            <td class="text-center">{{ $detail['container_numbers'] ?? '-' }}</td>
+                                            <td class="text-center font-weight-bold text-success">
+                                                {{ number_format($detail['value'] ?? 0, 2) }} ج.م
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-success font-weight-bold">
+                                        <td colspan="3" class="text-right">الإجمالي:</td>
+                                        <td class="text-center">{{ number_format($transaction['total2'] ?? 0, 2) }} ج.م</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer flex-column align-items-stretch pt-3">
+                        @if($paymentReceiptPdfUrl)
+                            <a href="{{ $paymentReceiptPdfUrl }}"
+                               class="btn font-weight-bold shadow-sm text-white border-0 car-statement-payment-pdf-btn w-100 text-center mb-2"
+                               title="تحميل بيان السداد PDF"
+                               dir="rtl">
+                                <i class="fas fa-file-pdf ml-2"></i>
+                                طباعة بيان السداد PDF
+                            </a>
+                        @endif
+                        <button type="button" class="btn btn-secondary font-weight-bold align-self-center" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
 @endsection

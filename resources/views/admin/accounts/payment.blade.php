@@ -237,7 +237,7 @@
                         </div>
                     </div>
 
-                    <!-- حقل اختيار البنك (للتحويل البنكي) -->
+                    <!-- حقل اختيار البنك (للتحويل البنكي والشيك) -->
                     <div class="col-md-12" id="bank_transfer_field" style="display: none;">
                         <div class="form-group">
                             <label class="font-weight-bold required-field">البنك <span class="text-danger">*</span></label>
@@ -413,7 +413,9 @@
                 $('#bank_transfer_field').show();
                 $('#bank_id').attr('required', 'required');
             } else if (paymentType === 'check') {
+                $('#bank_transfer_field').show();
                 $('#check_fields').show();
+                $('#bank_id').attr('required', 'required');
                 $('#check_bank_name').attr('required', 'required');
                 $('#check_number').attr('required', 'required');
                 $('#check_value').attr('required', 'required');

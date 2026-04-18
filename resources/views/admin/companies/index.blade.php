@@ -73,16 +73,44 @@
                         <tbody>
                             @foreach ($companies as $company)
                                 @php
-                                    // حساب الرصيد المتبقي من جميع الفواتير
+                                    // نفس منطق كشف الحساب: رصيد افتتاحي + (إجمالي الفواتير) - (إجمالي السداد الفعلي)
+                                    $openingBalance = (float) ($company->opening_balance ?? 0);
                                     $totalInvoices = 0;
                                     $totalPayments = 0;
+
                                     foreach ($company->bookings as $booking) {
-                                        if ($booking->invoice) {
-                                            $totalInvoices += $booking->invoice->invoice_total_after_discount ?? 0;
-                                            $totalPayments += $booking->invoice->invoicePayments->sum('value') ?? 0;
+                                        if (!$booking->invoice) {
+                                            continue;
                                         }
+
+                                        $invoice = $booking->invoice;
+
+                                        // نفس معادلة calculateInvoiceTotal في AccountController
+                                        $invoiceTotalBeforeTax = (float) ($invoice->invoice_total_before_tax ?? 0);
+                                        $taxedServicesTotal = (float) ($invoice->taxed_services_total_before_vat ?? 0);
+                                        $untaxedServicesTotal = (float) ($invoice->untaxed_services_total_before_vat ?? 0);
+                                        $vatValue = (float) ($invoice->value_added_tax_amount ?? 0);
+                                        $saleValue = (float) ($invoice->sales_tax_amount ?? 0);
+                                        $discountValue = (float) ($invoice->discount_amount ?? 0);
+
+                                        $totalInvoices += ceil(
+                                            $invoiceTotalBeforeTax
+                                            + $taxedServicesTotal
+                                            + $untaxedServicesTotal
+                                            + $vatValue
+                                            - $saleValue
+                                            - $discountValue
+                                        );
+
+                                        // نفس منطق calculatePaidAmount: استبعاد الشيكات غير المستحقة
+                                        $totalPayments += $invoice->invoicePayments
+                                            ->filter(function ($payment) {
+                                                return $payment->payment_type !== 'check' || !is_null($payment->check_paid_at);
+                                            })
+                                            ->sum('value');
                                     }
-                                    $remainingBalance = $totalInvoices - $totalPayments;
+
+                                    $remainingBalance = $openingBalance + $totalInvoices - $totalPayments;
                                 @endphp
                                 <tr>
                                     <td class="text-center align-middle">

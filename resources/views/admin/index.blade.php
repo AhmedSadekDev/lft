@@ -142,7 +142,7 @@
         </div>
     </div>
 
-    <!-- إحصائيات الفواتير -->
+    <!-- إحصائيات الفواتير والشيكات -->
     <div class="row mb-6">
         <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
             <div class="card card-custom shadow-sm border-left-danger">
@@ -166,6 +166,29 @@
                 </div>
             </div>
         </div>
+
+        @if(auth()->user()->hasPermissionTo('accounts.index'))
+        <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+            <a href="{{ route('accounts.checks.index') }}" class="text-decoration-none">
+                <div class="card card-custom shadow-sm border-left-dark h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted font-weight-bold mb-2">شيكات مستحقة خلال 3 أيام</h6>
+                                <h2 class="font-weight-bolder text-dark mb-0">{{ number_format($stats['checks_due_within_3_days'] ?? 0) }}</h2>
+                            </div>
+                            <div class="icon-circle bg-dark text-white">
+                                <i class="fas fa-money-check-alt fa-2x"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-primary font-weight-bold">عرض الشيكات ←</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        @endif
     </div>
 
     <!-- إحصائيات مالية -->

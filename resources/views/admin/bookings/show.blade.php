@@ -261,6 +261,12 @@
                             انشاء فاتورة
                         </a>
                     @endif
+                    @if (auth()->user()->hasPermissionTo('bookings.update'))
+                        <a href="{{ route('bookings.edit', $booking->id) }}" class="booking-btn-invoice booking-btn-invoice--create">
+                            <i class="fas fa-edit"></i>
+                            تعديل الطلب
+                        </a>
+                    @endif
                     <a href="{{ route('bookings.index') }}" class="booking-back-btn">
                         <i class="fas fa-arrow-right"></i>
                         {{ __('main.back') }}

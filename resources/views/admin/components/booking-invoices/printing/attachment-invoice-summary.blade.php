@@ -33,14 +33,14 @@
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 4px;">
         <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #DC143C;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 700; color: #495057; font-size: 9px;">النقل (خاضع للضريبة):</span>
+                <span style="font-weight: 700; color: #495057; font-size: 9px;">النقل:</span>
                 <span style="font-weight: 700; color: #212529; font-size: 10px;">{{ number_format($normalInvoiceTotal, 2) }} ج.م</span>
             </div>
         </div>
 
         <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #28a745;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 700; color: #495057; font-size: 9px;">الإيصالات (غير خاضعة):</span>
+                <span style="font-weight: 700; color: #495057; font-size: 9px;">الإيصالات:</span>
                 <span style="font-weight: 700; color: #28a745; font-size: 10px;">{{ number_format($allReceiptServicesTotal, 2) }} ج.م</span>
             </div>
         </div>
@@ -48,7 +48,7 @@
 
     <div style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); padding: 8px 12px; border-radius: 6px; margin-top: 4px; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الملحقات (غير خاضع للضريبة):</span>
+            <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الملحقات:</span>
             <span style="font-weight: 700; color: #fff; font-size: 16px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format($normalInvoiceTotal + $allReceiptServicesTotal, 2) }} ج.م</span>
         </div>
     </div>

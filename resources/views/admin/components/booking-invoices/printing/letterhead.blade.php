@@ -291,12 +291,17 @@
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 4px;">
-                <span style="color: #fff; font-weight: 600; font-size: 11px;">فاتورة رقم:</span>
-                <span style="color: #fff; font-size: 12px; font-weight: 700;">{{ $invoice->invoice_number ?? "" }}</span>
+                @if($attachment_print ?? false)
+                    <span style="color: #fff; font-weight: 600; font-size: 11px;">رقم:</span>
+                    <span style="color: #fff; font-size: 12px; font-weight: 700;">R {{ $invoice->invoice_number ?? "" }}</span>
+                @else
+                    <span style="color: #fff; font-weight: 600; font-size: 11px;">فاتورة رقم:</span>
+                    <span style="color: #fff; font-size: 12px; font-weight: 700;">{{ $invoice->invoice_number ?? "" }}</span>
+                @endif
             </div>
             <div style="display: flex; align-items: center; gap: 4px;">
                 <span style="color: #fff; font-weight: 600; font-size: 11px;">التاريخ:</span>
-                <span style="color: #fff; font-size: 11px;">{{ $invoice->created_at ?? "" }}</span>
+                <span style="color: #fff; font-size: 11px;">{{ optional($invoice->created_at)->format('d-m-Y') }}</span>
             </div>
         </div>
     </div>

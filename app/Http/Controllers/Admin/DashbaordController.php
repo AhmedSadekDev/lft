@@ -62,6 +62,13 @@ class DashbaordController extends Controller
             'total_invoices' => Invoice::count(),
             'today_invoices' => Invoice::whereDate('created_at', today())->count(),
             'month_invoices' => Invoice::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
+
+            // شيكات مستحقة خلال الثلاثة أيام القادمة (شامل اليوم)
+            'checks_due_within_3_days' => InvoicePayment::where('payment_type', 'check')
+                ->whereNull('check_paid_at')
+                ->whereNotNull('check_due_date')
+                ->whereBetween('check_due_date', [now()->startOfDay()->toDateString(), now()->addDays(3)->endOfDay()->toDateString()])
+                ->count(),
         ];
 
         // بيانات الرسوم البيانية - الحجوزات حسب الشهر (آخر 6 أشهر)

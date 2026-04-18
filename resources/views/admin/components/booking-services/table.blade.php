@@ -79,7 +79,7 @@
 
         @if (isset($expensesServices))
             @foreach($expensesServices as $expense)
-                <tr id="service_{{ $expense->id }}">
+                <tr id="agent_expense_{{ $expense->id }}">
                     <td>
                         {{ $expense->id }}
                     </td>
@@ -111,11 +111,20 @@
                         @endif
                     </td>
                     <td>
-                        @if (auth()->user()->hasPermissionTo('services.delete'))
-                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm">
-                                <i class="fas fa-trash text-danger"></i>
-                            </button>
-                        @endif
+                        <div class="d-flex gap-2">
+                            @if (auth()->user()->hasPermissionTo('services.update') && isset($booking))
+                                <a href="{{ route('booking-agent-expenses.edit', ['booking' => $booking->id, 'agent_expense' => $expense->id]) }}"
+                                   class="btn btn-icon btn-light btn-hover-primary btn-sm">
+                                    <i class="fas fa-edit text-primary"></i>
+                                </a>
+                            @endif
+                            @if (auth()->user()->hasPermissionTo('services.delete'))
+                                <button type="button" class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                    onclick="agentExpenseDelete(event, '{{ $expense->id }}')">
+                                    <i class="fas fa-trash text-danger"></i>
+                                </button>
+                            @endif
+                        </div>
                     </td>
                 </tr>
             @endforeach
@@ -162,7 +171,59 @@
                             });
                         },
                         error: function(xhr, ajaxOptions, thrownError) {
-                            var message = xhr.responseJSON.message;
+                            var message = xhr.responseJSON && xhr.responseJSON.message
+                                ? xhr.responseJSON.message
+                                : (xhr.responseText || thrownError);
+                            Swal.fire({
+                                title: message,
+                                icon: 'error',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function agentExpenseDelete(e, id) {
+            e.preventDefault();
+            Swal.fire({
+                title: "{{ __('alerts.are_you_sure') }}",
+                text: "{{ __('alerts.not_revert_information') }}",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "{{ __('alerts.confirm') }}",
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = "{{ route('expenses.destroy', ':id') }}".replace(':id', id);
+                    var token = '{{ csrf_token() }}';
+
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    });
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        success: function(response) {
+                            $('#agent_expense_' + id).remove();
+                            Swal.fire({
+                                title: "{{ __('alerts.success') }}",
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                        },
+                        error: function(xhr) {
+                            var message = xhr.responseJSON && xhr.responseJSON.message
+                                ? xhr.responseJSON.message
+                                : (xhr.responseText || '{{ __('alerts.error_occurred') }}');
                             Swal.fire({
                                 title: message,
                                 icon: 'error',
