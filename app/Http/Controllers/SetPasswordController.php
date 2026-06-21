@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agent;
 use App\Models\Company;
+use App\Models\Employee;
 use App\Models\Superagent;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,14 @@ class SetPasswordController extends Controller
         $company = Company::where('session_id', $request->token)->firstOrFail();
 
         return view('admin.companies.reset',[
+            'token' => $request->token,
+        ]);
+    }
+    public function employees(Request $request)
+    {
+        $company = Employee::where('session_id', $request->token)->firstOrFail();
+
+        return view('admin.employees.reset',[
             'token' => $request->token,
         ]);
     }
@@ -46,13 +55,34 @@ class SetPasswordController extends Controller
 
 
         $company = Company::where('session_id', $request->token)->first();
-
+        if (!$company) {
+            return redirect()->back()->withErrors(['token' => 'Invalid token.']);
+        } 
         $company->update([
             'password' => $request->password
         ]);
 
 
-        return to_route('main');
+        return redirect("https://leaderfortrans.com")->with('status', 'Password updated successfully!');
+    }
+    public function updateEmployee(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|exists:employees,session_id',
+            'password' => 'required|string|min:8|same:password_confirmation'
+        ]);
+
+
+        $employee = Employee::where('session_id', $request->token)->first();
+        if (!$employee) {
+            return redirect()->back()->withErrors(['token' => 'Invalid token.']);
+        }   
+        $employee->update([
+            'password' => $request->password
+        ]);
+
+
+        return redirect("https://leaderfortrans.com")->with('status', 'Password updated successfully!');
     }
 
 

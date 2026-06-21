@@ -12,6 +12,7 @@ use App\Models\Agent;
 use App\Models\Company;
 use App\Models\Vault;
 use App\Models\MoneyTransfer;
+use App\Models\VaultTransaction;
 use App\Services\SaveNotification;
 use App\Services\SendNotification;
 use Illuminate\Http\Request;
@@ -23,8 +24,11 @@ class MoneyTransferController extends Controller
     public function index()
     {
         $input = [
-            'financial_custody_agents'     => MoneyTransfer::where('transfered_type', 'App\Models\Agent')->get(),
-            'route_create'      => route('financial_custody_agents.create')
+            'financial_custody_agents' => MoneyTransfer::where(function($query) {
+                $query->where('transfered_type', 'App\Models\Agent')
+                      ->orWhere('transferer_type', 'App\Models\Agent');
+            })->orderBy('created_at', 'desc')->get(),
+            'route_create' => route('financial_custody_agents.create')
         ];
 
         return view('admin.financial_custody_agents.index', $input);
@@ -51,7 +55,7 @@ class MoneyTransferController extends Controller
         }
 
         $agent = Agent::find($request->agent_id);
-        $agent->update(['wallet' => $agent->wallet + $request->value]);
+        $agent->update(['wallet' => $agent->wallet + $request->value, 'total_wallet' => $agent->total_wallet + $request->value]);
 
         $data["value"] = $request->value;
         $data["transfered_type"] = "App\Models\Agent";
@@ -73,6 +77,14 @@ class MoneyTransferController extends Controller
        
         
         $vault->update(['amount' => $vault->amount - $value]);
+
+        // log vault deduction
+        VaultTransaction::create([
+            'name' => 'صرف عهدة للمندوب: ' . ($agent->name ?? ''),
+            'amount' => $value,
+            'type' => 0,
+            'agent_id' => $agent->id,
+        ]);
 
         SaveNotification::create($title, $text, $agent->id, Agent::class,AppNotification::specific);
         SendNotification::send($agent->device_token ?? "", $title, $text);

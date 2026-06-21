@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Resources\Api\CompanyResource;
+use App\Http\Resources\Api\EmployeeResource;
 use App\Http\Resources\Api\UserResource;
 use Illuminate\Support\Facades\Auth;
 use App\Services\LoginService;
@@ -15,20 +16,31 @@ class LoginController extends Controller
     protected $loginService;
     public function __construct(LoginService $loginService){
         $this->loginService = $loginService;
-        $this->middleware('guest:api')->except(['login', 'logout']);
-        $this->middleware('auth:api')->except(['login']);
+       $this->middleware('guest:api,employees')->except(['login', 'logout']);
+        $this->middleware('auth:api,employees')->except(['login']);
     }
 
-    public function login(LoginRequest $request){
-        try {
-            $company = $this->loginService->login($request->only('email', 'password'));
-            return $this->returnAllData([ 'company' => new CompanyResource($company), 'token' => $company->session_id], __('alerts.success'));
-            //code...
+    
+    public function login(LoginRequest $request)
+    {
+        try{
+            $user = $this->loginService->login($request->only('email', 'password'));
+        
+            $resource = $user instanceof \App\Models\Company
+                ? new CompanyResource($user)
+                : new EmployeeResource($user);
+        
+            return $this->returnAllData([
+                'company' => $resource,
+                'type' => $user instanceof \App\Models\Company ? 'company' : 'employee',
+                'token' => $user->session_id
+            ], __('alerts.success'));
         } catch (\Throwable $th) {
-            \Illuminate\Support\Facades\Log::error($th); $th;
+            \Illuminate\Support\Facades\Log::error($th);
             return $this->returnError(401, __('auth.credentials_incorrect'));
         }
     }
+
 
     /**
      * Refresh a token.

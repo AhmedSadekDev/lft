@@ -7,6 +7,10 @@ use App\Http\Requests\Admin\EmployeeRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Models\Employee;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\AssignPasswordNotificationEmployee;
+use App\Notifications\WelcomeCompany;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class EmployeeController extends Controller
 {
@@ -56,6 +60,10 @@ class EmployeeController extends Controller
     public function store(EmployeeRequest $request)
     {
         $employee = Employee::create($request->validated());
+        $token = JWTAuth::fromUser($employee);
+        $employee->update(['session_id' => $token]);
+        Notification::send($employee, new AssignPasswordNotificationEmployee($employee));
+        Notification::send($employee, new WelcomeCompany($employee));
         return redirect()->route('employees.index');
     }
 

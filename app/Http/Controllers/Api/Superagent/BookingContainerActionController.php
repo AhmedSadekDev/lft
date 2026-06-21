@@ -20,76 +20,72 @@ class BookingContainerActionController extends Controller
     public function done_specification(BookingRequest $request)
     {
         try {
-
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
-            $daily_container = DailyBookingContainer::whereDate("created_at", now())->where([["booking_container_id", "=", $booking_container->id],])->first();
+      
+            $daily_container = DailyBookingContainer::whereDate('created_at', now())
+                ->where('booking_container_id', $booking_container->id)
+                ->first();
+
             if (!$daily_container) {
-
-                $data["superagent_id"] = auth()->guard("superagent")->id();
-                $data["booking_container_id"] = $booking_container->id;
-                $data["booking_container_status"] = $booking_container->status;
-
-                DailyBookingContainer::create($data);
+                DailyBookingContainer::create([
+                    'superagent_id'           => auth()->guard('superagent')->id(),
+                    'booking_container_id'    => $booking_container->id,
+                    'booking_container_status' => $booking_container->status,
+                ]);
             } else {
-
                 $daily_container->delete();
             }
-            $response = new BookingContainerResource($booking_container);
 
-            //response
-
-            return $this->returnAllData($response, __('alerts.success'));
+            return $this->returnAllData(
+                new BookingContainerResource($booking_container),
+                __('alerts.success')
+            );
         } catch (\Exception $ex) {
-
-
             return $this->returnError(500, $ex->getMessage());
         }
     }
+
 
     public function done_loading(BookingContainerRequest $request)
     {
         try {
 
-            $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
+            BookingContainer::whereId($request->booking_container_id)
+                ->update([
+                    'status' => 2
+                ]);
 
-
-            $booking_container->update([
-                "status" => 2
-            ]);
-            $data = new BookingContainerResource($booking_container);
-
-            //response
+            $data = BookingContainerResource::collection(
+                BookingContainer::whereId($request->booking_container_id)->get()
+            );
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-
-
             return $this->returnError(500, $ex->getMessage());
         }
     }
+
 
     public function done_unloading(BookingContainerRequest $request)
     {
         try {
 
-            $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
+            BookingContainer::whereId($request->booking_container_id)
+                ->update([
+                    'status' => 3
+                ]);
 
-
-            $booking_container->update([
-                "status" => 3
-            ]);
-            $data = new BookingContainerResource($booking_container);
-
-            //response
+            $data = BookingContainerResource::collection(
+                BookingContainer::whereId($request->booking_container_id)->get()
+            );
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-
-
             return $this->returnError(500, $ex->getMessage());
         }
     }
+
 
     public function make_it_today(BookingContainerRequest $request)
     {

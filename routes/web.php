@@ -44,9 +44,16 @@ use App\Http\Controllers\Admin\VaultTransactionController;
 use App\Http\Controllers\Admin\CompanyTransportationController;
 use App\Http\Controllers\Admin\Booking\BookingInvoiceController;
 use App\Http\Controllers\Admin\Booking\BookingServiceController;
+use App\Http\Controllers\Admin\Booking\BookingAgentExpenseController;
 use App\Http\Controllers\Admin\Booking\BookingContainerController;
 use App\Http\Controllers\BookingContaBookingContrainerExtraCostsController;
 use App\Http\Controllers\InvoicePaymentController;
+use App\Exports\CarsExport;
+use App\Http\Controllers\Admin\AccountController;
+use Maatwebsite\Excel\Facades\Excel;
+
+
+use App\Services\SendNotification;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,11 +73,21 @@ Route::get('/index', function () {
 Route::get('/', function () {
     return to_route('main');
 });
+Route::get('/termsAgent', function () {
+    return view('termsAgent');
+});
+Route::get('/termsSuper', function () {
+    return view('termsSuper');
+});
+
+
 
 
 
 Route::get('set_password/companies', [SetPasswordController::class, 'company']);
 Route::post('companies/update_password', [SetPasswordController::class, 'updateCompany'])->name('companies.update_password');
+Route::get('set_password/employees', [SetPasswordController::class, 'employees']);
+Route::post('employees/update_password', [SetPasswordController::class, 'updateEmployee'])->name('employees.update_password');
 Route::get('set_password/superagents', [SetPasswordController::class, 'superagent']);
 Route::post('superagents/update_password', [SetPasswordController::class, 'updateSuperAgent'])->name('superagents.update_password');
 Route::get('set_password/agents', [SetPasswordController::class, 'agent']);
@@ -79,7 +96,7 @@ Route::post('agents/update_password', [SetPasswordController::class, 'updateAgen
 
 
 Auth::routes();
-
+Route::get('/previewInvoicePDF/{companyId}/{invoiceUUID}', [InvoicesController::class, 'previewInvoicePDF'])->name('bookings.previewInvoicePDF');
 
 // ----------------- companyInvoice -----------------
 Route::prefix('companyInvoice')->group(function () {
@@ -91,6 +108,7 @@ Route::prefix('companyInvoice')->group(function () {
     Route::delete('/{id}/destroy', [companyInvoiceController::class, 'destroy'])->name('companyInvoice.destroy');
     Route::get('/export/{from}/{to}/{company_id}', [companyInvoiceController::class, 'export'])->name('companyInvoice.export');
 });
+
 // ----------------- companyInvoice -----------------
 
 // ----------------- CarShipments -----------------
@@ -102,7 +120,7 @@ Route::prefix('car_shipments')->group(function () {
     Route::post('/store', [ShipmentController::class, 'store'])->name('shipments.store');
     Route::put('/{id}/update', [ShipmentController::class, 'update'])->name('shipments.update');
     Route::delete('/{id}/destroy', [ShipmentController::class, 'destroy'])->name('shipments.destroy');
-    Route::get('/{id}/export', [ShipmentController::class, 'export'])->name('shipments.export');
+    Route::get('/export', [ShipmentController::class, 'export'])->name('shipments.export');
 });
 
 Route::prefix('car_payments')->group(function () {
@@ -128,7 +146,10 @@ Route::prefix('car_payments')->group(function () {
 
 
 Route::get("get-employees-by-company", [EmployeeController::class, 'company']);
-
+Route::get('/submit-invoice/{id}', [InvoicesController::class, 'submitInvoice'])->name('bookings.invoices.submit');
+Route::get('/cancel-invoice/{id}', [InvoicesController::class, 'cancel_invoice'])->name('bookings.invoices.cancel');
+Route::get('/reject-invoice/{id}', [InvoicesController::class, 'reject_invoice'])->name('bookings.invoices.reject');
+Route::get('/get-invoice/{id}', [InvoicesController::class, 'get_invoice'])->name('bookings.invoices.get');
 
 
 // ----------------- Dashboard -----------------
@@ -164,9 +185,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     // ----------------- Companies -----------------
     Route::resource('companies', CompanyController::class);
+    Route::get('companies-export-excel', [CompanyController::class, 'exportExcel'])->name('companies.export-excel');
 
     Route::get('company/employee/{company}', 'App\Http\Controllers\Admin\CompanyController@getEmployees')->name('company.employee');
     // ----------------- \Companies -----------------
+
+    // ----------------- Private Companies -----------------
+    Route::resource('private-companies', \App\Http\Controllers\Admin\PrivateCompanyController::class);
+    // ----------------- \Private Companies -----------------
 
     // ----------------- Cities & Regions -----------------
     Route::resource('citiesAndRegions', CitiesAndRegionsController::class);
@@ -194,20 +220,27 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('bookings-invoices-exports/{id?}', [InvoicesController::class, 'export'])->name('bookings.invoices.exports');
     Route::get('/download-invoice/{companyId?}', [InvoicesController::class, 'downloadPDF'])->name('bookings.invoices.pdf');
 
+    Route::get('/export-cars', function () {
+        return Excel::download(new CarsExport, 'cars.xlsx');
+    })->name('cars.export');
 
     Route::get('invoice-payments/{invoiceId}', [InvoicePaymentController::class , 'index'])->name('invoice_payments.index');
     Route::get('invoice-payments-excel/{invoiceId}', [InvoicePaymentController::class , 'excel'])->name('invoice_payments.excel');
     Route::get('invoice-payments-pdf/{invoiceId}', [InvoicePaymentController::class , 'pdf'])->name('invoice_payments.pdf');
     Route::post('invoice-payments-store/', [InvoicePaymentController::class , 'store'])->name('invoice_payments.store');
-    Route::post('invoice-payments-update/{invoiceId}', [InvoicePaymentController::class , 'update'])->name('invoice_payments.update');
-    Route::post('invoice-payments-destroy/{invoiceId}', [InvoicePaymentController::class , 'destroy'])->name('invoice_payments.destroy');
+    Route::post('invoice-payments-update/{id}', [InvoicePaymentController::class , 'update'])->name('invoice_payments.update');
+    Route::post('invoice-payments-destroy/{id}', [InvoicePaymentController::class , 'destroy'])->name('invoice_payments.destroy');
 
 
     // invoices ----------------------------------------------------------------
 
     Route::get("booking_papers/{booking}", [BookingController::class, "booking_papers"])->name("bookings.booking_papers");
+    Route::post("storePapers", [BookingController::class, "storePapers"])->name("bookings.papers.store");
+    Route::get("booking_notes/{booking}", [BookingController::class, "booking_notes"])->name("bookings.booking_notes");
     Route::get("booking_container_papers/{booking}", [BookingController::class, "booking_container_papers"])->name("bookings.booking_container_papers");
     Route::get("booking_container_policies/{booking}", [BookingController::class, "booking_container_policies"])->name("bookings.booking_container_policies");
+    Route::delete("delete_delivery_policy/{id}", [BookingController::class, "delete_delivery_policy"])->name("bookings.delete_delivery_policy");
+    Route::delete("deletePaper/{booking}", [BookingController::class, "deletePaper"])->name("admin.papers.delete");
     // ----------------- Booking Containers -----------------
     Route::resource(
         'booking-containers',
@@ -231,9 +264,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
             Route::resource(
                 'booking-services',
                 BookingServiceController::class,
-                ['only' => ['create', 'store']]
+                ['only' => ['create', 'store', 'edit', 'update']]
             );
             // ----------------- \Booking Services -----------------
+            Route::get('agent-expenses/{agent_expense}/edit', [BookingAgentExpenseController::class, 'edit'])
+                ->name('booking-agent-expenses.edit');
+            Route::put('agent-expenses/{agent_expense}', [BookingAgentExpenseController::class, 'update'])
+                ->name('booking-agent-expenses.update');
 
             // ----------------- Booking Invoices -----------------
             Route::resource(
@@ -258,14 +295,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
         'booking-invoices',
         BookingInvoiceController::class,
         [
-            'only' => ['show', 'edit', 'update'],
+            'only' => ['show', 'edit', 'update', 'destroy'],
         ]
     );
     // ----------------- \Invoices -----------------
 
     // ----------------- Transportation -----------------
-    Route::resource('companyTransportations', CompanyTransportationController::class);
+    Route::get('companyTransportations/export', [CompanyTransportationController::class, 'export'])->name('companyTransportations.export');
     Route::post('companyTransportations/import', [CompanyTransportationController::class, 'import'])->name('companyTransportations.import');
+    Route::resource('companyTransportations', CompanyTransportationController::class)->except(['show']);
     Route::resource('{company}/companyServices', CompanyServicesController::class)->except('show');
     Route::post('{company}/companyServices/import', [CompanyServicesController::class, 'import'])->name('companyServices.import');
     // ----------------- \Transportation -----------------
@@ -363,6 +401,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     Route::prefix('vaultransactions')->group(function () {
         Route::get('/', [VaultTransactionController::class, 'index'])->name('vaultransactions.index');
+        Route::get('/{id}/edit', [VaultTransactionController::class, 'edit'])->name('vaultransactions.edit');
+        Route::put('/{id}/update', [VaultTransactionController::class, 'update'])->name('vaultransactions.update');
         Route::delete('/{id}/destroy', [VaultTransactionController::class, 'destroy'])->name('vaultransactions.destroy');
         Route::get('/export', [VaultTransactionController::class, 'export'])->name('vaultransactions.export');
     });
@@ -387,12 +427,61 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::resource('cars', CarController::class);
     // ----------------- cars -----------------
 
+    // ----------------- FCM Notifications -----------------
+    Route::get('fcm/send', [\App\Http\Controllers\FireBasePushNotification::class, 'index'])->name('fcm.index');
+    Route::post('fcm/send', [\App\Http\Controllers\FireBasePushNotification::class, 'sendNotification'])->name('fcm.send');
+    // ----------------- \FCM Notifications -----------------
+
     Route::get('/agent_reports/{agent}', [ReportController::class, 'agent_reports'])->name('reports.agent_reports');
     Route::get('/agent_expenses/{agent}', [ExpenseController::class, 'agent_expenses'])->name('expenses.agent_expenses');
+    Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
 
     Route::get('/booking_container_expenses/{id}', [ExpenseController::class, 'booking_container_expenses'])->name('expenses.booking_container_expenses');
 
-    Route::get('/daily_reports', [ReportController::class, 'daily_reports'])->name('reports.daily_reports');
+    // تم إلغاء التقارير اليومية ودمجها في المصروفات العامة
+    Route::get('/export_excel', [ReportController::class, 'exportExcel'])->name('reports.export_excel');
+    Route::get('/general_expenses', [ReportController::class, 'general_expenses'])->name('reports.general_expenses');
+    Route::get('/general_expenses_export', [ReportController::class, 'general_expenses_export'])->name('reports.general_expenses.export');
+
+    // ----------------- Accounts -----------------
+    Route::get('accounts', [AccountController::class, 'index'])->name('accounts.index');
+    Route::get('accounts/{companyId}/statement', [AccountController::class, 'statement'])->name('accounts.statement');
+    Route::get('accounts/{companyId}/statement/export-excel', [AccountController::class, 'exportExcel'])->name('accounts.statement.export.excel');
+    Route::get('accounts/{companyId}/statement/export-pdf', [AccountController::class, 'exportPDF'])->name('accounts.statement.export.pdf');
+    Route::get('accounts/{companyId}/statement/payment-receipt', [AccountController::class, 'companyStatementPaymentReceiptPrint'])->name('accounts.statement.payment-receipt');
+    Route::get('accounts/{companyId}/statement/payment-receipt-pdf', [AccountController::class, 'companyStatementPaymentReceiptPdf'])->name('accounts.statement.payment-receipt-pdf');
+    Route::get('accounts/{companyId}/payment', [AccountController::class, 'showPaymentForm'])->name('accounts.payment');
+    Route::post('accounts/{companyId}/payment', [AccountController::class, 'processPayment'])->name('accounts.payment.process');
+    Route::delete('accounts/{companyId}/payment/{paymentId}', [AccountController::class, 'destroyPayment'])->name('accounts.payment.destroy');
+    Route::delete('accounts/{companyId}/payment-group', [AccountController::class, 'destroyPaymentGroup'])->name('accounts.payment.group.destroy');
+
+    // صفحة الشيكات
+    Route::get('accounts/checks', [AccountController::class, 'checksIndex'])->name('accounts.checks.index');
+    Route::post('accounts/checks/{paymentId}/mark-paid', [AccountController::class, 'markCheckAsPaid'])->name('accounts.checks.mark-paid');
+
+    // كشف حساب السيارات
+    Route::get('accounts/car/{carId}/statement', [AccountController::class, 'carStatement'])->name('accounts.car.statement');
+    Route::get('accounts/car/{carId}/statement/payment-receipt', [AccountController::class, 'carPaymentGroupReceiptPrint'])->name('accounts.car.statement.payment-receipt');
+    Route::get('accounts/car/{carId}/statement/payment-receipt-pdf', [AccountController::class, 'carPaymentGroupReceiptPdf'])->name('accounts.car.statement.payment-receipt-pdf');
+    Route::get('accounts/car/{carId}/statement/export-excel', [AccountController::class, 'exportCarExcel'])->name('accounts.car.statement.export.excel');
+    Route::get('accounts/car/{carId}/payment', [AccountController::class, 'showCarPaymentForm'])->name('accounts.car.payment');
+    Route::post('accounts/car/{carId}/payment', [AccountController::class, 'processCarPayment'])->name('accounts.car.payment.process');
+    Route::get('accounts/car/{carId}/payment/export-pdf', [AccountController::class, 'exportCarPaymentPDF'])->name('accounts.car.payment.export.pdf');
+    Route::get('accounts/car/{carId}/statement/export-pdf', [AccountController::class, 'exportCarPDF'])->name('accounts.car.statement.export.pdf');
+
+    // تقرير الموقف المالي - الشركات المدينة
+    Route::get('accounts/financial-position', [AccountController::class, 'financialPositionReport'])->name('accounts.financial-position');
+    Route::get('accounts/financial-position/export-pdf', [AccountController::class, 'exportFinancialPositionPDF'])->name('accounts.financial-position.export.pdf');
+    Route::get('accounts/financial-position/export-excel', [AccountController::class, 'exportFinancialPositionExcel'])->name('accounts.financial-position.export.excel');
+
+    // تقرير الموقف المالي - السيارات
+    Route::get('accounts/cars/financial-position', [AccountController::class, 'carsFinancialPositionReport'])->name('accounts.cars.financial-position');
+
+    // تقرير الأرباح والخسائر
+    Route::get('accounts/profit-loss', [AccountController::class, 'profitLossReport'])->name('accounts.profit-loss');
+    Route::get('accounts/profit-loss/export-excel', [AccountController::class, 'exportProfitLossExcel'])->name('accounts.profit-loss.export.excel');
+    Route::get('accounts/profit-loss/export-pdf', [AccountController::class, 'exportProfitLossPDF'])->name('accounts.profit-loss.export.pdf');
+    // ----------------- \Accounts -----------------
 });
 // ----------------- \Dashboard -----------------
 
@@ -401,3 +490,8 @@ Route::get('/home', function() {
     return to_route('main');
 })->name('home');
 Route::get('dashboard/get/services/{serviceCategories}', [ServiceController::class, 'getServices'])->name('services.getServices');
+
+// ⚠️ Test Email Routes - احذفها أو أضف middleware للحماية في production
+if (config('app.debug')) {
+    require __DIR__ . '/test-email.php';
+}

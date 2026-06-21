@@ -1,69 +1,174 @@
 @extends("layouts.admin")
 @section("content")
-<div class="container">
+<div class="container-fluid">
     @include("layouts.includes.breadcrumb", [ 'page' => __('main.containers') ])
+
     <!--begin::Card-->
-    <div class="card card-custom">
-        <div class="card-header flex-wrap py-5">
+    <div class="card card-custom shadow-sm">
+        <div class="card-header border-0 py-4">
+            <div class="card-title">
+                <h3 class="card-label font-weight-bolder text-dark">
+                    <i class="fas fa-box text-primary mr-2"></i>
+                    {{ __('main.containers') }}
+                </h3>
+            </div>
             <div class="card-toolbar">
-                <!--begin::Button-->
-                @if(auth()->user()->hasPermissionTo('containers.create'))
-                <a href="{{route('containers.create')}}" class="btn btn-primary font-weight-bolder">
-                    <span class="svg-icon svg-icon-md">
-                        <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <rect x="0" y="0" width="24" height="24" />
-                                <circle fill="#000000" cx="9" cy="15" r="6" />
-                                <path d="M8.8012943,7.00241953 C9.83837775,5.20768121 11.7781543,4 14,4 C17.3137085,4 20,6.6862915 20,10 C20,12.2218457 18.7923188,14.1616223 16.9975805,15.1987057 C16.9991904,15.1326658 17,15.0664274 17,15 C17,10.581722 13.418278,7 9,7 C8.93357256,7 8.86733422,7.00080962 8.8012943,7.00241953 Z" fill="#000000" opacity="0.3" />
-                            </g>
-                        </svg>
-                        <!--end::Svg Icon-->
-                    </span>{{ __('admin.add') }}
-                </a>
-                @endif
-                <!--end::Button-->
+                <div class="d-flex gap-2 flex-wrap">
+                    @if(auth()->user()->hasPermissionTo('containers.create'))
+                        <a href="{{route('containers.create')}}" class="btn btn-primary font-weight-bold shadow-sm">
+                            <i class="fas fa-plus mr-1"></i>{{ __('admin.add') }}
+                        </a>
+                    @endif
+                </div>
             </div>
         </div>
-        <div class="card-body">
-            <table class="table table-responsive-xl" id="table">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">{{ __('admin.type') }}</th>
-                        <th scope="col">{{ __('admin.size') }}</th>
-                        <th scope="col">{{ __('admin.added_in') }}</th>
-                        <th scope="col">{{ __('admin.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($containers as $container)
-                    <tr>
-                            <th scope="row">{{$container->id}}</th>
-                            <td>{{$container->type}}</td>
-                            <td>{{$container->size}}</td>
-                            <td>{{$container->created_at}}</td>
-                            <td>
 
-                                @if(auth()->user()->hasPermissionTo('containers.update'))
-                                <a href="{{route('containers.edit',$container->id)}}" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3">
-                                    <i class="fas fa-edit text-primary"></i>
-                                </a>
-                                @endif
-                                @if(auth()->user()->hasPermissionTo('containers.delete'))
-                                    <button class="btn btn-icon btn-light btn-hover-danger btn-sm" onclick="Delete({{$container->id}})">
-                                        <i class="fas fa-trash text-danger"></i>
-                                    </button>
-                                @endif
-                            </td>
+        <!-- شريط البحث -->
+        <div class="card-body border-top">
+            <form action="{{ route('containers.index') }}" method="get" class="mb-4">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label class="font-weight-bold text-dark mb-2">البحث</label>
+                        <div class="input-group input-group-solid">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-light">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                            </div>
+                            <input type="text" name="search" class="form-control form-control-solid"
+                                   placeholder="ابحث عن النوع أو الحجم..."
+                                   value="{{ request('search') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary font-weight-bold w-100">
+                            <i class="fas fa-search mr-1"></i> بحث
+                        </button>
+                    </div>
+                    @if(request('search'))
+                        <div class="col-md-2">
+                            <a href="{{ route('containers.index') }}" class="btn btn-secondary font-weight-bold w-100">
+                                <i class="fas fa-times mr-1"></i> إلغاء البحث
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </form>
+
+            <!-- معلومات النتائج -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="text-muted">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    عرض {{ $containers->firstItem() ?? 0 }} - {{ $containers->lastItem() ?? 0 }} من أصل {{ $containers->total() }} حاوية
+                </div>
+            </div>
+
+            <!-- الجدول -->
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-head-custom table-vertical-center no-datatable">
+                    <thead class="thead-light">
+                        <tr class="text-center">
+                            <th scope="col" style="width: 80px;">#</th>
+                            <th scope="col">{{ __('admin.type') }}</th>
+                            <th scope="col">{{ __('admin.size') }}</th>
+                            <th scope="col">{{ __('admin.added_in') }}</th>
+                            <th scope="col" style="width: 120px;">{{ __('admin.actions') }}</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse ($containers as $container)
+                            <tr>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-secondary badge-pill">{{ $container->id }}</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">
+                                        <i class="fas fa-tag mr-1 text-muted"></i>{{ $container->type }}
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-muted">
+                                        <i class="fas fa-ruler-combined mr-1"></i>{{ $container->size }}
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <small class="text-muted">
+                                        {{ $container->created_at ? \Carbon\Carbon::parse($container->created_at)->format('Y-m-d') : '-' }}
+                                    </small>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        @if(auth()->user()->hasPermissionTo('containers.update'))
+                                            <a href="{{route('containers.edit',$container->id)}}"
+                                               class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                               title="تعديل">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </a>
+                                        @endif
+                                        @if(auth()->user()->hasPermissionTo('containers.delete'))
+                                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                                    onclick="Delete({{$container->id}})"
+                                                    title="حذف">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-box fa-3x mb-3"></i>
+                                        <p class="font-weight-bold">لا توجد حاويات</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if($containers->hasPages())
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        صفحة {{ $containers->currentPage() }} من {{ $containers->lastPage() }}
+                    </div>
+                    <div>
+                        {{ $containers->appends(request()->query())->links('pagination::bootstrap-4') }}
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
     <!--end::Card-->
 </div>
+
+<style>
+    .table-head-custom th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: background-color 0.2s ease;
+    }
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+    .btn-icon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+</style>
 @endsection
 @push('js')
     <script>

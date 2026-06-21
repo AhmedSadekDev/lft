@@ -1,267 +1,632 @@
 @extends('layouts.admin')
 @section('content')
     <style>
-        .bs-canvas-overlay,
-        .bs-canvas {
-            transition: all .4s ease-out;
-            -webkit-transition: all .4s ease-out;
-            -moz-transition: all .4s ease-out;
-            -ms-transition: all .4s ease-out;
+        .bookings-table {
+            font-size: 14px;
         }
-
-        .bs-canvas {
-            top: 0;
-            z-index: 1110;
-            overflow-x: hidden;
-            overflow-y: auto;
-            width: 330px;
+        .bookings-table thead th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            padding: 12px;
+            white-space: nowrap;
         }
-
-        .bs-canvas-left {
-            left: 0;
-            margin-left: -330px;
+        .bookings-table tbody td {
+            padding: 12px;
+            vertical-align: middle;
         }
-
-        .bs-canvas-right {
-            right: 0;
-            margin-right: -330px;
+        .bookings-table tbody tr:hover {
+            background-color: #f8f9fa;
         }
-
-        /* Only for demo */
+        .filter-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .badge-custom {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .action-buttons .btn {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .search-input-group {
+            position: relative;
+        }
+        .search-input-group .form-control {
+            padding-right: 40px;
+        }
+        .search-input-group .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        .filter-badge {
+            display: inline-block;
+            margin: 2px;
+            padding: 4px 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .pagination-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-top: 1px solid #e9ecef;
+            margin-top: 20px;
+        }
+        .pagination-info {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .pagination {
+            margin: 0;
+        }
+        .pagination .page-link {
+            color: #495057;
+            border: 1px solid #dee2e6;
+            padding: 8px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .pagination .page-link:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+            color: #495057;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            font-weight: 600;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: #fff;
+            border-color: #dee2e6;
+            opacity: 0.5;
+        }
+        .custom-pagination {
+            display: flex;
+            align-items: center;
+        }
+        .pagination-list {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 5px;
+            align-items: center;
+        }
+        .pagination-item {
+            margin: 0;
+        }
+        .pagination-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 14px;
+            min-width: 40px;
+            height: 40px;
+            color: #495057;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .pagination-link:hover:not(.disabled) {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+            color: #495057;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .pagination-item.active .pagination-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,123,255,0.3);
+        }
+        .pagination-item.active .pagination-link:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        .pagination-link.disabled,
+        .pagination-item.disabled .pagination-link {
+            color: #6c757d;
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .pagination-prev,
+        .pagination-next {
+            gap: 6px;
+            font-weight: 500;
+        }
+        .pagination-prev i,
+        .pagination-next i {
+            font-size: 12px;
+        }
+        .pagination-item.disabled span {
+            cursor: not-allowed;
+        }
+        .table-container {
+            min-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .pagination-wrapper {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .pagination-info {
+                text-align: center;
+            }
+            .pagination-list {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .pagination-link {
+                padding: 6px 10px;
+                min-width: 36px;
+                height: 36px;
+                font-size: 13px;
+            }
+            .pagination-prev span,
+            .pagination-next span {
+                display: none;
+            }
+        }
     </style>
-    <div class="container">
+
+    <div class="container-fluid">
         @include('layouts.includes.breadcrumb', ['page' => __('main.bookings')])
-        <!--begin::Card-->
-        <div class="card card-custom">
-            <div class="card-header flex-wrap py-5">
-                <div class="card-toolbar w-100 d-flex justify-content-between align-items-center">
-                    <!--begin::Button-->
-                    @if (auth()->user()->hasPermissionTo('bookings.create'))
-                        <a href="{{ route('bookings.create') }}" class="btn btn-primary font-weight-bolder">
-                            <span class="svg-icon svg-icon-md">
-                                <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                    width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <rect x="0" y="0" width="24" height="24" />
-                                        <circle fill="#000000" cx="9" cy="15" r="6" />
-                                        <path
-                                            d="M8.8012943,7.00241953 C9.83837775,5.20768121 11.7781543,4 14,4 C17.3137085,4 20,6.6862915 20,10 C20,12.2218457 18.7923188,14.1616223 16.9975805,15.1987057 C16.9991904,15.1326658 17,15.0664274 17,15 C17,10.581722 13.418278,7 9,7 C8.93357256,7 8.86733422,7.00080962 8.8012943,7.00241953 Z"
-                                            fill="#000000" opacity="0.3" />
-                                    </g>
-                                </svg>
-                                <!--end::Svg Icon-->
-                            </span>{{ __('admin.add_new_booking') }}
-                        </a>
-                    @endif
-                    <!--end::Button-->
 
-                    <div class="p-2">
-                        <a class="btn btn-primary"
-                            href="{{ route('booking_container.export', ['ids' => implode(',', $bookings->pluck('id')->toArray())]) }}">{{ __('admin.export') }}</a>
-                        <button class="btn btn-primary" type="button" data-toggle="canvas" data-target="#bs-canvas-left"
-                            aria-expanded="false" aria-controls="bs-canvas-left">{{ __('admin.search') }}</button>
-                    </div>
-
-                    <div id="bs-canvas-left" class="bs-canvas bs-canvas-left position-fixed bg-light h-100">
-                        <header class="bs-canvas-header p-3 bg-primary overflow-auto">
-                            <button type="button" class="bs-canvas-close float-left close" aria-label="Close"
-                                aria-expanded="false"><span aria-hidden="true" class="text-light">&times;</span></button>
-                            <h4 class="d-inline-block text-light mb-0 float-right">Filter</h4>
-                        </header>
-                        <div class="bs-canvas-content px-3 py-5">
-                            <form action="">
-                                <div class="form-group">
-                                    <label for="">{{ __('admin.date') }}</label>
-                                    <input type="date" name="arrival_date" value="{{ old('arrival_date') }}"
-                                        id="" class="form-control" placeholder="{{ __('admin.date') }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">{{ __('admin.search') }}</label>
-                                    <input type="text" name="search" id="SearchInput" value="{{ old('search') }}"
-                                        class="form-control" placeholder="{{ __('admin.search') }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="">{{ __('main.company') }}</label>
-                                    <select name="company" id="" class="form-control selectpicker"
-                                        title="{{ __('main.comapny') }}">
-                                        <option value="">{{ __('admin.select') }}</option>
-                                        @foreach ($companies as $company)
-                                            <option {{ old('company') == $company->id ? 'selected' : '' }}
-                                                value="{{ $company->id }}">{{ $company->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- <div class="form-group">
-                                    <label for="">{{ __('admin.taxed_status') }}</label>
-                                    <select name="tax_status" id="" class="form-control selectpicker"
-                                        title="{{ __('admin.taxed_status') }}">
-                                        <option value="">{{ __('admin.select') }}</option>
-                                        <option value="1">{{ __('admin.taxed') }}</option>
-                                        <option value="0">{{ __('admin.not_taxed') }}</option>
-                                    </select>
-                                </div> --}}
-                                <button class="btn btn-primary" type="submit">{{ __('admin.search') }}</button>
-
-                            </form>
-                        </div>
-                    </div>
-                    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-                        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-                    </script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
-                        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
-                    </script>
-                    <script>
-                        jQuery(document).ready(function($) {
-                            var bsOverlay = $('.bs-canvas-overlay');
-                            $('[data-toggle="canvas"]').on('click', function() {
-                                var ctrl = $(this),
-                                    elm = ctrl.is('button') ? ctrl.data('target') : ctrl.attr('href');
-                                $(elm).addClass('mr-0');
-                                $(elm + ' .bs-canvas-close').attr('aria-expanded', "true");
-                                $('[data-target="' + elm + '"], a[href="' + elm + '"]').attr('aria-expanded', "true");
-                                if (bsOverlay.length)
-                                    bsOverlay.addClass('show');
-                                return false;
-                            });
-
-                            $('.bs-canvas-close, .bs-canvas-overlay').on('click', function() {
-                                var elm;
-                                if ($(this).hasClass('bs-canvas-close')) {
-                                    elm = $(this).closest('.bs-canvas');
-                                    $('[data-target="' + elm + '"], a[href="' + elm + '"]').attr('aria-expanded', "false");
-                                } else {
-                                    elm = $('.bs-canvas')
-                                    $('[data-toggle="canvas"]').attr('aria-expanded', "false");
-                                }
-                                elm.removeClass('mr-0');
-                                $('.bs-canvas-close', elm).attr('aria-expanded', "false");
-                                if (bsOverlay.length)
-                                    bsOverlay.removeClass('show');
-                                return false;
-                            });
-                        });
-                    </script>
-                </div>
+        <!-- Filters Card -->
+        <div class="card filter-card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter"></i> {{ __('admin.search') }} و {{ __('admin.filter') }}
+                </h5>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
+                <form method="GET" action="{{ route('bookings.index') }}" id="filterForm">
+                    @if(request('per_page'))
+                        <input type="hidden" name="per_page" value="{{ request('per_page') }}">
+                    @endif
+                    <div class="row">
+                        <!-- Search Input -->
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">{{ __('admin.search') }}</label>
+                            <div class="search-input-group">
+                                <input type="text" name="search" class="form-control"
+                                        value="{{ request('search') }}"
+                                        placeholder="{{ __('admin.search') }}...">
+                                <i class="fas fa-search search-icon"></i>
+                            </div>
+                        </div>
 
-                    <table class="table-responsive-xl" id="">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">{{ __('admin.company_name') }}</th>
-                                <th scope="col">{{ __('admin.responsible_employee') }}</th>
-                                <th scope="col">{{ __('main.factory') }}</th>
-                                <th scope="col">{{ __('admin.booking_number') }}</th>
-                                <th scope="col">{{ __('admin.taxed_status') }}</th>
+                        <!-- Date From Filter -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">{{ __('admin.date_from') ?? 'تاريخ من' }}</label>
+                            <input type="date" name="date_from" class="form-control"
+                                    value="{{ request('date_from') }}">
+                        </div>
 
-                                <th scope="col">{{ __('admin.invoice_status') }}</th>
-                                <th scope="col">{{ __('admin.created_at') }}</th>
-                                <th scope="col">{{ __('admin.print_invoice') }}</th>
-                                <th scope="col">{{ __('admin.print_eInvoice') }}</th>
+                        <!-- Date To Filter -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">{{ __('admin.date_to') ?? 'تاريخ إلى' }}</label>
+                            <input type="date" name="date_to" class="form-control"
+                                    value="{{ request('date_to') }}">
+                        </div>
 
-                                <th scope="col">{{ __('admin.delete') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($bookings as $booking)
-                                <tr>
-                                    <th scope="row">{{ $booking->id }}</th>
-                                    <td>{{ $booking->company->name ?? '__' }}</td>
-                                    <td>{{ $booking->employee_name ?? '__' }}</td>
-                                    <td>{{ $booking?->factory?->name ?? '__' }}</td>
-                                    <td>{{ $booking->booking_number }} </td>
-                                    <td>
-                                        <span
-                                            class="badge badge-{{ $booking->company->taxed == 0 ? 'danger' : 'success' }} text-white">
-                                            <i
-                                                class="fa fa-{{ $booking->company->taxed == 0 ? 'xmark' : 'check' }} text-white"></i>
-                                            {{ $booking->taxed_invoice }}
-                                        </span>
-                                    </td>
+                        <!-- Company Filter -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">{{ __('main.company') }}</label>
+                            <select name="company" class="form-control">
+                                <option value="">{{ __('admin.all') }}</option>
+                                @foreach ($companies as $company)
+                                    <option value="{{ $company->id }}"
+                                            {{ request('company') == $company->id ? 'selected' : '' }}>
+                                        {{ $company->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                                    <td>{{ !is_null($booking->invoice?->invoice_number) ? 'تم إنشاء فاتورة' : 'لم يتم إنشاء فاتورة' }}
-                                    </td>
-                                    <td>{{ $booking->created_at }}</td>
-                                    <td class="text-center">
-                                        @if (is_null($booking->invoice?->invoice_number))
-                                            @if ($booking->type_of_action != 2)
-                                                <a href="{{ route('booking-invoices.create', ['booking' => $booking->id]) }}"
-                                                    class="btn btn-primary">
-                                                    {{ __('admin.create_invoice') }}
-                                                </a>
-                                            @else
-                                                ____
-                                            @endif
-                                        @else
-                                            @if ($booking->type_of_action != 2)
-                                                <a href="{{ route('booking-invoices.edit', $booking->invoice->id) }}"
-                                                    class="btn btn-primary mb-2">
-                                                    {{ __('admin.edit_invoice') }}
-                                                </a>
-                                                <a href="{{ route('booking-invoices.show', ['booking_invoice' => $booking->invoice->id]) }}"
-                                                    class="btn btn-primary w-full">
-                                                    {{ __('admin.show') . ' ' . __('admin.bill_type_invoice') }}
-                                                </a>
-                                            @else
-                                                ____
-                                            @endif
-                                        @endif
-                                    </td>
-                                    <td>{{ 'لم يتم طباعة الفاتورة الالكترونية' }}</td>
+                        <!-- Tax Status Filter -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">{{ __('admin.taxed_status') }}</label>
+                            <select name="tax_status" class="form-control">
+                                <option value="">{{ __('admin.all') }}</option>
+                                <option value="1" {{ request('tax_status') == '1' ? 'selected' : '' }}>
+                                    {{ __('admin.taxed') }}
+                                </option>
+                                <option value="0" {{ request('tax_status') == '0' ? 'selected' : '' }}>
+                                    {{ __('admin.not_taxed') }}
+                                </option>
+                            </select>
+                        </div>
 
-                                    <td>
-                                        <div class="row">
-                                            @if (auth()->user()->hasPermissionTo('bookings.index'))
-                                                <div class="col-md-3 col-sm-6 ml-2">
-                                                    <a href="{{ route('bookings.show', $booking->id) }}"
-                                                        class="btn btn-icon btn-light btn-hover-success btn-sm mx-3">
-                                                        <i class="fas fa-eye text-success"></i>
-                                                    </a>
-                                                </div>
-                                            @endif
-                                            @if (auth()->user()->hasPermissionTo('bookings.update'))
-                                                <div class="col-md-3 col-sm-6 ml-2">
-                                                    <a href="{{ route('bookings.edit', $booking->id) }}"
-                                                        class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3">
-                                                        <i class="fas fa-edit text-primary"></i>
-                                                    </a>
-                                                </div>
-                                            @endif
-                                            @if (auth()->user()->hasPermissionTo('bookings.delete'))
-                                                <div class="col-md-3 col-sm-6 ml-2">
-                                                    <button
-                                                        class="btn btn-icon btn-light btn-hover-danger btn-sm mx-3 delete"
-                                                        onclick="Delete('{{ $booking->id }}')">
-                                                        <i class="fas fa-trash text-danger"></i>
-                                                    </button>
-                                                </div>
-                                            @endif
-                                            <div class="col-md-3 col-sm-6 ml-2 mt-1">
-                                                <a href="{{ route('bookings.booking_papers', ['booking' => $booking->id]) }}"
-                                                    class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3">
-                                                    {{ __('admin.papers') }}
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                        <!-- Invoice Status Filter -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">حالة الفاتورة</label>
+                            <select name="invoice_status" class="form-control">
+                                <option value="">{{ __('admin.all') }}</option>
+                                <option value="1" {{ request('invoice_status') == '1' ? 'selected' : '' }}>
+                                    تم إنشاء فاتورة
+                                </option>
+                                <option value="0" {{ request('invoice_status') == '0' ? 'selected' : '' }}>
+                                    لم يتم إنشاء فاتورة
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="col-md-1 mb-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> {{ __('admin.search') }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active Filters -->
+                    @if(request()->hasAny(['search', 'arrival_date', 'company', 'tax_status', 'invoice_status']))
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <small class="text-muted">الفلاتر النشطة:</small>
+                                @if(request('search'))
+                                    <span class="filter-badge">
+                                        بحث: {{ request('search') }}
+                                        <a href="{{ route('bookings.index', request()->except('search')) }}" class="ml-2 text-danger">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </span>
+                                @endif
+                                @if(request('arrival_date'))
+                                    <span class="filter-badge">
+                                        تاريخ: {{ request('arrival_date') }}
+                                        <a href="{{ route('bookings.index', request()->except('arrival_date')) }}" class="ml-2 text-danger">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </span>
+                                @endif
+                                @if(request('company'))
+                                    <span class="filter-badge">
+                                        شركة: {{ $companies->find(request('company'))->name ?? '' }}
+                                        <a href="{{ route('bookings.index', request()->except('company')) }}" class="ml-2 text-danger">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </span>
+                                @endif
+                                @if(request('tax_status') !== null && request('tax_status') !== '')
+                                    <span class="filter-badge">
+                                        ضريبة: {{ request('tax_status') == '1' ? 'معفى' : 'غير معفى' }}
+                                        <a href="{{ route('bookings.index', request()->except('tax_status')) }}" class="ml-2 text-danger">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </span>
+                                @endif
+                                @if(request('invoice_status') !== null && request('invoice_status') !== '')
+                                    <span class="filter-badge">
+                                        فاتورة: {{ request('invoice_status') == '1' ? 'تم الإنشاء' : 'لم يتم الإنشاء' }}
+                                        <a href="{{ route('bookings.index', request()->except('invoice_status')) }}" class="ml-2 text-danger">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </span>
+                                @endif
+                                <a href="{{ route('bookings.index') }}" class="btn btn-sm btn-outline-danger ml-2">
+                                    <i class="fas fa-times"></i> إزالة جميع الفلاتر
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                </form>
             </div>
         </div>
-        <!--end::Card-->
+
+        <!-- Bookings Table Card -->
+        <div class="card card-custom">
+            <div class="card-header flex-wrap py-4">
+                <div class="card-title">
+                    <h3 class="card-label">
+                        {{ __('main.bookings') }}
+                        <span class="text-muted font-size-sm ml-2">
+                            ({{ $bookings->total() }} {{ __('admin.result') }})
+                        </span>
+                    </h3>
+                </div>
+                <div class="card-toolbar">
+                    @if (auth()->user()->hasPermissionTo('bookings.create'))
+                        <a href="{{ route('bookings.create') }}" class="btn btn-primary font-weight-bolder">
+                            <i class="fas fa-plus"></i> {{ __('admin.add_new_booking') }}
+                        </a>
+                    @endif
+                    @if($bookings->count() > 0)
+                        <a class="btn btn-success ml-2"
+                            href="{{ route('booking_container.export', request()->only(['search', 'date_from', 'date_to', 'company', 'tax_status', 'invoice_status'])) }}"
+                            title="{{ __('admin.export') }}">
+                            <i class="fas fa-download"></i> {{ __('admin.export') }}
+                        </a>
+                    @endif
+                </div>
+            </div>
+
+            <div class="card-body">
+                @if($bookings->count() > 0)
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table table-hover bookings-table no-datatable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>{{ __('admin.company_name') }}</th>
+                                    <th>{{ __('admin.responsible_employee') }}</th>
+                                    <th>{{ __('main.factory') }}</th>
+                                    <th>{{ __('admin.booking_number') }}</th>
+                                    <th>{{ __('admin.taxed_status') }}</th>
+                                    <th>حالة الفاتورة</th>
+                                    <th>{{ __('admin.created_at') }}</th>
+                                    <th>الفاتورة</th>
+                                    <th>الملاحظات</th>
+                                    <th>{{ __('admin.actions') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($bookings as $booking)
+                                    <tr>
+                                        <td><strong>{{ $booking->id }}</strong></td>
+                                        <td>{{ $booking->company->name ?? '__' }}</td>
+                                        <td>{{ $booking->employee_name ?? '__' }}</td>
+                                        <td>{{ $booking?->factory?->name ?? '__' }}</td>
+                                        <td>
+                                            <span class="badge badge-info badge-custom">
+                                                {{ $booking->booking_number }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-{{ $booking->company && $booking->company->taxed == 0 ? 'danger' : 'success' }} badge-custom">
+                                                <i class="fa fa-{{ $booking->company && $booking->company->taxed == 0 ? 'xmark' : 'check' }}"></i>
+                                                {{ $booking->taxed_invoice }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if(!is_null($booking->invoice?->invoice_number))
+                                                <div class="d-flex flex-column">
+                                                    <span class="badge badge-success badge-custom mb-1">
+                                                        <i class="fas fa-check"></i> تم إنشاء فاتورة
+                                                    </span>
+                                                    <span class="badge badge-info badge-custom" style="font-size: 0.75rem;">
+                                                        <i class="fas fa-file-invoice"></i> {{ $booking->invoice->invoice_number }}
+                                                    </span>
+                                                </div>
+                                            @else
+                                                <span class="badge badge-warning badge-custom">
+                                                    <i class="fas fa-clock"></i> لم يتم إنشاء فاتورة
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $booking->created_at ? \Carbon\Carbon::parse($booking->created_at)->format('Y-m-d') : '__' }}</td>
+                                        <td>
+                                            @if (is_null($booking->invoice?->invoice_number))
+                                                @if ($booking->type_of_action != 2)
+                                                    <a class="btn btn-sm btn-primary" href="{{ route('booking-invoices.create', $booking->id) }}">
+                                                        <i class="fas fa-plus"></i> إنشاء فاتورة
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            @else
+                                                @if ($booking->type_of_action != 2)
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <a href="{{ route('booking-invoices.edit', $booking->invoice->id) }}" class="btn btn-sm btn-warning">
+                                                            <i class="fas fa-edit"></i> تعديل
+                                                        </a>
+                                                        <a href="{{ route('booking-invoices.show', ['booking_invoice' => $booking->invoice->id]) }}" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-eye"></i> عرض
+                                                        </a>
+                                                    </div>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('bookings.booking_notes', ['booking' => $booking->id]) }}" class="btn btn-sm btn-secondary">
+                                                <i class="fas fa-sticky-note"></i> الملاحظات
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                @if (auth()->user()->hasPermissionTo('bookings.index'))
+                                                    <a href="{{ route('bookings.show', $booking->id) }}"
+                                                        class="btn btn-sm btn-light btn-hover-success"
+                                                        title="{{ __('admin.show') }}">
+                                                        <i class="fas fa-eye text-success"></i>
+                                                    </a>
+                                                @endif
+                                                @if (auth()->user()->hasPermissionTo('bookings.update'))
+                                                    <a href="{{ route('bookings.edit', $booking->id) }}"
+                                                        class="btn btn-sm btn-light btn-hover-primary"
+                                                        title="{{ __('admin.edit') }}">
+                                                        <i class="fas fa-edit text-primary"></i>
+                                                    </a>
+                                                @endif
+                                                @if (auth()->user()->hasPermissionTo('bookings.delete'))
+                                                    <button class="btn btn-sm btn-light btn-hover-danger delete"
+                                                            onclick="Delete('{{ $booking->id }}')"
+                                                            title="{{ __('admin.delete') }}">
+                                                        <i class="fas fa-trash text-danger"></i>
+                                                    </button>
+                                                @endif
+                                                <a href="{{ route('bookings.booking_papers', ['booking' => $booking->id]) }}"
+                                                    class="btn btn-sm btn-light btn-hover-info"
+                                                    title="{{ __('admin.papers') }}">
+                                                    <i class="fas fa-file text-info"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        </div>
+
+                        <!-- Custom Pagination -->
+                        <div class="pagination-wrapper">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="pagination-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    عرض {{ $bookings->firstItem() ?? 0 }} إلى {{ $bookings->lastItem() ?? 0 }} من {{ $bookings->total() }} نتيجة
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="perPageSelect" class="mb-0 text-muted font-weight-bold" style="font-size: 0.9rem;">عرض:</label>
+                                    <select id="perPageSelect" class="form-control form-control-sm" style="width: auto; min-width: 80px;" onchange="changePerPage(this.value)">
+                                        @for($i = 15; $i <= 100; $i+=15)
+                                            <option value="{{ $i }}" {{ (request('per_page', 15) == $i) ? 'selected' : '' }}>{{ $i }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="custom-pagination">
+                                @php
+                                    $currentPage = $bookings->currentPage();
+                                    $lastPage = $bookings->lastPage();
+                                    $queryParams = request()->query();
+                                @endphp
+
+                                <ul class="pagination-list">
+                                    {{-- Previous Button --}}
+                                    <li class="pagination-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                        @if($currentPage > 1)
+                                            <a href="{{ $bookings->appends($queryParams)->url($currentPage - 1) }}" class="pagination-link pagination-prev">
+                                                <i class="fas fa-chevron-right"></i>
+                                                <span>السابق</span>
+                                            </a>
+                                        @else
+                                            <span class="pagination-link pagination-prev disabled">
+                                                <i class="fas fa-chevron-right"></i>
+                                                <span>السابق</span>
+                                            </span>
+                                        @endif
+                                    </li>
+
+                                    {{-- Page Numbers --}}
+                                    @if($lastPage <= 7)
+                                        {{-- Show all pages if total pages <= 7 --}}
+                                        @for($i = 1; $i <= $lastPage; $i++)
+                                            <li class="pagination-item {{ $i == $currentPage ? 'active' : '' }}">
+                                                <a href="{{ $bookings->appends($queryParams)->url($i) }}" class="pagination-link">
+                                                    {{ $i }}
+                                                </a>
+                                            </li>
+                                        @endfor
+                                    @else
+                                        {{-- Show first page --}}
+                                        @if($currentPage > 3)
+                                            <li class="pagination-item">
+                                                <a href="{{ $bookings->appends($queryParams)->url(1) }}" class="pagination-link">1</a>
+                                            </li>
+                                            @if($currentPage > 4)
+                                                <li class="pagination-item disabled">
+                                                    <span class="pagination-link">...</span>
+                                                </li>
+                                            @endif
+                                        @endif
+
+                                        {{-- Show pages around current page --}}
+                                        @for($i = max(1, $currentPage - 2); $i <= min($lastPage, $currentPage + 2); $i++)
+                                            <li class="pagination-item {{ $i == $currentPage ? 'active' : '' }}">
+                                                <a href="{{ $bookings->appends($queryParams)->url($i) }}" class="pagination-link">
+                                                    {{ $i }}
+                                                </a>
+                                            </li>
+                                        @endfor
+
+                                        {{-- Show last page --}}
+                                        @if($currentPage < $lastPage - 2)
+                                            @if($currentPage < $lastPage - 3)
+                                                <li class="pagination-item disabled">
+                                                    <span class="pagination-link">...</span>
+                                                </li>
+                                            @endif
+                                            <li class="pagination-item">
+                                                <a href="{{ $bookings->appends($queryParams)->url($lastPage) }}" class="pagination-link">{{ $lastPage }}</a>
+                                            </li>
+                                        @endif
+                                    @endif
+
+                                    {{-- Next Button --}}
+                                    <li class="pagination-item {{ $currentPage == $lastPage ? 'disabled' : '' }}">
+                                        @if($currentPage < $lastPage)
+                                            <a href="{{ $bookings->appends($queryParams)->url($currentPage + 1) }}" class="pagination-link pagination-next">
+                                                <span>التالي</span>
+                                                <i class="fas fa-chevron-left"></i>
+                                            </a>
+                                        @else
+                                            <span class="pagination-link pagination-next disabled">
+                                                <span>التالي</span>
+                                                <i class="fas fa-chevron-left"></i>
+                                            </span>
+                                        @endif
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">{{ __('admin.no_data') }}</p>
+                        @if (auth()->user()->hasPermissionTo('bookings.create'))
+                            <a href="{{ route('bookings.create') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> {{ __('admin.add_new_booking') }}
+                            </a>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 @endsection
+
 @push('js')
     <script>
         (function($) {
             "use strict";
+
+            // Auto submit form on filter change (optional)
+            // $('select[name="company"], select[name="tax_status"], select[name="invoice_status"]').on('change', function() {
+            //     $('#filterForm').submit();
+            // });
+
+            // Clear search on X click
+            $('.search-input-group .form-control').on('input', function() {
+                if ($(this).val() === '') {
+                    // Optionally auto-submit when cleared
+                }
+            });
         })(jQuery);
 
         function Delete(id) {
@@ -288,18 +653,33 @@
                         url: url,
                         type: 'DELETE',
                         success: function(response) {
-                            location.reload();
                             Swal.fire({
                                 title: "{{ __('alerts.done') }}",
                                 icon: 'success',
                                 showConfirmButton: false,
-                                timer: 3000,
+                                timer: 2000,
                                 timerProgressBar: true,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function() {
+                            Swal.fire({
+                                title: "{{ __('alerts.error') }}",
+                                text: "حدث خطأ أثناء الحذف",
+                                icon: 'error',
                             });
                         }
                     });
                 }
             });
+        }
+
+        function changePerPage(value) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', value);
+            url.searchParams.set('page', '1'); // العودة للصفحة الأولى عند تغيير عدد العناصر
+            window.location.href = url.toString();
         }
     </script>
 @endpush

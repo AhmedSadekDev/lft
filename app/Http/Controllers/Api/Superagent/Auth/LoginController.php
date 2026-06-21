@@ -7,6 +7,7 @@ use App\Http\Requests\Api\Superagent\Auth\LoginRequest;
 use App\Http\Resources\Api\Superagent\SuperagentResource;
 use App\Models\Superagent;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginController extends Controller
 {
@@ -16,7 +17,18 @@ class LoginController extends Controller
 
             $credentials = $request->only('email', 'password');
 
+            // البحث عن المستخدم أولاً للتحقق من وجود session_id قديم
+            $superagent = Superagent::where('email', $credentials['email'])->first();
 
+            // إذا كان المستخدم مسجل دخول من قبل، إبطال الـ token القديم
+            if ($superagent && $superagent->session_id) {
+                try {
+                    // محاولة إبطال الـ token القديم باستخدام JWTAuth
+                    JWTAuth::setToken($superagent->session_id)->invalidate();
+                } catch (\Exception $e) {
+                    // في حالة فشل الإبطال (مثل token منتهي)، نتجاهل الخطأ
+                }
+            }
 
             $token = auth()->guard('superagent')->attempt($credentials);
 

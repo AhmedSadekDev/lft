@@ -29,6 +29,16 @@
                 </div>
             </div>
             <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <strong>{{ __('main.there_are_errors') }}</strong>
+                        <ul class="mb-0 mt-2">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form action="{{ route('banktransactions.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="bank_id" value="{{ $bank->id }}">

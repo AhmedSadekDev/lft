@@ -35,11 +35,12 @@ Route::group(['middleware' => 'localization'], function(){
     // ------------------ Dashboard ------------------
     Route::group(['namespace' => 'App\Http\Controllers\Api', 'prefix' => 'booking'], function() {
         Route::get('track', [BookingController::class, 'getBooking']);
-        Route::get('container/{container}', [BookingController::class,'getContainerDetails']);
+        Route::get('container/{booking_container}', [BookingController::class,'getContainerDetails']);
+        Route::get('booking_papers', [BookingController::class,'booking_papers']);
     });
 
     // ------------------ Profile ------------------
-    Route::group(['namespace' => 'App\Http\Controllers\Api', 'prefix' => 'profile', 'middleware' => 'auth:api'], function() {
+    Route::group(['namespace' => 'App\Http\Controllers\Api', 'prefix' => 'profile', 'middleware' => 'auth:api,employees'], function() {
         Route::get('employees', [EmployeeController::class,'getEmployees']);
         Route::get('bookings', [BookingController::class,'getCompanyBookings']);
         Route::put('/update_information', [CompanyController::class,'update']);

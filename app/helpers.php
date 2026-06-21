@@ -123,6 +123,7 @@ if(!function_exists('adminDbTablesPermissions')){
             'shipments',
             'vaults',
             'banks',
+            'accounts',
         ];
 
 

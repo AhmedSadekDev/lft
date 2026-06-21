@@ -16,19 +16,26 @@ class CarController extends Controller
         $this->middleware('permission:cars.index')->only('index');
         $this->middleware('permission:cars.create')->only(['create', 'store']);
         $this->middleware('permission:cars.udpate')->only(['edit', 'udpate']);
-        $this->middleware('permission:cars.delete')->only('destroy');   
+        $this->middleware('permission:cars.delete')->only('destroy');
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $input = [
-            'cars' => Car::all(),
-        ];
-        return view('admin.cars.index', $input);
+        $query = Car::with(['deliveryPolicies' => fn ($q) => $q->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars']), 'payingcars']);
+
+        // تطبيق البحث إذا كان موجود
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('car_number', 'like', '%' . $search . '%');
+        }
+
+        $cars = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();
+
+        return view('admin.cars.index', compact('cars'));
     }
     /**
      * Show the form for creating a new resource.
@@ -39,7 +46,7 @@ class CarController extends Controller
     {
         $input = [
             'method'    => 'POST',
-            'action'    => route('cars.store') 
+            'action'    => route('cars.store')
         ];
 
         return view('admin.cars.create', $input);

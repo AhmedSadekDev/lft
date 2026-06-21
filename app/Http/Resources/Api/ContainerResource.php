@@ -21,7 +21,6 @@ class ContainerResource extends JsonResource
             'sail_of_number'    => $this->sail_of_number,
             'container_number'  => $this->container_no,
             'arrival_date'      => $this->arrival_date,
-
             'last_status'       => $this->status ?? 'Gate out empty',
             'date'              => $this->created_at ?? now(),
         ];

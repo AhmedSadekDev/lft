@@ -83,7 +83,7 @@
                 {!! Form::select(
                     'yard_id',
                     array_replace(['to_be_disabled' => __('admin.select')], $yards->all()),
-                    old('yard_id'),
+                    old('yard_id', isset($booking_container) ? $booking_container->yard_id : null),
                     ['id' => 'yard_id', 'class' => 'form-control'],
                 ) !!}
                 <small class="text-danger">{{ $errors->first('yard_id') }}</small>
@@ -98,7 +98,7 @@
                 {!! Form::select(
                     'container_id',
                     array_replace(['to_be_disabled' => __('admin.select')], $container_types->all()),
-                    old('container_id'),
+                    old('container_id', isset($booking_container) ? $booking_container->container_id : null),
                     [
                         'id' => 'container_id',
                         'class' => 'form-control',
@@ -113,7 +113,7 @@
                 {!! Form::select(
                     'departure_id',
                     array_replace(['to_be_disabled' => __('admin.select')], $cities_and_regions->all()),
-                    old('departure_id'),
+                    old('departure_id', isset($booking_container) ? $booking_container->departure_id : null),
                     [
                         'id' => 'departure_id',
                         'class' => 'form-control departureSelect',
@@ -128,7 +128,7 @@
                 {!! Form::select(
                     'loading_id',
                     array_replace(['to_be_disabled' => __('admin.select')], $cities_and_regions->all()),
-                    old('loading_id'),
+                    old('loading_id', isset($booking_container) ? $booking_container->loading_id : null),
                     [
                         'id' => 'loading_id',
                         'class' => 'form-control loadingSelect',
@@ -143,7 +143,7 @@
                 {!! Form::select(
                     'aging_id',
                     array_replace(['to_be_disabled' => __('admin.select')], $cities_and_regions->all()),
-                    old('aging_id'),
+                    old('aging_id', isset($booking_container) ? $booking_container->aging_id : null),
                     [
                         'id' => 'aging_id',
                         'class' => 'form-control agingSelect',
@@ -155,7 +155,7 @@
         <div class="col-md-6 col-sm-12">
             <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
                 {!! Form::label('price', __('admin.price')) !!}
-                {!! Form::number('price', old('price'), ['class' => 'form-control']) !!}
+                {!! Form::number('price', old('price', isset($booking_container) ? $booking_container->price : null), ['class' => 'form-control', 'id' => 'price']) !!}
                 <small class="text-danger">{{ $errors->first('price') }}</small>
             </div>
         </div>
@@ -180,29 +180,66 @@
 
 @push('js')
     <script>
-        var company_prices = {!! json_encode($company_prices) !!};
-        $('#container_id').on('change', updatePrice);
-        $('#departure_id').on('change', updatePrice);
-        $('#loading_id').on('change', updatePrice);
-        $('#aging_id').on('change', updatePrice);
+        var company_prices = {!! json_encode($company_prices, JSON_UNESCAPED_UNICODE) !!};
+
+        function bookingContainerNormalizeId(v) {
+            if (v === undefined || v === null || v === '' || v === 'to_be_disabled') {
+                return null;
+            }
+            return String(v);
+        }
+
+        function bookingContainerIdsMatch(selected, rowValue) {
+            var a = bookingContainerNormalizeId(selected);
+            if (a === null) {
+                return false;
+            }
+            if (rowValue === undefined || rowValue === null) {
+                return false;
+            }
+            return a === String(rowValue);
+        }
 
         function updatePrice() {
-            var container_id = $('#container_id option:selected').val();
-            var departure_id = $('#departure_id option:selected').val();
-            var loading_id = $('#loading_id option:selected').val();
-            var aging_id = $('#aging_id option:selected').val();
+            var containerId = bookingContainerNormalizeId($('#container_id').val());
+            if (!containerId) {
+                return;
+            }
 
-            var container_prices = company_prices[container_id];
+            var departureId = $('#departure_id').val();
+            var loadingId = $('#loading_id').val();
+            var agingId = $('#aging_id').val();
 
-            container_prices.forEach(quotation => {
+            var rows = company_prices[containerId];
+            if (!rows || !Array.isArray(rows)) {
+                return;
+            }
+
+            var matchedPrice = null;
+            for (var i = 0; i < rows.length; i++) {
+                var q = rows[i];
                 if (
-                    departure_id == quotation.departure_id &&
-                    loading_id == quotation.loading_id &&
-                    aging_id == quotation.aging_id
-                )
-                    $('#price').val(quotation.price);
-            });
+                    bookingContainerIdsMatch(departureId, q.departure_id) &&
+                    bookingContainerIdsMatch(loadingId, q.loading_id) &&
+                    bookingContainerIdsMatch(agingId, q.aging_id)
+                ) {
+                    matchedPrice = q.price;
+                }
+            }
+
+            if (matchedPrice !== null && matchedPrice !== undefined && matchedPrice !== '') {
+                $('#price').val(matchedPrice);
+            }
         }
+
+        $(function () {
+            $('#container_id, #departure_id, #loading_id, #aging_id').on('change', updatePrice);
+
+            var pv = $('#price').val();
+            if (pv === '' || pv === null || parseFloat(String(pv).replace(',', '.')) === 0) {
+                updatePrice();
+            }
+        });
     </script>
     <script>
         var factory_branches = {!! json_encode($factory_branches) !!};

@@ -24,10 +24,12 @@ class Booking extends Model
     */
 
 
-    
 
-    public function expenses(){
-        return $this->hasMany(AgentExpense::class);
+
+    public function expenses()
+    {
+        // مصروفات مرتبطة بالحجز عبر booking_id (يُعبَّأ من التطبيق/الداش من الحاوية أو من بوليصة التوصيل)
+        return $this->hasMany(AgentExpense::class, 'booking_id', 'id');
     }
 
 
@@ -208,13 +210,13 @@ class Booking extends Model
     {
         // $x = $this->expenses->sum('value') ;
         // $y = 0;
-        
+
         // foreach($this->bookingContainers as $container) {
         //     foreach($container->delivery_policies as $policy) {
         //         $y += $policy->money_transfer->value;
         //     }
         // }
-        
+
         // return $x + $y;
 
         return $this->bookingContainers->sum('price');
@@ -261,6 +263,19 @@ class Booking extends Model
     {
         $query->when($date, function (Builder $query) use ($date) {
             $query->whereDate('created_at', $date);
+        });
+    }
+
+    public function scopeFilterDateRange(Builder $query, ?string $dateFrom, ?string $dateTo)
+    {
+        $query->when($dateFrom || $dateTo, function (Builder $query) use ($dateFrom, $dateTo) {
+            if ($dateFrom && $dateTo) {
+                $query->whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59']);
+            } elseif ($dateFrom) {
+                $query->whereDate('created_at', '>=', $dateFrom);
+            } elseif ($dateTo) {
+                $query->whereDate('created_at', '<=', $dateTo);
+            }
         });
     }
     public function scopeFilterSearch(Builder $query, ?string $search)

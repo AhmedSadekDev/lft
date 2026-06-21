@@ -38,20 +38,45 @@ class BookingContainerRequest extends FormRequest
                 'nullable',
                 'string'
             ],
+            'factory_id' => [
+                'nullable',
+                'exists:factories,id'
+            ],
+            'branch_id' => [
+                'nullable',
+                'exists:branches,id'
+            ],
+            'arrival_date' => [
+                'nullable',
+                'date'
+            ],
+            'status' => [
+                'nullable',
+                'integer',
+                'in:0,1,2,3'
+            ],
+            'yard_id' => [
+                'nullable',
+                'exists:yards,id'
+            ],
+            'container_id' => [
+                'nullable',
+                'exists:containers,id'
+            ],
             'departure_id' => [
-                'required',
+                'nullable',
                 'exists:cities_and_regions,id'
             ],
             'loading_id' => [
-                'required',
+                'nullable',
                 'exists:cities_and_regions,id'
             ],
             'aging_id' => [
-                'required',
+                'nullable',
                 'exists:cities_and_regions,id'
             ],
             'price' => [
-                'required',
+                'nullable',
                 'numeric',
                 'min:0'
             ],

@@ -15,12 +15,13 @@ class LogActivity extends Model
     protected $guarded = [];
 
     protected $appends = ['date','time','action'];
+
     public function attacher(){
-        return $this->belongsTo($this->attacher_type,"attacher_id");
+        return $this->morphTo('attacher', 'attacher_type', 'attacher_id');
     }
 
     public function log(){
-        return $this->belongsTo($this->log_type,"log_id");
+        return $this->morphTo('log', 'log_type', 'log_id');
     }
 
     public function getDateAttribute(){
@@ -42,8 +43,28 @@ class LogActivity extends Model
             return $msg;
         }
         elseif ($this->log_type == MoneyTransfer::class) {
-           $msg =  __("main.transfer_money", ['value' => $value, 'name' => $name]);
-            return $msg;
+            $type = $this->log?->type;
+
+            if ($type == MoneyTransfer::officeCommission) {
+                // دخان المكتب - إضافة للمندوب
+                return __("main.received_office_commission", ['value' => $value]);
+            }
+            elseif ($type == MoneyTransfer::deliveryPolicy) {
+                // عهدة للسائق - خصم من المندوب
+                return __("main.transfer_custody_to_driver", ['value' => $value, 'name' => $name]);
+            }
+            elseif ($type == MoneyTransfer::settle) {
+                // تسوية البوليصة
+                return __("main.settle_delivery_policy_transaction", ['value' => $value, 'name' => $name]);
+            }
+            elseif ($type == MoneyTransfer::transferAgent) {
+                // تحويل لمندوب آخر
+                return __("main.transfer_money", ['value' => $value, 'name' => $name]);
+            }
+            else {
+                // من لوحة التحكم
+                return __("main.transfer_money", ['value' => $value, 'name' => $name]);
+            }
         }
         elseif ($this->log_type == BookingContainer::class) {
 

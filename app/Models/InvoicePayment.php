@@ -16,4 +16,19 @@ class InvoicePayment extends Model
     {
         return $this->belongsTo(Invoice::class);
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
+    }
+
+    public function bankTransaction()
+    {
+        return $this->belongsTo(BankTrnsaction::class, 'bank_transaction_id');
+    }
 }

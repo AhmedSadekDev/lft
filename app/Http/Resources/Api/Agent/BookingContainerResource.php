@@ -26,11 +26,11 @@ class BookingContainerResource extends JsonResource
             "yard_id" => $this?->booking?->yard?->id ?? "",
             "booking_id" => $this->booking_id ?? "",
             "notes" => NoteResource::collection($this->notes),
-            'specification_latter' => $this->bookingPapers->where('type', 0)->last()->image->image ?? '',
-            'container_image' => $this->bookingPapers->where('type', 1)->last()->image->image ?? '',
-            'container_with_sail_image' => $this->bookingPapers->where('type', 2)->last()->image->image ?? '',
-
-
+            'specification_latter' => optional($this->bookingPapers->where('type', 0)->last())->image->image ?? '',
+            'container_image' => optional($this->bookingPapers->where('type', 1)->last())->image->image ?? '',
+            'loading_answer' => optional($this->bookingPapers->where('type', 6)->last())->image->image ?? '',
+            'container_with_sail_image' => optional($this->bookingPapers->where('type', 2)->last())->image->image ?? '',
+            'unloading_image' => optional($this->bookingPapers->where('type', 3)->last())->image->image ?? '',
         ];
     }
 }

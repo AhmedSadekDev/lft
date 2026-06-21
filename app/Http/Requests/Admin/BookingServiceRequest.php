@@ -45,6 +45,9 @@ class BookingServiceRequest extends FormRequest
             'price'         => ['required', 'numeric', 'min:0'],
             'note'          => ['sometimes', 'nullable', 'string'],
             'image'         => ['sometimes', 'nullable', 'mimes:png,jpg,jpeg', 'max:5000'],
+            'payment_type'  => ['sometimes', 'nullable', 'in:vault,bank,agent'],
+            'bank_id'       => ['required_if:payment_type,bank', 'nullable', 'exists:banks,id'],
+            'agent_id'      => ['required_if:payment_type,agent', 'nullable', 'exists:agents,id'],
         ];
     }
 
@@ -58,6 +61,9 @@ class BookingServiceRequest extends FormRequest
             'note'          => __('admin.note'),
             'image'         => __('admin.receipt_image'),
             'service_id'    => __('admin.service'),
+            'payment_type'  => __('admin.payment_type'),
+            'bank_id'       => __('main.bank'),
+            'agent_id'      => __('main.agent'),
         ];
     }
 

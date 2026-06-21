@@ -15,4 +15,8 @@ class VaultTransaction extends Model
     {
         return $this->belongsTo(Bank::class);
     }
+    public function agient()
+    {
+        return $this->belongsTo(Agent::class);
+    }
 }

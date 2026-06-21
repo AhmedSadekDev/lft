@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Booking;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InvoiceRequest;
+use App\Mappers\ServiceCategoryStatusMapper;
 use App\Models\Booking;
 use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Collection;
@@ -30,9 +31,7 @@ class BookingInvoiceController extends Controller
     public function create(Request $request, Booking $booking)
     {
         $company = $booking->company;
-        $invoice_number = date("Y") . '-'
-            . invoiceNumberTrim($company->id) . '-'
-            . invoiceNumberTrim(count($company->invoices) + 1);
+        $invoice_number = Invoice::getNextInvoiceNumberForCompany($company->id);
 
         $transportation_total = $booking->transportation_total_price;
         $taxed_services_total = $booking->taxed_services_total_price;
@@ -64,18 +63,19 @@ class BookingInvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
+            // dd($request->all());
             $company = $booking->company;
             $company = $booking->company;
-            $invoice_number = date("Y") . '-'
-                . invoiceNumberTrim($company->id) . '-'
-                . invoiceNumberTrim(
-                    Invoice::getMaxCompanyInvoiceNumber($company->id)
-                        + 1
-                );
+            // $invoice_number = date("Y") . '-'
+            //     . invoiceNumberTrim($company->id) . '-'
+            //     . invoiceNumberTrim(
+            //         Invoice::getMaxCompanyInvoiceNumber($company->id)
+            //             + 1
+            //     );
 
             $invoice_data = array_merge(
                 [
-                    'invoice_number' => $invoice_number,
+                    'invoice_number' => $request->invoice_number,
                     'booking_id' => $booking->id,
 
                     'transportation_json' => $booking->bookingContainers,
@@ -88,13 +88,12 @@ class BookingInvoiceController extends Controller
                 ],
                 $request->only([
                     'value_added_tax',
-                    'sales_tax',
                     'discount'
                 ])
             );
             $invoice = Invoice::create($invoice_data);
             DB::commit();
-            return redirect()->route('bookings.index')->with('success', __('alerts.added_successfully'));
+            return redirect()->route('bookings.show', $booking)->with('success', __('alerts.added_successfully'));
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -125,8 +124,38 @@ class BookingInvoiceController extends Controller
         $lpr_limit = 8;
 
         $booking = $booking_invoice->booking;
+        $booking->loadMissing(['expenses.service.serviceCategory']);
+
+        // Get taxed services and separate receipts (ايصالات) from them
+        $taxedServices = $booking->getTaxedServices()->get();
+        $receiptServices = collect();
+        $nonReceiptTaxedServices = collect();
+
+        foreach ($taxedServices as $service) {
+            $fullName = $service->full_name ?? '';
+            // Check if service name contains "ايصالات" or "receipt"
+            if (stripos($fullName, 'ايصالات') !== false || stripos($fullName, 'receipt') !== false) {
+                $receiptServices->push($service);
+            } else {
+                $nonReceiptTaxedServices->push($service);
+            }
+        }
+
+        // Sort services: "مصاريف أخرى" should come before "بيانه"
+        $nonReceiptTaxedServices = $nonReceiptTaxedServices->sortBy(function ($service) {
+            $fullName = $service->full_name ?? '';
+            // "مصاريف أخرى" should have priority 1, "بيانه" should have priority 2
+            if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
+                return 1;
+            } elseif (stripos($fullName, 'بيانه') !== false || stripos($fullName, 'بيان') !== false) {
+                return 2;
+            }
+            return 3; // Other services
+        })->values(); // Reset keys after sorting
+
+        // Invoice rows: containers + non-receipt taxed services
         $invoice_rows = $booking->bookingContainers
-            ->concat($booking->getTaxedServices);
+            ->concat($nonReceiptTaxedServices);
         $fpr = [];
         $mps = [];
         $lpr = [];
@@ -154,6 +183,82 @@ class BookingInvoiceController extends Controller
         if (!is_array($lpr) && !($lpr instanceof Collection))
             $lpr = [$lpr];
 
+        // Attachment rows: only untaxed receipt services (sorted)
+        // Get receipt services from untaxed services
+        $untaxedServices = $booking->getUntaxedServices()->get();
+        $untaxedReceiptServices = $untaxedServices->filter(function ($service) {
+            $fullName = $service->full_name ?? '';
+            return stripos($fullName, 'ايصالات') !== false || stripos($fullName, 'receipt') !== false || stripos($fullName, 'إيصالات') !== false;
+        });
+
+        // Get all receipt services (from taxedServices, they are already collected above in $receiptServices)
+        // Note: receiptServices from taxedServices are already collected above (line 138)
+        // Combine all receipt services (from both taxed and untaxed service collections)
+        $allReceiptServices = $untaxedReceiptServices->concat($receiptServices);
+
+        // Sort all receipt services: "مصاريف أخرى" should come before "بيانه"
+        $allReceiptServices = $allReceiptServices->sortBy(function ($service) {
+            $fullName = $service->full_name ?? '';
+            if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
+                return 1;
+            } elseif (stripos($fullName, 'بيانه') !== false || stripos($fullName, 'بيان') !== false) {
+                return 2;
+            }
+            return 3;
+        })->values();
+
+        // Group receipt services by type (e.g., "تخصيص", "هيئة الميناء")
+        $groupedReceiptServices = collect();
+        $receiptGroups = $allReceiptServices->groupBy(function ($service) {
+            $fullName = $service->full_name ?? '';
+            // Extract the part before "ايصالات" as the group key
+            $parts = preg_split('/(ايصالات|إيصالات)/i', $fullName, 2, PREG_SPLIT_DELIM_CAPTURE);
+            if (count($parts) >= 2) {
+                $beforePart = trim($parts[0]);
+                // If there's a part after "ايصالات", use it instead
+                if (isset($parts[2]) && !empty(trim($parts[2]))) {
+                    $beforePart = trim($parts[2]);
+                }
+                return !empty($beforePart) ? $beforePart : 'عام';
+            }
+            return 'عام';
+        });
+
+        foreach ($receiptGroups as $groupKey => $services) {
+            $totalPrice = $services->sum('price');
+            $allNotes = $services->filter(function ($s) {
+                return !empty($s->note);
+            })->pluck('note')->toArray();
+
+            // Create a grouped service object
+            $groupedService = (object)[
+                'type' => 'grouped_receipt',
+                'group_key' => $groupKey,
+                'services' => $services,
+                'total_price' => $totalPrice,
+                'notes' => $allNotes,
+                'count' => $services->count()
+            ];
+            $groupedReceiptServices->push($groupedService);
+        }
+
+        // مصروفات الوكلاء (التطبيق/الداش) المدخلة في إجمالي «غير الضريبية» — نفس منطق Booking::getUntaxedServicesTotalPriceAttribute
+        $invoiceableAgentExpenses = $booking->expenses()
+            ->whereHas('service.serviceCategory', function ($q) {
+                $q->where('service_status', ServiceCategoryStatusMapper::UNTAXED);
+            })
+            ->orderBy('id')
+            ->get();
+
+        $agentExpenseRows = $invoiceableAgentExpenses->map(fn ($expense) => (object) [
+            'type' => 'agent_expense_attachment',
+            'expense' => $expense,
+        ]);
+
+        $attachment_rows = $groupedReceiptServices->concat($agentExpenseRows);
+
+        $agentExpensesAttachmentTotal = $invoiceableAgentExpenses->sum('value');
+
         return view('admin.bookings.booking-invoices.show', [
             'invoice' => $booking_invoice,
             'fpr' => $fpr,
@@ -164,8 +269,9 @@ class BookingInvoiceController extends Controller
             'mpr_limit' => $mpr_limit,
             'lpr_limit' => $lpr_limit,
             'booking' => $booking,
-            'attachment_rows' => $booking->getUnTaxedServices
-        ])->render();
+            'attachment_rows' => $attachment_rows,
+            'agent_expenses_attachment_total' => $agentExpensesAttachmentTotal,
+        ]);
     }
 
     /**
@@ -191,6 +297,7 @@ class BookingInvoiceController extends Controller
 
             'invoice'           => $booking_invoice,
             'booking'           => $booking,
+            'invoice_number'    => $booking->invoice->invoice_number,
 
             'transportation_total' => $transportation_total,
             'taxed_services_total' => $taxed_services_total,
@@ -223,10 +330,10 @@ class BookingInvoiceController extends Controller
                     'transportation_total_before_vat' => $booking->transportation_total_price,
                     'taxed_services_total_before_vat' => $booking->taxed_services_total_price,
                     'untaxed_services_total_before_vat' => $booking->untaxed_services_total_price,
+                    'invoice_number' => $request->invoice_number
                 ],
                 $request->only([
                     'value_added_tax',
-                    'sales_tax',
                     'discount'
                 ])
             );
@@ -237,11 +344,7 @@ class BookingInvoiceController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             \Illuminate\Support\Facades\Log::error($th);
-            if (!$th->getMessage()) {
-                redirect()->back()->with('error', $th->getResponse()?->getData());
-            } elseif ($th->getMessage()) {
-                redirect()->back()->with('error', $th->getMessage());
-            }
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 
@@ -251,8 +354,34 @@ class BookingInvoiceController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(Invoice $booking_invoice)
     {
-        //
+        DB::beginTransaction();
+        try {
+            if ($booking_invoice->invoicePayments()->exists()) {
+                DB::rollBack();
+                return redirect()
+                    ->back()
+                    ->with('error', 'لا يمكن حذف الفاتورة بعد تسجيل أي عملية سداد عليها');
+            }
+
+            $booking = $booking_invoice->booking;
+            $booking_invoice->delete();
+            DB::commit();
+
+            if ($booking) {
+                return redirect()
+                    ->route('bookings.show', $booking->id)
+                    ->with('success', __('alerts.deleted_successfully'));
+            }
+
+            return redirect()
+                ->route('bookings.index')
+                ->with('success', __('alerts.deleted_successfully'));
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error($th);
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

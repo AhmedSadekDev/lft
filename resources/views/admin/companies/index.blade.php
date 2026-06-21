@@ -5,10 +5,28 @@
         <!--begin::Card-->
         <div class="card card-custom">
             <div class="card-header flex-wrap py-5">
+                <div class="card-title">
+                    <h3 class="card-label">{{ __('main.companies') }}</h3>
+                </div>
                 <div class="card-toolbar">
+                    <!--begin::Search-->
+                    <form method="GET" action="{{ route('companies.index') }}" class="d-flex align-items-center mr-4">
+                        <input type="text" name="search" class="form-control form-control-solid w-250px mr-3"
+                               placeholder="بحث بالاسم، البريد، الهاتف..."
+                               value="{{ request('search') }}">
+                        <button type="submit" class="btn btn-light-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        @if(request('search'))
+                            <a href="{{ route('companies.index') }}" class="btn btn-light ml-2">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        @endif
+                    </form>
+                    <!--end::Search-->
                     <!--begin::Button-->
                     @if (auth()->user()->hasPermissionTo('companies.create'))
-                        <a href="{{ route('companies.create') }}" class="btn btn-primary font-weight-bolder">
+                        <a href="{{ route('companies.create') }}" class="btn btn-primary font-weight-bolder mr-2">
                             <span class="svg-icon svg-icon-md">
                                 <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -26,115 +44,217 @@
                         </a>
                     @endif
                     <!--end::Button-->
+                    <div class="p-2">
+                        <a href="{{ route('companies.export-excel', ['search' => request('search')]) }}"
+                           class="btn btn-primary">
+                            <i class="fas fa-file-excel"></i> تصدير إلى Excel
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
+                @if($companies->count() > 0)
                 <div class="table-responsive">
-
-                    <table class="table" id="table">
-                        <thead class="thead-light">
+                    <table class="table table-hover table-separate table-head-custom no-datatable" id="table" style="width: 100%">
+                        <thead>
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">{{ __('admin.name') }}</th>
-                                <th scope="col">{{ __('admin.email') }}</th>
-                                <th scope="col">{{ __('admin.address') }}</th>
-                                <th scope="col">{{ __('admin.phone') }}</th>
-                                <th scope="col">{{ __('admin.tax_no') }}</th>
-                                <th scope="col">{{ __('admin.taxed_status') }}</th>
-                                <th scope="col">{{ __('admin.bill_type') }}</th>
-                                <th scope="col">{{ __('admin.attachments') }}</th>
-                                <th scope="col">{{ __('admin.created_at') }}</th>
-                                <th scope="col"></th>
+                                <th class="text-center" style="width: 60px">#</th>
+                                <th style="min-width: 180px">معلومات الشركة</th>
+                                <th style="min-width: 150px">التواصل</th>
+                                <th style="min-width: 120px">الضريبي</th>
+                                <th class="text-center" style="min-width: 120px">الحالة الضريبية</th>
+                                <th class="text-center" style="min-width: 100px">نوع الفاتورة</th>
+                                <th class="text-center" style="min-width: 120px">آخر فاتورة</th>
+                                <th class="text-center" style="min-width: 150px">الرصيد المتبقي</th>
+                                <th class="text-center" style="min-width: 100px">الملحقات</th>
+                                <th class="text-center" style="min-width: 120px">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($companies as $company)
+                                @php
+                                    // نفس منطق كشف الحساب: رصيد افتتاحي + (إجمالي الفواتير) - (إجمالي السداد الفعلي)
+                                    $openingBalance = (float) ($company->opening_balance ?? 0);
+                                    $totalInvoices = 0;
+                                    $totalPayments = 0;
+
+                                    foreach ($company->bookings as $booking) {
+                                        if (!$booking->invoice) {
+                                            continue;
+                                        }
+
+                                        $invoice = $booking->invoice;
+
+                                        // نفس معادلة calculateInvoiceTotal في AccountController
+                                        $invoiceTotalBeforeTax = (float) ($invoice->invoice_total_before_tax ?? 0);
+                                        $taxedServicesTotal = (float) ($invoice->taxed_services_total_before_vat ?? 0);
+                                        $untaxedServicesTotal = (float) ($invoice->untaxed_services_total_before_vat ?? 0);
+                                        $vatValue = (float) ($invoice->value_added_tax_amount ?? 0);
+                                        $saleValue = (float) ($invoice->sales_tax_amount ?? 0);
+                                        $discountValue = (float) ($invoice->discount_amount ?? 0);
+
+                                        $totalInvoices += ceil(
+                                            $invoiceTotalBeforeTax
+                                            + $taxedServicesTotal
+                                            + $untaxedServicesTotal
+                                            + $vatValue
+                                            - $saleValue
+                                            - $discountValue
+                                        );
+
+                                        // نفس منطق calculatePaidAmount: استبعاد الشيكات غير المستحقة
+                                        $totalPayments += $invoice->invoicePayments
+                                            ->filter(function ($payment) {
+                                                return $payment->payment_type !== 'check' || !is_null($payment->check_paid_at);
+                                            })
+                                            ->sum('value');
+                                    }
+
+                                    $remainingBalance = $openingBalance + $totalInvoices - $totalPayments;
+                                @endphp
                                 <tr>
-                                    <th scope="row">{{ $company->id }}</th>
-                                    <td>
-                                        {{ $company->name }}
+                                    <td class="text-center align-middle">
+                                        <span class="text-muted font-weight-bold">{{ $company->id }}</span>
                                     </td>
                                     <td>
-                                        {{ $company->email }}
+                                        <div class="d-flex flex-column">
+                                            <span class="text-dark font-weight-bold mb-1">{{ $company->name }}</span>
+                                            @if($company->address)
+                                                <span class="text-muted font-size-sm">
+                                                    <i class="fas fa-map-marker-alt text-muted mr-1"></i>
+                                                    {{ $company->address }}
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td>
-                                        {{ $company->address }}
+                                        <div class="d-flex flex-column">
+                                            @if($company->email)
+                                                <span class="text-dark-75 font-size-sm mb-1">
+                                                    <i class="fas fa-envelope text-primary mr-1"></i>
+                                                    <a href="mailto:{{ $company->email }}" class="text-primary">{{ $company->email }}</a>
+                                                </span>
+                                            @endif
+                                            @if($company->phone)
+                                                <span class="text-dark-75 font-size-sm">
+                                                    <i class="fas fa-phone text-success mr-1"></i>
+                                                    <a href="tel:{{ $company->phone }}" class="text-dark-75">{{ $company->phone }}</a>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td>
-                                        {{ $company->phone }}
+                                        @if($company->tax_no)
+                                            <span class="badge badge-light-primary font-weight-bold">
+                                                {{ $company->tax_no }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
                                     </td>
-                                    <td>
-                                        {{ $company->tax_no }}
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="badge badge-{{ $company->taxed == 0 ? 'danger' : 'success' }} text-white">
-                                            <i class="fa fa-{{ $company->taxed == 0 ? 'xmark' : 'check' }} text-white"></i>
+                                    <td class="text-center align-middle">
+                                        <span class="badge badge-{{ $company->taxed == 0 ? 'danger' : 'success' }} font-weight-bold">
+                                            <i class="fa fa-{{ $company->taxed == 0 ? 'times' : 'check' }} mr-1"></i>
                                             {{ $company->taxed_invoice }}
                                         </span>
                                         @if($company->invoices->count())
-                                        <a class="mt-2" href="{{ route('bokkings.invoices', $company->id) }}">
-                                            {{ __('main.Tax_invoices') }}
-                                        </a>
+                                            <div class="mt-1">
+                                                <a href="{{ route('bokkings.invoices', $company->id) }}" class="btn btn-sm btn-light-primary">
+                                                    <i class="fas fa-file-invoice mr-1"></i>
+                                                    {{ __('main.Tax_invoices') }}
+                                                </a>
+                                            </div>
                                         @endif
                                     </td>
-                                    <td>
-                                        {{ $company->bill_type == 1 ? __('admin.bill_type_invoice') : __('admin.bill_type_statement') }}
+                                    <td class="text-center align-middle">
+                                        <span class="badge badge-light-info font-weight-bold">
+                                            {{ $company->bill_type == 1 ? __('admin.bill_type_invoice') : __('admin.bill_type_statement') }}
+                                        </span>
                                     </td>
-                                    <td>
-
-                                        @if (!is_null($company->attachments))
-                                            @if (is_array($company->attachments))
-                                                @foreach ($company->attachments as $attachment)
-                                                    <a href="{{ url($attachment) }}"
-                                                        class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3 ">
-                                                        <i
-                                                            class="fas fa-file-{{ pathinfo($attachment, PATHINFO_EXTENSION) == 'pdf' ? 'pdf text-danger' : 'image text-primary' }} "></i>
-                                                    </a>
-                                                @endforeach
+                                    <td class="text-center align-middle">
+                                        @php
+                                            $lastInvoice = $company->companyInvoices()->latest()->first();
+                                        @endphp
+                                        @if($lastInvoice && $lastInvoice->created_at)
+                                            <span class="text-dark-75 font-weight-bold">
+                                                {{ $lastInvoice->created_at->format('Y-m-d') }}
+                                            </span>
+                                            <div class="text-muted font-size-sm">
+                                                {{ $lastInvoice->created_at->diffForHumans() }}
+                                            </div>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <span class="badge badge-{{ $remainingBalance > 0 ? 'warning' : ($remainingBalance < 0 ? 'info' : 'success') }} badge-lg font-weight-bold mb-2">
+                                                {{ number_format(abs($remainingBalance), 2) }} ج
+                                            </span>
+                                            @if($remainingBalance > 0)
+                                                <span class="text-muted font-size-sm mb-2">مستحق</span>
+                                            @elseif($remainingBalance < 0)
+                                                <span class="text-muted font-size-sm mb-2">رصيد زائد</span>
                                             @else
-                                                <a href="{{ url($company->attachments) }}"
-                                                    class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3 ">
-                                                    <i class="fas fa-file-pdf text-danger"></i>
+                                                <span class="text-muted font-size-sm mb-2">مسدد</span>
+                                            @endif
+                                            @if(auth()->user()->hasPermissionTo('accounts.index'))
+                                                <a href="{{ route('accounts.statement', $company->id) }}" class="btn btn-sm btn-light-primary">
+                                                    <i class="fas fa-file-invoice mr-1"></i>
+                                                    كشف حساب
                                                 </a>
                                             @endif
+                                        </div>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        @if (!is_null($company->attachments))
+                                            <div class="d-flex justify-content-center">
+                                                @if (is_array($company->attachments))
+                                                    @foreach ($company->attachments as $attachment)
+                                                        <a href="{{ url($attachment) }}" target="_blank" class="btn btn-icon btn-light btn-hover-primary btn-sm mr-1" title="عرض الملف">
+                                                            <i class="fas fa-file-{{ pathinfo($attachment, PATHINFO_EXTENSION) == 'pdf' ? 'pdf text-danger' : 'image text-primary' }}"></i>
+                                                        </a>
+                                                    @endforeach
+                                                @else
+                                                    <a href="{{ url($company->attachments) }}" target="_blank" class="btn btn-icon btn-light btn-hover-primary btn-sm" title="عرض الملف">
+                                                        <i class="fas fa-file-pdf text-danger"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <span class="text-muted">-</span>
                                         @endif
                                     </td>
-                                    <td>{{ $company->created_at }}</td>
-                                    <td>
-                                        <div class="row">
-                                            <div class="col-md-3 mr-3">
+                                    <td class="text-center align-middle">
+                                        <div class="dropdown dropdown-inline">
+                                            <a href="javascript:;" class="btn btn-sm btn-light-primary btn-icon" data-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
                                                 @if (auth()->user()->hasPermissionTo('companies.update'))
-                                                    <a href="{{ route('companies.edit', $company->id) }}"
-                                                        class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3 ">
-                                                        <i class="fas fa-edit text-primary"></i>
+                                                    <a class="dropdown-item" href="{{ route('companies.edit', $company->id) }}">
+                                                        <i class="fas fa-edit text-primary mr-2"></i> تعديل
                                                     </a>
                                                 @endif
-                                            </div>
-                                            <div class="col-md-3">
-                                                @if (auth()->user()->hasPermissionTo('companies.delete'))
-                                                    <button
-                                                        class="btn btn-icon btn-light btn-hover-danger btn-sm mx-3 delete"
-                                                        onclick="Delete('{{ $company->id }}')">
-                                                        <i class="fas fa-trash text-danger"></i>
-                                                    </button>
-                                                @endif
-                                            </div>
-                                            <div class="col-md-12 mt-2">
                                                 @if (auth()->user()->hasPermissionTo('transportations.create'))
-                                                    <a href="{{ route('companyTransportations.index', ['company_id' => $company->id]) }}"
-                                                        class="btn btn-primary btn-hover-light">
-                                                        <i class="fas fa-plus text-white"></i>
-                                                        {{ __('admin.add_quotation_price') }}
+                                                    <a class="dropdown-item" href="{{ route('companyTransportations.index', ['company_id' => $company->id]) }}">
+                                                        <i class="fas fa-plus text-success mr-2"></i> إضافة عرض سعر
                                                     </a>
                                                 @endif
-                                            </div>
-                                            <div class="col-md-12 mt-2">
                                                 @if (auth()->user()->hasPermissionTo('services.create'))
-                                                    <a href="{{ route('companyServices.index', ['company' => $company]) }}"
-                                                        class="btn btn-primary btn-hover-light">
-                                                        <i class="fas fa-plus text-white"></i>
-                                                        {{ __('admin.services') }}
+                                                    <a class="dropdown-item" href="{{ route('companyServices.index', ['company' => $company]) }}">
+                                                        <i class="fas fa-cog text-info mr-2"></i> الخدمات
+                                                    </a>
+                                                @endif
+                                                @if(auth()->user()->hasPermissionTo('accounts.index'))
+                                                    <a class="dropdown-item" href="{{ route('accounts.statement', $company->id) }}">
+                                                        <i class="fas fa-file-invoice text-warning mr-2"></i> كشف حساب
+                                                    </a>
+                                                @endif
+                                                <div class="dropdown-divider"></div>
+                                                @if (auth()->user()->hasPermissionTo('companies.delete'))
+                                                    <a class="dropdown-item text-danger" href="javascript:;" onclick="Delete('{{ $company->id }}')">
+                                                        <i class="fas fa-trash mr-2"></i> حذف
                                                     </a>
                                                 @endif
                                             </div>
@@ -145,6 +265,35 @@
                         </tbody>
                     </table>
                 </div>
+                @else
+                    <div class="text-center py-10">
+                        <i class="fas fa-building fa-3x text-muted mb-4"></i>
+                        <h4 class="text-muted">لا توجد شركات</h4>
+                        @if (auth()->user()->hasPermissionTo('companies.create'))
+                            <a href="{{ route('companies.create') }}" class="btn btn-primary mt-3">
+                                <i class="fas fa-plus mr-2"></i> إضافة شركة جديدة
+                            </a>
+                        @endif
+                    </div>
+                @endif
+                @if($companies->hasPages())
+                <!--begin::Pagination-->
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div class="mr-3">
+                            <span class="text-muted font-weight-bold">
+                                عرض <span class="text-dark">{{ $companies->firstItem() ?? 0 }}</span>
+                                إلى <span class="text-dark">{{ $companies->lastItem() ?? 0 }}</span>
+                                من <span class="text-dark">{{ $companies->total() }}</span> نتيجة
+                            </span>
+                        </div>
+                        <div>
+                            {{ $companies->links() }}
+                        </div>
+                    </div>
+                </div>
+                <!--end::Pagination-->
+                @endif
             </div>
         </div>
         <!--end::Card-->
@@ -167,6 +316,76 @@
         </div>
     @endif
 @endsection
+@push('css')
+    <style>
+        .table-separate {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table-separate thead th {
+            border: none;
+            background-color: #f3f6f9;
+            color: #464e5f;
+            font-weight: 600;
+            padding: 15px 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-separate tbody tr {
+            background-color: #fff;
+            border: 1px solid #ebedf3;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .table-separate tbody tr:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .table-separate tbody td {
+            border: none;
+            padding: 20px 10px;
+            vertical-align: middle;
+        }
+
+        .table-separate tbody tr:first-child td:first-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .table-separate tbody tr:first-child td:last-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .badge-lg {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .dropdown-menu {
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 10px 20px;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3f6f9;
+            padding-right: 25px;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+        }
+    </style>
+@endpush
 @push('js')
     <script>
         function Delete(id) {
@@ -216,3 +435,4 @@
         }
     </script>
 @endpush
+

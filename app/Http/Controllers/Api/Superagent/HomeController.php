@@ -17,24 +17,24 @@ class HomeController extends Controller
         try {
             //->where([["booking_container_id", "=", $specification_daily->booking_container_id], ["booking_container_status", "=", $specification_daily?->booking_container?->status]
 
-            $specification_daily_booking_containers =  DailyBookingContainer::whereDate("created_at", now())->where("superagent_id", auth()->guard("superagent")->id())->where("booking_container_status", 0)->get();
+            $specification_daily_booking_containers =  DailyBookingContainer::where("superagent_id", auth()->guard("superagent")->id())->where("booking_container_status", 0)->get();
 
             $specification_assigned_booking_containers = 0;
             $specification_finished_booking_containers = 0;
 
-            $loading_daily_booking_containers =  DailyBookingContainer::whereDate("created_at", now())->where("superagent_id", auth()->guard("superagent")->id())->where("booking_container_status", 1)->get();
+            $loading_daily_booking_containers =  DailyBookingContainer::where("superagent_id", auth()->guard("superagent")->id())->where("booking_container_status", 1)->get();
 
             $loading_assigned_booking_containers = 0;
             $loading_finished_booking_containers = 0;
 
-            $unloading_daily_booking_containers =  DailyBookingContainer::whereDate("created_at", now())->where("superagent_id", auth()->guard("superagent")->id())->where("booking_container_status", 2)->get();
+            $unloading_daily_booking_containers =  DailyBookingContainer::where("superagent_id", auth()->guard("superagent")->id())->where("booking_container_status", 2)->get();
 
             $unloading_assigned_booking_containers = 0;
             $unloading_finished_booking_containers = 0;
 
             foreach ($specification_daily_booking_containers as $specification_daily) {
 
-                $booking_container_agent = BookingContainerAgent::whereDate("created_at", now())->where([["booking_container_id", "=", $specification_daily->booking_container_id]])->first();
+                $booking_container_agent = BookingContainerAgent::where([["booking_container_id", "=", $specification_daily->booking_container_id]])->first();
 
                 if ($booking_container_agent) {
 
@@ -52,7 +52,7 @@ class HomeController extends Controller
 
             foreach ($loading_daily_booking_containers as $loading_daily) {
 
-                $booking_container_agent = BookingContainerAgent::whereDate("created_at", now())->where([["booking_container_id", "=", $loading_daily->booking_container_id]])->first();
+                $booking_container_agent = BookingContainerAgent::where([["booking_container_id", "=", $loading_daily->booking_container_id]])->first();
 
                 if ($booking_container_agent) {
 
@@ -71,7 +71,7 @@ class HomeController extends Controller
 
             foreach ($unloading_daily_booking_containers as $unloading_daily) {
 
-                $booking_container_agent = BookingContainerAgent::whereDate("created_at", now())->where([["booking_container_id", "=", $unloading_daily->booking_container_id]])->first();
+                $booking_container_agent = BookingContainerAgent::where([["booking_container_id", "=", $unloading_daily->booking_container_id]])->first();
 
                 if ($booking_container_agent) {
 

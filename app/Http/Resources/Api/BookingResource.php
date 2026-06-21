@@ -6,20 +6,24 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookingResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
+    protected $containerId;
+
+    public function __construct($resource, $containerId = null)
+    {
+        parent::__construct($resource);
+        $this->containerId = $containerId;
+    }
+
     public function toArray($request)
     {
         return [
-            'containers' => !is_null($this->bookingContainers) ? ContainerResource::collection($this->bookingContainers) : null,
-
+            'container' => $this->bookingContainers?->first() 
+    ? new ContainerResource($this->bookingContainers->first())
+    : null,
+            // باقي البيانات
             'status' => !is_null($this->last_movements) ? ($this->last_movements?->last()?->status ?? null) : null,
-            'container_count' => !is_null($this->bookingContainers) ? $this->bookingContainers->count() : 0,
-            'employee' => !is_null($this->employee) ? $this->employee->name : null,
+            'container_count' => $this->bookingContainers?->count() ?? 0,
+            'employee' => $this->employee->name ?? null,
             'shipping_agency' => $this->shippingAgent->title ?? null,
             'Booking_number' => $this->booking_number ?? null,
             'custom_certificate_number' => $this->certificate_number ?? null,
@@ -27,6 +31,5 @@ class BookingResource extends JsonResource
             'discharge_date' => $this->discharge_date ?? null,
             'permit_end_date' => $this->permit_end_date ?? null,
         ];
-
     }
 }

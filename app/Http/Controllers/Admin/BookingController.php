@@ -11,12 +11,16 @@ use App\Models\BookingPaper;
 use App\Models\Branch;
 use App\Models\CitiesAndRegions;
 use App\Models\Company;
+use App\Models\Note;
 use App\Models\Container;
 use App\Models\DeliveryPolicy;
 use App\Models\Employee;
+use App\Models\Image;
 use App\Models\Factory;
 use App\Models\ServiceCategory;
 use App\Models\shippingAgent;
+use App\Models\MoneyTransfer;
+use App\Models\Agent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\NewBooking;
@@ -39,28 +43,56 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        $bookings  = Booking::query();
+        $bookings = Booking::query()
+            ->with(['company', 'factory', 'invoice']);
 
-
+        // Search filter
         if ($request->filled('search')) {
-            $bookings->whereHas('bookingContainers', function($container) use($request){
-                $container->where('container_no', 'like',  '%' . $request->search . '%');
-            })
-                ->orWhere('booking_number', 'like', '%' . $request->search . '%')
-                ->orWhere('employee_name', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $bookings->where(function($query) use ($search) {
+                $query->where('booking_number', 'like', '%' . $search . '%')
+                    ->orWhere('employee_name', 'like', '%' . $search . '%')
+                    ->orWhereHas('bookingContainers', function($container) use($search){
+                        $container->where('container_no', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('factory', function($factory) use($search){
+                        $factory->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('invoice', function($invoice) use($search){
+                        $invoice->where('invoice_number', 'like', '%' . $search . '%');
+                    });
+            });
         }
 
-        if ($request->filled('arrival_date')) {
-            $bookings->filterDate(request('arrival_date'));
-
+        // Date range filter
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $bookings->filterDateRange(request('date_from'), request('date_to'));
         }
 
+        // Company filter
         if ($request->filled("company")) {
             $bookings->filterCompany(request('company'));
-
         }
 
-        $bookings = $bookings->get();
+        // Tax status filter
+        if ($request->filled("tax_status")) {
+            $bookings->filterTaxStatus(request('tax_status'));
+        }
+
+        // Invoice status filter
+        if ($request->filled("invoice_status")) {
+            if ($request->invoice_status == '1') {
+                $bookings->whereHas('invoice');
+            } else {
+                $bookings->whereDoesntHave('invoice');
+            }
+        }
+
+        // Per page filter
+        $perPage = $request->get('per_page', 15);
+        $perPage = min(max((int)$perPage, 15), 100); // Between 15 and 100
+
+        $bookings = $bookings->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
 
         $companies = Company::query()->get();
 
@@ -118,8 +150,9 @@ class BookingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(BookingRequest $request)
+    public function store(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $booking = Booking::create($request->only(
@@ -148,9 +181,27 @@ class BookingController extends Controller
                 }
             }
             BookingContainer::insert($dataBookingContainers);
-            
+            if ($request->hasFile('image')) {
+
+                // Create new paper
+                $bookingPaper = BookingPaper::create([
+                    'booking_id' => $booking->id,
+                    'type' => $request->type,
+                    'booking_container_id' => $request->booking_container_id ?? null,
+                ]);
+
+                // Save image file
+                $path = $request->file('image')->store('uploads', 'public');
+                $image_data["image"] = $request->image;
+                $image_data["imageable_id"] = $bookingPaper->id;
+                $image_data["imageable_type"] = "App\Models\BookingPaper";
+                Image::create($image_data);
+            }
+
             $company = Company::find($request->company_id);
+            $employee = Employee::find($request->employee_id);
             Notification::send($company, new NewBooking($booking));
+            Notification::send($employee, new NewBooking($booking));
 
             DB::commit();
             if ($booking) {
@@ -160,6 +211,7 @@ class BookingController extends Controller
                 redirect()->back()->with('error', 'something went wrong');
             }
         } catch (\Throwable $th) {
+
             DB::rollBack();
             // throw $th;
             if (!$th->getMessage()) {
@@ -187,8 +239,12 @@ class BookingController extends Controller
             }),
             'classifications'   => ServiceCategory::pluck('title', 'id'),
             'citiesAndRegions'  => CitiesAndRegions::pluck('title', 'id'),
-            'deliveryPolices' => DeliveryPolicy::all()
+            'deliveryPolices'   => DeliveryPolicy::whereHas('booking_containers', function($container) use($booking) {
+                $container->where('booking_id', $booking->id);
+            })->get()
         ];
+
+
 
         return view('admin.bookings.show', $input);
     }
@@ -231,6 +287,7 @@ class BookingController extends Controller
      */
     public function update(UpdateBookingRequest $request, Booking $booking)
     {
+        // dd($request->all());
         DB::beginTransaction();
 
         try {
@@ -248,25 +305,182 @@ class BookingController extends Controller
                 'employee_name'
             ));
 
-            // Get the existing container IDs
-            $bookingContainersID = $booking->bookingContainers->pluck('id')->toArray();
+            // Handle containers update - preserve existing containers and their data (expenses, container_no, etc.)
+            // IMPORTANT: Do NOT delete existing containers to preserve expenses and container_no
+            $existingContainers = $booking->bookingContainers->sortBy('id')->values();
+            $requestContainers = $request->get('containers', []);
 
-            // Delete existing containers
-            BookingContainer::destroy($bookingContainersID);
+            // Check if request has container arrays (from thirdStep views) or nested arrays (from form view)
+            $hasContainerArrays = $request->has('container_no') || $request->has('sail_of_numbers');
 
-            // Insert new containers
-            foreach ($request->get('containers') as $container) {
-                for ($i = 0; $i < $container['containers_count']; $i++) {
-                    $dataBookingContainers = [
-                        'booking_id'    => $booking->id,
-                        'container_id'  => $container['container_id'],
-                        'arrival_date'  => $container['arrival_date'],
-                        'branch_id'     => $container['branch_id'],
-                        'container_no'  => $container['container_no'] ?? null,
-                        'sail_of_number'=> $container['sail_of_number'] ?? null,
-                    ];
-                    BookingContainer::create($dataBookingContainers);
+            // Only update containers if containers data is provided in request
+            if (!empty($requestContainers) || $hasContainerArrays) {
+            if ($hasContainerArrays) {
+                // Handle arrays format (from thirdStep/outbound.blade.php or thirdStep/inbound.blade.php)
+                $containerNos = $request->get('container_no', []);
+                $sailOfNumbers = $request->get('sail_of_numbers', []);
+                $arrivalDates = $request->get('arrival_dates', []);
+                $branches = $request->get('branches', []);
+                $containerIds = $request->get('containers', []);
+
+                // Update existing containers instead of deleting them to preserve expenses and container_no
+                $containerIndex = 0;
+                foreach ($existingContainers as $existingContainer) {
+                    if ($containerIndex < count($containerNos)) {
+                        // Update existing container with new data, but preserve container_no if not provided
+                        $updateData = [];
+
+                        if (isset($containerIds[$containerIndex])) {
+                            $updateData['container_id'] = $containerIds[$containerIndex];
+                        }
+
+                        // Only update container_no if provided and not empty
+                        if (isset($containerNos[$containerIndex]) && !empty($containerNos[$containerIndex])) {
+                            $updateData['container_no'] = $containerNos[$containerIndex];
+                        }
+
+                        // Only update sail_of_number if provided and not empty
+                        if (isset($sailOfNumbers[$containerIndex]) && !empty($sailOfNumbers[$containerIndex])) {
+                            $updateData['sail_of_number'] = $sailOfNumbers[$containerIndex];
+                        }
+
+                        if (isset($arrivalDates[$containerIndex])) {
+                            $updateData['arrival_date'] = $arrivalDates[$containerIndex];
+                        }
+
+                        if (isset($branches[$containerIndex])) {
+                            $updateData['branch_id'] = $branches[$containerIndex];
+                        }
+
+                        if (!empty($updateData)) {
+                            $existingContainer->update($updateData);
+                        }
+                        $containerIndex++;
+                    }
                 }
+
+                // If there are more containers in request than existing, create new ones
+                while ($containerIndex < count($containerNos)) {
+                    BookingContainer::create([
+                        'booking_id'    => $booking->id,
+                        'container_id'  => $containerIds[$containerIndex] ?? null,
+                        'arrival_date'  => $arrivalDates[$containerIndex] ?? null,
+                        'branch_id'     => $branches[$containerIndex] ?? null,
+                        'container_no'  => $containerNos[$containerIndex] ?? null,
+                        'sail_of_number'=> $sailOfNumbers[$containerIndex] ?? null,
+                    ]);
+                    $containerIndex++;
+                }
+
+                // If there are fewer containers in request, delete the extra ones (but only if they have no expenses or delivery policies)
+                if ($containerIndex < $existingContainers->count()) {
+                    $containersToDelete = $existingContainers->slice($containerIndex);
+                    foreach ($containersToDelete as $containerToDelete) {
+                        // Only delete if container has no expenses, delivery policies, or papers
+                        $hasExpenses = $containerToDelete->expenses->count() > 0;
+                        $hasDeliveryPolicies = $containerToDelete->delivery_policies->count() > 0;
+                        $hasPapers = $containerToDelete->bookingPapers->count() > 0;
+
+                        if (!$hasExpenses && !$hasDeliveryPolicies && !$hasPapers) {
+                            $containerToDelete->delete();
+                        }
+                    }
+                }
+            } else {
+                // Handle nested arrays format (from form.blade.php) - containers[0][branch_id], etc.
+                // Update existing containers instead of deleting them
+                $containerIndex = 0;
+                $totalRequestContainers = 0;
+
+                // Calculate total containers from request (sum of containers_count)
+                foreach ($requestContainers as $containerGroup) {
+                    $totalRequestContainers += $containerGroup['containers_count'] ?? 1;
+                }
+
+                // Update existing containers
+                foreach ($existingContainers as $existingContainer) {
+                    // Find matching container group in request
+                    $matched = false;
+                    foreach ($requestContainers as $index => $containerGroup) {
+                        if (($containerGroup['container_id'] ?? null) == $existingContainer->container_id &&
+                            ($containerGroup['branch_id'] ?? null) == $existingContainer->branch_id) {
+                            // Update existing container, but preserve container_no and sail_of_number
+                            $updateData = [
+                                'container_id' => $containerGroup['container_id'] ?? $existingContainer->container_id,
+                                'arrival_date' => $containerGroup['arrival_date'] ?? $existingContainer->arrival_date,
+                                'branch_id' => $containerGroup['branch_id'] ?? $existingContainer->branch_id,
+                            ];
+
+                            // Only update container_no if explicitly provided in request
+                            if (isset($containerGroup['container_no']) && !empty($containerGroup['container_no'])) {
+                                $updateData['container_no'] = $containerGroup['container_no'];
+                            }
+
+                            // Only update sail_of_number if explicitly provided in request
+                            if (isset($containerGroup['sail_of_number']) && !empty($containerGroup['sail_of_number'])) {
+                                $updateData['sail_of_number'] = $containerGroup['sail_of_number'];
+                            }
+
+                            $existingContainer->update($updateData);
+                            $matched = true;
+                            break;
+                        }
+                    }
+
+                    // If no match found and container has expenses/delivery policies, keep it
+                    if (!$matched) {
+                        $hasExpenses = $existingContainer->expenses->count() > 0;
+                        $hasDeliveryPolicies = $existingContainer->delivery_policies->count() > 0;
+                        $hasPapers = $existingContainer->bookingPapers->count() > 0;
+
+                        // Only delete if container has no expenses, delivery policies, or papers
+                        if (!$hasExpenses && !$hasDeliveryPolicies && !$hasPapers) {
+                            $existingContainer->delete();
+                        }
+                    }
+                }
+
+                // Create new containers from request
+                foreach ($requestContainers as $containerGroup) {
+                    $containersCount = $containerGroup['containers_count'] ?? 1;
+                    for ($i = 0; $i < $containersCount; $i++) {
+                        // Check if this container already exists
+                        $exists = $existingContainers->contains(function ($container) use ($containerGroup) {
+                            return $container->container_id == ($containerGroup['container_id'] ?? null) &&
+                                   $container->branch_id == ($containerGroup['branch_id'] ?? null);
+                        });
+
+                        if (!$exists) {
+                            BookingContainer::create([
+                                'booking_id'    => $booking->id,
+                                'container_id'  => $containerGroup['container_id'] ?? null,
+                                'arrival_date'  => $containerGroup['arrival_date'] ?? null,
+                                'branch_id'     => $containerGroup['branch_id'] ?? null,
+                                'container_no'  => $containerGroup['container_no'] ?? null,
+                                'sail_of_number'=> $containerGroup['sail_of_number'] ?? null,
+                            ]);
+                        }
+                    }
+                }
+            }
+            }
+            // If no containers data in request, keep existing containers unchanged (only update booking details)
+
+            if ($request->hasFile('image')) {
+
+                // Create new paper
+                $bookingPaper = BookingPaper::create([
+                    'booking_id' => $booking->id,
+                    'type' => $request->type,
+                    'booking_container_id' => $request->booking_container_id ?? null,
+                ]);
+
+                // Save image file
+                $path = $request->file('image')->store('uploads', 'public');
+                $image_data["image"] = $request->image;
+                $image_data["imageable_id"] = $bookingPaper->id;
+                $image_data["imageable_type"] = "App\Models\BookingPaper";
+                Image::create($image_data);
             }
 
             // Commit the transaction
@@ -276,7 +490,6 @@ class BookingController extends Controller
         } catch (\Throwable $th) {
             // Rollback the transaction on error
             DB::rollBack();
-
             // Handle the exception and redirect back with error message
             $errorMessage = $th->getMessage() ?: ($th->getResponse()?->getData() ?: 'An error occurred while updating the booking.');
             return redirect()->route('bookings.index')->with('error', $errorMessage);
@@ -305,6 +518,17 @@ class BookingController extends Controller
 
         return view('admin.bookings.papers', $input);
     }
+    public function booking_notes(Booking $booking)
+    {
+        $BookingContainer = BookingContainer::where('booking_id', $booking->id)->first();
+        $notes = Note::where('attached_id', $BookingContainer->id)->get();
+        $input = [
+            'booking'      => $booking,
+            'notes'   => $notes,
+        ];
+
+        return view('admin.bookings.notes', $input);
+    }
 
     public function booking_container_papers(BookingContainer $booking)
     {
@@ -327,4 +551,175 @@ class BookingController extends Controller
 
         return view('admin.bookings.container_policies', $input);
     }
+
+    public function delete_delivery_policy($id)
+    {
+        try {
+            $delivery_policy = DeliveryPolicy::with([
+                'money_transfer',
+                'car_expenses',
+                'extraExpenses',
+                'payingCars',
+                'booking_containers'
+            ])->findOrFail($id);
+
+            if ($delivery_policy->is_settled == 1) {
+                if (request()->ajax() || request()->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => __('main.delivery_policy is settled')
+                    ], 400);
+                }
+                return back()->with('error', __('main.delivery_policy is settled'));
+            }
+
+            DB::beginTransaction();
+
+            // الحصول على المندوب من money_transfer
+            $agent = null;
+            if ($delivery_policy->money_transfer && $delivery_policy->money_transfer->transferer_type === 'App\Models\Agent') {
+                $agent = \App\Models\Agent::find($delivery_policy->money_transfer->transferer_id);
+            }
+
+            // حساب المبلغ الذي يجب إرجاعه (القيمة - دخان المكتب)
+            $valueToRefund = (float) ($delivery_policy->money_transfer?->value ?? 0);
+            $officeCommission = (float) ($delivery_policy->office_commission ?? 0);
+            $actualRefund = $valueToRefund - $officeCommission; // المبلغ الفعلي الذي تم خصمه
+
+            // حذف جميع المصروفات المرتبطة بالبوليصة (car_expenses)
+            foreach ($delivery_policy->car_expenses as $expense) {
+                // حذف صورة المصروف إن وجدت
+                if ($expense->image_agent_expenses) {
+                    $path = public_path('Admin/images/expenses/' . $expense->image_agent_expenses);
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
+                }
+                $expense->delete();
+            }
+
+            // حذف جميع المصروفات الإضافية المرتبطة بالبوليصة
+            foreach ($delivery_policy->extraExpenses as $extraExpense) {
+                $extraExpense->delete();
+            }
+
+            // حذف جميع سجلات السداد المرتبطة بالبوليصة
+            foreach ($delivery_policy->payingCars as $payingCar) {
+                // حذف صورة السداد إن وجدت
+                if ($payingCar->image) {
+                    $path = public_path($payingCar->image);
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
+                }
+                // حذف money_transfer المرتبط بالسداد
+                $payingCar->moneyTransfers()->delete();
+                $payingCar->delete();
+            }
+
+            // إرجاع الفلوس للمندوب
+            if ($actualRefund > 0 && $agent) {
+                $agent->update(['wallet' => $agent->wallet + $actualRefund]);
+            }
+
+            // حذف الصورة المرتبطة بالبوليصة
+            if ($delivery_policy->image) {
+                $delivery_policy->image()->delete();
+            }
+
+            // فصل البوليصة عن الحاويات
+            $delivery_policy->booking_containers()->detach();
+
+            // حذف معاملة العهدة (type 3)
+            if ($delivery_policy->money_transfer) {
+                $delivery_policy->money_transfer()->delete();
+            }
+
+            // حذف معاملة دخان المكتب (type 5) إن وجدت
+            MoneyTransfer::where('delivery_policy_id', $delivery_policy->id)
+                ->where('type', 5)
+                ->delete();
+
+            // حذف البوليصة نفسها
+            $delivery_policy->delete();
+
+            DB::commit();
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => __('alerts.deleted_successfully')
+                ], 200);
+            }
+
+            return back()->with('success', __('alerts.deleted_successfully'));
+        } catch (\Exception $Exception) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $Exception->getMessage()
+                ], 500);
+            }
+
+            return back()->with('error', $Exception->getMessage());
+        }
+    }
+    public function deletePaper(Request $request, BookingPaper $booking)
+    {
+        $booking->delete();
+        return back()->with('success', 'تم حذف الورقه بنجاح');
+    }
+    public function storePapers(Request $request)
+    {
+        try {
+            $request->validate([
+                'booking_id' => 'required|exists:bookings,id',
+                'type' => 'required|integer',
+                'image' => 'required|file', // allow images or PDFs
+            ]);
+
+            $booking = Booking::findOrFail($request->booking_id);
+
+            // If yard_id is sent, update booking and all containers
+            if ($request->filled('yard_id')) {
+                $booking->update([
+                    'yard_id' => $request->yard_id,
+                ]);
+
+                foreach ($booking->bookingContainers as $container) {
+                    $container->update([
+                        'yard_id' => $request->yard_id,
+                    ]);
+                }
+            }
+
+            // If image uploaded, handle file and paper record
+            if ($request->hasFile('image')) {
+
+                // Create new paper
+                $bookingPaper = BookingPaper::create([
+                    'booking_id' => $booking->id,
+                    'type' => $request->type,
+                    'booking_container_id' => $request->booking_container_id ?? null,
+                ]);
+
+                // Save image file
+                $path = $request->file('image')->store('uploads', 'public');
+                $image_data["image"] = $request->image;
+                $image_data["imageable_id"] = $bookingPaper->id;
+                $image_data["imageable_type"] = "App\Models\BookingPaper";
+                Image::create($image_data);
+            }
+
+            return back()->with('success', 'تم اضافة الملف بنجاح');
+
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
 }

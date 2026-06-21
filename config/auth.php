@@ -13,8 +13,8 @@ return [
     |
     */
 
-    'defaults' => [
-        'guard' => 'web',
+    'defaults'         => [
+        'guard'     => 'web',
         'passwords' => 'users',
     ],
 
@@ -35,35 +35,45 @@ return [
     |
     */
 
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
+    'guards'           => [
+        'web'                => [
+            'driver'   => 'session',
             'provider' => 'users',
         ],
-        'api' => [
-            'driver' => 'jwt',
+        'api'                => [
+            'driver'   => 'jwt',
             'provider' => 'companies',
-            'hash' => false,
+            'hash'     => false,
         ],
-        'superagent' => [
-            'driver' => 'jwt',
+        'employees'               => [
+            'driver'   => 'jwt',
+            'provider' => 'employees',
+            'hash'     => false,
+        ],
+        'superagent'         => [
+            'driver'   => 'jwt',
             'provider' => 'superagents',
-            'hash' => false,
+            'hash'     => false,
         ],
 
         'superagent_session' => [
-            'driver' => 'session',
+            'driver'   => 'session',
             'provider' => 'superagents',
         ],
 
-        'agent' => [
-            'driver' => 'jwt',
+        'agent'              => [
+            'driver'   => 'jwt',
             'provider' => 'agents',
-            'hash' => false,
+            'hash'     => false,
+        ],
+        'desktop'            => [
+            'driver'   => 'jwt',
+            'provider' => 'users',
+            'hash'     => false,
         ],
 
-        'agent_session' => [
-            'driver' => 'session',
+        'agent_session'      => [
+            'driver'   => 'session',
             'provider' => 'agents',
         ],
     ],
@@ -85,25 +95,33 @@ return [
     |
     */
 
-    'providers' => [
-        'users' => [
+    'providers'        => [
+        'users'       => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model'  => App\Models\User::class,
         ],
 
-        'companies' => [
+        'companies'   => [
             'driver' => 'eloquent',
-            'model' => App\Models\Company::class,
+            'model'  => App\Models\Company::class,
+        ],
+        'employees' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Employee::class,
         ],
 
         'superagents' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Superagent::class,
+            'model'  => App\Models\Superagent::class,
         ],
 
-        'agents' => [
+        'agents'      => [
             'driver' => 'eloquent',
-            'model' => App\Models\Agent::class,
+            'model'  => App\Models\Agent::class,
+        ],
+        'desktop'     => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\User::class,
         ],
 
         // 'users' => [
@@ -127,17 +145,17 @@ return [
     |
     */
 
-    'passwords' => [
-        'users' => [
+    'passwords'        => [
+        'users'     => [
             'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
+            'table'    => 'password_resets',
+            'expire'   => 60,
             'throttle' => 60,
         ],
         'companies' => [
             'provider' => 'companies',
-            'table' => 'password_resets',
-            'expire' => 60,
+            'table'    => 'password_resets',
+            'expire'   => 60,
             'throttle' => 60,
         ],
     ],
