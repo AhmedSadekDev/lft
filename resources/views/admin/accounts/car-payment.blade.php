@@ -1,8 +1,8 @@
-@extends("layouts.admin")
+﻿@extends("layouts.admin")
 
 @section("content")
 <div class="container-fluid">
-    @include("layouts.includes.breadcrumb", [ 'page' => 'سداد حساب - ' . $car->car_number ])
+    @include("layouts.includes.breadcrumb", [ 'page' => '╪│╪»╪º╪» ╪¡╪│╪º╪¿ - ' . $car->car_number ])
 
     <!--begin::Card-->
     <div class="card card-custom shadow-sm">
@@ -10,13 +10,13 @@
             <div class="card-title">
                 <h3 class="card-label font-weight-bolder text-dark">
                     <i class="fas fa-money-bill text-success mr-2"></i>
-                    سداد حساب - {{ $car->car_number }}
+                    ╪│╪»╪º╪» ╪¡╪│╪º╪¿ - {{ $car->car_number }}
                 </h3>
             </div>
             <div class="card-toolbar">
                 <a href="{{ route('accounts.car.statement', $car->id) }}"
                    class="btn btn-primary font-weight-bold shadow-sm">
-                    <i class="fas fa-file-invoice"></i> كشف الحساب
+                    <i class="fas fa-file-invoice"></i> ┘â╪┤┘ü ╪º┘ä╪¡╪│╪º╪¿
                 </a>
             </div>
         </div>
@@ -39,50 +39,114 @@
             </div>
         @endif
 
+        @if(session('payment_group_uuid'))
+            @php
+                $receiptPrintUrl = route('accounts.car.statement.payment-receipt', [
+                    'carId' => $car->id,
+                    'group' => session('payment_group_uuid'),
+                ]);
+                $receiptIds = session('processed_shipments', []);
+                $receiptAmounts = session('processed_shipment_amounts', []);
+                $receiptPdfQuery = ['carId' => $car->id, 'shipment_ids' => implode(',', $receiptIds)];
+                if (count($receiptAmounts) === count($receiptIds) && count($receiptIds) > 0) {
+                    $receiptPdfQuery['amounts'] = implode(',', array_map(static fn ($v) => (string) (float) $v, $receiptAmounts));
+                }
+            @endphp
+            <div class="mx-3 mb-0">
+                <div class="card border-info shadow-sm">
+                    <div class="card-header bg-info text-white font-weight-bold py-3">
+                        <i class="fas fa-file-invoice mr-2"></i> ╪¿┘è╪º┘å ╪│╪»╪º╪» ┘å┘é┘ä╪º╪¬ (┘à╪╣╪º┘è┘å╪⌐ ┘ê╪╖╪¿╪º╪╣╪⌐ ΓÇö ┘å┘ü╪│ ╪┤┘â┘ä ┘â╪┤┘ü ╪º┘ä╪¡╪│╪º╪¿)
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            ╪º┘ä┘à╪╣╪º┘è┘å╪⌐ ╪ú╪»┘å╪º┘ç ┘à╪╖╪º╪¿┘é╪⌐ ┘ä╪¿┘è╪º┘å ╪º┘ä╪│╪»╪º╪» ┘ü┘è ┘â╪┤┘ü ╪º┘ä╪¡╪│╪º╪¿. ╪º╪│╪¬╪«╪»┘à ┬½╪╖╪¿╪º╪╣╪⌐ ╪º┘ä╪¿┘è╪º┘å┬╗ ╪ú┘ê ┬½┘ü╪¬╪¡ ┘ü┘è ┘å╪º┘ü╪░╪⌐ ╪¼╪»┘è╪»╪⌐┬╗ ╪½┘à ╪╖╪¿╪º╪╣╪⌐ ┘à┘å ╪º┘ä┘à╪¬╪╡┘ü╪¡.
+                        </p>
+                        <iframe id="carPaymentPageReceiptIframe"
+                                class="w-100 border rounded"
+                                title="╪¿┘è╪º┘å ╪│╪»╪º╪» ┘å┘é┘ä╪º╪¬"
+                                data-src="{{ $receiptPrintUrl }}"
+                                style="height: 480px; min-height: 320px; background: #fff;"></iframe>
+                        <div class="d-flex flex-wrap align-items-center mt-3">
+                            <button type="button" class="btn btn-primary font-weight-bold js-print-car-payment-page-receipt ml-2 mb-2">
+                                <i class="fas fa-print ml-1"></i> ╪╖╪¿╪º╪╣╪⌐ ╪º┘ä╪¿┘è╪º┘å
+                            </button>
+                            <a href="{{ $receiptPrintUrl }}"
+                               class="btn btn-outline-primary font-weight-bold ml-2 mb-2"
+                               target="_blank"
+                               rel="noopener">
+                                <i class="fas fa-external-link-alt ml-1"></i> ┘ü╪¬╪¡ ┘ü┘è ┘å╪º┘ü╪░╪⌐ ╪¼╪»┘è╪»╪⌐
+                            </a>
+                            @if(count($receiptIds) > 0)
+                                <a href="{{ route('accounts.car.payment.export.pdf', $receiptPdfQuery) }}"
+                                   class="btn btn-outline-danger font-weight-bold ml-2 mb-2">
+                                    <i class="fas fa-file-pdf ml-1"></i> ╪¬╪¡┘à┘è┘ä PDF
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @elseif(session('processed_shipments'))
+            @php
+                $receiptIds = session('processed_shipments', []);
+                $receiptAmounts = session('processed_shipment_amounts', []);
+                $receiptPdfQuery = ['carId' => $car->id, 'shipment_ids' => implode(',', $receiptIds)];
+                if (count($receiptAmounts) === count($receiptIds) && count($receiptIds) > 0) {
+                    $receiptPdfQuery['amounts'] = implode(',', array_map(static fn ($v) => (string) (float) $v, $receiptAmounts));
+                }
+            @endphp
+            <div class="alert alert-light border m-3 mb-0">
+                <a href="{{ route('accounts.car.payment.export.pdf', $receiptPdfQuery) }}"
+                   class="btn btn-danger font-weight-bold">
+                    <i class="fas fa-file-pdf mr-2"></i> ╪╖╪¿╪º╪╣╪⌐ ╪¿┘è╪º┘å ╪º┘ä╪│╪»╪º╪» PDF
+                </a>
+            </div>
+        @endif
+
         <div class="card-body">
-            <!-- معلومات السيارة والحساب -->
+            <!-- ┘à╪╣┘ä┘ê┘à╪º╪¬ ╪º┘ä╪│┘è╪º╪▒╪⌐ ┘ê╪º┘ä╪¡╪│╪º╪¿ -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <h5 class="font-weight-bold">معلومات السيارة</h5>
-                    <p><strong>رقم السيارة:</strong> {{ $car->car_number }}</p>
+                    <h5 class="font-weight-bold">┘à╪╣┘ä┘ê┘à╪º╪¬ ╪º┘ä╪│┘è╪º╪▒╪⌐</h5>
+                    <p><strong>╪▒┘é┘à ╪º┘ä╪│┘è╪º╪▒╪⌐:</strong> {{ $car->car_number }}</p>
                 </div>
                 <div class="col-md-6">
-                    <h5 class="font-weight-bold">معلومات الحساب</h5>
-                    <p><strong>الرصيد المستحق (نقلات غير مسددة):</strong>
+                    <h5 class="font-weight-bold">┘à╪╣┘ä┘ê┘à╪º╪¬ ╪º┘ä╪¡╪│╪º╪¿</h5>
+                    <p><strong>╪º┘ä╪▒╪╡┘è╪» ╪º┘ä┘à╪│╪¬╪¡┘é (┘å┘é┘ä╪º╪¬ ╪║┘è╪▒ ┘à╪│╪»╪»╪⌐):</strong>
                         <span class="text-danger font-weight-bold" style="font-size: 1.2em">
-                            {{ number_format($currentBalance, 2) }} جنيه
+                            {{ number_format($currentBalance, 2) }} ╪¼┘å┘è┘ç
                         </span>
                     </p>
-                    <p><strong>الرصيد النهائي (مطابق لكشف الحساب):</strong>
+                    <p><strong>╪º┘ä╪▒╪╡┘è╪» ╪º┘ä┘å┘ç╪º╪ª┘è (┘à╪╖╪º╪¿┘é ┘ä┘â╪┤┘ü ╪º┘ä╪¡╪│╪º╪¿):</strong>
                         <span class="font-weight-bold {{ isset($finalBalance) && $finalBalance >= 0 ? 'text-danger' : 'text-success' }}" style="font-size: 1.1em">
-                            {{ number_format($finalBalance ?? 0, 2) }} جنيه
+                            {{ number_format($finalBalance ?? 0, 2) }} ╪¼┘å┘è┘ç
                         </span>
                     </p>
                 </div>
             </div>
 
-            <!-- النقلات غير المسددة -->
+            <!-- ╪º┘ä┘å┘é┘ä╪º╪¬ ╪║┘è╪▒ ╪º┘ä┘à╪│╪»╪»╪⌐ -->
             @if($unpaidShipments->count() > 0)
                 <div class="mb-4">
-                    <h5 class="font-weight-bold mb-3">النقلات غير المسددة</h5>
+                    <h5 class="font-weight-bold mb-3">╪º┘ä┘å┘é┘ä╪º╪¬ ╪║┘è╪▒ ╪º┘ä┘à╪│╪»╪»╪⌐</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff;">
                                 <tr>
                                     <th>
-                                        <input type="checkbox" id="select_all" title="تحديد الكل">
+                                        <input type="checkbox" id="select_all" title="╪¬╪¡╪»┘è╪» ╪º┘ä┘â┘ä">
                                     </th>
                                     <th>#</th>
-                                    <th>رقم الحاوية</th>
-                                    <th>تاريخ النقلة</th>
-                                    <th>التكلفة</th>
-                                    <th>العهدة</th>
-                                    <th>المصروفات الإضافية</th>
-                                    <th>المسدد</th>
-                                    <th>المتبقي</th>
-                                    <th>خروج</th>
-                                    <th>تحميل</th>
-                                    <th>تسليم</th>
+                                    <th>╪▒┘é┘à ╪º┘ä╪¡╪º┘ê┘è╪⌐</th>
+                                    <th>╪¬╪º╪▒┘è╪« ╪º┘ä┘å┘é┘ä╪⌐</th>
+                                    <th>╪º┘ä╪¬┘â┘ä┘ü╪⌐</th>
+                                    <th>╪º┘ä╪╣┘ç╪»╪⌐</th>
+                                    <th>╪º┘ä┘à╪╡╪▒┘ê┘ü╪º╪¬ ╪º┘ä╪Ñ╪╢╪º┘ü┘è╪⌐</th>
+                                    <th>╪º┘ä┘à╪│╪»╪»</th>
+                                    <th>╪º┘ä┘à╪¬╪¿┘é┘è</th>
+                                    <th>╪«╪▒┘ê╪¼</th>
+                                    <th>╪¬╪¡┘à┘è┘ä</th>
+                                    <th>╪¬╪│┘ä┘è┘à</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -98,11 +162,11 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $shipment['container_numbers'] ?: '-' }}</td>
                                         <td>{{ \Carbon\Carbon::parse($shipment['date'])->format('Y-m-d') }}</td>
-                                        <td class="font-weight-bold">{{ number_format($shipment['cost'], 2) }} ج.م</td>
-                                        <td class="text-info">{{ number_format($shipment['financial_custody'], 2) }} ج.م</td>
-                                        <td class="text-warning">{{ number_format($shipment['extra_expenses'], 2) }} ج.م</td>
-                                        <td class="text-success">{{ number_format($shipment['paid'], 2) }} ج.م</td>
-                                        <td class="text-danger font-weight-bold">{{ number_format($shipment['remaining'], 2) }} ج.م</td>
+                                        <td class="font-weight-bold">{{ number_format($shipment['cost'], 2) }} ╪¼.┘à</td>
+                                        <td class="text-info">{{ number_format($shipment['financial_custody'], 2) }} ╪¼.┘à</td>
+                                        <td class="text-warning">{{ number_format($shipment['extra_expenses'], 2) }} ╪¼.┘à</td>
+                                        <td class="text-success">{{ number_format($shipment['paid'], 2) }} ╪¼.┘à</td>
+                                        <td class="text-danger font-weight-bold">{{ number_format($shipment['remaining'], 2) }} ╪¼.┘à</td>
                                         <td>{{ $shipment['departure'] ?: '-' }}</td>
                                         <td>{{ $shipment['loading'] ?: '-' }}</td>
                                         <td>{{ $shipment['aging'] ?: '-' }}</td>
@@ -112,20 +176,20 @@
                         </table>
                     </div>
                     <div class="alert alert-info mt-3">
-                        <strong>أقصى متبقي للنقلات المحددة:</strong> <span id="selected_total" class="font-weight-bold">0.00</span> ج.م
-                        <span id="selected_count" class="ml-3">(0 نقلة)</span>
+                        <strong>╪ú┘é╪╡┘ë ┘à╪¬╪¿┘é┘è ┘ä┘ä┘å┘é┘ä╪º╪¬ ╪º┘ä┘à╪¡╪»╪»╪⌐:</strong> <span id="selected_total" class="font-weight-bold">0.00</span> ╪¼.┘à
+                        <span id="selected_count" class="ml-3">(0 ┘å┘é┘ä╪⌐)</span>
                         <div class="small text-muted mt-2">
-                            يمكنك إدخال مبلغ أقل في حقل «المبلغ» أدناه لسداد جزئي (توزيع تلقائي من الأقدم للأحدث بين النقلات المحددة).
+                            ┘è┘à┘â┘å┘â ╪Ñ╪»╪«╪º┘ä ┘à╪¿┘ä╪║ ╪ú┘é┘ä ┘ü┘è ╪¡┘é┘ä ┬½╪º┘ä┘à╪¿┘ä╪║┬╗ ╪ú╪»┘å╪º┘ç ┘ä╪│╪»╪º╪» ╪¼╪▓╪ª┘è (╪¬┘ê╪▓┘è╪╣ ╪¬┘ä┘é╪º╪ª┘è ┘à┘å ╪º┘ä╪ú┘é╪»┘à ┘ä┘ä╪ú╪¡╪»╪½ ╪¿┘è┘å ╪º┘ä┘å┘é┘ä╪º╪¬ ╪º┘ä┘à╪¡╪»╪»╪⌐).
                         </div>
                     </div>
                 </div>
             @else
                 <div class="alert alert-warning">
-                    لا توجد نقلات غير مسددة
+                    ┘ä╪º ╪¬┘ê╪¼╪» ┘å┘é┘ä╪º╪¬ ╪║┘è╪▒ ┘à╪│╪»╪»╪⌐
                 </div>
             @endif
 
-            <!-- نموذج السداد -->
+            <!-- ┘å┘à┘ê╪░╪¼ ╪º┘ä╪│╪»╪º╪» -->
             <form action="{{ route('accounts.car.payment.process', $car->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="shipment_ids" id="shipment_ids_input" value="">
@@ -133,7 +197,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="font-weight-bold required-field">المبلغ <span class="text-danger">*</span></label>
+                            <label class="font-weight-bold required-field">╪º┘ä┘à╪¿┘ä╪║ <span class="text-danger">*</span></label>
                             <input type="number"
                                    name="amount"
                                    id="amount_input"
@@ -145,12 +209,12 @@
                             @error('amount')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted" id="amount_hint">اختر نقلاتاً لعرض أقصى مبلغ يمكن سداده منها.</small>
+                            <small class="text-muted" id="amount_hint">╪º╪«╪¬╪▒ ┘å┘é┘ä╪º╪¬╪º┘ï ┘ä╪╣╪▒╪╢ ╪ú┘é╪╡┘ë ┘à╪¿┘ä╪║ ┘è┘à┘â┘å ╪│╪»╪º╪»┘ç ┘à┘å┘ç╪º.</small>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="font-weight-bold required-field">تاريخ السداد <span class="text-danger">*</span></label>
+                            <label class="font-weight-bold required-field">╪¬╪º╪▒┘è╪« ╪º┘ä╪│╪»╪º╪» <span class="text-danger">*</span></label>
                             <input type="date"
                                    name="payment_date"
                                    class="form-control @error('payment_date') is-invalid @enderror"
@@ -164,7 +228,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="font-weight-bold">ملاحظات</label>
+                            <label class="font-weight-bold">┘à┘ä╪º╪¡╪╕╪º╪¬</label>
                             <textarea name="notes"
                                       class="form-control @error('notes') is-invalid @enderror"
                                       rows="3">{{ old('notes') }}</textarea>
@@ -176,7 +240,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="font-weight-bold">صورة السداد (اختياري)</label>
+                            <label class="font-weight-bold">╪╡┘ê╪▒╪⌐ ╪º┘ä╪│╪»╪º╪» (╪º╪«╪¬┘è╪º╪▒┘è)</label>
                             <input type="file"
                                    name="image"
                                    class="form-control @error('image') is-invalid @enderror"
@@ -192,26 +256,11 @@
                     <div class="col-md-12">
                         <button type="submit" class="btn btn-success btn-lg font-weight-bold">
                             <i class="fas fa-check-circle mr-2"></i>
-                            تسجيل السداد
+                            ╪¬╪│╪¼┘è┘ä ╪º┘ä╪│╪»╪º╪»
                         </button>
-                        @if(session('processed_shipments'))
-                            @php
-                                $receiptIds = session('processed_shipments', []);
-                                $receiptAmounts = session('processed_shipment_amounts', []);
-                                $receiptQuery = ['carId' => $car->id, 'shipment_ids' => implode(',', $receiptIds)];
-                                if (count($receiptAmounts) === count($receiptIds) && count($receiptIds) > 0) {
-                                    $receiptQuery['amounts'] = implode(',', array_map(static fn ($v) => (string) (float) $v, $receiptAmounts));
-                                }
-                            @endphp
-                            <a href="{{ route('accounts.car.payment.export.pdf', $receiptQuery) }}"
-                               class="btn btn-danger btn-lg font-weight-bold ml-2">
-                                <i class="fas fa-file-pdf mr-2"></i>
-                                طباعة بيان السداد PDF
-                            </a>
-                        @endif
                         <a href="{{ route('accounts.car.statement', $car->id) }}" class="btn btn-secondary btn-lg font-weight-bold ml-2">
                             <i class="fas fa-times mr-2"></i>
-                            إلغاء
+                            ╪Ñ┘ä╪║╪º╪í
                         </a>
                     </div>
                 </div>
@@ -223,16 +272,40 @@
 @push('js')
 <script>
     $(document).ready(function() {
-        // تحديد/إلغاء تحديد الكل
+        var $receiptIframe = $('#carPaymentPageReceiptIframe');
+        if ($receiptIframe.length) {
+            var src = $receiptIframe.data('src');
+            if (src) {
+                $receiptIframe.attr('src', src);
+            }
+        }
+
+        $(document).on('click', '.js-print-car-payment-page-receipt', function () {
+            var iframe = document.getElementById('carPaymentPageReceiptIframe');
+            if (!iframe || !iframe.contentWindow) {
+                return;
+            }
+            try {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            } catch (e) {
+                var fallback = iframe.getAttribute('src');
+                if (fallback) {
+                    window.open(fallback, '_blank');
+                }
+            }
+        });
+
+        // ╪¬╪¡╪»┘è╪»/╪Ñ┘ä╪║╪º╪í ╪¬╪¡╪»┘è╪» ╪º┘ä┘â┘ä
         $('#select_all').on('change', function() {
             $('.shipment-checkbox').prop('checked', this.checked);
             updateSelectedTotal();
         });
 
-        // تحديث المجموع عند تحديد/إلغاء تحديد نقلة
+        // ╪¬╪¡╪»┘è╪½ ╪º┘ä┘à╪¼┘à┘ê╪╣ ╪╣┘å╪» ╪¬╪¡╪»┘è╪»/╪Ñ┘ä╪║╪º╪í ╪¬╪¡╪»┘è╪» ┘å┘é┘ä╪⌐
         $('.shipment-checkbox').on('change', function() {
             updateSelectedTotal();
-            // تحديث حالة "تحديد الكل"
+            // ╪¬╪¡╪»┘è╪½ ╪¡╪º┘ä╪⌐ "╪¬╪¡╪»┘è╪» ╪º┘ä┘â┘ä"
             var totalCheckboxes = $('.shipment-checkbox').length;
             var checkedCheckboxes = $('.shipment-checkbox:checked').length;
             $('#select_all').prop('checked', totalCheckboxes === checkedCheckboxes);
@@ -251,26 +324,26 @@
             });
 
             $('#selected_total').text(total.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-            $('#selected_count').text('(' + count + ' نقلة)');
+            $('#selected_count').text('(' + count + ' ┘å┘é┘ä╪⌐)');
             $('#shipment_ids_input').val(selectedIds.join(','));
             if (total > 0) {
                 $('#amount_input').val(parseFloat(total.toFixed(2)));
-                $('#amount_hint').text('أقصى مبلغ يمكن سداده من النقلات المحددة: ' + total.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ج.م (يمكن تقليل المبلغ لسداد جزئي).');
+                $('#amount_hint').text('╪ú┘é╪╡┘ë ┘à╪¿┘ä╪║ ┘è┘à┘â┘å ╪│╪»╪º╪»┘ç ┘à┘å ╪º┘ä┘å┘é┘ä╪º╪¬ ╪º┘ä┘à╪¡╪»╪»╪⌐: ' + total.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ╪¼.┘à (┘è┘à┘â┘å ╪¬┘é┘ä┘è┘ä ╪º┘ä┘à╪¿┘ä╪║ ┘ä╪│╪»╪º╪» ╪¼╪▓╪ª┘è).');
             } else {
                 $('#amount_input').val('');
-                $('#amount_hint').text('اختر نقلاتاً لعرض أقصى مبلغ يمكن سداده منها.');
+                $('#amount_hint').text('╪º╪«╪¬╪▒ ┘å┘é┘ä╪º╪¬╪º┘ï ┘ä╪╣╪▒╪╢ ╪ú┘é╪╡┘ë ┘à╪¿┘ä╪║ ┘è┘à┘â┘å ╪│╪»╪º╪»┘ç ┘à┘å┘ç╪º.');
             }
         }
 
-        // منع إرسال النموذج بدون تحديد نقلات أو مبلغ غير صالح
+        // ┘à┘å╪╣ ╪Ñ╪▒╪│╪º┘ä ╪º┘ä┘å┘à┘ê╪░╪¼ ╪¿╪»┘ê┘å ╪¬╪¡╪»┘è╪» ┘å┘é┘ä╪º╪¬ ╪ú┘ê ┘à╪¿┘ä╪║ ╪║┘è╪▒ ╪╡╪º┘ä╪¡
         $('form').on('submit', function(e) {
             var selectedIds = $('#shipment_ids_input').val();
             if (!selectedIds || selectedIds.trim() === '') {
                 e.preventDefault();
                 Swal.fire({
                     icon: 'error',
-                    title: 'خطأ',
-                    text: 'يجب تحديد نقلات على الأقل'
+                    title: '╪«╪╖╪ú',
+                    text: '┘è╪¼╪¿ ╪¬╪¡╪»┘è╪» ┘å┘é┘ä╪º╪¬ ╪╣┘ä┘ë ╪º┘ä╪ú┘é┘ä'
                 });
                 return false;
             }
@@ -281,15 +354,15 @@
             var amount = parseFloat($('#amount_input').val());
             if (!amount || amount < 0.01) {
                 e.preventDefault();
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل مبلغاً صحيحاً (0.01 على الأقل)' });
+                Swal.fire({ icon: 'error', title: '╪«╪╖╪ú', text: '╪ú╪»╪«┘ä ┘à╪¿┘ä╪║╪º┘ï ╪╡╪¡┘è╪¡╪º┘ï (0.01 ╪╣┘ä┘ë ╪º┘ä╪ú┘é┘ä)' });
                 return false;
             }
             if (amount - maxTotal > 0.009) {
                 e.preventDefault();
                 Swal.fire({
                     icon: 'error',
-                    title: 'خطأ',
-                    text: 'المبلغ أكبر من إجمالي المتبقي للنقلات المحددة (' + maxTotal.toFixed(2) + ' ج.م)'
+                    title: '╪«╪╖╪ú',
+                    text: '╪º┘ä┘à╪¿┘ä╪║ ╪ú┘â╪¿╪▒ ┘à┘å ╪Ñ╪¼┘à╪º┘ä┘è ╪º┘ä┘à╪¬╪¿┘é┘è ┘ä┘ä┘å┘é┘ä╪º╪¬ ╪º┘ä┘à╪¡╪»╪»╪⌐ (' + maxTotal.toFixed(2) + ' ╪¼.┘à)'
                 });
                 return false;
             }

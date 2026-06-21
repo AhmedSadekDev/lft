@@ -34,7 +34,7 @@ class Company extends Authenticatable implements JWTSubject
         'bill_type',
         'attachments',
         'invoice_number_auto_increment',
-        'wallet'
+        'wallet',
     ];
 
     protected $casts = [

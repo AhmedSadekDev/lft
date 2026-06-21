@@ -2,104 +2,105 @@
 
 @section("content")
 <div class="container-fluid">
-    @include("layouts.includes.breadcrumb", [ 'page' => 'الموقف المالي - السيارات' ])
+    @include("layouts.includes.breadcrumb", [ 'page' => 'تقرير الموقف المالي - الشركات المدينة' ])
 
     <!--begin::Card-->
     <div class="card card-custom shadow-sm">
         <div class="card-header border-0 py-4">
             <div class="card-title">
                 <h3 class="card-label font-weight-bolder text-dark">
-                    <i class="fas fa-chart-line text-info mr-2"></i>
-                    الموقف المالي - السيارات
+                    <i class="fas fa-chart-line text-primary mr-2"></i>
+                    تقرير الموقف المالي - الشركات المدينة
                 </h3>
             </div>
             <div class="card-toolbar">
-                <form action="{{ route('accounts.cars.financial-position') }}" method="get" class="d-flex align-items-center">
-                    <input type="date"
-                           name="date"
-                           class="form-control mr-2"
-                           value="{{ $reportDate }}"
-                           style="width: 200px;">
-                    <button type="submit" class="btn btn-primary font-weight-bold">
-                        <i class="fas fa-filter mr-1"></i> فلترة
-                    </button>
-                </form>
+                <a href="{{ route('accounts.financial-position.export.excel', ['date' => $reportDate]) }}"
+                   class="btn btn-success font-weight-bold shadow-sm mr-2">
+                    <i class="fas fa-file-excel"></i> تصدير Excel
+                </a>
+                <a href="{{ route('accounts.financial-position.export.pdf', ['date' => $reportDate]) }}"
+                   class="btn btn-danger font-weight-bold shadow-sm mr-2">
+                    <i class="fas fa-file-pdf"></i> تصدير PDF
+                </a>
+                <button type="button" class="btn btn-secondary font-weight-bold shadow-sm" data-toggle="modal" data-target="#filterModal">
+                    <i class="fas fa-calendar-alt"></i> اختيار التاريخ
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal الفلتر -->
+        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title font-weight-bold">
+                            <i class="fas fa-calendar-alt mr-2"></i>اختيار تاريخ التقرير
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('accounts.financial-position') }}" method="get">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="font-weight-bold">تاريخ التقرير</label>
+                                <input type="date" name="date" value="{{ $reportDate }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                            <button type="submit" class="btn btn-primary">تطبيق</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
         <div class="card-body">
-            <!-- ملخص التقرير -->
+            <!-- معلومات التقرير -->
             <div class="row mb-4">
-                <div class="col-md-12">
-                    <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                        <div class="card-body text-white">
-                            <div class="row text-center">
-                                <div class="col-md-4">
-                                    <div class="mb-2">
-                                        <i class="fas fa-calendar-alt fa-lg mb-2"></i>
-                                    </div>
-                                    <div class="font-weight-bold" style="font-size: 14px; opacity: 0.9;">تاريخ التقرير</div>
-                                    <div class="font-weight-bold" style="font-size: 18px;">{{ \Carbon\Carbon::parse($reportDate)->format('Y-m-d') }}</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-2">
-                                        <i class="fas fa-car fa-lg mb-2"></i>
-                                    </div>
-                                    <div class="font-weight-bold" style="font-size: 14px; opacity: 0.9;">عدد السيارات المدينة</div>
-                                    <div class="font-weight-bold" style="font-size: 18px;">{{ $carsWithDebts?->count() ?? 0 }}</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-2">
-                                        <i class="fas fa-money-bill-wave fa-lg mb-2"></i>
-                                    </div>
-                                    <div class="font-weight-bold" style="font-size: 14px; opacity: 0.9;">إجمالي المديونية</div>
-                                    <div class="font-weight-bold" style="font-size: 22px; color: #fff;">{{ number_format($totalDebts, 2) }} ج.م</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-6">
+                    <h5 class="font-weight-bold">معلومات التقرير</h5>
+                    <p><strong>تاريخ التقرير:</strong> {{ $reportDate }}</p>
+                    <p><strong>عدد الشركات المدينة:</strong> {{ $companiesWithDebts->count() }}</p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <h5 class="font-weight-bold">ملخص التقرير</h5>
+                    <p><strong>إجمالي المبالغ المستحقة:</strong>
+                        <span class="text-danger font-weight-bold" style="font-size: 18px;">
+                            {{ number_format($totalDebts, 2) }} جنيه
+                        </span>
+                    </p>
                 </div>
             </div>
 
-            <!-- الجدول -->
+            <!-- جدول الشركات المدينة -->
+            <h5 class="font-weight-bold mt-4 mb-3">الشركات المدينة (التي عليها فلوس)</h5>
             <div class="table-responsive">
-                <table class="table table-bordered table-hover" style="font-size: 14px;">
-                    <thead>
-                        <tr style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff;">
-                            <th class="text-center" style="width: 60px; border: 1px solid rgba(255,255,255,0.3);">#</th>
-                            <th style="border: 1px solid rgba(255,255,255,0.3);">رقم السيارة</th>
-                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">إجمالي التكلفة</th>
-                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">إجمالي المدفوع</th>
-                            <th class="text-center" style="border: 1px solid rgba(255,255,255,0.3);">الرصيد المستحق</th>
-                            <th class="text-center" style="width: 100px; border: 1px solid rgba(255,255,255,0.3);">الإجراءات</th>
+                <table class="table table-bordered table-hover">
+                    <thead style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff;">
+                        <tr class="text-center">
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 30%;">اسم الشركة</th>
+                            <th style="width: 25%;">البريد الإلكتروني</th>
+                            <th style="width: 20%;">الهاتف</th>
+                            <th style="width: 15%;">القيمة النهائية</th>
+                            <th style="width: 10%;">الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($carsWithDebts as $index => $car)
-                        <tr style="transition: all 0.3s ease;">
-                            <td class="text-center align-middle">
-                                <span class="badge badge-secondary badge-pill">{{ $index + 1 }}</span>
+                        @forelse ($companiesWithDebts as $index => $company)
+                        <tr>
+                            <td class="text-center">{{ $index + 1 }}</td>
+                            <td class="font-weight-bold">{{ $company['name'] }}</td>
+                            <td>{{ $company['email'] }}</td>
+                            <td>{{ $company['phone'] }}</td>
+                            <td class="text-center text-danger font-weight-bold" style="font-size: 16px;">
+                                {{ number_format($company['balance'], 2) }} ج.م
                             </td>
-                            <td class="align-middle">
-                                <span class="font-weight-bold text-primary">
-                                    <i class="fas fa-car mr-1"></i>{{ $car['car_number'] }}
-                                </span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="text-dark">{{ number_format($car['total_cost'], 2) }} ج.م</span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="text-success font-weight-bold">{{ number_format($car['total_paid'], 2) }} ج.م</span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="badge badge-danger badge-pill" style="font-size: 13px; padding: 6px 12px;">
-                                    {{ number_format($car['balance'], 2) }} ج.م
-                                </span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <a href="{{ route('accounts.car.statement', $car['id']) }}?from={{ \Carbon\Carbon::parse($reportDate)->startOfYear()->format('Y-m-d') }}&to={{ $reportDate }}"
-                                   class="btn btn-sm btn-primary btn-icon" title="كشف حساب"
-                                   style="width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center;">
+                            <td class="text-center">
+                                <a href="{{ route('accounts.statement', $company['id']) }}?from={{ \Carbon\Carbon::parse($reportDate)->startOfYear()->format('Y-m-d') }}&to={{ $reportDate }}"
+                                   class="btn btn-sm btn-primary" title="كشف حساب">
                                     <i class="fas fa-file-invoice"></i>
                                 </a>
                             </td>
@@ -109,27 +110,18 @@
                             <td colspan="6" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
-                                    <p class="font-weight-bold">لا توجد سيارات مدينة في هذا التاريخ</p>
+                                    <p class="font-weight-bold">لا توجد شركات مدينة في هذا التاريخ</p>
                                 </div>
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
-                    @if($carsWithDebts->count() > 0)
-                    <tfoot>
-                        <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-top: 3px solid #DC143C;">
-                            <td colspan="3" class="text-right font-weight-bold align-middle" style="font-size: 16px;">
-                                <i class="fas fa-calculator mr-2 text-primary"></i>الإجمالي:
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="text-success font-weight-bold" style="font-size: 15px;">
-                                    {{ number_format($carsWithDebts->sum('total_paid'), 2) }} ج.م
-                                </span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="badge badge-danger" style="font-size: 16px; padding: 8px 16px;">
-                                    {{ number_format($totalDebts, 2) }} ج.م
-                                </span>
+                    @if($companiesWithDebts->count() > 0)
+                    <tfoot style="background: #f8f9fa;">
+                        <tr class="font-weight-bold">
+                            <td colspan="4" class="text-right" style="font-size: 16px;">الإجمالي:</td>
+                            <td class="text-center text-danger" style="font-size: 18px;">
+                                {{ number_format($totalDebts, 2) }} ج.م
                             </td>
                             <td></td>
                         </tr>
@@ -138,24 +130,6 @@
                 </table>
             </div>
         </div>
-
-        <style>
-            .table tbody tr:hover {
-                background-color: #f8f9fa !important;
-                transform: scale(1.01);
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
-            .table thead th {
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                font-size: 13px;
-            }
-            .btn-icon:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            }
-        </style>
     </div>
 </div>
 @endsection
