@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leader for Trans — الشجرة المحاسبية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; line-height: 1.7; color: #1a1a2e; background: #f5f7fa; padding: 2rem; }
+        .container { max-width: 960px; margin: 0 auto; background: #fff; padding: 3rem; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+        .header { text-align: center; border-bottom: 3px solid #059669; padding-bottom: 2rem; margin-bottom: 2rem; }
+        .header h1 { font-size: 1.9rem; color: #059669; margin-bottom: .4rem; }
+        .header .sub { color: #64748b; font-size: 1.05rem; }
+        .meta { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; font-size: .88rem; color: #475569; }
+        h2 { font-size: 1.25rem; color: #059669; margin: 2rem 0 .8rem; padding-bottom: .35rem; border-bottom: 2px solid #e2e8f0; }
+        h3 { font-size: 1.05rem; color: #334155; margin: 1.3rem 0 .6rem; }
+        p { margin-bottom: .6rem; }
+        table { width: 100%; border-collapse: collapse; margin: .8rem 0 1.2rem; font-size: .86rem; }
+        th, td { border: 1px solid #e2e8f0; padding: .5rem .65rem; text-align: right; vertical-align: top; }
+        th { background: #059669; color: #fff; font-weight: 600; }
+        tr:nth-child(even) { background: #f8fafc; }
+        .tree { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 1.2rem 1.5rem; font-family: 'Courier New', monospace; font-size: .82rem; line-height: 1.55; white-space: pre; margin: 1rem 0; }
+        .flow { background: #f1f5f9; border-radius: 8px; padding: 1.2rem; font-size: .88rem; line-height: 1.7; margin: 1rem 0; }
+        .note { background: #eff6ff; border-right: 4px solid #2563eb; padding: .7rem 1rem; margin: 1rem 0; border-radius: 0 8px 8px 0; font-size: .88rem; }
+        code { background: #f1f5f9; padding: .1rem .35rem; border-radius: 4px; font-size: .85em; }
+        .footer { text-align: center; margin-top: 2.5rem; padding-top: 1.2rem; border-top: 2px solid #e2e8f0; color: #64748b; font-size: .85rem; }
+        @media print { body { background: #fff; padding: 0; } .container { box-shadow: none; padding: 1.2rem; } table { page-break-inside: avoid; } }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>Leader for Trans — الشجرة المحاسبية</h1>
+        <div class="sub">نظام ليدر</div>
+        <div class="meta">
+            <span>الإصدار: 1.0</span>
+            <span>يوليو 2026</span>
+            <span>بناءً على الهيكل الفعلي في النظام</span>
+        </div>
+    </div>
+
+    <h2>مقدمة</h2>
+    <p>نظام <strong>Leader for Trans</strong> يعتمد على <strong>محاسبة تشغيلية متكاملة</strong> مرتبطة بعمليات النقل. لا يستخدم جدولاً تقليدياً لشجرة حسابات عامة (GL)، بل يُدار كل حساب عبر <strong>وحدات مالية مترابطة</strong> تُحدّث أرصدتها تلقائياً.</p>
+
+    <h2>ملخص الهيكل</h2>
+    <div class="tree">1  الأصول (Assets)
+   ├── 11  الأصول النقدية والبنكية
+   ├── 12  الذمم المدينة (العملاء)
+   └── 13  العهد والأرصدة الميدانية
+
+2  الخصوم (Liabilities)
+   ├── 21  الذمم الدائنة (السيارات)
+   └── 22  الالتزامات الضريبية
+
+3  حقوق الملكية / الأرصدة الافتتاحية
+   └── 31  أرصدة افتتاحية للعملاء
+
+4  الإيرادات (Revenue)
+   ├── 41  إيرادات النقل والخدمات
+   └── 42  إيرادات تشغيلية أخرى
+
+5  المصروفات (Expenses)
+   ├── 51  مصروفات ميدانية
+   ├── 52  مصروفات تشغيل الحجز
+   └── 53  مصروفات الأسطول</div>
+
+    <h2>1. الأصول</h2>
+
+    <h3>11 — الأصول النقدية والبنكية</h3>
+    <table>
+        <tr><th>الكود</th><th>الحساب</th><th>المصدر</th><th>الطبيعة</th></tr>
+        <tr><td>1101</td><td>الخزنة الرئيسية</td><td><code>vaults</code></td><td>مدين</td></tr>
+        <tr><td>1102</td><td>حسابات البنوك</td><td><code>banks</code> — حساب لكل بنك</td><td>مدين</td></tr>
+        <tr><td>1103</td><td>شيكات تحت التحصيل</td><td><code>invoice_payments</code> — شيك غير مستحق</td><td>مدين</td></tr>
+    </table>
+
+    <h3>12 — الذمم المدينة (العملاء)</h3>
+    <table>
+        <tr><th>الكود</th><th>الحساب</th><th>المصدر</th><th>الطبيعة</th></tr>
+        <tr><td>1201</td><td>ذمم مدينة — عملاء</td><td>كشف حساب الشركة</td><td>مدين</td></tr>
+        <tr><td>1202</td><td>رصيد افتتاحي مدين</td><td><code>companies.opening_balance</code> (+)</td><td>مدين</td></tr>
+    </table>
+    <div class="note">الرصيد المستحق = (الفواتير + الرصيد الافتتاحي) − المدفوعات المؤكدة</div>
+
+    <h3>13 — العهد والأرصدة الميدانية</h3>
+    <table>
+        <tr><th>الكود</th><th>الحساب</th><th>المصدر</th><th>الطبيعة</th></tr>
+        <tr><td>1301</td><td>عهدة المندوبين</td><td><code>agents.wallet</code></td><td>مدين</td></tr>
+        <tr><td>1302</td><td>عهدة المشرفين</td><td><code>superagents.wallet</code></td><td>مدين</td></tr>
+        <tr><td>1303</td><td>رصيد السيارات</td><td><code>cars.wallet</code></td><td>مدين</td></tr>
+    </table>
+
+    <h2>2. الخصوم</h2>
+    <table>
+        <tr><th>الكود</th><th>الحساب</th><th>المصدر</th><th>الطبيعة</th></tr>
+        <tr><td>2101</td><td>ذمم دائنة — سيارات/ناقلين</td><td>كشف حساب السيارة — <code>delivery_policies</code></td><td>دائن</td></tr>
+        <tr><td>2201</td><td>ضريبة القيمة المضافة المستحقة</td><td><code>invoices.value_added_tax</code></td><td>دائن</td></tr>
+        <tr><td>2202</td><td>ضريبة المبيعات</td><td><code>invoices.sales_tax</code></td><td>دائن</td></tr>
+        <tr><td>3101</td><td>رصيد افتتاحي دائن للعميل</td><td><code>companies.opening_balance</code> (−)</td><td>دائن</td></tr>
+    </table>
+
+    <h2>4. الإيرادات</h2>
+    <table>
+        <tr><th>الكود</th><th>الحساب</th><th>المصدر</th></tr>
+        <tr><td>4101</td><td>إيرادات النقل</td><td><code>transportation_total_before_vat</code></td></tr>
+        <tr><td>4102</td><td>إيرادات خدمات ضريبية</td><td><code>taxed_services</code> — status = 0</td></tr>
+        <tr><td>4103</td><td>إيرادات خدمات غير ضريبية</td><td><code>untaxed_services</code> — status = 1</td></tr>
+        <tr><td>4104</td><td>عمولة المكتب (دخان المكتب)</td><td><code>MoneyTransfer</code> نوع 5</td></tr>
+    </table>
+
+    <h2>5. المصروفات</h2>
+    <table>
+        <tr><th>الكود</th><th>الحساب</th><th>المصدر</th></tr>
+        <tr><td>5101</td><td>مصروفات عامة للمندوب</td><td><code>agent_expenses</code> type=1</td></tr>
+        <tr><td>5102</td><td>مصروفات حجز/حاوية</td><td><code>agent_expenses</code> + booking_container</td></tr>
+        <tr><td>5103</td><td>مصروفات بوليصة تسليم</td><td><code>agent_expenses</code> + delivery_policy</td></tr>
+        <tr><td>5104</td><td>مصروفات المشرف</td><td><code>superagent_transactions</code></td></tr>
+        <tr><td>5201–5203</td><td>مصروفات خدمات الحجز</td><td><code>booking_services</code> vault/bank/agent</td></tr>
+        <tr><td>5204</td><td>تكاليف إضافية للحاويات</td><td><code>booking_contrainer_extra_costs</code></td></tr>
+        <tr><td>5301</td><td>مصروفات السيارات</td><td><code>agent_expenses</code> type=2</td></tr>
+        <tr><td>5302</td><td>سداد مديونية السيارات</td><td><code>payingcars</code> — من الخزنة</td></tr>
+        <tr><td>5303</td><td>عهدة نقلات</td><td><code>money_transfers</code> type=3</td></tr>
+    </table>
+
+    <h2>أنواع التحويلات المالية (MoneyTransfer)</h2>
+    <table>
+        <tr><th>النوع</th><th>الاسم</th><th>التأثير</th></tr>
+        <tr><td>1</td><td>صرف عهدة من الإدارة</td><td>خزنة − / مندوب +</td></tr>
+        <tr><td>2</td><td>تحويل بين مندوبين</td><td>مندوب −/+</td></tr>
+        <tr><td>3</td><td>عهدة بوليصة تسليم</td><td>مندوب − / نقلة +</td></tr>
+        <tr><td>4</td><td>تسوية بوليصة</td><td>إغلاق عهدة النقلة</td></tr>
+        <tr><td>5</td><td>عمولة المكتب</td><td>إيراد 4104</td></tr>
+        <tr><td>7</td><td>سداد سيارة</td><td>مصروف 5302</td></tr>
+    </table>
+
+    <h2>طرق السداد</h2>
+    <table>
+        <tr><th>النوع</th><th>الطريقة</th><th>التأثير</th></tr>
+        <tr><td>سداد عميل</td><td>تحويل بنكي</td><td>ذمم − / بنك +</td></tr>
+        <tr><td>سداد عميل</td><td>شيك</td><td>ذمم − / شيك تحت التحصيل + → بنك + عند الاستحقاق</td></tr>
+        <tr><td>سداد سيارة</td><td>من الخزنة</td><td>ذمم سيارات − / خزنة −</td></tr>
+        <tr><td>خدمة حجز</td><td>vault / bank / agent</td><td>مصروف + / مصدر −</td></tr>
+    </table>
+
+    <h2>دورة محاسبية (مثال)</h2>
+    <div class="flow">
+        <strong>[1]</strong> إصدار فاتورة → مدين: ذمم العملاء | دائن: إيرادات + VAT<br>
+        <strong>[2]</strong> سداد عميل (بنك) → مدين: البنك | دائن: ذمم العملاء<br>
+        <strong>[3]</strong> صرف عهدة مندوب → مدين: عهدة المندوب | دائن: الخزنة<br>
+        <strong>[4]</strong> تنفيذ نقلة → مدين: مصروفات/عهدة نقلات | دائن: عهدة المندوب<br>
+        <strong>[5]</strong> تسوية + عمولة مكتب → إيراد 4104<br>
+        <strong>[6]</strong> سداد سيارة → مدين: 5302 | دائن: الخزنة
+    </div>
+
+    <h2>التقارير المحاسبية</h2>
+    <table>
+        <tr><th>التقرير</th><th>الحسابات</th></tr>
+        <tr><td>كشف حساب الشركة</td><td>1201, 1202</td></tr>
+        <tr><td>كشف حساب السيارة</td><td>2101, 1303</td></tr>
+        <tr><td>الموقف المالي — شركات</td><td>1201</td></tr>
+        <tr><td>الموقف المالي — سيارات</td><td>2101</td></tr>
+        <tr><td>الأرباح والخسائر</td><td>4101–4104 / 51xx–53xx</td></tr>
+        <tr><td>المصروفات العام</td><td>51xx, 52xx, 53xx</td></tr>
+        <tr><td>إدارة الشيكات</td><td>1103</td></tr>
+    </table>
+
+    <div class="note">
+        <strong>ملاحظات:</strong> لا يوجد دفتر يومية عام — كل حركة في وحدتها. الشيكات تُضاف للبنك بعد «تم الاستحقاق». العملة: جنيه مصري. الفواتير الإلكترونية عبر ETA.
+    </div>
+
+    <div class="footer">
+        <p>booking@leaderfortrans.com</p>
+        <p><strong>© 2026 Leader for Trans</strong></p>
+    </div>
+
+</div>
+</body>
+</html>

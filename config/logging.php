@@ -114,6 +114,13 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        'desktop_eta' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/desktop_eta.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
