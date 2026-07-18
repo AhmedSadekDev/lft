@@ -22,6 +22,19 @@ class SpecificationBookingResource extends JsonResource
         // تحديد المرحلة من الـ request أو من context
         $stage = $request->get('stage', 'specification');
 
+        // حالة تنفيذ المندوب لكل مراحل الطلب.
+        // تُعتبر المرحلة منتهية عندما تنتهي في جميع حاويات الطلب.
+        $allBookingContainers = $this->bookingContainers()
+            ->get(['booking_containers.id', 'booking_containers.status']);
+        $hasBookingContainers = $allBookingContainers->isNotEmpty();
+
+        $isSpecificationDone = $hasBookingContainers
+            && $allBookingContainers->every(fn ($container) => (int) $container->status >= 1);
+        $isLoadingDone = $hasBookingContainers
+            && $allBookingContainers->every(fn ($container) => (int) $container->status >= 2);
+        $isUnloadingDone = $hasBookingContainers
+            && $allBookingContainers->every(fn ($container) => (int) $container->status >= 3);
+
         // فلترة الحاويات حسب المرحلة
         $bookingContainersQuery = $this->bookingContainers();
 
@@ -54,6 +67,9 @@ class SpecificationBookingResource extends JsonResource
             "id" => $this->id,
             "booking_number" => $this->booking_number ?? "",
             "is_today" => $superagent_booking_containers->count() ? 1 : 0,
+            "is_specification_done" => $isSpecificationDone ? 1 : 0,
+            "is_loading_done" => $isLoadingDone ? 1 : 0,
+            "is_unloading_done" => $isUnloadingDone ? 1 : 0,
             "booking_containers" => BookingContainerResource::collection($bookingContainersQuery->get())
         ];
     }

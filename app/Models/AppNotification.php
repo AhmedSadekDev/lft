@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class AppNotification extends Model
@@ -16,10 +17,21 @@ class AppNotification extends Model
 
     protected $appends = ['date','time',];
 
+    protected $casts = [
+        'type' => 'integer',
+        'booking_container_id' => 'integer',
+        'type_id' => 'integer',
+    ];
+
     const specific = 1;
     const all = 2;
     public function notificationable(){
         return $this->belongsTo($this->notificationable_type,"notificationable_id");
+    }
+
+    public function bookingContainer(): BelongsTo
+    {
+        return $this->belongsTo(BookingContainer::class);
     }
     public function getDateAttribute(){
         return $this->created_at ? Carbon::parse($this->created_at)->format('Y-m-d') : "";

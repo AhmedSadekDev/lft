@@ -17,7 +17,8 @@ class NotificationController extends Controller
         try {
             $agent = auth('agent')->user();
 
-            $notifications = AppNotification::where(function ($query) use ($agent) {
+            $notifications = AppNotification::with('bookingContainer:id,booking_id')
+                ->where(function ($query) use ($agent) {
                 $query->where('type', AppNotification::all)
                     ->orWhere(function ($q) use ($agent) {
                         $q->where("notificationable_id", $agent->id)->where("notificationable_type", Agent::class);

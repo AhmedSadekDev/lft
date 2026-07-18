@@ -79,6 +79,23 @@ class FireBasePushNotification extends Controller
 
     public function to($device, $body, $title = 'My favorite App', $extraData = [])
     {
+        $type = $extraData['type']
+            ?? $extraData['type_action']
+            ?? $extraData['action_type']
+            ?? null;
+
+        $typeAction = $extraData['type_action']
+            ?? $extraData['action_type']
+            ?? $type;
+
+        if ($type !== null) {
+            $extraData['type'] = $type;
+        }
+
+        if ($typeAction !== null) {
+            $extraData['type_action'] = $typeAction;
+        }
+
         $data = [
             'token' => $device,
             'title' => $title,

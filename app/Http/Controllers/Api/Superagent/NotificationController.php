@@ -17,7 +17,8 @@ class NotificationController extends Controller
         try {
             $superagent = auth('superagent')->user();
 
-            $notifications = AppNotification::where(function ($query) use ($superagent) {
+            $notifications = AppNotification::with('bookingContainer:id,booking_id')
+                ->where(function ($query) use ($superagent) {
                 $query->where('type', AppNotification::all)
                     ->orWhere(function ($q) use ($superagent) {
                         $q->where("notificationable_id", $superagent->id)->where("notificationable_type", Superagent::class);
@@ -45,7 +46,8 @@ class NotificationController extends Controller
         try {
             $superagent = auth('superagent')->user();
 
-            $notifications = AppNotification::where("notificationable_type", Agent::class)
+            $notifications = AppNotification::with('bookingContainer:id,booking_id')
+                ->where("notificationable_type", Agent::class)
             ->when($request->date, function ($query) use ($request) {
                     $formattedDate = \Carbon\Carbon::parse($request->date)->format('Y-m-d');
                     $query->whereDate('created_at', '=', $formattedDate);
