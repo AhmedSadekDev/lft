@@ -18,7 +18,7 @@ class YardController extends Controller
     {
         try {
 
-            $yards = Yard::get();
+            $yards = Yard::query()->withActiveYardContainersCount()->get();
 
             $data = YardResource::collection($yards);
 
@@ -32,14 +32,8 @@ class YardController extends Controller
     {
         try {
 
-            $yards = Yard::select('yards.*')
-                ->selectSub(function ($query) {
-                    $query->selectRaw('COUNT(*)')
-                        ->from('booking_containers')
-                        ->join('bookings', 'booking_containers.booking_id', '=', 'bookings.id')
-                        ->whereColumn('bookings.yard_id', 'yards.id')
-                        ->where('booking_containers.status', '!=', 3);
-                }, 'active_containers_count')
+            $yards = Yard::query()
+                ->withActiveYardContainersCount()
                 ->havingRaw('active_containers_count > 0')
                 ->get();
 
@@ -64,6 +58,9 @@ class YardController extends Controller
             // Get all bookings that belong to the specified yard
             // YardBookingResource will show all containers in the booking
             $bookings = Booking::where('yard_id', $request->yard_id)
+                ->whereHas('bookingContainers', static function ($q) {
+                    $q->whereIn('booking_containers.status', [0, 1]);
+                })
                 ->with([
                     'bookingContainers.branch.factory',
                     'bookingContainers.container',

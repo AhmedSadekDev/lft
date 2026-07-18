@@ -73,7 +73,6 @@ class TransferAgentController extends Controller
                 $Vault->save();
             }
 
-
             $this->saveLogActivity($agent->id, Agent::class, $moneyTransfer->id, MoneyTransfer::class);
 
 

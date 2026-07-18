@@ -62,7 +62,7 @@
                 <div class="col-md-6">
                     <h5 class="font-weight-bold">معلومات التقرير</h5>
                     <p><strong>تاريخ التقرير:</strong> {{ $reportDate }}</p>
-                    <p><strong>عدد الشركات المدينة:</strong> {{ $companiesWithDebts->count() }}</p>
+                    <p><strong>عدد الشركات المدينة:</strong> {{ $companiesWithDebts?->count() ?? 0 }}</p>
                 </div>
                 <div class="col-md-6 text-right">
                     <h5 class="font-weight-bold">ملخص التقرير</h5>
@@ -89,7 +89,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($companiesWithDebts as $index => $company)
+                        @forelse ($companiesWithDebts ?? [] as $index => $company)
                         <tr>
                             <td class="text-center">{{ $index + 1 }}</td>
                             <td class="font-weight-bold">{{ $company['name'] }}</td>
@@ -116,7 +116,7 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    @if($companiesWithDebts->count() > 0)
+                    @if($companiesWithDebts?->count() > 0)
                     <tfoot style="background: #f8f9fa;">
                         <tr class="font-weight-bold">
                             <td colspan="4" class="text-right" style="font-size: 16px;">الإجمالي:</td>
