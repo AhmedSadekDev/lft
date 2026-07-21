@@ -60,7 +60,8 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
+            $first_container_id = !empty($booking_container_ids) ? $booking_container_ids[0] : ($booking->bookingContainers()->first()?->id ?? null);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $first_container_id, 0);
             // SendNotification::send($agent->device_token ?? "", $title, $text);
 
             $superAgents = Superagent::get();
@@ -72,6 +73,8 @@ class BookingContainerActionController extends Controller
             foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking->id,
+                    'booking_container_id' => $first_container_id,
+                    'type_id' => 0,
                     'action_type' => 'specification' // تخصيص
                 ];
                 \Illuminate\Support\Facades\Log::info('done_specification: Sending notification to superagent', [
@@ -124,11 +127,13 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $booking_container->id, 1);
             
             if ($agent->device_token) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 1,
                     'action_type' => 'loading' // تحميل
                 ];
                 SendNotification::send($agent->device_token, $title, $text, $notificationData);
@@ -143,6 +148,8 @@ class BookingContainerActionController extends Controller
             foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 1,
                     'action_type' => 'loading' // تحميل
                 ];
                 \Illuminate\Support\Facades\Log::info('done_loading: Sending notification to superagent', [
@@ -200,11 +207,13 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $booking_container->id, 2);
             
             if ($agent->device_token) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 2,
                     'action_type' => 'unloading' // تعتيق
                 ];
                 SendNotification::send($agent->device_token, $title, $text, $notificationData);
@@ -219,6 +228,8 @@ class BookingContainerActionController extends Controller
             foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 2,
                     'action_type' => 'unloading' // تعتيق
                 ];
                 \Illuminate\Support\Facades\Log::info('done_unloading: Sending notification to superagent', [

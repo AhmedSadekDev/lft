@@ -19,7 +19,13 @@ class NotificationResource extends JsonResource
             "booking_container_id" => $this->booking_container_id,
             "is_read" => $this->is_read,
             "date" => $this->date ?? "",
-            "time" => $this->time ?? ""
+            "time" => $this->time ?? "",
+            'action_type' => match ($this->type_id) {
+                0 => 'specification',
+                1 => 'loading',
+                2 => 'unloading',
+                default => null,
+            },  
         ];
     }
 }
