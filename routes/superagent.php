@@ -117,6 +117,7 @@ Route::group(['middleware' => 'localization'], function () {
 
             Route::post("fetch_your_notifications", "fetch_notifications");
             Route::post("fetch_agents_notifications", "fetch_agents_notifications");
+            Route::post("mark_notification_read", "mark_as_read");
         });
         Route::get('fetch_yards', [YardController::class, 'fetch_yards']);
         Route::get('fetch_active_yards', [YardController::class, 'fetch_active_yards']);

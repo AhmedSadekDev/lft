@@ -17,6 +17,7 @@ class NotificationResource extends JsonResource
             "type_id" => $this->type_id,
             "booking_id" => $this->bookingContainer?->booking_id,
             "booking_container_id" => $this->booking_container_id,
+            "is_read" => $this->is_read,
             "date" => $this->date ?? "",
             "time" => $this->time ?? ""
         ];

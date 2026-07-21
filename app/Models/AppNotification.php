@@ -21,6 +21,7 @@ class AppNotification extends Model
         'type' => 'integer',
         'booking_container_id' => 'integer',
         'type_id' => 'integer',
+        'is_read' => 'boolean',
     ];
 
     const specific = 1;
