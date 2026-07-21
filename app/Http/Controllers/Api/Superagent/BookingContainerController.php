@@ -190,5 +190,62 @@ class BookingContainerController extends Controller
             return $this->returnError(500, $ex->getMessage());
         }
     }
+
+    public function details(Request $request)
+    {
+        try {
+            $bookingContainerId = $request->get('booking_container_id');
+            $bookingId = null;
+
+            if ($bookingContainerId) {
+                $container = BookingContainer::find($bookingContainerId);
+                if (!$container) {
+                    return $this->returnError(404, __('alerts.not_found') ?? 'Booking container not found');
+                }
+                $bookingId = $container->booking_id;
+            } else {
+                $bookingId = $request->get('booking_id') ?? $request->get('id');
+            }
+
+            if (!$bookingId) {
+                return $this->returnError(400, 'booking_id or booking_container_id is required');
+            }
+
+            $booking = Booking::find($bookingId);
+            if (!$booking) {
+                return $this->returnError(404, __('alerts.not_found') ?? 'Booking not found');
+            }
+
+            // Map type_id to stage if provided
+            if ($request->has('type_id')) {
+                $typeId = $request->get('type_id');
+                if ($typeId == 0) {
+                    $request->merge(['stage' => 'specification']);
+                } elseif ($typeId == 1) {
+                    $request->merge(['stage' => 'loading']);
+                } elseif ($typeId == 2) {
+                    $request->merge(['stage' => 'unloading']);
+                }
+            }
+
+            // Eager load booking containers and relations to prevent N+1 queries
+            $booking->load([
+                'bookingContainers.booking.company',
+                'bookingContainers.booking.yard',
+                'bookingContainers.branch.factory',
+                'bookingContainers.container',
+                'bookingContainers.notes',
+                'bookingContainers.agents',
+                'bookingContainers.delivery_policies.money_transfer',
+                'bookingContainers.bookingPapers.image',
+            ]);
+
+            $data = new SpecificationBookingResource($booking);
+
+            return $this->returnAllData($data, __('alerts.success'));
+        } catch (\Exception $ex) {
+            return $this->returnError(500, $ex->getMessage());
+        }
+    }
 }
 

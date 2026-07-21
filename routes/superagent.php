@@ -34,6 +34,9 @@ Route::group(['middleware' => 'localization'], function () {
         Route::post('verifyOtp', [OtpController::class, 'verifyOtp']);
         Route::post('resetPassword', [OtpController::class, 'resetPassword']);
     // });
+
+    Route::get("booking/details", [BookingContainerController::class, "details"]);
+
     Route::group(['middleware' => 'auth:superagent'], function () {
 
         //agent expensess-approve
