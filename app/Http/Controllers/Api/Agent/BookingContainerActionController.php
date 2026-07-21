@@ -43,7 +43,7 @@ class BookingContainerActionController extends Controller
             ]);
 
 
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container_ids);
+            $dailyContainers = DailyBookingContainer::whereIn("booking_container_id", $booking_container_ids);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
 
@@ -63,12 +63,22 @@ class BookingContainerActionController extends Controller
             SaveNotification::create($title, $text, null, null, AppNotification::all);
             // SendNotification::send($agent->device_token ?? "", $title, $text);
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_specification: Sending notification to all superagents', [
+                'booking_id' => $booking->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
+
+            foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking->id,
                     'action_type' => 'specification' // تخصيص
                 ];
+                \Illuminate\Support\Facades\Log::info('done_specification: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
                 SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
@@ -94,11 +104,11 @@ class BookingContainerActionController extends Controller
                 "status" => 2
             ]);
 
-            BookingContainerAgent::whereBookingContainerId($booking_container->id)->whereAgentId($agent->id)->update([
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->whereAgentId($agent->id)->update([
                 "booking_container_status" => 2
             ]);
 
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container->id);
+            $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
                 $dailyContainer->update([
@@ -124,12 +134,22 @@ class BookingContainerActionController extends Controller
                 SendNotification::send($agent->device_token, $title, $text, $notificationData);
             }
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_loading: Sending notification to all superagents', [
+                'booking_container_id' => $booking_container->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
+
+            foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
                     'action_type' => 'loading' // تحميل
                 ];
+                \Illuminate\Support\Facades\Log::info('done_loading: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
                 SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
@@ -160,11 +180,11 @@ class BookingContainerActionController extends Controller
                 "status" => 3
             ]);
 
-            BookingContainerAgent::whereBookingContainerId($booking_container->id)->whereAgentId($agent->id)->update([
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->whereAgentId($agent->id)->update([
                 "booking_container_status" => 3
             ]);
 
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container->id);
+            $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
                 $dailyContainer->update([
@@ -190,12 +210,22 @@ class BookingContainerActionController extends Controller
                 SendNotification::send($agent->device_token, $title, $text, $notificationData);
             }
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_unloading: Sending notification to all superagents', [
+                'booking_container_id' => $booking_container->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
+
+            foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
                     'action_type' => 'unloading' // تعتيق
                 ];
+                \Illuminate\Support\Facades\Log::info('done_unloading: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
                 SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 

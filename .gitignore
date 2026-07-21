@@ -17,3 +17,5 @@ yarn-error.log
 /.idea
 /.vscode
 /deleteme
+/storage/app/firebase.json
+/storage/logs/*.log
