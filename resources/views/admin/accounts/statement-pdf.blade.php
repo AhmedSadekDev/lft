@@ -103,7 +103,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>كشف حساب</h1>
+        <h1>{{ ($mode ?? 'combined') === 'detailed' ? 'كشف حساب تفصيلي' : 'كشف حساب مجمّع' }}</h1>
         <div class="company-name">الاسم: {{ $company->name }}</div>
         <div class="period">الحساب في الفترة من {{ $fromDate }} الى {{ $toDate }}</div>
         @if($company->opening_balance && $company->opening_balance != 0)

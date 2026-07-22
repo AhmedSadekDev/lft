@@ -17,12 +17,12 @@
             </h4>
 
             <div>
-                <a href="{{ route('accounts.statement.export.excel', ['companyId'=>$company->id,'from'=>$fromDate,'to'=>$toDate]) }}"
+                <a href="{{ route('accounts.statement.export.excel', ['companyId'=>$company->id,'from'=>$fromDate,'to'=>$toDate,'mode'=>$mode ?? 'combined']) }}"
                    class="btn btn-light btn-sm mr-2">
                     <i class="fas fa-file-excel text-success"></i> Excel
                 </a>
 
-                <a href="{{ route('accounts.statement.export.pdf', ['companyId'=>$company->id,'from'=>$fromDate,'to'=>$toDate]) }}"
+                <a href="{{ route('accounts.statement.export.pdf', ['companyId'=>$company->id,'from'=>$fromDate,'to'=>$toDate,'mode'=>$mode ?? 'combined']) }}"
                    class="btn btn-light btn-sm mr-2">
                     <i class="fas fa-file-pdf text-danger"></i> PDF
                 </a>
@@ -96,14 +96,29 @@
                 </div>
             </div>
 
-            <!-- فلتر -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#filterModal">
-                    <i class="fas fa-filter"></i> فلتر
-                </button>
+            <!-- فلتر + نوع الكشف -->
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                <div class="mb-2 mb-md-0">
+                    <button class="btn btn-primary btn-sm mr-2" data-toggle="modal" data-target="#filterModal">
+                        <i class="fas fa-filter"></i> فلتر
+                    </button>
+
+                    <div class="btn-group" role="group">
+                        <a href="{{ route('accounts.statement', ['companyId' => $company->id, 'from' => $fromDate, 'to' => $toDate, 'mode' => 'combined']) }}"
+                           class="btn btn-sm {{ ($mode ?? 'combined') === 'combined' ? 'btn-dark' : 'btn-outline-dark' }}">
+                            كشف حساب مجمّع
+                        </a>
+                        <a href="{{ route('accounts.statement', ['companyId' => $company->id, 'from' => $fromDate, 'to' => $toDate, 'mode' => 'detailed']) }}"
+                           class="btn btn-sm {{ ($mode ?? 'combined') === 'detailed' ? 'btn-dark' : 'btn-outline-dark' }}">
+                            كشف حساب تفصيلي
+                        </a>
+                    </div>
+                </div>
 
                 <strong>
                     من {{ $fromDate }} إلى {{ $toDate }}
+                    —
+                    {{ ($mode ?? 'combined') === 'detailed' ? 'تفصيلي (I / R / S)' : 'مجمّع' }}
                 </strong>
             </div>
 
@@ -147,8 +162,16 @@
                                 <td>{{ $transaction['invoice_number'] ?? '-' }}</td>
 
                                 <td>
-                                    @if($transaction['type'] == 'invoice')
-                                        <span class="badge badge-danger">فاتورة</span>
+                                    @if(in_array($transaction['type'] ?? '', ['invoice', 'invoice_tax', 'invoice_receipt', 'invoice_additional'], true))
+                                        @if(($transaction['type'] ?? '') === 'invoice_tax')
+                                            <span class="badge badge-danger">ضريبية (I)</span>
+                                        @elseif(($transaction['type'] ?? '') === 'invoice_receipt')
+                                            <span class="badge badge-primary">إيصالات (R)</span>
+                                        @elseif(($transaction['type'] ?? '') === 'invoice_additional')
+                                            <span class="badge badge-success">إضافية (S)</span>
+                                        @else
+                                            <span class="badge badge-danger">فاتورة</span>
+                                        @endif
                                     @elseif($transaction['type'] == 'payment')
                                         <span class="badge badge-success">سداد</span>
                                     @else
@@ -381,7 +404,13 @@
                     <input type="date" name="from" value="{{ $fromDate }}" class="form-control mb-3">
 
                     <label>إلى</label>
-                    <input type="date" name="to" value="{{ $toDate }}" class="form-control">
+                    <input type="date" name="to" value="{{ $toDate }}" class="form-control mb-3">
+
+                    <label>نوع الكشف</label>
+                    <select name="mode" class="form-control">
+                        <option value="combined" {{ ($mode ?? 'combined') === 'combined' ? 'selected' : '' }}>كشف حساب مجمّع</option>
+                        <option value="detailed" {{ ($mode ?? 'combined') === 'detailed' ? 'selected' : '' }}>كشف حساب تفصيلي</option>
+                    </select>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary">تطبيق</button>

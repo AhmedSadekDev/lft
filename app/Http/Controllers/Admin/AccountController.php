@@ -27,6 +27,7 @@ use App\Models\Bank;
 use App\Models\Booking;
 use App\Models\BookingContainer;
 use App\Models\Invoice;
+use App\Services\InvoicePrintBuilder;
 use Maatwebsite\Excel\Facades\Excel;
 use Mpdf\Mpdf;
 
@@ -68,6 +69,7 @@ class AccountController extends Controller
 
         $fromDate = $request->from ?? Carbon::now()->startOfYear()->format('Y-m-d');
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
+        $mode = $this->resolveStatementMode($request);
 
         // حساب الرصيد المرحّل من الفواتير السابقة (قبل تاريخ البداية)
         $carriedForwardBalance = $this->calculateCarriedForwardBalance($company, $fromDate);
@@ -98,12 +100,13 @@ class AccountController extends Controller
         }
 
         // إنشاء قائمة موحدة بجميع الحركات (فواتير + سداد) مرتبة حسب التاريخ
-        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company);
+        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company, $mode);
 
         return view('admin.accounts.statement', compact(
             'company',
             'fromDate',
             'toDate',
+            'mode',
             'carriedForwardBalance',
             'invoices',
             'totalInvoices',
@@ -115,11 +118,24 @@ class AccountController extends Controller
     }
 
     /**
-     * بناء قائمة موحدة بجميع الحركات (فواتير + سداد)
+     * combined = فاتورة واحدة مجمّعة | detailed = أسطر I / R / S
      */
-    private function buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate = null, $company = null)
+    private function resolveStatementMode(Request $request): string
+    {
+        $mode = strtolower((string) $request->get('mode', 'combined'));
+
+        return in_array($mode, ['combined', 'detailed'], true) ? $mode : 'combined';
+    }
+
+    /**
+     * بناء قائمة موحدة بجميع الحركات (فواتير + سداد)
+     *
+     * @param  string  $mode  combined|detailed
+     */
+    private function buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate = null, $company = null, string $mode = 'combined')
     {
         $transactions = collect();
+        $printBuilder = new InvoicePrintBuilder();
 
         // حساب الرصيد المرحّل بدون الرصيد الافتتاحي
         $openingBalance = $company ? ($company->opening_balance ?? 0) : 0;
@@ -134,8 +150,8 @@ class AccountController extends Controller
                 'type_label' => 'رصيد افتتاحي',
                 'booking_number' => '',
                 'invoice_number' => '',
-                'previous_debit' => 0, // أول سجل، لا يوجد رصيد سابق
-                'previous_credit' => 0, // أول سجل، لا يوجد رصيد سابق
+                'previous_debit' => 0,
+                'previous_credit' => 0,
                 'discount' => 0,
                 'tax' => 0,
                 'attachment_statement' => '',
@@ -154,7 +170,6 @@ class AccountController extends Controller
             $startDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now()->startOfYear();
             $runningBalance = $openingBalance + $carriedForwardWithoutOpening;
 
-            // حساب الرصيد السابق من السجلات السابقة
             $previousDebit = $transactions->sum('current_debit');
             $previousCredit = $transactions->sum('current_credit');
 
@@ -179,50 +194,76 @@ class AccountController extends Controller
             ]);
         }
 
-        // إضافة الفواتير (إذا كانت موجودة)
+        // إضافة الفواتير
         if ($invoices && is_iterable($invoices)) {
             foreach ($invoices as $invoice) {
-                // التحقق من أن $invoice هو array وليس object
                 $invoiceId = is_array($invoice) ? ($invoice['id'] ?? null) : ($invoice->id ?? null);
-                if (!$invoiceId) continue;
+                if (!$invoiceId) {
+                    continue;
+                }
 
-                $invoiceObj = Invoice::find($invoiceId);
-                if (!$invoiceObj) continue;
+                $invoiceObj = Invoice::with([
+                    'booking.bookingContainers',
+                    'booking.bookingServices.service.serviceCategory',
+                    'booking.expenses.service.serviceCategory',
+                ])->find($invoiceId);
 
-                $transportationTotal = $invoiceObj->transportation_total_before_vat ?? 0;
-                $vatAmount = $invoiceObj->value_added_tax_amount ?? 0;
-                $discountAmount = $invoiceObj->discount_amount ?? 0;
-                $totalInvoice = is_array($invoice) ? ($invoice['total'] ?? 0) : ($invoice->total ?? 0);
-                $paidAmount = is_array($invoice) ? ($invoice['paid'] ?? 0) : ($invoice->paid ?? 0);
+                if (!$invoiceObj) {
+                    continue;
+                }
+
                 $invoiceDate = is_array($invoice) ? ($invoice['date'] ?? now()) : ($invoice->date ?? now());
                 $bookingNumber = is_array($invoice) ? ($invoice['booking_number'] ?? '') : ($invoice->booking_number ?? '');
                 $invoiceNumber = is_array($invoice) ? ($invoice['invoice_number'] ?? '') : ($invoice->invoice_number ?? '');
+                $legacyTotal = (float) (is_array($invoice) ? ($invoice['total'] ?? 0) : ($invoice->total ?? 0));
 
-                $currentBalance = ($transactions->last()['running_balance'] ?? ($carriedForwardBalance)) + $totalInvoice;
+                if ($mode === 'detailed') {
+                    $sectionRows = $this->buildDetailedInvoiceSectionRows(
+                        $printBuilder,
+                        $invoiceObj,
+                        $invoiceDate,
+                        $bookingNumber,
+                        $invoiceNumber,
+                        $legacyTotal
+                    );
 
-                $transactions->push([
-                    'date' => $invoiceDate,
-                    'type' => 'invoice',
-                    'type_label' => 'فاتورة نقل',
-                    'booking_number' => $bookingNumber,
-                    'invoice_number' => $invoiceNumber,
-                    'previous_debit' => 0, // سيتم حسابه بعد الترتيب
-                    'previous_credit' => 0, // سيتم حسابه بعد الترتيب
-                    'discount' => $discountAmount,
-                    'tax' => $vatAmount,
-                    'attachment_statement' => '',
-                    'transportation' => $transportationTotal,
-                    'total' => $totalInvoice,
-                    'paid' => 0,
-                    'notes' => '',
-                    'current_debit' => $totalInvoice,
-                    'current_credit' => 0,
-                    'running_balance' => $currentBalance,
-                ]);
+                    foreach ($sectionRows as $sectionRow) {
+                        $currentBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) + $sectionRow['total'];
+                        $sectionRow['running_balance'] = $currentBalance;
+                        $transactions->push($sectionRow);
+                    }
+                } else {
+                    $transportationTotal = $invoiceObj->transportation_total_before_vat ?? 0;
+                    $vatAmount = $invoiceObj->value_added_tax_amount ?? 0;
+                    $discountAmount = $invoiceObj->discount_amount ?? 0;
+                    $totalInvoice = $legacyTotal;
+                    $currentBalance = ($transactions->last()['running_balance'] ?? $carriedForwardBalance) + $totalInvoice;
+
+                    $transactions->push([
+                        'date' => $invoiceDate,
+                        'type' => 'invoice',
+                        'type_label' => 'فاتورة',
+                        'booking_number' => $bookingNumber,
+                        'invoice_number' => $invoiceNumber,
+                        'previous_debit' => 0,
+                        'previous_credit' => 0,
+                        'discount' => $discountAmount,
+                        'tax' => $vatAmount,
+                        'attachment_statement' => '',
+                        'transportation' => $transportationTotal,
+                        'total' => $totalInvoice,
+                        'paid' => 0,
+                        'notes' => '',
+                        'current_debit' => $totalInvoice,
+                        'current_credit' => 0,
+                        'running_balance' => $currentBalance,
+                        'section' => 'combined',
+                    ]);
+                }
             }
         }
 
-        // تجميع المدفوعات حسب التاريخ (فقط إذا كانت موجودة)
+        // تجميع المدفوعات حسب التاريخ
         $groupedPayments = collect();
         if ($payments && $payments->count() > 0) {
             $groupedPayments = $payments->groupBy(function ($payment) {
@@ -230,24 +271,17 @@ class AccountController extends Controller
             });
         }
 
-        // إضافة المدفوعات المجمعة
         foreach ($groupedPayments as $date => $dayPayments) {
             $totalPaymentValue = $dayPayments->sum('value');
             $currentBalance = ($transactions->last()['running_balance'] ?? ($carriedForwardBalance)) - $totalPaymentValue;
 
-            // جمع تفاصيل السداد
             $paymentDetails = $dayPayments->map(function ($payment) {
-                // الحصول على ملاحظات السداد
                 $notes = '';
                 if ($payment->notes && strpos(ltrim($payment->notes), '{') !== 0) {
                     $notes = $payment->notes;
                 } elseif ($payment->bank_id) {
                     $bank = Bank::find($payment->bank_id);
-                    if ($bank) {
-                        $notes = 'تحويل ' . $bank->name;
-                    } else {
-                        $notes = 'سداد';
-                    }
+                    $notes = $bank ? ('تحويل ' . $bank->name) : 'سداد';
                 } else {
                     $notes = 'قام العميل بسداد';
                 }
@@ -268,20 +302,15 @@ class AccountController extends Controller
                     'check_number' => $payment->check_number ?? '',
                     'date' => $payment->created_at,
                 ];
-            })->values()->toArray(); // تحويل إلى array indexed
+            })->values()->toArray();
 
-            // الحصول على ملاحظات السداد (من أول سداد في اليوم)
             $firstPayment = $dayPayments->first();
             $notes = '';
             if ($firstPayment->notes) {
                 $notes = $firstPayment->notes;
             } elseif ($firstPayment->bank_id) {
                 $bank = Bank::find($firstPayment->bank_id);
-                if ($bank) {
-                    $notes = 'تحويل ' . $bank->name;
-                } else {
-                    $notes = 'سداد';
-                }
+                $notes = $bank ? ('تحويل ' . $bank->name) : 'سداد';
             } else {
                 $notes = 'قام العميل بسداد';
             }
@@ -298,8 +327,8 @@ class AccountController extends Controller
                 'type_label' => 'قام العميل بسداد',
                 'booking_number' => '',
                 'invoice_number' => $dayPayments->count() > 1 ? 'متعدد (' . $dayPayments->count() . ' فاتورة)' : $firstInvNo,
-                'previous_debit' => 0, // سيتم حسابه بعد الترتيب
-                'previous_credit' => 0, // سيتم حسابه بعد الترتيب
+                'previous_debit' => 0,
+                'previous_credit' => 0,
                 'discount' => 0,
                 'tax' => 0,
                 'attachment_statement' => '',
@@ -310,28 +339,135 @@ class AccountController extends Controller
                 'current_debit' => 0,
                 'current_credit' => $totalPaymentValue,
                 'running_balance' => $currentBalance,
-                'payment_details' => $paymentDetails, // تفاصيل السداد (تم تحويله إلى array في السطر 259)
-                'payment_count' => $dayPayments->count(), // عدد الفواتير
+                'payment_details' => $paymentDetails,
+                'payment_count' => $dayPayments->count(),
             ]);
         }
 
-        // ترتيب حسب التاريخ (تصاعدي - من الأقدم للأحدث)
-        $sortedTransactions = $transactions->sortBy('date')->values();
+        $sortedTransactions = $transactions->sortBy([
+            ['date', 'asc'],
+            ['line_order', 'asc'],
+        ])->values();
 
-        // حساب الرصيد السابق لكل سجل بناءً على السجلات السابقة له
         $sortedTransactions = $sortedTransactions->map(function ($transaction, $index) use ($sortedTransactions) {
             if ($index > 0) {
-                // حساب مجموع الحساب الحالي من السجلات السابقة
                 $previousDebit = $sortedTransactions->take($index)->sum('current_debit');
                 $previousCredit = $sortedTransactions->take($index)->sum('current_credit');
                 $transaction['previous_debit'] = $previousDebit;
                 $transaction['previous_credit'] = $previousCredit;
             }
+
             return $transaction;
         });
 
-        // ترتيب تنازلي (من الأحدث للأقدم)
-        return $sortedTransactions->sortByDesc('date')->values();
+        // عرض تنازلي مع الإبقاء على ترتيب I ثم R ثم S داخل نفس التاريخ
+        return $sortedTransactions->sortBy([
+            ['date', 'desc'],
+            ['line_order', 'asc'],
+        ])->values();
+    }
+
+    /**
+     * أسطر الفاتورة التفصيلية: ضريبية (I) ثم إيصالات (R) ثم خدمات إضافية (S)
+     */
+    private function buildDetailedInvoiceSectionRows(
+        InvoicePrintBuilder $printBuilder,
+        Invoice $invoiceObj,
+        $invoiceDate,
+        string $bookingNumber,
+        string $invoiceNumber,
+        float $legacyTotal
+    ): array {
+        $printData = $printBuilder->build($invoiceObj);
+        $rows = [];
+
+        $sections = [
+            [
+                'key' => 'tax',
+                'group' => $printData['tax'],
+                'type' => 'invoice_tax',
+                'type_label' => 'فاتورة ضريبية (I)',
+                'include_tax_meta' => true,
+            ],
+            [
+                'key' => 'receipt',
+                'group' => $printData['receipt'],
+                'type' => 'invoice_receipt',
+                'type_label' => 'إيصالات (R)',
+                'include_tax_meta' => false,
+            ],
+            [
+                'key' => 'additional',
+                'group' => $printData['additional'],
+                'type' => 'invoice_additional',
+                'type_label' => 'خدمات إضافية (S)',
+                'include_tax_meta' => false,
+            ],
+        ];
+
+        $sectionSum = collect($sections)->sum(fn ($s) => (float) ($s['group']['total'] ?? 0));
+        // إن اختلف مجموع الأقسام عن إجمالي كشف الحساب المحفوظ، نضبط الفرق على قسم الضريبة للحفاظ على الرصيد
+        $diff = round($legacyTotal - $sectionSum, 2);
+
+        foreach ($sections as $index => $section) {
+            $amount = (float) ($section['group']['total'] ?? 0);
+            if ($index === 0 && abs($diff) > 0.009) {
+                $amount += $diff;
+            }
+
+            if ($amount <= 0 && ($section['group']['items'] ?? collect())->isEmpty()) {
+                continue;
+            }
+            if ($amount == 0.0) {
+                continue;
+            }
+
+            $rows[] = [
+                'date' => $invoiceDate,
+                'type' => $section['type'],
+                'type_label' => $section['type_label'],
+                'booking_number' => $bookingNumber,
+                'invoice_number' => $section['group']['number'] ?? ($invoiceNumber . '-' . ($section['group']['suffix'] ?? '')),
+                'previous_debit' => 0,
+                'previous_credit' => 0,
+                'discount' => $section['include_tax_meta'] ? (float) ($section['group']['discount'] ?? 0) : 0,
+                'tax' => $section['include_tax_meta'] ? (float) ($section['group']['vat'] ?? 0) : 0,
+                'attachment_statement' => $section['key'] === 'receipt' ? 'إيصالات' : ($section['key'] === 'additional' ? 'خدمات إضافية' : ''),
+                'transportation' => $section['key'] === 'tax' ? (float) ($invoiceObj->transportation_total_before_vat ?? 0) : 0,
+                'total' => $amount,
+                'paid' => 0,
+                'notes' => $section['group']['label'] ?? '',
+                'current_debit' => $amount,
+                'current_credit' => 0,
+                'section' => $section['key'],
+                'line_order' => $index + 1,
+            ];
+        }
+
+        // لو كل الأقسام فارغة لأي سبب، أبقِ سطراً واحداً بالمبلغ القديم
+        if (empty($rows) && $legacyTotal > 0) {
+            $rows[] = [
+                'date' => $invoiceDate,
+                'type' => 'invoice',
+                'type_label' => 'فاتورة',
+                'booking_number' => $bookingNumber,
+                'invoice_number' => $invoiceNumber,
+                'previous_debit' => 0,
+                'previous_credit' => 0,
+                'discount' => (float) ($invoiceObj->discount_amount ?? 0),
+                'tax' => (float) ($invoiceObj->value_added_tax_amount ?? 0),
+                'attachment_statement' => '',
+                'transportation' => (float) ($invoiceObj->transportation_total_before_vat ?? 0),
+                'total' => $legacyTotal,
+                'paid' => 0,
+                'notes' => '',
+                'current_debit' => $legacyTotal,
+                'current_credit' => 0,
+                'section' => 'combined',
+            ];
+        }
+
+        return $rows;
     }
 
     /**
@@ -343,6 +479,7 @@ class AccountController extends Controller
 
         $fromDate = $request->from ?? Carbon::now()->startOfYear()->format('Y-m-d');
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
+        $mode = $this->resolveStatementMode($request);
 
         // حساب الرصيد المرحّل
         $carriedForwardBalance = $this->calculateCarriedForwardBalance($company, $fromDate);
@@ -359,15 +496,19 @@ class AccountController extends Controller
         $finalBalance = $carriedForwardBalance + $totalInvoices - $totalPayments;
 
         // إنشاء قائمة موحدة بجميع الحركات
-        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company);
+        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company, $mode);
 
-        // ترتيب تصاعدي (ASC) للتصدير
-        $transactions = $transactions->sortBy('date')->values();
+        // ترتيب تصاعدي (ASC) للتصدير مع الحفاظ على I ثم R ثم S
+        $transactions = $transactions->sortBy([
+            ['date', 'asc'],
+            ['line_order', 'asc'],
+        ])->values();
 
-        $fileName = 'كشف_حساب_' . $company->name . '_' . $fromDate . '_' . $toDate . '.xlsx';
+        $modeLabel = $mode === 'detailed' ? 'تفصيلي' : 'مجمع';
+        $fileName = 'كشف_حساب_' . $modeLabel . '_' . $company->name . '_' . $fromDate . '_' . $toDate . '.xlsx';
 
         return Excel::download(
-            new AccountStatementExport($company, $fromDate, $toDate, $carriedForwardBalance, $totalInvoices, $totalPayments, $finalBalance, $invoices, $payments, $transactions ?? collect()),
+            new AccountStatementExport($company, $fromDate, $toDate, $carriedForwardBalance, $totalInvoices, $totalPayments, $finalBalance, $invoices, $payments, $transactions ?? collect(), $mode),
             $fileName
         );
     }
@@ -381,6 +522,7 @@ class AccountController extends Controller
 
         $fromDate = $request->from ?? Carbon::now()->startOfYear()->format('Y-m-d');
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
+        $mode = $this->resolveStatementMode($request);
 
         // حساب الرصيد المرحّل
         $carriedForwardBalance = $this->calculateCarriedForwardBalance($company, $fromDate);
@@ -397,15 +539,19 @@ class AccountController extends Controller
         $finalBalance = $carriedForwardBalance + $totalInvoices - $totalPayments;
 
         // إنشاء قائمة موحدة بجميع الحركات
-        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company);
+        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate, $company, $mode);
 
         // ترتيب تصاعدي (ASC) للتصدير
-        $transactions = $transactions->sortBy('date')->values();
+        $transactions = $transactions->sortBy([
+            ['date', 'asc'],
+            ['line_order', 'asc'],
+        ])->values();
 
         $html = view('admin.accounts.statement-pdf', compact(
             'company',
             'fromDate',
             'toDate',
+            'mode',
             'carriedForwardBalance',
             'invoices',
             'totalInvoices',

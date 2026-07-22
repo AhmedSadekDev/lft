@@ -23,8 +23,9 @@ class AccountStatementExport implements WithMultipleSheets
     protected $invoices;
     protected $payments;
     protected $transactions;
+    protected $mode;
 
-    public function __construct($company, $fromDate, $toDate, $carriedForwardBalance, $totalInvoices, $totalPayments, $finalBalance, $invoices, $payments, $transactions)
+    public function __construct($company, $fromDate, $toDate, $carriedForwardBalance, $totalInvoices, $totalPayments, $finalBalance, $invoices, $payments, $transactions, string $mode = 'combined')
     {
         $this->company = $company;
         $this->fromDate = $fromDate;
@@ -36,13 +37,14 @@ class AccountStatementExport implements WithMultipleSheets
         $this->invoices = $invoices;
         $this->payments = $payments;
         $this->transactions = $transactions;
+        $this->mode = $mode;
     }
 
     public function sheets(): array
     {
         return [
-            new AccountStatementTransactionsSheet($this->company, $this->fromDate, $this->toDate, $this->transactions, $this->finalBalance),
-            new AccountStatementSummarySheet($this->company, $this->fromDate, $this->toDate, $this->carriedForwardBalance, $this->totalInvoices, $this->totalPayments, $this->finalBalance),
+            new AccountStatementTransactionsSheet($this->company, $this->fromDate, $this->toDate, $this->transactions, $this->finalBalance, $this->mode),
+            new AccountStatementSummarySheet($this->company, $this->fromDate, $this->toDate, $this->carriedForwardBalance, $this->totalInvoices, $this->totalPayments, $this->finalBalance, $this->mode),
         ];
     }
 }
@@ -54,27 +56,30 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
     protected $toDate;
     protected $transactions;
     protected $finalBalance;
+    protected $mode;
 
-    public function __construct($company, $fromDate, $toDate, $transactions, $finalBalance)
+    public function __construct($company, $fromDate, $toDate, $transactions, $finalBalance, string $mode = 'combined')
     {
         $this->company = $company;
         $this->fromDate = $fromDate;
         $this->toDate = $toDate;
         $this->transactions = $transactions;
         $this->finalBalance = $finalBalance;
+        $this->mode = $mode;
     }
 
     public function collection()
     {
         $data = collect();
+        $modeTitle = $this->mode === 'detailed' ? 'كشف حساب تفصيلي' : 'كشف حساب مجمّع';
 
-        // إضافة صف العنوان (بدون headings)
         $data->push([
             $this->company->name,
             '',
             '',
             '',
-            'الحساب في الفترة',
+            $modeTitle,
+            '',
             '',
             '',
             '',
@@ -86,20 +91,19 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
             '',
         ]);
 
-        // إضافة صف فارغ
         $data->push([
-            '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+            '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
         ]);
 
-        // إضافة الحركات (بدون headings لأن headings() ستعتني بهذا)
         foreach ($this->transactions as $transaction) {
             $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
 
             $data->push([
-                $date->format('Y-m-d H:i'),
+                $date->format('Y-m-d'),
                 $transaction['previous_debit'] > 0 ? number_format($transaction['previous_debit'], 2) : '',
                 $transaction['previous_credit'] > 0 ? number_format($transaction['previous_credit'], 2) : '',
                 $transaction['booking_number'] ?: '',
+                $transaction['invoice_number'] ?: '',
                 $transaction['type_label'],
                 $transaction['discount'] > 0 ? number_format($transaction['discount'], 2) : '',
                 $transaction['tax'] > 0 ? number_format($transaction['tax'], 2) : '',
@@ -113,7 +117,6 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
             ]);
         }
 
-        // إضافة صف الإجمالي
         if ($this->transactions->count() > 0) {
             $totalPreviousDebit = $this->transactions->sum('previous_debit');
             $totalPreviousCredit = $this->transactions->sum('previous_credit');
@@ -121,13 +124,14 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
             $totalCurrentCredit = $this->transactions->sum('current_credit');
 
             $data->push([
-                '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+                '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
             ]);
 
             $data->push([
                 "الحساب النهائي يوم {$this->toDate}",
                 number_format($totalPreviousDebit, 2),
                 number_format($totalPreviousCredit, 2),
+                '',
                 '',
                 '',
                 '',
@@ -154,6 +158,7 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
                 '',
                 '',
                 '',
+                '',
                 number_format(abs($this->finalBalance), 2),
                 '',
             ]);
@@ -169,6 +174,7 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
             'حساب سابق - مدين',
             'حساب سابق - دائن',
             'رقم الطلب',
+            'رقم الفاتورة',
             'نوع العملية',
             'خصم على الفاتورة',
             'الضريبة',
@@ -184,7 +190,7 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
 
     public function title(): string
     {
-        return 'كشف الحساب';
+        return $this->mode === 'detailed' ? 'كشف تفصيلي' : 'كشف مجمّع';
     }
 }
 
@@ -197,8 +203,9 @@ class AccountStatementSummarySheet implements FromCollection, WithHeadings, Shou
     protected $totalInvoices;
     protected $totalPayments;
     protected $finalBalance;
+    protected $mode;
 
-    public function __construct($company, $fromDate, $toDate, $carriedForwardBalance, $totalInvoices, $totalPayments, $finalBalance)
+    public function __construct($company, $fromDate, $toDate, $carriedForwardBalance, $totalInvoices, $totalPayments, $finalBalance, string $mode = 'combined')
     {
         $this->company = $company;
         $this->fromDate = $fromDate;
@@ -207,6 +214,7 @@ class AccountStatementSummarySheet implements FromCollection, WithHeadings, Shou
         $this->totalInvoices = $totalInvoices;
         $this->totalPayments = $totalPayments;
         $this->finalBalance = $finalBalance;
+        $this->mode = $mode;
     }
 
     public function collection()
@@ -216,13 +224,13 @@ class AccountStatementSummarySheet implements FromCollection, WithHeadings, Shou
             ['الاسم', $this->company->name],
             ['البريد الإلكتروني', $this->company->email ?? '-'],
             ['الهاتف', $this->company->phone ?? '-'],
+            ['نوع الكشف', $this->mode === 'detailed' ? 'تفصيلي (I / R / S)' : 'مجمّع'],
             ['', ''],
             ['ملخص الحساب', ''],
             ['من تاريخ', $this->fromDate],
             ['إلى تاريخ', $this->toDate],
         ];
 
-        // إضافة الرصيد الافتتاحي إن وجد
         if ($this->company->opening_balance && $this->company->opening_balance != 0) {
             $data[] = ['الرصيد الافتتاحي', number_format($this->company->opening_balance, 2)];
         }
