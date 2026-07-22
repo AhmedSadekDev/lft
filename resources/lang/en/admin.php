@@ -184,6 +184,7 @@ return [
     'taxed'                     => 'Taxed',
     'untaxed'                   => 'Untaxed',
     'not_added'                 => 'Not added',
+    'invoice_print_section'     => 'Invoice print section',
     'background_information'    => 'Background Information',
     'invoice_number'            => 'Invoice number',
 

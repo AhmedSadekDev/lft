@@ -200,6 +200,7 @@ return [
     'taxed'                     => 'ضريبية',
     'untaxed'                   => 'غير ضريبية',
     'not_added'                 => 'لا يتم إضافتها',
+    'invoice_print_section'     => 'قسم الطباعة في الفاتورة',
     'background_information'    => 'معلومات أساسية',
     'invoice_number'            => 'رقم الفاتورة',
 
