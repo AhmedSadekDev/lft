@@ -39,6 +39,11 @@ class Booking extends Model
         return $this->belongsTo(Company::class);
     }
 
+    public function receipts()
+    {
+        return $this->hasMany(Receipt::class);
+    }
+
     public function factory()
     {
         return $this->belongsTo(Factory::class);

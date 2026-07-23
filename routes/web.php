@@ -51,6 +51,7 @@ use App\Http\Controllers\InvoicePaymentController;
 use App\Exports\CarsExport;
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\ReceiptController;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -449,6 +450,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('suppliers/{supplier}/payment', [SupplierController::class, 'showPaymentForm'])->name('suppliers.payment');
     Route::post('suppliers/{supplier}/payment', [SupplierController::class, 'processPayment'])->name('suppliers.payment.process');
     Route::resource('suppliers', SupplierController::class);
+    Route::resource('receipts', ReceiptController::class)->except(['show']);
     // ----------------- \Suppliers -----------------
 
     // ----------------- Accounts -----------------

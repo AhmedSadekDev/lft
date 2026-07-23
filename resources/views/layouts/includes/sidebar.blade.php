@@ -279,7 +279,7 @@
                                 <span class="svg-icon menu-icon">
                                     <i class="fas fa-building"></i>
                                 </span>
-                                <span class="menu-text">{{ __('main.suppliers') }}</span>
+                                <span class="menu-text">{{ __('main.transportations') }}</span>
                                 <i class="menu-arrow"></i>
                             </a>
                             <div class="menu-submenu">
@@ -287,7 +287,7 @@
                                 <ul class="menu-subnav">
                                     <li class="menu-item menu-item-parent" aria-haspopup="true">
                                         <span class="menu-link">
-                                            <span class="menu-text">{{ __('main.suppliers') }}</span>
+                                            <span class="menu-text">{{ __('main.transportations') }}</span>
                                         </span>
                                     </li>
 
@@ -557,7 +557,7 @@
 
 
 
-                    @if (auth()->user()->hasPermissionTo('accounts.index') || auth()->user()->hasPermissionTo('daily_reports.index'))
+                    @if (auth()->user()->hasPermissionTo('accounts.index') || auth()->user()->hasPermissionTo('daily_reports.index') || auth()->user()->hasPermissionTo('suppliers.index'))
                         <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
                             <a href="javascript:;" class="menu-link menu-toggle">
                                 <span class="svg-icon menu-icon">
@@ -586,6 +586,22 @@
                                             <a href="{{ route('accounts.checks.index') }}" class="menu-link">
                                                 <i class="menu-bullet menu-bullet-dot"><span></span></i>
                                                 <span class="menu-text">الشيكات</span>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if (auth()->user()->hasPermissionTo('suppliers.index'))
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('suppliers.index') }}" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">{{ __('main.suppliers') }}</span>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('receipts.index') }}" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">إيصالات الموردين</span>
                                             </a>
                                         </li>
                                     @endif
