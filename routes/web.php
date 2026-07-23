@@ -50,6 +50,7 @@ use App\Http\Controllers\BookingContaBookingContrainerExtraCostsController;
 use App\Http\Controllers\InvoicePaymentController;
 use App\Exports\CarsExport;
 use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\SupplierController;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -442,6 +443,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('/export_excel', [ReportController::class, 'exportExcel'])->name('reports.export_excel');
     Route::get('/general_expenses', [ReportController::class, 'general_expenses'])->name('reports.general_expenses');
     Route::get('/general_expenses_export', [ReportController::class, 'general_expenses_export'])->name('reports.general_expenses.export');
+
+    // ----------------- Suppliers -----------------
+    Route::get('suppliers/{supplier}/statement', [SupplierController::class, 'statement'])->name('suppliers.statement');
+    Route::get('suppliers/{supplier}/payment', [SupplierController::class, 'showPaymentForm'])->name('suppliers.payment');
+    Route::post('suppliers/{supplier}/payment', [SupplierController::class, 'processPayment'])->name('suppliers.payment.process');
+    Route::resource('suppliers', SupplierController::class);
+    // ----------------- \Suppliers -----------------
 
     // ----------------- Accounts -----------------
     Route::get('accounts', [AccountController::class, 'index'])->name('accounts.index');

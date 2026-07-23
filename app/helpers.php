@@ -124,6 +124,7 @@ if(!function_exists('adminDbTablesPermissions')){
             'vaults',
             'banks',
             'accounts',
+            'suppliers',
         ];
 
 
