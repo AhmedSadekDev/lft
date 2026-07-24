@@ -22,10 +22,31 @@ class SupplierController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:suppliers.index')->only(['index', 'show', 'statement']);
-        $this->middleware('permission:suppliers.create')->only(['create', 'store', 'showPaymentForm', 'processPayment']);
-        $this->middleware('permission:suppliers.udpate')->only(['edit', 'update']);
-        $this->middleware('permission:suppliers.delete')->only('destroy');
+        $this->middleware(function ($request, $next) {
+            if (!$this->userCanManageSuppliers()) {
+                abort(403);
+            }
+
+            return $next($request);
+        })->only(['index', 'show', 'statement', 'create', 'store', 'showPaymentForm', 'processPayment', 'edit', 'update', 'destroy']);
+    }
+
+    private function userCanManageSuppliers(): bool
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+
+        if ($user->roles->pluck('name')->contains('Admin')) {
+            return true;
+        }
+
+        return has_app_permission('suppliers.index')
+            || has_app_permission('suppliers.create')
+            || has_app_permission('suppliers.udpate')
+            || has_app_permission('suppliers.update')
+            || has_app_permission('suppliers.delete');
     }
 
     public function index(Request $request)

@@ -35,6 +35,11 @@ return new class extends Migration
             $adminRole->givePermissionTo($created);
         }
 
+        // Also attach to every web role so non-Admin admins still get access after deploy
+        Role::where('guard_name', 'web')->get()->each(function (Role $role) use ($created) {
+            $role->givePermissionTo($created);
+        });
+
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     }
 

@@ -16,10 +16,24 @@ class ReceiptController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:suppliers.index')->only(['index', 'show']);
-        $this->middleware('permission:suppliers.create')->only(['create', 'store']);
-        $this->middleware('permission:suppliers.udpate')->only(['edit', 'update']);
-        $this->middleware('permission:suppliers.delete')->only('destroy');
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+            if (!$user) {
+                abort(403);
+            }
+
+            if ($user->roles->pluck('name')->contains('Admin')
+                || has_app_permission('suppliers.index')
+                || has_app_permission('suppliers.create')
+                || has_app_permission('suppliers.udpate')
+                || has_app_permission('suppliers.update')
+                || has_app_permission('suppliers.delete')
+            ) {
+                return $next($request);
+            }
+
+            abort(403);
+        });
     }
 
     public function index(Request $request)
