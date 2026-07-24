@@ -341,12 +341,15 @@
                     <span class="booking-section-icon booking-section-icon--teal"><i class="fas fa-concierge-bell"></i></span>
                     {{ __('main.services') }}
                 </h2>
-                <span class="booking-section-badge">{{ $booking->booking_services_count + $booking->expenses_count }}</span>
+                <span class="booking-section-badge">{{ $booking->booking_services_count + $booking->expenses_count + ($booking->receipts?->whereNull('booking_service_id')->count() ?? 0) }}</span>
             </div>
             <div class="booking-section-body" style="direction:rtl">
                 @include('admin.components.booking-services.table', [
                     'booking_services' => $booking->bookingServices ?? collect(),
                     'expensesServices' => $booking->expenses ?? collect(),
+                    'supplierReceipts' => ($booking->receipts ?? collect())
+                        ->whereNull('booking_service_id')
+                        ->values(),
                     'booking' => $booking,
                 ])
             </div>

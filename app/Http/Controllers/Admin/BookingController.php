@@ -230,7 +230,13 @@ class BookingController extends Controller
      */
     public function show(Booking $booking)
     {
-        $booking->loadCount(['bookingServices', 'expenses']);
+        $booking->loadCount(['bookingServices', 'expenses', 'receipts']);
+        $booking->load([
+            'bookingServices.service.serviceCategory',
+            'bookingServices.supplier',
+            'expenses.service',
+            'receipts.supplier',
+        ]);
 
         $input = [
             'booking'      => $booking,

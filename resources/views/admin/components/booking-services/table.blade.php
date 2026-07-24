@@ -38,6 +38,9 @@
                 </td>
                 <td>
                     {{ $service->full_name }}
+                    @if(($service->payment_type ?? null) === 'supplier')
+                        <br><small class="text-info">مورد{{ $service->supplier?->name ? ': ' . $service->supplier->name : '' }}</small>
+                    @endif
                 </td>
                 <td>
                     {{ $service->note }}
@@ -123,6 +126,41 @@
                                     onclick="agentExpenseDelete(event, '{{ $expense->id }}')">
                                     <i class="fas fa-trash text-danger"></i>
                                 </button>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+        @endif
+
+        @if (isset($supplierReceipts))
+            @foreach($supplierReceipts as $receipt)
+                <tr id="supplier_receipt_{{ $receipt->id }}">
+                    <td>
+                        {{ $receipt->id }}
+                    </td>
+                    <td>
+                        إيصال مورد{{ $receipt->supplier?->name ? ': ' . $receipt->supplier->name : '' }}
+                        @if($receipt->supplier_invoice_number)
+                            <br><small class="text-muted">فاتورة: {{ $receipt->supplier_invoice_number }}</small>
+                        @endif
+                    </td>
+                    <td>
+                        {{ $receipt->notes }}
+                    </td>
+                    <td class="services_total_price" data-price="{{ $receipt->cost }}">
+                        {{ $receipt->cost }}
+                    </td>
+                    <td>
+                        <span class="text-muted">{{ __('admin.no_receipt_image') }}</span>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            @if (auth()->user()->hasPermissionTo('suppliers.udpate') || auth()->user()->hasPermissionTo('suppliers.update') || auth()->user()->roles->pluck('name')->contains('Admin'))
+                                <a href="{{ route('receipts.edit', $receipt) }}"
+                                   class="btn btn-icon btn-light btn-hover-primary btn-sm">
+                                    <i class="fas fa-edit text-primary"></i>
+                                </a>
                             @endif
                         </div>
                     </td>

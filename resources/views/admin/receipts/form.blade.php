@@ -7,6 +7,11 @@
         'supplier_id',
         $selectedSupplierId ?? (isset($receipt) ? $receipt->supplier_id : null)
     );
+    $currentBookingId = old('booking_id', isset($receipt) ? $receipt->booking_id : null);
+    $currentBookingNumber = old(
+        'booking_number',
+        isset($receipt) && $receipt->booking ? $receipt->booking->booking_number : null
+    );
 @endphp
 
 @if($method == 'POST')
@@ -55,8 +60,9 @@
             <div class="form-group">
                 {!! Form::label('supplier_id', 'المورد', ['class' => 'required-field']) !!}
                 {!! Form::select('supplier_id', ['' => 'اختر المورد'] + collect($suppliers ?? [])->toArray(), $currentSupplierId, [
-                    'class' => 'form-control',
+                    'class' => 'form-control selectpicker',
                     'id' => 'supplier_id',
+                    'data-live-search' => 'true',
                 ]) !!}
                 @error('supplier_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
@@ -76,17 +82,32 @@
 
         <div class="col-md-6">
             <div class="form-group">
-                {!! Form::label('booking_id', 'رقم الطلب (اختياري)') !!}
-                <select name="booking_id" class="form-control" id="booking_id">
+                {!! Form::label('booking_number', 'رقم البوكينج') !!}
+                {!! Form::text('booking_number', $currentBookingNumber, [
+                    'class' => 'form-control',
+                    'id' => 'booking_number',
+                    'placeholder' => 'أدخل رقم البوكينج لربط الإيصال بالطلب',
+                    'autocomplete' => 'off',
+                ]) !!}
+                <small class="text-muted">عند الحفظ يُربط الإيصال تلقائياً بشاشة الطلب</small>
+                @error('booking_number') <small class="text-danger d-block">{{ $message }}</small> @enderror
+                @error('booking_id') <small class="text-danger d-block">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('booking_id', 'أو اختر الطلب من القائمة') !!}
+                <select name="booking_id" class="form-control selectpicker" id="booking_id" data-live-search="true">
                     <option value="">بدون ربط بطلب</option>
                     @foreach($bookings ?? [] as $booking)
                         <option value="{{ $booking->id }}"
-                            {{ (string) old('booking_id', isset($receipt) ? $receipt->booking_id : '') === (string) $booking->id ? 'selected' : '' }}>
-                            #{{ $booking->id }} {{ $booking->booking_number ? '— ' . $booking->booking_number : '' }}
+                            data-booking-number="{{ $booking->booking_number }}"
+                            {{ (string) $currentBookingId === (string) $booking->id ? 'selected' : '' }}>
+                            {{ $booking->booking_number ?: ('#' . $booking->id) }}
                         </option>
                     @endforeach
                 </select>
-                @error('booking_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
         </div>
 
@@ -135,5 +156,13 @@
 
     document.getElementById('payment_source').addEventListener('change', toggleSupplierFields);
     toggleSupplierFields();
+
+    $('#booking_id').on('changed.bs.select change', function () {
+        var selected = $(this).find('option:selected');
+        var number = selected.data('booking-number') || '';
+        if ($(this).val()) {
+            $('#booking_number').val(number);
+        }
+    });
 </script>
 @endpush

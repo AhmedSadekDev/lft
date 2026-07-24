@@ -31,6 +31,11 @@ class Receipt extends Model
         return $this->belongsTo(Booking::class);
     }
 
+    public function bookingService(): BelongsTo
+    {
+        return $this->belongsTo(BookingService::class);
+    }
+
     public function scopeForSupplier($query, int $supplierId)
     {
         return $query->where('supplier_id', $supplierId);
