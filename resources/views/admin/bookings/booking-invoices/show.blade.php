@@ -57,6 +57,18 @@
 
             .invoice-section-block { page-break-inside: avoid; }
 
+            .detailed-page-break {
+                page-break-before: always;
+                break-before: page;
+            }
+
+            /* الصفحة الثانية: بدون هيدر/فوتر — أبيض وأسود */
+            body.print-detailed .attachments-print-page .letterhead-header,
+            body.print-detailed .attachments-print-page .letterhead-footer,
+            body.print-detailed .attachments-print-page .watermark {
+                display: none !important;
+            }
+
             body.print-combined .letterhead-header,
             body.print-combined .letterhead-footer,
             body.print-combined .watermark {
@@ -64,7 +76,9 @@
             }
 
             body.print-combined,
-            body.print-combined * {
+            body.print-combined *,
+            body.print-detailed .attachments-print-page,
+            body.print-detailed .attachments-print-page * {
                 color: #000 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -74,18 +88,32 @@
             body.print-combined td,
             body.print-combined th,
             body.print-combined span,
-            body.print-combined p {
+            body.print-combined p,
+            body.print-detailed .attachments-print-page div,
+            body.print-detailed .attachments-print-page td,
+            body.print-detailed .attachments-print-page th,
+            body.print-detailed .attachments-print-page span,
+            body.print-detailed .attachments-print-page p {
                 background-color: #fff !important;
                 background-image: none !important;
             }
 
-            body.print-combined table { border: 1px solid #000 !important; }
-            body.print-combined table th {
+            body.print-combined table,
+            body.print-detailed .attachments-print-page table {
+                border: 1px solid #000 !important;
+            }
+
+            body.print-combined table th,
+            body.print-detailed .attachments-print-page table th {
                 background-color: #e0e0e0 !important;
                 border: 1px solid #000 !important;
                 color: #000 !important;
             }
-            body.print-combined table td { border: 1px solid #000 !important; }
+
+            body.print-combined table td,
+            body.print-detailed .attachments-print-page table td {
+                border: 1px solid #000 !important;
+            }
         }
 
         .print-btn {
@@ -119,14 +147,27 @@
 
         .invoices-container {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            max-width: 900px;
+            gap: 15px;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
             margin: 0 auto;
+            max-width: 96%;
+            padding: 0;
         }
 
-        .invoice-wrapper { width: 100%; }
+        .invoice-wrapper {
+            flex: 1;
+            min-width: 42%;
+            max-width: 48%;
+        }
+
+        @media (max-width: 1200px) {
+            .invoice-wrapper {
+                min-width: 100%;
+                max-width: 100%;
+            }
+        }
 
         table { border-collapse: collapse; }
         table tbody tr:nth-child(odd) { background-color: #fff; }
@@ -143,13 +184,14 @@
         $additionalGroup = $additionalGroup ?? $printData['additional'];
         $combinedItems = $combinedItems ?? $printData['combined_items'];
         $combinedTotal = $combinedTotal ?? $printData['combined_total'];
+        $attachmentsSubtotal = (float) ($receiptGroup['total'] ?? 0) + (float) ($additionalGroup['total'] ?? 0);
     @endphp
 
     <div class="buttons-container">
-        <button type="button" class="btn print-btn" onclick="printInvoiceMode('printableAreaDetailed')">
-            طباعة فاتورة مفصلة (I / R / S)
+        <button type="button" class="btn print-btn" onclick="printInvoiceMode('printableAreaDetailed', false, true)">
+            طباعة فاتورة مفصلة (I ثم R+S)
         </button>
-        <button type="button" class="btn print-btn secondary" onclick="printInvoiceMode('printableAreaCombined', true)">
+        <button type="button" class="btn print-btn secondary" onclick="printInvoiceMode('printableAreaCombined', true, false)">
             طباعة كشف حساب (مجمّع)
         </button>
         @if (!$hasPayments)
@@ -165,9 +207,9 @@
     </div>
 
     <div class="invoices-container">
-        {{-- Detailed preview / print --}}
+        {{-- الصفحة 1: الفاتورة الضريبية فقط (مع هيدر) --}}
         <div class="invoice-wrapper">
-            <div class="print" id="printableAreaDetailed"
+            <div class="print" id="printableAreaDetailedTax"
                  style="width: 100%; margin: 0; padding: 12px 16px; border: 2px solid #DC143C; border-radius: 8px; background: #fff;">
                 <div class="invoice" style="overflow: visible;">
                     @include('admin.components.booking-invoices.printing.letterhead', [
@@ -178,58 +220,51 @@
                     @include('admin.components.booking-invoices.printing.section-block', [
                         'group' => $taxGroup,
                         'border_color' => '#DC143C',
-                        'table_title' => 'بنود الفاتورة الضريبية',
+                        'table_title' => 'تفاصيل الفاتورة',
+                        'hide_title' => true,
+                        'row_context' => 'tax',
                     ])
-
-                    @include('admin.components.booking-invoices.printing.section-block', [
-                        'group' => $receiptGroup,
-                        'border_color' => '#0d6efd',
-                        'title_bg' => 'linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%)',
-                        'table_title' => 'بنود الإيصالات',
-                    ])
-
-                    @include('admin.components.booking-invoices.printing.section-block', [
-                        'group' => $additionalGroup,
-                        'border_color' => '#198754',
-                        'title_bg' => 'linear-gradient(135deg, #198754 0%, #146c43 100%)',
-                        'table_title' => 'خدمات إضافية',
-                    ])
-
-                    <div style="background: #212529; color: #fff; padding: 10px 14px; border-radius: 6px; margin-top: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 700; font-size: 13px;">الإجمالي العام للمستند</span>
-                            <span style="font-weight: 700; font-size: 16px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- Combined / statement print (hidden on screen, used for print) --}}
-        <div class="invoice-wrapper" style="display: none;" aria-hidden="true">
-            <div class="print" id="printableAreaCombined"
-                 style="width: 100%; margin: 0; padding: 12px 16px; background: #fff;">
+        {{-- الصفحة 2: الإيصالات + خدمات بياتة (بدون هيدر/فوتر) --}}
+        <div class="invoice-wrapper">
+            <div class="print attachments-print-page" id="printableAreaDetailedAttachments"
+                 style="width: 100%; margin: 0; padding: 12px 16px; border: 2px solid #333; border-radius: 8px; background: #fff;">
                 <div class="invoice" style="overflow: visible;">
-                    <div style="text-align: center; margin-bottom: 12px; border-bottom: 2px solid #000; padding-bottom: 8px;">
-                        <h2 style="font-family: 'Cairo', sans-serif; font-size: 18px; margin: 0 0 4px;">كشف حساب / فاتورة مجمّعة</h2>
-                        <div style="font-size: 13px;">
-                            رقم: {{ $invoice->invoice_number ?? '' }}
+                    <div style="text-align: center; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 8px;">
+                        <div style="font-size: 13px; font-weight: 700;">
+                            رقم: {{ $invoice->invoice_number ?? '' }}-R/S
                             &nbsp;|&nbsp;
                             التاريخ: {{ optional($invoice->created_at)->format('d-m-Y') }}
                         </div>
                     </div>
 
-                    @include('admin.components.booking-invoices.printing.table.layout', [
-                        'items' => $combinedItems,
-                        'table_title_override' => 'البنود',
+                    @include('admin.components.booking-invoices.printing.section-block', [
+                        'group' => $receiptGroup,
+                        'border_color' => '#000',
+                        'title_bg' => '#e0e0e0',
+                        'table_title' => 'الإيصالات',
+                        'section_title' => 'الإيصالات',
                         'bw' => true,
-                        'empty_message' => $combinedItems->isEmpty(),
+                        'row_context' => 'receipt',
+                    ])
+
+                    @include('admin.components.booking-invoices.printing.section-block', [
+                        'group' => $additionalGroup,
+                        'border_color' => '#000',
+                        'title_bg' => '#e0e0e0',
+                        'table_title' => 'خدمات بياتة',
+                        'section_title' => 'خدمات بياتة',
+                        'bw' => true,
+                        'row_context' => 'additional',
                     ])
 
                     <div style="margin-top: 10px; border: 2px solid #000; padding: 10px 12px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 700; font-size: 14px;">الإجمالي</span>
-                            <span style="font-weight: 700; font-size: 16px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
+                            <span style="font-weight: 700; font-size: 13px;">إجمالي الملحقات (إيصالات + بياتة)</span>
+                            <span style="font-weight: 700; font-size: 15px;">{{ number_format($attachmentsSubtotal, 2) }} ج.م</span>
                         </div>
                     </div>
                 </div>
@@ -237,25 +272,133 @@
         </div>
     </div>
 
+    {{-- محتوى الطباعة المفصلة الموحّد (صفحة 1 ثم صفحة 2) --}}
+    <div style="display: none;" aria-hidden="true">
+        <div id="printableAreaDetailed">
+            <div class="tax-print-page">
+                @include('admin.components.booking-invoices.printing.letterhead', [
+                    'document_title' => __('admin.invoice'),
+                    'document_number' => $invoice->invoice_number,
+                ])
+                @include('admin.components.booking-invoices.printing.section-block', [
+                    'group' => $taxGroup,
+                    'border_color' => '#DC143C',
+                    'table_title' => 'تفاصيل الفاتورة',
+                    'hide_title' => true,
+                    'row_context' => 'tax',
+                ])
+            </div>
+
+            <div class="attachments-print-page detailed-page-break" style="padding-top: 12px;">
+                <div style="text-align: center; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 8px;">
+                    <div style="font-size: 13px; font-weight: 700;">
+                        رقم: {{ $invoice->invoice_number ?? '' }}-R/S
+                        &nbsp;|&nbsp;
+                        التاريخ: {{ optional($invoice->created_at)->format('d-m-Y') }}
+                    </div>
+                </div>
+
+                @include('admin.components.booking-invoices.printing.section-block', [
+                    'group' => $receiptGroup,
+                    'border_color' => '#000',
+                    'title_bg' => '#e0e0e0',
+                    'table_title' => 'الإيصالات',
+                    'section_title' => 'الإيصالات',
+                    'bw' => true,
+                    'row_context' => 'receipt',
+                ])
+
+                @include('admin.components.booking-invoices.printing.section-block', [
+                    'group' => $additionalGroup,
+                    'border_color' => '#000',
+                    'title_bg' => '#e0e0e0',
+                    'table_title' => 'خدمات بياتة',
+                    'section_title' => 'خدمات بياتة',
+                    'bw' => true,
+                    'row_context' => 'additional',
+                ])
+
+                <div style="margin-top: 10px; border: 2px solid #000; padding: 10px 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; font-size: 13px;">إجمالي الملحقات (إيصالات + بياتة)</span>
+                        <span style="font-weight: 700; font-size: 15px;">{{ number_format($attachmentsSubtotal, 2) }} ج.م</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Combined / statement print --}}
+    <div class="invoice-wrapper" style="display: none;" aria-hidden="true">
+        <div class="print" id="printableAreaCombined"
+             style="width: 100%; margin: 0; padding: 12px 16px; background: #fff;">
+            <div class="invoice" style="overflow: visible;">
+                <div style="text-align: center; margin-bottom: 12px; border-bottom: 2px solid #000; padding-bottom: 8px;">
+                    <h2 style="font-family: 'Cairo', sans-serif; font-size: 18px; margin: 0 0 4px;">كشف حساب / فاتورة مجمّعة</h2>
+                    <div style="font-size: 13px;">
+                        رقم: {{ $invoice->invoice_number ?? '' }}
+                        &nbsp;|&nbsp;
+                        التاريخ: {{ optional($invoice->created_at)->format('d-m-Y') }}
+                    </div>
+                </div>
+
+                @include('admin.components.booking-invoices.printing.table.layout', [
+                    'items' => $combinedItems,
+                    'table_title_override' => 'البنود',
+                    'bw' => true,
+                    'empty_message' => $combinedItems->isEmpty(),
+                    'row_context' => null,
+                ])
+
+                <div style="margin-top: 10px; border: 2px solid #000; padding: 10px 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; font-size: 14px;">الإجمالي</span>
+                        <span style="font-weight: 700; font-size: 16px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function printInvoiceMode(divName, combined) {
+        function printInvoiceMode(divName, combined, detailed) {
             var printContents = document.getElementById(divName).innerHTML;
             var originalContents = document.body.innerHTML;
             var originalClassName = document.body.className;
 
+            var style = '';
             if (combined) {
                 document.body.classList.add('print-combined');
-                printContents = '<style>' +
+                style = '<style>' +
                     'body { font-family: Cairo, sans-serif; color: #000 !important; }' +
                     '.letterhead-header, .letterhead-footer, .watermark { display: none !important; }' +
                     'div, td, th, span, p { background: #fff !important; background-image: none !important; color: #000 !important; }' +
                     'table { border: 1px solid #000 !important; border-collapse: collapse; width: 100%; }' +
                     'table th { background: #e0e0e0 !important; border: 1px solid #000 !important; color: #000 !important; }' +
                     'table td { border: 1px solid #000 !important; }' +
-                    '</style>' + printContents;
+                    '</style>';
             }
 
-            document.body.innerHTML = printContents;
+            if (detailed) {
+                document.body.classList.add('print-detailed');
+                style = '<style>' +
+                    'body { font-family: Cairo, sans-serif; }' +
+                    '.detailed-page-break { page-break-before: always; break-before: page; }' +
+                    '.attachments-print-page .letterhead-header,' +
+                    '.attachments-print-page .letterhead-footer,' +
+                    '.attachments-print-page .watermark { display: none !important; }' +
+                    '.attachments-print-page, .attachments-print-page * { color: #000 !important; }' +
+                    '.attachments-print-page div, .attachments-print-page td, .attachments-print-page th,' +
+                    '.attachments-print-page span, .attachments-print-page p {' +
+                    '  background: #fff !important; background-image: none !important;' +
+                    '}' +
+                    '.attachments-print-page table { border: 1px solid #000 !important; border-collapse: collapse; width: 100%; }' +
+                    '.attachments-print-page table th { background: #e0e0e0 !important; border: 1px solid #000 !important; color: #000 !important; }' +
+                    '.attachments-print-page table td { border: 1px solid #000 !important; }' +
+                    '</style>';
+            }
+
+            document.body.innerHTML = style + printContents;
             window.print();
             document.body.innerHTML = originalContents;
             document.body.className = originalClassName;

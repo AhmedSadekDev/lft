@@ -5,6 +5,7 @@
     $theadBg = $isBw ? '#e0e0e0' : 'linear-gradient(135deg, #DC143C 0%, #B22222 100%)';
     $theadColor = $isBw ? '#000' : '#fff';
     $borderColor = $isBw ? '#000' : '#dee2e6';
+    $rowContext = $row_context ?? null;
 @endphp
 <table style="display: table; width: 100%; margin-top: 0.2rem; border-spacing: 0; border: 1px solid {{ $borderColor }}; border-radius: 4px; overflow: hidden;">
     <thead style="background: {{ $theadBg }}; color: {{ $theadColor }}; font-family: 'Cairo', sans-serif; font-size: 0.7rem; vertical-align: middle;">
@@ -33,6 +34,7 @@
                 @include('admin.components.booking-invoices.printing.table.service-row', [
                     'booking_service' => $item,
                     'key' => $key + 1,
+                    'row_context' => $rowContext,
                 ])
             @endif
             @if (is_object($item) && isset($item->type) && $item->type === 'grouped_receipt')
@@ -45,6 +47,7 @@
                 @include('admin.components.booking-invoices.printing.table.agent-expense-receipt-row', [
                     'expense' => $item->expense,
                     'key' => $key + 1,
+                    'row_context' => $rowContext,
                 ])
             @endif
         @endforeach
