@@ -10,6 +10,24 @@
         $fullName = 'خدمات بياتة';
     }
 
+    // توحيد عرض بنود الإيصالات داخل قسم الإيصالات
+    $rowContext = $row_context ?? null;
+    $normalizedName = str_replace(['أ', 'إ', 'آ', 'ٱ'], 'ا', mb_strtolower($fullName, 'UTF-8'));
+    $normalizedName = str_replace(['ى', 'ی'], 'ي', $normalizedName);
+    $isReceiptContext = $rowContext === 'receipt'
+        || str_contains($normalizedName, 'ايصالات')
+        || str_contains($normalizedName, 'ايصال');
+
+    if ($isReceiptContext) {
+        $parts = preg_split('/(ايصالات|إيصالات|ايصال|إيصال)/iu', $fullName, 2, PREG_SPLIT_DELIM_CAPTURE);
+        $beforePart = trim($parts[0] ?? '');
+        $afterPart = trim($parts[2] ?? '');
+        $desc = $beforePart !== '' ? $beforePart : ($afterPart !== '' ? $afterPart : 'عام');
+        $desc = trim(preg_replace('/\bوكيل\b/u', '', $desc));
+        $fullName = 'إيصالات ' . ($desc !== '' ? $desc : 'عام');
+        $fullName = trim(preg_replace('/\s+/', ' ', $fullName));
+    }
+
     $receiptUrl = ! empty($expense->image_agent_expenses)
         ? asset('Admin/images/expenses/' . $expense->image_agent_expenses)
         : null;

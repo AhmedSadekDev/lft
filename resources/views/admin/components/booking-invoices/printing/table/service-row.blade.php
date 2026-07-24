@@ -6,7 +6,11 @@
     $displayValue = $fullName;
     $hideLabel = false;
 
-    $hasReceipts = stripos($fullName, 'ايصالات') !== false || stripos($fullName, 'إيصالات') !== false;
+    $normalizedName = str_replace(['أ', 'إ', 'آ', 'ٱ'], 'ا', mb_strtolower($fullName, 'UTF-8'));
+    $normalizedName = str_replace(['ى', 'ی'], 'ي', $normalizedName);
+    $hasReceipts = str_contains($normalizedName, 'ايصالات')
+        || str_contains($normalizedName, 'ايصال')
+        || str_contains($normalizedName, 'receipt');
 
     if ($hasReceipts) {
         $parts = preg_split('/(ايصالات|إيصالات)/iu', $fullName, 2, PREG_SPLIT_DELIM_CAPTURE);

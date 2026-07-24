@@ -54,11 +54,13 @@ class InvoicePrintBuilder
         $receiptItems = $this->sortPrintServices($receiptItems);
         $additionalItems = $this->sortPrintServices($additionalItems);
 
-        // Agent expenses from app (untaxed / additional) → additional block
+        // Agent expenses from app: receipt-named ones → receipts, rest → bayatah/additional
         $agentExpenseRows = $booking->expenses()
+            ->with(['service.serviceCategory'])
             ->whereHas('service.serviceCategory', function ($q) {
                 $q->where(function ($inner) {
                     $inner->where('invoice_print_section', InvoicePrintSectionMapper::ADDITIONAL)
+                        ->orWhere('invoice_print_section', InvoicePrintSectionMapper::RECEIPT)
                         ->orWhere(function ($fallback) {
                             $fallback->whereNull('invoice_print_section')
                                 ->whereIn('service_status', [
@@ -76,7 +78,20 @@ class InvoicePrintBuilder
                 'price' => (float) ($expense->value ?? 0),
             ]);
 
-        $additionalItems = $additionalItems->concat($agentExpenseRows);
+        [$receiptAgentExpenses, $additionalAgentExpenses] = $agentExpenseRows
+            ->partition(function ($row) {
+                $expense = $row->expense;
+                $section = $expense->service?->serviceCategory?->invoice_print_section;
+
+                if ($section === InvoicePrintSectionMapper::RECEIPT) {
+                    return true;
+                }
+
+                return $this->looksLikeReceipt($this->expenseDisplayName($expense));
+            });
+
+        $receiptItems = $receiptItems->concat($receiptAgentExpenses->values());
+        $additionalItems = $additionalItems->concat($additionalAgentExpenses->values());
 
         // Group receipt booking services by receipt family for cleaner print
         $receiptItems = $this->groupReceiptServices($receiptItems);
@@ -148,9 +163,34 @@ class InvoicePrintBuilder
 
     private function looksLikeReceipt(string $fullName): bool
     {
-        return stripos($fullName, 'ايصالات') !== false
-            || stripos($fullName, 'إيصالات') !== false
-            || stripos($fullName, 'receipt') !== false;
+        $normalized = $this->normalizeArabic($fullName);
+
+        return str_contains($normalized, 'ايصالات')
+            || str_contains($normalized, 'ايصال')
+            || str_contains($normalized, 'receipt');
+    }
+
+    private function expenseDisplayName($expense): string
+    {
+        $fullName = trim(($expense->service->name ?? '') . ' ' . ($expense->service->serviceCategory?->title ?? ''));
+        if ($fullName === '') {
+            $fullName = (string) ($expense->title ?? '');
+        }
+
+        return $fullName;
+    }
+
+    /**
+     * Normalize Arabic variants so "إيصالات" / "ايصالات" / yeh forms all match.
+     */
+    private function normalizeArabic(string $text): string
+    {
+        $text = mb_strtolower($text, 'UTF-8');
+        $text = str_replace(['أ', 'إ', 'آ', 'ٱ'], 'ا', $text);
+        $text = str_replace(['ى', 'ی', 'ي'], 'ي', $text);
+        $text = preg_replace('/[\x{064B}-\x{065F}\x{0670}\x{0640}]/u', '', $text) ?? $text;
+
+        return $text;
     }
 
     /**
