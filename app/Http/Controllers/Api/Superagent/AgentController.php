@@ -283,13 +283,9 @@ class AgentController extends Controller
             $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
             $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
 
-
-            foreach ($bookingContainerAgents as $item) {
-                $item->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved'   => 1,
-                ]);
-            }
+            // إشعار المناديب الحاليين ثم إزالة التعيين بالكامل (لا نقل لنفس المندوب للتحميل)
+            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
+            BookingContainerAgent::whereIn('booking_container_id', $containerIds)->delete();
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([
@@ -300,7 +296,6 @@ class AgentController extends Controller
             $message = 'تم تخصيص حاويات الطلب ' . $container->booking_id;
 
             // Send Firebase notifications to agents
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
             foreach ($agents as $agent) {
                 $title = __('new_notification');
@@ -336,16 +331,12 @@ class AgentController extends Controller
                 'status' => 2
             ]);
 
-            $containerIds = $container->booking->bookingContainers->pluck('id')->toArray();
-            $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
-            $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
+            $bookingContainerAgents = BookingContainerAgent::where('booking_container_id', $container->id)->get();
+            $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $container->id)->get();
 
-            foreach ($bookingContainerAgents as $item) {
-                $item->update([
-                    'booking_container_status' => 2,
-                    'superagent_loading_approved' => 1
-                ]);
-            }
+            // إشعار ثم إزالة التعيين بالكامل لهذه الحاوية فقط (لا نقل لنفس المندوب للتعتيق)
+            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
+            BookingContainerAgent::where('booking_container_id', $container->id)->delete();
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([
@@ -356,7 +347,6 @@ class AgentController extends Controller
             $message = 'تم تحميل حاوية رقم ' . $container->container_no;
 
             // Send Firebase notifications to agents
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
             foreach ($agents as $agent) {
                 $title = __('new_notification');
@@ -393,16 +383,11 @@ class AgentController extends Controller
                 'status' => 3
             ]);
 
-            $containerIds = $container->booking->bookingContainers->pluck('id')->toArray();
-            $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
-            $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
+            $bookingContainerAgents = BookingContainerAgent::where('booking_container_id', $container->id)->get();
+            $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $container->id)->get();
 
-            foreach ($bookingContainerAgents as $item) {
-                $item->update([
-                    'booking_container_status' => 3,
-                    'superagent_unloading_approved' => 1
-                ]);
-            }
+            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
+            BookingContainerAgent::where('booking_container_id', $container->id)->delete();
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([
@@ -414,7 +399,6 @@ class AgentController extends Controller
             $message = 'تم تعتيق حاوية رقم ' . $container->container_no;
 
             // Send Firebase notifications to agents
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
             foreach ($agents as $agent) {
                 $title = __('new_notification');

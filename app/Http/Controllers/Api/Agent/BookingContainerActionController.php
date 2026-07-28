@@ -38,10 +38,8 @@ class BookingContainerActionController extends Controller
                 "status" => 1
             ]);
 
-            BookingContainerAgent::where("booking_container_status", 0)->whereIn("booking_container_id", $booking_container_ids)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 1
-            ]);
-
+            // إزالة المندوب/المناديب بالكامل بعد التخصيص — المدير يعيّن مندوب التحميل من جديد
+            BookingContainerAgent::whereIn("booking_container_id", $booking_container_ids)->delete();
 
             $dailyContainers = DailyBookingContainer::whereIn("booking_container_id", $booking_container_ids);
 
@@ -107,9 +105,8 @@ class BookingContainerActionController extends Controller
                 "status" => 2
             ]);
 
-            BookingContainerAgent::where("booking_container_id", $booking_container->id)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 2
-            ]);
+            // إزالة المندوب بالكامل بعد التحميل — المدير يعيّن مندوب التعتيق من جديد
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->delete();
 
             $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
@@ -187,9 +184,8 @@ class BookingContainerActionController extends Controller
                 "status" => 3
             ]);
 
-            BookingContainerAgent::where("booking_container_id", $booking_container->id)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 3
-            ]);
+            // إزالة المندوب بالكامل بعد التعتيق
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->delete();
 
             $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
