@@ -47,6 +47,11 @@ class BookingService extends Model
         return asset('storage/' . $relative);
     }
 
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
+
     public function service()
     {
         return $this->belongsTo(Service::class);

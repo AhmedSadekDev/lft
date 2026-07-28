@@ -53,12 +53,13 @@ class BookingServiceRequest extends FormRequest
     {
         return [
             'invoice_id'    => __('main.invoice'),
-            'service'       => __('admin.service'),
+            'service' => __('admin.service'),
             'service_type'  => __('admin.service_type'),
             'price'         => __('admin.price'),
             'note'          => __('admin.note'),
             'image'         => __('admin.receipt_image'),
             'service_id'    => __('admin.service'),
+            'service_type_id' => __('admin.service_type'),
             'payment_type'  => __('admin.payment_type'),
             'bank_id'       => __('main.bank'),
             'agent_id'      => __('main.agent'),

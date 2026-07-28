@@ -59,23 +59,78 @@ class BookingSupplierReceiptSync
     }
 
     /**
-     * When a Receipt is linked to a booking (and not already mirrored),
-     * ensure supplier balance is handled by ReceiptController — this method
-     * only clears stale booking_service link if booking was removed.
+     * Create/update BookingService from a supplier receipt so it appears
+     * on the booking screen and in invoice receipt printing.
      */
-    public function syncFromReceipt(Receipt $receipt): void
+    public function syncBookingServiceFromReceipt(Receipt $receipt, array $extra = []): ?BookingService
     {
-        if (!$receipt->booking_id && $receipt->booking_service_id) {
+        if (!$receipt->booking_id) {
+            if ($receipt->booking_service_id) {
+                BookingService::query()
+                    ->where('id', $receipt->booking_service_id)
+                    ->where('payment_type', 'supplier')
+                    ->delete();
+                $receipt->booking_service_id = null;
+                $receipt->save();
+            }
+
+            return null;
+        }
+
+        $serviceId = $extra['service_id'] ?? null;
+        if (!$serviceId && $receipt->booking_service_id) {
+            $serviceId = BookingService::query()
+                ->where('id', $receipt->booking_service_id)
+                ->value('service_id');
+        }
+
+        if (!$serviceId) {
+            return null;
+        }
+
+        $paymentType = match ($receipt->payment_source) {
+            Receipt::PAYMENT_SOURCE_SUPPLIER => 'supplier',
+            Receipt::PAYMENT_SOURCE_SAFE => 'vault',
+            Receipt::PAYMENT_SOURCE_REPRESENTATIVE => 'agent',
+            default => 'supplier',
+        };
+
+        $payload = [
+            'booking_id' => $receipt->booking_id,
+            'service_id' => (int) $serviceId,
+            'price' => round((float) $receipt->cost, 2),
+            'note' => $receipt->notes,
+            'payment_type' => $paymentType,
+            'supplier_id' => $receipt->payment_source === Receipt::PAYMENT_SOURCE_SUPPLIER
+                ? $receipt->supplier_id
+                : null,
+            'supplier_invoice_number' => $receipt->supplier_invoice_number,
+            'updated_by' => auth()->id(),
+        ];
+
+        if (!empty($extra['image'])) {
+            $payload['image'] = $extra['image'];
+        }
+
+        if ($receipt->booking_service_id) {
             $bookingService = BookingService::query()
                 ->lockForUpdate()
                 ->find($receipt->booking_service_id);
 
-            if ($bookingService && $bookingService->payment_type === 'supplier') {
-                // Unlink from booking service without deleting the service row
-                $receipt->booking_service_id = null;
-                $receipt->save();
+            if ($bookingService) {
+                $bookingService->update($payload);
+
+                return $bookingService->fresh();
             }
         }
+
+        $payload['created_by'] = auth()->id();
+        $bookingService = BookingService::create($payload);
+
+        $receipt->booking_service_id = $bookingService->id;
+        $receipt->save();
+
+        return $bookingService;
     }
 
     public function deleteLinkedReceipt(BookingService $bookingService): void

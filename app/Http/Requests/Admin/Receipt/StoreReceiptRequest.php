@@ -18,8 +18,10 @@ class StoreReceiptRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'booking_id' => ['nullable', 'exists:bookings,id'],
+            'booking_id' => ['required', 'exists:bookings,id'],
             'booking_number' => ['nullable', 'string', 'max:255'],
+            'service_type_id' => ['required', 'exists:service_categories,id'],
+            'service_id' => ['required', 'exists:services,id'],
             'cost' => ['required', 'numeric', 'min:0'],
             'payment_source' => ['required', Rule::in([
                 Receipt::PAYMENT_SOURCE_SAFE,
@@ -38,6 +40,7 @@ class StoreReceiptRequest extends FormRequest
                 'max:255',
             ],
             'notes' => ['nullable', 'string', 'max:2000'],
+            'image' => ['nullable', 'mimes:png,jpg,jpeg', 'max:5000'],
         ];
     }
 
@@ -46,9 +49,24 @@ class StoreReceiptRequest extends FormRequest
         return [
             'cost.required' => 'التكلفة مطلوبة',
             'payment_source.required' => 'مصدر الدفع مطلوب',
+            'booking_id.required' => 'يجب ربط الإيصال برقم البوكينج / الطلب',
+            'service_type_id.required' => 'نوع الخدمة مطلوب',
+            'service_id.required' => 'يجب اختيار الخدمة',
+            'service_id.required_with' => 'يجب اختيار الخدمة عند ربط الإيصال بطلب',
             'supplier_id.required_if' => 'يجب اختيار المورد عند اختيار مصدر الدفع: مورد',
             'supplier_invoice_number.required_if' => 'رقم فاتورة المورد مطلوب عند اختيار مصدر الدفع: مورد',
             'booking_number.exists' => 'رقم البوكينج غير موجود',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'service_id' => __('admin.service'),
+            'service_type_id' => __('admin.service_type'),
+            'image' => __('admin.receipt_image'),
+            'booking_id' => 'الطلب',
+            'booking_number' => 'رقم البوكينج',
         ];
     }
 
@@ -59,6 +77,18 @@ class StoreReceiptRequest extends FormRequest
                 'supplier_id' => null,
                 'supplier_invoice_number' => null,
             ]);
+        }
+
+        if ($this->input('service_id') === 'to_be_disabled' || $this->input('service_id') === '') {
+            $this->merge(['service_id' => null]);
+        }
+
+        if ($this->input('service_type_id') === 'to_be_disabled' || $this->input('service_type_id') === '') {
+            $this->merge(['service_type_id' => null]);
+        }
+
+        if ($this->input('booking_id') === '') {
+            $this->merge(['booking_id' => null]);
         }
 
         $bookingNumber = trim((string) $this->input('booking_number', ''));
@@ -84,6 +114,10 @@ class StoreReceiptRequest extends FormRequest
             $bookingNumber = trim((string) $this->input('booking_number', ''));
             if ($bookingNumber !== '' && !$this->filled('booking_id')) {
                 $validator->errors()->add('booking_number', 'رقم البوكينج غير موجود');
+            }
+
+            if (!$this->filled('booking_id') && $bookingNumber === '') {
+                $validator->errors()->add('booking_number', 'يجب إدخال رقم البوكينج أو اختيار الطلب');
             }
         });
     }

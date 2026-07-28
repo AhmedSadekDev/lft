@@ -57,6 +57,7 @@
                             <th>مصدر الدفع</th>
                             <th>المورد</th>
                             <th>رقم فاتورة المورد</th>
+                            <th>الخدمة</th>
                             <th>رقم الطلب</th>
                             <th></th>
                         </tr>
@@ -76,7 +77,16 @@
                                 </td>
                                 <td>{{ $receipt->supplier->name ?? '-' }}</td>
                                 <td>{{ $receipt->supplier_invoice_number ?: '-' }}</td>
-                                <td>{{ $receipt->booking->booking_number ?? $receipt->booking_id ?? '-' }}</td>
+                                <td>{{ $receipt->bookingService?->full_name ?? '-' }}</td>
+                                <td>
+                                    @if($receipt->booking)
+                                        <a href="{{ route('bookings.show', $receipt->booking_id) }}">
+                                            {{ $receipt->booking->booking_number ?? ('#'.$receipt->booking_id) }}
+                                        </a>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td>
                                     @if (auth()->user()->hasPermissionTo('suppliers.udpate') || auth()->user()->hasPermissionTo('suppliers.update'))
                                         <a href="{{ route('receipts.edit', $receipt) }}" class="btn btn-sm btn-light-warning">
