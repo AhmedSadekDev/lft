@@ -184,7 +184,11 @@
         $additionalGroup = $additionalGroup ?? $printData['additional'];
         $combinedItems = $combinedItems ?? $printData['combined_items'];
         $combinedTotal = $combinedTotal ?? $printData['combined_total'];
+        $hasAdditionalItems = collect($additionalGroup['items'] ?? [])->isNotEmpty();
         $attachmentsSubtotal = (float) ($receiptGroup['total'] ?? 0) + (float) ($additionalGroup['total'] ?? 0);
+        $attachmentsTotalLabel = $hasAdditionalItems
+            ? 'إجمالي الملحقات (إيصالات + بياتة)'
+            : 'إجمالي الإيصالات';
     @endphp
 
     <div class="buttons-container">
@@ -251,19 +255,21 @@
                         'row_context' => 'receipt',
                     ])
 
-                    @include('admin.components.booking-invoices.printing.section-block', [
-                        'group' => $additionalGroup,
-                        'border_color' => '#000',
-                        'title_bg' => '#e0e0e0',
-                        'table_title' => 'خدمات بياتة',
-                        'section_title' => 'خدمات بياتة',
-                        'bw' => true,
-                        'row_context' => 'additional',
-                    ])
+                    @if ($hasAdditionalItems)
+                        @include('admin.components.booking-invoices.printing.section-block', [
+                            'group' => $additionalGroup,
+                            'border_color' => '#000',
+                            'title_bg' => '#e0e0e0',
+                            'table_title' => 'خدمات بياتة',
+                            'section_title' => 'خدمات بياتة',
+                            'bw' => true,
+                            'row_context' => 'additional',
+                        ])
+                    @endif
 
                     <div style="margin-top: 10px; border: 2px solid #000; padding: 10px 12px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 700; font-size: 13px;">إجمالي الملحقات (إيصالات + بياتة)</span>
+                            <span style="font-weight: 700; font-size: 13px;">{{ $attachmentsTotalLabel }}</span>
                             <span style="font-weight: 700; font-size: 15px;">{{ number_format($attachmentsSubtotal, 2) }} ج.م</span>
                         </div>
                     </div>
@@ -308,19 +314,21 @@
                     'row_context' => 'receipt',
                 ])
 
-                @include('admin.components.booking-invoices.printing.section-block', [
-                    'group' => $additionalGroup,
-                    'border_color' => '#000',
-                    'title_bg' => '#e0e0e0',
-                    'table_title' => 'خدمات بياتة',
-                    'section_title' => 'خدمات بياتة',
-                    'bw' => true,
-                    'row_context' => 'additional',
-                ])
+                @if ($hasAdditionalItems)
+                    @include('admin.components.booking-invoices.printing.section-block', [
+                        'group' => $additionalGroup,
+                        'border_color' => '#000',
+                        'title_bg' => '#e0e0e0',
+                        'table_title' => 'خدمات بياتة',
+                        'section_title' => 'خدمات بياتة',
+                        'bw' => true,
+                        'row_context' => 'additional',
+                    ])
+                @endif
 
                 <div style="margin-top: 10px; border: 2px solid #000; padding: 10px 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 700; font-size: 13px;">إجمالي الملحقات (إيصالات + بياتة)</span>
+                        <span style="font-weight: 700; font-size: 13px;">{{ $attachmentsTotalLabel }}</span>
                         <span style="font-weight: 700; font-size: 15px;">{{ number_format($attachmentsSubtotal, 2) }} ج.م</span>
                     </div>
                 </div>
