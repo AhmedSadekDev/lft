@@ -94,7 +94,7 @@ class InvoicePrintBuilder
         $receiptItems = $receiptItems->concat($receiptAgentExpenses->values());
         $additionalItems = $additionalItems->concat($additionalAgentExpenses->values());
 
-        // Group receipt booking services by receipt family for cleaner print
+        // Group receipt booking services + agent receipt expenses by receipt family
         $receiptItems = $this->groupReceiptServices($receiptItems);
 
         $taxSubtotal = $this->sumItems($taxItems);
@@ -222,37 +222,89 @@ class InvoicePrintBuilder
 
     private function groupReceiptServices(Collection $receiptServices): Collection
     {
-        $bookingServices = $receiptServices->filter(fn ($item) => $item instanceof BookingService);
-        $others = $receiptServices->reject(fn ($item) => $item instanceof BookingService);
+        $groups = [];
 
-        $groups = $bookingServices->groupBy(function (BookingService $service) {
-            $fullName = (string) ($service->full_name ?? '');
-            $parts = preg_split('/(ايصالات|إيصالات)/iu', $fullName, 2, PREG_SPLIT_DELIM_CAPTURE);
-            if (count($parts) >= 2) {
-                $before = trim($parts[0] ?? '');
-                $after = trim($parts[2] ?? '');
-                $key = $before !== '' ? $before : ($after !== '' ? $after : 'عام');
+        foreach ($receiptServices as $item) {
+            if ($item instanceof BookingService) {
+                $key = $this->receiptGroupKeyFromName((string) ($item->full_name ?? ''));
+                $this->initReceiptGroupBucket($groups, $key);
+                $groups[$key]['services']->push($item);
+                $groups[$key]['total'] += (float) ($item->price ?? 0);
+                if (filled($item->note)) {
+                    $groups[$key]['notes']->push(trim((string) $item->note));
+                }
 
-                return $key;
+                continue;
             }
 
-            return 'عام';
-        });
+            if (is_object($item) && ($item->type ?? null) === 'agent_expense_attachment' && isset($item->expense)) {
+                $expense = $item->expense;
+                $key = $this->receiptGroupKeyFromName($this->expenseDisplayName($expense));
+                $this->initReceiptGroupBucket($groups, $key);
+                $groups[$key]['expenses']->push($expense);
+                $groups[$key]['total'] += (float) ($expense->value ?? $item->price ?? 0);
+                if (filled($expense->notes)) {
+                    $groups[$key]['notes']->push(trim((string) $expense->notes));
+                }
+
+                continue;
+            }
+
+            if (! isset($groups['__ungrouped__'])) {
+                $groups['__ungrouped__'] = ['others' => collect()];
+            }
+            $groups['__ungrouped__']['others']->push($item);
+        }
 
         $grouped = collect();
-        foreach ($groups as $groupKey => $services) {
+        foreach ($groups as $groupKey => $bucket) {
+            if ($groupKey === '__ungrouped__') {
+                continue;
+            }
+
             $grouped->push((object) [
                 'type' => 'grouped_receipt',
                 'group_key' => $groupKey,
-                'services' => $services,
-                'total_price' => $services->sum('price'),
-                'price' => $services->sum('price'),
-                'notes' => $services->pluck('note')->filter()->values()->all(),
-                'count' => $services->count(),
+                'services' => $bucket['services'],
+                'expenses' => $bucket['expenses'],
+                'total_price' => $bucket['total'],
+                'price' => $bucket['total'],
+                'notes' => $bucket['notes']->filter()->unique()->values()->all(),
+                'count' => $bucket['services']->count() + $bucket['expenses']->count(),
             ]);
         }
 
-        return $grouped->concat($others)->values();
+        $ungrouped = $groups['__ungrouped__']['others'] ?? collect();
+
+        return $grouped->concat($ungrouped)->values();
+    }
+
+    private function initReceiptGroupBucket(array &$groups, string $key): void
+    {
+        if (! isset($groups[$key])) {
+            $groups[$key] = [
+                'services' => collect(),
+                'expenses' => collect(),
+                'notes' => collect(),
+                'total' => 0.0,
+            ];
+        }
+    }
+
+    private function receiptGroupKeyFromName(string $fullName): string
+    {
+        $fullName = trim(preg_replace('/\bوكيل\b/u', '', $fullName));
+        $parts = preg_split('/(ايصالات|إيصالات)/iu', $fullName, 2, PREG_SPLIT_DELIM_CAPTURE);
+
+        if (is_array($parts) && count($parts) >= 2) {
+            $before = trim($parts[0] ?? '');
+            $after = trim($parts[2] ?? '');
+            $key = $before !== '' ? $before : ($after !== '' ? $after : 'عام');
+
+            return trim($key) !== '' ? trim($key) : 'عام';
+        }
+
+        return $fullName !== '' ? $fullName : 'عام';
     }
 
     private function sumItems(Collection $items): float
