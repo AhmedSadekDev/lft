@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Http\Traits\GeneralTrait;
 use App\Traits\ResponseTrait;
 use BadMethodCallException;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -54,6 +55,25 @@ class Handler extends ExceptionHandler
             if ($request->is('api/*')) {
                 return $this->returnError(401, __('alerts.notAuth'));
             }
+        });
+
+        // فشل مصادقة Google/Firebase (مثل Invalid JWT Signature عند جلب توكن FCM):
+        // نرجع 401 حتى يقوم التطبيق بتسجيل الخروج والتوجه لشاشة الدخول
+        $this->renderable(function (ClientException $e, $request) {
+            $host = $e->getRequest()->getUri()->getHost();
+            $isGoogleAuth = $host === 'oauth2.googleapis.com'
+                || strpos($e->getMessage(), 'Invalid JWT Signature') !== false
+                || strpos($e->getMessage(), 'invalid_grant') !== false;
+
+            if (! $isGoogleAuth) {
+                return null;
+            }
+
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return $this->returnError(401, __('alerts.notAuth'));
+            }
+
+            return response(__('alerts.notAuth'), 401);
         });
 
         $this->renderable(function (NotFoundHttpException $e, $request) {

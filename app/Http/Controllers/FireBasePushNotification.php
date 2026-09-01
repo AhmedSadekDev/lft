@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Superagent;
 use Google\Auth\Credentials\ServiceAccountCredentials;
 use Google\Auth\HttpHandler\HttpHandlerFactory;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class FireBasePushNotification extends Controller
 
     public function __construct()
     {
-        $projectId = config('services.firebase.project_id', 'amani-32c87');
+        $projectId = config('services.firebase.project_id', 'leaderfortrans-779a4');
         $this->url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
     }
 
@@ -79,6 +80,23 @@ class FireBasePushNotification extends Controller
 
     public function to($device, $body, $title = 'My favorite App', $extraData = [])
     {
+        $type = $extraData['type']
+            ?? $extraData['type_action']
+            ?? $extraData['action_type']
+            ?? null;
+
+        $typeAction = $extraData['type_action']
+            ?? $extraData['action_type']
+            ?? $type;
+
+        if ($type !== null) {
+            $extraData['type'] = $type;
+        }
+
+        if ($typeAction !== null) {
+            $extraData['type_action'] = $typeAction;
+        }
+
         $data = [
             'token' => $device,
             'title' => $title,
@@ -111,7 +129,7 @@ class FireBasePushNotification extends Controller
         }
 
         $fields = json_encode($fields);
-
+        info($fields);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -121,7 +139,7 @@ class FireBasePushNotification extends Controller
 
         $result = curl_exec($ch);
         curl_close($ch);
-
+        info($result);
         return $result;
     }
 
@@ -138,18 +156,21 @@ class FireBasePushNotification extends Controller
     public function sendNotification(Request $request)
     {
         $request->validate([
-            'token' => 'required|string',
             'title' => 'required|string',
             'body' => 'required|string',
         ]);
 
         try {
-            $result = $this->to($request->token, $request->body, $request->title);
-            $response = json_decode($result, true);
+            $superAdminTokens = Superagent::whereNotNull('device_token')->get();
+            foreach ($superAdminTokens as $token) {
+                $result = $this->to($token->device_token, $request->body, $request->title);
+                $response = json_decode($result, true);
 
-            if (isset($response['name'])) {
-                return redirect()->back()->with('success', __('alerts.success') . ' - ' . __('Notification sent successfully'));
+                if (isset($response['name'])) {
+                    continue;
+                }
             }
+            return redirect()->back()->with('success', __('alerts.success') . ' - ' . __('Notification sent successfully'));
 
             return redirect()->back()->with('error', __('Notification failed: ') . ($response['error']['message'] ?? 'Unknown error'));
         } catch (\Exception $e) {

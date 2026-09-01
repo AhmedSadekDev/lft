@@ -40,6 +40,22 @@
                 </div>
             </div>
             <!-- For loop this div -->
+
+            <div class="col-md-6 col-sm-12">
+                <div class="form-group">
+                    {!! Form::label("input_invoice_print_section", __('admin.invoice_print_section'), ["class" => "required-field"]) !!}
+                    {!! Form::select(
+                        'invoice_print_section',
+                        $print_sections ?? [],
+                        old('invoice_print_section', isset($serviceCategory) ? $serviceCategory->invoice_print_section : null),
+                        ["class" => "form-control", "id" => "input_invoice_print_section", "placeholder" => __('admin.invoice_print_section')]
+                    ) !!}
+                    @error('invoice_print_section')
+                        <small class="aleart text-danger">{{ $message }}</small>
+                    @enderror
+                    <small class="text-muted d-block mt-1">تحديد مكان ظهور الفئة عند طباعة الفاتورة: ضريبية / إيصالات / خدمات إضافية</small>
+                </div>
+            </div>
         </div>
     </div>
 

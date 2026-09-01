@@ -20,8 +20,10 @@ class BookingService extends Model
         'service_data', // TODO: HANDLE WHEN THESE SHLD BE ADDED
         'vault_id',
         'bank_id',
-        'payment_type', // vault, bank, agent
+        'payment_type', // vault, bank, agent, supplier
         'agent_id',
+        'supplier_id',
+        'supplier_invoice_number',
         'created_by',
         'updated_by',
     ];
@@ -43,6 +45,11 @@ class BookingService extends Model
         $relative = $folder . '/' . $name;
 
         return asset('storage/' . $relative);
+    }
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
     }
 
     public function service()
@@ -86,5 +93,15 @@ class BookingService extends Model
     public function agent()
     {
         return $this->belongsTo(Agent::class);
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function receipt()
+    {
+        return $this->hasOne(Receipt::class, 'booking_service_id');
     }
 }

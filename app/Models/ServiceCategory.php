@@ -13,7 +13,8 @@ class ServiceCategory extends Model
     protected $fillable = [
         'title',
         'description',
-        'service_status'
+        'service_status',
+        'invoice_print_section',
     ];
 
     public $translatable = ['title', 'description'];

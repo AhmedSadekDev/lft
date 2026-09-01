@@ -26,6 +26,28 @@ use App\Http\Resources\Api\Superagent\SimpleBookingContainerResource;
 
 class AgentController extends Controller
 {
+    private function getContainerNotificationTypeId(BookingContainer $container): int
+    {
+        if (! $container->superagent_specification_approved) {
+            return 0;
+        }
+
+        if (! $container->superagent_loading_approved) {
+            return 1;
+        }
+
+        return 2;
+    }
+
+    private function getContainerNotificationType(BookingContainer $container): string
+    {
+        return match ($this->getContainerNotificationTypeId($container)) {
+            0 => 'specification',
+            1 => 'loading',
+            2 => 'unloading',
+        };
+    }
+
     public function fetch_agents()
     {
         try {
@@ -102,12 +124,27 @@ class AgentController extends Controller
                         'agent' => $agent->name
                     ]);
 
-                    SaveNotification::create($title, $text, $agent->id, Agent::class, AppNotification::specific);
+                    $notificationTypeId = $this->getContainerNotificationTypeId($booking_container);
+                    $notificationType = $this->getContainerNotificationType($booking_container);
+
+                    SaveNotification::create(
+                        $title,
+                        $text,
+                        $agent->id,
+                        Agent::class,
+                        AppNotification::specific,
+                        $booking_container->id,
+                        $notificationTypeId
+                    );
 
                     if ($agent->device_token) {
                         $notificationData = [
                             'booking_id' => $booking_container->booking_id,
-                            'action_type' => 'assignment' // تخصيص
+                            'booking_container_id' => $booking_container->id,
+                            'type_id' => $notificationTypeId,
+                            'type' => $notificationType,
+                            'type_action' => $notificationType,
+                            'action_type' => $notificationType,
                         ];
                         SendNotification::send($agent->device_token, $title, $text, $notificationData);
                     }
@@ -168,14 +205,30 @@ class AgentController extends Controller
                     'agent' => $agent->name
                 ]);
 
-                SaveNotification::create($title, $text, $agent->id, Agent::class, AppNotification::specific);
+                // Save and send one notification for each booking.
+                foreach ($bookings as $booking) {
+                    $notificationContainer = $booking->bookingContainers()
+                        ->where('booking_containers.status', 0)
+                        ->first();
 
-                if ($agent->device_token) {
-                    // Send notification for each booking
-                    foreach ($bookings as $booking) {
+                    SaveNotification::create(
+                        $title,
+                        $text,
+                        $agent->id,
+                        Agent::class,
+                        AppNotification::specific,
+                        $notificationContainer?->id,
+                        0
+                    );
+
+                    if ($agent->device_token) {
                         $notificationData = [
                             'booking_id' => $booking->id,
-                            'action_type' => 'specification' // تخصيص
+                            'booking_container_id' => $notificationContainer?->id ?? '',
+                            'type_id' => 0,
+                            'type' => 'specification',
+                            'type_action' => 'specification',
+                            'action_type' => 'specification',
                         ];
                         SendNotification::send($agent->device_token, $title, $text, $notificationData);
                     }
@@ -195,7 +248,7 @@ class AgentController extends Controller
     {
         $rules = [
             'booking_container_id'  => 'required',
-            'type_id' => 'required'
+            'type_id' => 'required|in:0,1,2'
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -214,6 +267,7 @@ class AgentController extends Controller
 
         $superagent = auth()->guard("superagent")->user();
 
+        $message = '';
 
         if ($request->type_id == 0) {
 
@@ -229,13 +283,9 @@ class AgentController extends Controller
             $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
             $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
 
-
-            foreach ($bookingContainerAgents as $item) {
-                $item->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved'   => 1,
-                ]);
-            }
+            // إشعار المناديب الحاليين ثم إزالة التعيين بالكامل (لا نقل لنفس المندوب للتحميل)
+            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
+            BookingContainerAgent::whereIn('booking_container_id', $containerIds)->delete();
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([
@@ -246,17 +296,31 @@ class AgentController extends Controller
             $message = 'تم تخصيص حاويات الطلب ' . $container->booking_id;
 
             // Send Firebase notifications to agents
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
             foreach ($agents as $agent) {
+                $title = __('new_notification');
+                $text = __('booking_specification_approved', [
+                    'booking_number' => $container->booking->booking_number ?? ''
+                ]);
+
+                SaveNotification::create(
+                    $title,
+                    $text,
+                    $agent->id,
+                    Agent::class,
+                    AppNotification::specific,
+                    $container->id,
+                    0
+                );
+
                 if ($agent->device_token) {
-                    $title = __('new_notification');
-                    $text = __('booking_specification_approved', [
-                        'booking_number' => $container->booking->booking_number ?? ''
-                    ]);
                     $notificationData = [
                         'booking_id' => $container->booking_id,
-                        'action_type' => 'specification' // تخصيص
+                        'booking_container_id' => $container->id,
+                        'type_id' => 0,
+                        'type' => 'specification',
+                        'type_action' => 'specification',
+                        'action_type' => 'specification',
                     ];
                     SendNotification::send($agent->device_token, $title, $text, $notificationData);
                 }
@@ -267,16 +331,12 @@ class AgentController extends Controller
                 'status' => 2
             ]);
 
-            $containerIds = $container->booking->bookingContainers->pluck('id')->toArray();
-            $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
-            $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
+            $bookingContainerAgents = BookingContainerAgent::where('booking_container_id', $container->id)->get();
+            $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $container->id)->get();
 
-            foreach ($bookingContainerAgents as $item) {
-                $item->update([
-                    'booking_container_status' => 2,
-                    'superagent_loading_approved' => 1
-                ]);
-            }
+            // إشعار ثم إزالة التعيين بالكامل لهذه الحاوية فقط (لا نقل لنفس المندوب للتعتيق)
+            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
+            BookingContainerAgent::where('booking_container_id', $container->id)->delete();
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([
@@ -287,17 +347,31 @@ class AgentController extends Controller
             $message = 'تم تحميل حاوية رقم ' . $container->container_no;
 
             // Send Firebase notifications to agents
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
             foreach ($agents as $agent) {
+                $title = __('new_notification');
+                $text = __('booking_loading_approved', [
+                    'container_no' => $container->container_no ?? ''
+                ]);
+
+                SaveNotification::create(
+                    $title,
+                    $text,
+                    $agent->id,
+                    Agent::class,
+                    AppNotification::specific,
+                    $container->id,
+                    1
+                );
+
                 if ($agent->device_token) {
-                    $title = __('new_notification');
-                    $text = __('booking_loading_approved', [
-                        'container_no' => $container->container_no ?? ''
-                    ]);
                     $notificationData = [
                         'booking_id' => $container->booking_id,
-                        'action_type' => 'loading' // تحميل
+                        'booking_container_id' => $container->id,
+                        'type_id' => 1,
+                        'type' => 'loading',
+                        'type_action' => 'loading',
+                        'action_type' => 'loading',
                     ];
                     SendNotification::send($agent->device_token, $title, $text, $notificationData);
                 }
@@ -309,16 +383,11 @@ class AgentController extends Controller
                 'status' => 3
             ]);
 
-            $containerIds = $container->booking->bookingContainers->pluck('id')->toArray();
-            $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
-            $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
+            $bookingContainerAgents = BookingContainerAgent::where('booking_container_id', $container->id)->get();
+            $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $container->id)->get();
 
-            foreach ($bookingContainerAgents as $item) {
-                $item->update([
-                    'booking_container_status' => 3,
-                    'superagent_unloading_approved' => 1
-                ]);
-            }
+            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
+            BookingContainerAgent::where('booking_container_id', $container->id)->delete();
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([
@@ -330,17 +399,31 @@ class AgentController extends Controller
             $message = 'تم تعتيق حاوية رقم ' . $container->container_no;
 
             // Send Firebase notifications to agents
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
             $agents = Agent::whereIn('id', $agentIds)->get();
             foreach ($agents as $agent) {
+                $title = __('new_notification');
+                $text = __('booking_unloading_approved', [
+                    'container_no' => $container->container_no ?? ''
+                ]);
+
+                SaveNotification::create(
+                    $title,
+                    $text,
+                    $agent->id,
+                    Agent::class,
+                    AppNotification::specific,
+                    $container->id,
+                    2
+                );
+
                 if ($agent->device_token) {
-                    $title = __('new_notification');
-                    $text = __('booking_unloading_approved', [
-                        'container_no' => $container->container_no ?? ''
-                    ]);
                     $notificationData = [
                         'booking_id' => $container->booking_id,
-                        'action_type' => 'unloading' // تعتيق
+                        'booking_container_id' => $container->id,
+                        'type_id' => 2,
+                        'type' => 'unloading',
+                        'type_action' => 'unloading',
+                        'action_type' => 'unloading',
                     ];
                     SendNotification::send($agent->device_token, $title, $text, $notificationData);
                 }

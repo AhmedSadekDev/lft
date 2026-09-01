@@ -38,12 +38,10 @@ class BookingContainerActionController extends Controller
                 "status" => 1
             ]);
 
-            BookingContainerAgent::where("booking_container_status", 0)->whereIn("booking_container_id", $booking_container_ids)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 1
-            ]);
+            // إزالة المندوب/المناديب بالكامل بعد التخصيص — المدير يعيّن مندوب التحميل من جديد
+            BookingContainerAgent::whereIn("booking_container_id", $booking_container_ids)->delete();
 
-
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container_ids);
+            $dailyContainers = DailyBookingContainer::whereIn("booking_container_id", $booking_container_ids);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
 
@@ -60,15 +58,28 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
+            $first_container_id = !empty($booking_container_ids) ? $booking_container_ids[0] : ($booking->bookingContainers()->first()?->id ?? null);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $first_container_id, 0);
             // SendNotification::send($agent->device_token ?? "", $title, $text);
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_specification: Sending notification to all superagents', [
+                'booking_id' => $booking->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
+
+            foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking->id,
+                    'booking_container_id' => $first_container_id,
+                    'type_id' => 0,
                     'action_type' => 'specification' // تخصيص
                 ];
+                \Illuminate\Support\Facades\Log::info('done_specification: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
                 SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
@@ -94,11 +105,10 @@ class BookingContainerActionController extends Controller
                 "status" => 2
             ]);
 
-            BookingContainerAgent::whereBookingContainerId($booking_container->id)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 2
-            ]);
+            // إزالة المندوب بالكامل بعد التحميل — المدير يعيّن مندوب التعتيق من جديد
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->delete();
 
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container->id);
+            $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
                 $dailyContainer->update([
@@ -114,22 +124,36 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $booking_container->id, 1);
             
             if ($agent->device_token) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 1,
                     'action_type' => 'loading' // تحميل
                 ];
                 SendNotification::send($agent->device_token, $title, $text, $notificationData);
             }
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_loading: Sending notification to all superagents', [
+                'booking_container_id' => $booking_container->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
+
+            foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 1,
                     'action_type' => 'loading' // تحميل
                 ];
+                \Illuminate\Support\Facades\Log::info('done_loading: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
                 SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
@@ -160,11 +184,10 @@ class BookingContainerActionController extends Controller
                 "status" => 3
             ]);
 
-            BookingContainerAgent::whereBookingContainerId($booking_container->id)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 3
-            ]);
+            // إزالة المندوب بالكامل بعد التعتيق
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->delete();
 
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container->id);
+            $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
                 $dailyContainer->update([
@@ -180,22 +203,36 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $booking_container->id, 2);
             
             if ($agent->device_token) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 2,
                     'action_type' => 'unloading' // تعتيق
                 ];
                 SendNotification::send($agent->device_token, $title, $text, $notificationData);
             }
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_unloading: Sending notification to all superagents', [
+                'booking_container_id' => $booking_container->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
+
+            foreach ($superAgents as $superAgent) {
                 $notificationData = [
                     'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 2,
                     'action_type' => 'unloading' // تعتيق
                 ];
+                \Illuminate\Support\Facades\Log::info('done_unloading: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
                 SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 

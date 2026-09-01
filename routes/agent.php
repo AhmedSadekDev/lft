@@ -123,6 +123,7 @@ Route::group(['middleware' => 'localization'], function () {
         Route::group(['controller' => NotificationController::class], function () {
 
             Route::post("fetch_your_notifications", "fetch_notifications");
+            Route::post("mark_notification_read", "mark_as_read");
         });
 
 

@@ -77,6 +77,7 @@
                         'vault' => __('admin.vault'),
                         'bank' => __('main.bank'),
                         'agent' => __('main.agent'),
+                        'supplier' => 'مورد',
                     ],
                     old('payment_type', isset($booking_service) ? $booking_service->payment_type : null),
                     ['id' => 'payment_type', 'class' => 'form-control', 'onchange' => 'togglePaymentFields()']
@@ -112,6 +113,29 @@
                     ['id' => 'agent_id', 'class' => 'form-control']
                 ) !!}
                 <small class="text-danger">{{ $errors->first('agent_id') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12" id="supplier_field" style="display: none;">
+            <div class="form-group{{ $errors->has('supplier_id') ? ' has-error' : '' }}">
+                {!! Form::label('supplier_id', 'المورد', ['class' => 'required-field']) !!}
+                {!! Form::select('supplier_id',
+                    array_replace(['' => 'اختر المورد'], isset($suppliers) ? $suppliers->toArray() : []),
+                    old('supplier_id', isset($booking_service) ? $booking_service->supplier_id : null),
+                    ['id' => 'supplier_id', 'class' => 'form-control selectpicker', 'data-live-search' => 'true']
+                ) !!}
+                <small class="text-danger">{{ $errors->first('supplier_id') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12" id="supplier_invoice_field" style="display: none;">
+            <div class="form-group{{ $errors->has('supplier_invoice_number') ? ' has-error' : '' }}">
+                {!! Form::label('supplier_invoice_number', 'رقم فاتورة المورد') !!}
+                {!! Form::text('supplier_invoice_number',
+                    old('supplier_invoice_number', isset($booking_service) ? $booking_service->supplier_invoice_number : null),
+                    ['id' => 'supplier_invoice_number', 'class' => 'form-control', 'placeholder' => 'اختياري — افتراضي رقم البوكينج']
+                ) !!}
+                <small class="text-danger">{{ $errors->first('supplier_invoice_number') }}</small>
             </div>
         </div>
 
@@ -213,18 +237,21 @@
         function togglePaymentFields() {
             var paymentType = $('#payment_type').val();
 
-            // Hide all fields
             $('#vault_field').hide();
             $('#bank_field').hide();
             $('#agent_field').hide();
+            $('#supplier_field').hide();
+            $('#supplier_invoice_field').hide();
 
-            // Show relevant field
             if (paymentType === 'vault') {
                 $('#vault_field').show();
             } else if (paymentType === 'bank') {
                 $('#bank_field').show();
             } else if (paymentType === 'agent') {
                 $('#agent_field').show();
+            } else if (paymentType === 'supplier') {
+                $('#supplier_field').show();
+                $('#supplier_invoice_field').show();
             }
         }
 

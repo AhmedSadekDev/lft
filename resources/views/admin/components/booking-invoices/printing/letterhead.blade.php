@@ -291,13 +291,17 @@
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 4px;">
-                @if($attachment_print ?? false)
-                    <span style="color: #fff; font-weight: 600; font-size: 11px;">رقم:</span>
-                    <span style="color: #fff; font-size: 12px; font-weight: 700;">R {{ $invoice->invoice_number ?? "" }}</span>
-                @else
-                    <span style="color: #fff; font-weight: 600; font-size: 11px;">فاتورة رقم:</span>
-                    <span style="color: #fff; font-size: 12px; font-weight: 700;">{{ $invoice->invoice_number ?? "" }}</span>
-                @endif
+                @php
+                    $resolvedDocumentNumber = $document_number
+                        ?? (($attachment_print ?? false)
+                            ? ('R ' . ($invoice->invoice_number ?? ''))
+                            : ($invoice->invoice_number ?? ''));
+                    $numberLabel = ($attachment_print ?? false) || !empty($document_number_label_short)
+                        ? 'رقم:'
+                        : 'فاتورة رقم:';
+                @endphp
+                <span style="color: #fff; font-weight: 600; font-size: 11px;">{{ $numberLabel }}</span>
+                <span style="color: #fff; font-size: 12px; font-weight: 700;">{{ $resolvedDocumentNumber }}</span>
             </div>
             <div style="display: flex; align-items: center; gap: 4px;">
                 <span style="color: #fff; font-weight: 600; font-size: 11px;">التاريخ:</span>

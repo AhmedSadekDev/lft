@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Admin\Booking;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InvoiceRequest;
-use App\Mappers\ServiceCategoryStatusMapper;
 use App\Models\Booking;
 use App\Models\Invoice;
-use Illuminate\Database\Eloquent\Collection;
+use App\Services\InvoicePrintBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -114,163 +113,31 @@ class BookingInvoiceController extends Controller
      */
     public function show(Invoice $booking_invoice)
     {
-        // first page rows limit with header and footer
-        $fpr_hf_limit = 6;
-        // first page rows limit with header only
-        $fpr_h_limit = 8;
-        // middle page rows limit
-        $mpr_limit = 10;
-        // last page rows limit with footer only
-        $lpr_limit = 8;
-
         $booking = $booking_invoice->booking;
-        $booking->loadMissing(['expenses.service.serviceCategory']);
-
-        // Get taxed services and separate receipts (ايصالات) from them
-        $taxedServices = $booking->getTaxedServices()->get();
-        $receiptServices = collect();
-        $nonReceiptTaxedServices = collect();
-
-        foreach ($taxedServices as $service) {
-            $fullName = $service->full_name ?? '';
-            // Check if service name contains "ايصالات" or "receipt"
-            if (stripos($fullName, 'ايصالات') !== false || stripos($fullName, 'receipt') !== false) {
-                $receiptServices->push($service);
-            } else {
-                $nonReceiptTaxedServices->push($service);
-            }
+        if (!$booking) {
+            return redirect()->back()->with('error', 'هذه الفاتورة لا يمكن عرضها لأن الحجز غير موجود');
         }
 
-        // Sort services: "مصاريف أخرى" should come before "بيانه"
-        $nonReceiptTaxedServices = $nonReceiptTaxedServices->sortBy(function ($service) {
-            $fullName = $service->full_name ?? '';
-            // "مصاريف أخرى" should have priority 1, "بيانه" should have priority 2
-            if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
-                return 1;
-            } elseif (stripos($fullName, 'بيانه') !== false || stripos($fullName, 'بيان') !== false) {
-                return 2;
-            }
-            return 3; // Other services
-        })->values(); // Reset keys after sorting
+        $printData = (new InvoicePrintBuilder())->build($booking_invoice);
 
-        // Invoice rows: containers + non-receipt taxed services
-        $invoice_rows = $booking->bookingContainers
-            ->concat($nonReceiptTaxedServices);
-        $fpr = [];
-        $mps = [];
-        $lpr = [];
-
-        $fpr = $invoice_rows->shift(
-            count($invoice_rows) <= $fpr_hf_limit ? $fpr_hf_limit : $fpr_h_limit
-        );
-
-        $mps_count = floor(count($invoice_rows) / $mpr_limit);
-        $mps_modulus = count($invoice_rows) % $mpr_limit;
-        if ($mps_modulus <= $lpr_limit)
-            $lpr = $invoice_rows->pop($mps_modulus);
-        else
-            $mps_count++;
-
-
-        for ($i = 0; $i < $mps_count; $i++)
-            $mps[] = $invoice_rows->shift($mpr_limit);
-
-        if (!is_array($fpr) && !($fpr instanceof Collection))
-            $fpr = [$fpr];
-        foreach ($mps as $key => $mp)
-            if (!is_array($mp) && !($mp instanceof Collection))
-                $mps[$key] = [$mp];
-        if (!is_array($lpr) && !($lpr instanceof Collection))
-            $lpr = [$lpr];
-
-        // Attachment rows: only untaxed receipt services (sorted)
-        // Get receipt services from untaxed services
-        $untaxedServices = $booking->getUntaxedServices()->get();
-        $untaxedReceiptServices = $untaxedServices->filter(function ($service) {
-            $fullName = $service->full_name ?? '';
-            return stripos($fullName, 'ايصالات') !== false || stripos($fullName, 'receipt') !== false || stripos($fullName, 'إيصالات') !== false;
-        });
-
-        // Get all receipt services (from taxedServices, they are already collected above in $receiptServices)
-        // Note: receiptServices from taxedServices are already collected above (line 138)
-        // Combine all receipt services (from both taxed and untaxed service collections)
-        $allReceiptServices = $untaxedReceiptServices->concat($receiptServices);
-
-        // Sort all receipt services: "مصاريف أخرى" should come before "بيانه"
-        $allReceiptServices = $allReceiptServices->sortBy(function ($service) {
-            $fullName = $service->full_name ?? '';
-            if (stripos($fullName, 'مصاريف أخرى') !== false || stripos($fullName, 'مصاريف اخري') !== false) {
-                return 1;
-            } elseif (stripos($fullName, 'بيانه') !== false || stripos($fullName, 'بيان') !== false) {
-                return 2;
-            }
-            return 3;
-        })->values();
-
-        // Group receipt services by type (e.g., "تخصيص", "هيئة الميناء")
-        $groupedReceiptServices = collect();
-        $receiptGroups = $allReceiptServices->groupBy(function ($service) {
-            $fullName = $service->full_name ?? '';
-            // Extract the part before "ايصالات" as the group key
-            $parts = preg_split('/(ايصالات|إيصالات)/i', $fullName, 2, PREG_SPLIT_DELIM_CAPTURE);
-            if (count($parts) >= 2) {
-                $beforePart = trim($parts[0]);
-                // If there's a part after "ايصالات", use it instead
-                if (isset($parts[2]) && !empty(trim($parts[2]))) {
-                    $beforePart = trim($parts[2]);
-                }
-                return !empty($beforePart) ? $beforePart : 'عام';
-            }
-            return 'عام';
-        });
-
-        foreach ($receiptGroups as $groupKey => $services) {
-            $totalPrice = $services->sum('price');
-            $allNotes = $services->filter(function ($s) {
-                return !empty($s->note);
-            })->pluck('note')->toArray();
-
-            // Create a grouped service object
-            $groupedService = (object)[
-                'type' => 'grouped_receipt',
-                'group_key' => $groupKey,
-                'services' => $services,
-                'total_price' => $totalPrice,
-                'notes' => $allNotes,
-                'count' => $services->count()
-            ];
-            $groupedReceiptServices->push($groupedService);
-        }
-
-        // مصروفات الوكلاء (التطبيق/الداش) المدخلة في إجمالي «غير الضريبية» — نفس منطق Booking::getUntaxedServicesTotalPriceAttribute
-        $invoiceableAgentExpenses = $booking->expenses()
-            ->whereHas('service.serviceCategory', function ($q) {
-                $q->where('service_status', ServiceCategoryStatusMapper::UNTAXED);
-            })
-            ->orderBy('id')
-            ->get();
-
-        $agentExpenseRows = $invoiceableAgentExpenses->map(fn ($expense) => (object) [
-            'type' => 'agent_expense_attachment',
-            'expense' => $expense,
-        ]);
-
-        $attachment_rows = $groupedReceiptServices->concat($agentExpenseRows);
-
-        $agentExpensesAttachmentTotal = $invoiceableAgentExpenses->sum('value');
+        // Backward-compatible aliases used by older partials
+        $attachment_rows = $printData['receipt']['items']
+            ->concat($printData['additional']['items'])
+            ->values();
 
         return view('admin.bookings.booking-invoices.show', [
             'invoice' => $booking_invoice,
-            'fpr' => $fpr,
-            'mps' => $mps,
-            'lpr' => $lpr,
-            'fpr_hf_limit' => $fpr_hf_limit,
-            'fpr_h_limit' => $fpr_h_limit,
-            'mpr_limit' => $mpr_limit,
-            'lpr_limit' => $lpr_limit,
             'booking' => $booking,
+            'printData' => $printData,
+            'taxGroup' => $printData['tax'],
+            'receiptGroup' => $printData['receipt'],
+            'additionalGroup' => $printData['additional'],
+            'combinedItems' => $printData['combined_items'],
+            'combinedTotal' => $printData['combined_total'],
             'attachment_rows' => $attachment_rows,
-            'agent_expenses_attachment_total' => $agentExpensesAttachmentTotal,
+            'agent_expenses_attachment_total' => $printData['additional']['items']
+                ->filter(fn ($item) => is_object($item) && ($item->type ?? null) === 'agent_expense_attachment')
+                ->sum(fn ($item) => (float) ($item->expense->value ?? $item->price ?? 0)),
         ]);
     }
 

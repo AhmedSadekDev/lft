@@ -134,33 +134,34 @@ class Invoice extends Model
             }
         }
 
-        return ceil(
-            $this->transportation_total_before_vat
-                + $nonReceiptTaxedServicesTotal
+        return round(
+            (float) $this->transportation_total_before_vat + (float) $nonReceiptTaxedServicesTotal,
+            2
         );
     }
 
     public function getValueAddedTaxAmountAttribute()
     {
-        return ceil(
-            $this->invoice_total_before_tax
-                * ($this->value_added_tax / 100)
+        // round أولاً لتجنب خطأ الفاصلة العائمة مع ceil (مثال: 191000*0.14 => 26740.000000000004)
+        return round(
+            (float) $this->invoice_total_before_tax * ((float) $this->value_added_tax / 100),
+            2
         );
     }
 
     public function getSalesTaxAmountAttribute()
     {
-        return ceil(
-            $this->invoice_total_before_tax
-                * ($this->sales_tax / 100)
+        return round(
+            (float) $this->invoice_total_before_tax * ((float) $this->sales_tax / 100),
+            2
         );
     }
 
     public function getInvoiceTotalAfterTaxAttribute()
     {
-        return ceil(
-            $this->invoice_total_before_tax
-                + $this->value_added_tax_amount
+        return round(
+            (float) $this->invoice_total_before_tax + (float) $this->value_added_tax_amount,
+            2
         );
     }
 
@@ -172,9 +173,9 @@ class Invoice extends Model
 
     public function getInvoiceTotalAfterDiscountAttribute()
     {
-        return ceil(
-            $this->invoice_total_after_tax
-                - $this->discount_amount
+        return round(
+            (float) $this->invoice_total_after_tax - (float) $this->discount_amount,
+            2
         );
     }
 

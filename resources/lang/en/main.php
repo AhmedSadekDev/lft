@@ -12,6 +12,7 @@ return [
     'factory'       => 'Factory',
     'branches'      => 'Branches',
     'branch'        => 'Branch',
+    'suppliers'     => 'Suppliers',
     "agent_assignment" => "Agent Assignments",
     'reports'       => 'Reports',
     'report'        => 'Report',

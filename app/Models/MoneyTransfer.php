@@ -16,6 +16,7 @@ class MoneyTransfer extends Model
     const settle = 4;
     const officeCommission = 5; // دخان المكتب
     const carPayment = 7; // سداد سيارة
+    const supplierPayment = 8; // سداد مورد
 
     protected $guarded = [];
 
@@ -61,6 +62,19 @@ class MoneyTransfer extends Model
                 return $title;
             }
             return __('main.transfer_to_agent') . '   -   ' . ($this->transfered?->name ?? "");
+        }
+
+        if ($this->type == self::supplierPayment) {
+            $supplierName = $this->transfered?->supplier?->name ?? '';
+            $title = 'سداد مورد' . ($supplierName !== '' ? '   -   ' . $supplierName : '');
+            if ($this->notes) {
+                $title .= '   -   ' . $this->notes;
+            }
+            return $title;
+        }
+
+        if ($this->type == self::carPayment) {
+            return 'سداد سيارة' . '   -   ' . ($this->transfered?->name ?? '');
         }
 
         return __('main.custody_transfer') . '   -   ' . ($this->transfered?->name ?? "");
