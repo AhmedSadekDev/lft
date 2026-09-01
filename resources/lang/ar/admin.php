@@ -361,6 +361,11 @@ return [
 
 
 
+    'dashboard.index' => 'عرض لوحة التحكم',
+    'dashboard.create' => 'إنشاء لوحة التحكم',
+    'dashboard.update' => 'تحديث لوحة التحكم',
+    'dashboard.delete' => 'حذف لوحة التحكم',
+
     'companies.index' => 'عرض الشركات',
     'companies.create' => 'إنشاء شركة',
     'companies.update' => 'تحديث الشركة',

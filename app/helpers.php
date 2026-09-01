@@ -93,6 +93,7 @@ if(!function_exists('adminDbTablesPermissions')){
      */
     function adminDbTablesPermissions(){
         $adminPermissions = [
+            'dashboard',
             'companies',
             'superagents',
             'agents',

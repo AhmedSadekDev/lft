@@ -316,6 +316,11 @@ return [
     "papers" => "Papers",
     'not_taxed' => 'Not Taxed',
 
+    'dashboard.index' => 'View Dashboard',
+    'dashboard.create' => 'Create Dashboard',
+    'dashboard.update' => 'Update Dashboard',
+    'dashboard.delete' => 'Delete Dashboard',
+
     'companies.index' => 'View Companies',
     'companies.create' => 'Create Company',
     'companies.update' => 'Update Company',
