@@ -16,14 +16,23 @@ use App\Models\DeliveryPolicy;
 use App\Models\CitiesAndRegions;
 use App\Models\Image;
 use App\Models\MoneyTransfer;
+use App\Services\AgentImageUploadService;
+use App\Traits\HandlesAgentImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DeliveryPolicyController extends Controller
 {
+    use HandlesAgentImageUploads;
+
+    private const IMAGE_FOLDER = 'delivery_policies';
 
     public function create_delivery_policy(DeliveryPolicyRequest $request)
     {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) {
+            return $response;
+        }
+
         try {
             // dd($request->all());
             $agent = auth()->guard('agent')->user();
@@ -118,11 +127,19 @@ class DeliveryPolicyController extends Controller
                 $this->saveLogActivity($agent->id, Agent::class, $officeCommissionTransfer->id, MoneyTransfer::class);
             }
 
-            if ($request->image) {
-                $image_data["image"] = $request->image;
-                $image_data["imageable_id"] = $delivery_policy->id;
-                $image_data["imageable_type"] = "App\Models\DeliveryPolicy";
-                Image::create($image_data);
+            if ($request->hasFile('image') || $request->has('image')) {
+                $stored = $this->storeMorphImageFromRequest(
+                    $request,
+                    'image',
+                    self::IMAGE_FOLDER,
+                    $delivery_policy->id,
+                    DeliveryPolicy::class,
+                    false
+                );
+                if ($stored instanceof \Illuminate\Http\JsonResponse) {
+                    DB::rollBack();
+                    return $stored;
+                }
             }
 
             // خصم المبلغ الفعلي فقط (القيمة - دخان المكتب)
@@ -236,13 +253,19 @@ class DeliveryPolicyController extends Controller
 
             $this->saveLogActivity($agent->id, Agent::class, $moneyTransfer->id, MoneyTransfer::class);
 
-            if ($request->image) {
-                $image_data["image"] = $request->image;
-                $image_data["imageable_id"] = $delivery_policy->id;
-                $image_data["imageable_type"] = "App\Models\DeliveryPolicy";
-                Image::create($image_data);
+            if ($request->hasFile('image') || $request->has('image')) {
+                $stored = $this->storeMorphImageFromRequest(
+                    $request,
+                    'image',
+                    self::IMAGE_FOLDER,
+                    $delivery_policy->id,
+                    DeliveryPolicy::class,
+                    false
+                );
+                if ($stored instanceof \Illuminate\Http\JsonResponse) {
+                    return $stored;
+                }
             }
-
 
             return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
         } catch (\Exception $Exception) {
@@ -252,6 +275,10 @@ class DeliveryPolicyController extends Controller
 
     public function update_delivery_policy(Request $request)
     {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) {
+            return $response;
+        }
+
         try {
             $request->validate([
                 'id' => 'required|exists:delivery_policies,id',
@@ -359,15 +386,26 @@ class DeliveryPolicyController extends Controller
                 $agent->update(['wallet' => $agent->wallet - $actualDiff]);
             }
 
-            if ($request->filled('image')) {
-                if ($delivery_policy->image) {
-                    $delivery_policy->image->update(['image' => $request->image]);
-                } else {
-                    Image::create([
-                        'image' => $request->image,
-                        'imageable_id' => $delivery_policy->id,
-                        'imageable_type' => DeliveryPolicy::class,
-                    ]);
+            if ($request->hasFile('image') || $request->has('image')) {
+                $upload = $this->resolveAgentImageUpload(
+                    $request,
+                    'image',
+                    self::IMAGE_FOLDER,
+                    AgentImageUploadService::STORAGE_DISK,
+                    false
+                );
+
+                if ($upload instanceof \Illuminate\Http\JsonResponse) {
+                    DB::rollBack();
+                    return $upload;
+                }
+
+                if (! $upload['skipped'] && ! empty($upload['path'])) {
+                    if ($delivery_policy->image) {
+                        $delivery_policy->image->update(['image' => $upload['path']]);
+                    } else {
+                        $this->attachStoredImage($upload['path'], $delivery_policy->id, DeliveryPolicy::class);
+                    }
                 }
             }
 

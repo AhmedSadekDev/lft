@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Agent;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Agent\CarExpenseRequest;
+use App\Traits\HandlesAgentImageUploads;
 use App\Traits\ImagesTrait;
 use App\Models\Agent;
 use App\Models\AgentExpense;
@@ -11,10 +12,14 @@ use App\Models\DeliveryPolicy;
 
 class CarExpenseController extends Controller
 {
-    use ImagesTrait;
+    use HandlesAgentImageUploads, ImagesTrait;
 
     public function make_car_expenses(CarExpenseRequest $request)
     {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) {
+            return $response;
+        }
+
         try {
 
             $agent = auth()->guard('agent')->user();
@@ -45,9 +50,12 @@ class CarExpenseController extends Controller
             $data['type'] = AgentExpense::carExpenses;
 
             $imageName = null;
-            if ($request->hasFile('image')) {
-                $imageName = time() . '_car_expenses.' . $request->image->extension();
-                $this->uploadImage($request->image, $imageName, 'expenses');
+            if ($request->hasFile('image') || $request->has('image')) {
+                $stored = $this->storeAdminExpenseImage($request, 'image', false);
+                if ($stored instanceof \Illuminate\Http\JsonResponse) {
+                    return $stored;
+                }
+                $imageName = $stored;
             }
             $data['image_agent_expenses'] = $imageName;
 

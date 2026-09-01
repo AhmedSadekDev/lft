@@ -20,10 +20,12 @@ use App\Models\Note;
 use App\Models\Superagent;
 use App\Services\SaveNotification;
 use App\Services\SendNotification;
+use App\Traits\HandlesAgentImageUploads;
 use Illuminate\Http\Request;
 
 class BookingContainerActionController extends Controller
 {
+    use HandlesAgentImageUploads;
     public function done_specification(BookingRequest $request)
     {
         try {
@@ -249,6 +251,10 @@ class BookingContainerActionController extends Controller
     }
     public function send_notes(NoteRequest $request)
     {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) {
+            return $response;
+        }
+
         try {
 
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
@@ -262,12 +268,18 @@ class BookingContainerActionController extends Controller
 
             $note = Note::create($data);
 
-            if ($request->images && count($request->images) > 0) {
-                foreach ($request->images as $image) {
-                    $image_data["image"] = $image;
-                    $image_data["imageable_id"] = $note->id;
-                    $image_data["imageable_type"] = "App\Models\Note";
-                    Image::create($image_data);
+            if ($request->hasFile('images') || $request->has('images')) {
+                if (! $request->hasFile('images')) {
+                    return $this->returnError(422, 'فشل رفع صور الملاحظة: الحجم كبير جداً أو انقطع الاتصال أثناء الرفع.');
+                }
+
+                foreach ($request->file('images') as $index => $image) {
+                    $upload = $this->imageUploadService()->storeUploadedFile($image, 'notes');
+                    if (! $upload['ok']) {
+                        return $this->returnError(422, $upload['error'] ?? ('فشل رفع صورة الملاحظة رقم ' . ($index + 1)));
+                    }
+
+                    $this->attachStoredImage($upload['path'], $note->id, Note::class);
                 }
             }
             $response = new NoteResource($note);

@@ -7,6 +7,7 @@ use App\Http\Requests\Api\Agent\GeneralExpenseRequest;
 use App\Http\Requests\Api\Agent\ReservationExpenseRequest;
 use App\Http\Resources\Api\Agent\ExpenseResource;
 use App\Models\Agent;
+use App\Traits\HandlesAgentImageUploads;
 use App\Traits\ImagesTrait;
 use App\Models\AgentExpense;
 use App\Models\BookingContainer;
@@ -17,10 +18,14 @@ use Illuminate\Support\Facades\DB;
 
 class ExpenseController extends Controller
 {
-    use ImagesTrait;
+    use HandlesAgentImageUploads, ImagesTrait;
 
     public function update_expense(Request $request)
     {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) {
+            return $response;
+        }
+
         try {
             $request->validate([
                 'id' => 'required|exists:agent_expenses,id',
@@ -52,11 +57,21 @@ class ExpenseController extends Controller
 
             // Handle image replacement if provided
             $imageName = $expense->image_agent_expenses;
-            if ($request->hasFile('image')) {
-                $newImageName = time() . '_expenses.' . $request->image->extension();
-                $oldPath = $imageName ? 'Admin/images/expenses/' . $imageName : null;
-                $this->uploadImage($request->image, $newImageName, 'expenses', $oldPath);
-                $imageName = $newImageName;
+            if ($request->hasFile('image') || $request->has('image')) {
+                $stored = $this->storeAdminExpenseImage($request, 'image', false);
+                if ($stored instanceof \Illuminate\Http\JsonResponse) {
+                    DB::rollBack();
+                    return $stored;
+                }
+                if ($stored) {
+                    if ($imageName) {
+                        $oldPath = public_path('Admin/images/expenses/' . $imageName);
+                        if (file_exists($oldPath)) {
+                            @unlink($oldPath);
+                        }
+                    }
+                    $imageName = $stored;
+                }
             }
 
             // Update expense fields
@@ -166,6 +181,10 @@ class ExpenseController extends Controller
     }
     public function make_general_expenses(GeneralExpenseRequest $request)
     {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) {
+            return $response;
+        }
+
         try {
 
             $agent = auth()->guard('agent')->user();
@@ -173,11 +192,14 @@ class ExpenseController extends Controller
             if ($agent->wallet < $request->value) {
                 return $this->returnError(200, __('main.you dont have enougth money'));
             }
+
             $imageName = null;
-            if($request->image)
-            {
-                $imageName = time() . '_expenses.' . $request->image->extension();
-                $this->uploadImage($request->image, $imageName, 'expenses');
+            if ($request->hasFile('image') || $request->has('image')) {
+                $stored = $this->storeAdminExpenseImage($request, 'image', false);
+                if ($stored instanceof \Illuminate\Http\JsonResponse) {
+                    return $stored;
+                }
+                $imageName = $stored;
             }
             $data = $request->validated();
             $data["agent_id"] = $agent->id;
@@ -208,6 +230,10 @@ class ExpenseController extends Controller
     }
     public function make_reservation_expenses(ReservationExpenseRequest $request)
     {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) {
+            return $response;
+        }
+
         try {
             $agent = auth()->guard('agent')->user();
 
@@ -217,10 +243,12 @@ class ExpenseController extends Controller
 
             $data = $request->validated();
             $imageName = null;
-            if($request->image)
-            {
-                $imageName = time() . '_expenses.' . $request->image->extension();
-                $this->uploadImage($request->image, $imageName, 'expenses');
+            if ($request->hasFile('image') || $request->has('image')) {
+                $stored = $this->storeAdminExpenseImage($request, 'image', false);
+                if ($stored instanceof \Illuminate\Http\JsonResponse) {
+                    return $stored;
+                }
+                $imageName = $stored;
             }
             $data["agent_id"] = $agent->id;
             $data["type"] = 2;
