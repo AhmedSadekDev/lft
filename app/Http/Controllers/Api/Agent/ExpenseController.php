@@ -78,7 +78,7 @@ class ExpenseController extends Controller
             $expense->update([
                 'value' => $newValue,
                 'service_id' => $request->input('service_id', $expense->service_id),
-                'notes' => $request->input('notes', $expense->notes),
+                'notes' => $request->input('notes', $request->input('text', $expense->notes)),
                 'booking_container_id' => $request->input('booking_container_id', $expense->booking_container_id),
                 'type_id' => $request->input('type_id', $expense->type_id),
                 'image_agent_expenses' => $imageName,
@@ -271,6 +271,7 @@ class ExpenseController extends Controller
                 'type_id' => $request->type_id,
                 'service_id' => $request->service_id,
                 'value' => $request->value,
+                'notes' => $data['notes'] ?? null,
                 'booking_container_id' => $request->booking_container_id,
                 'booking_id' => $data['booking_id'] ?? null,
             ]);

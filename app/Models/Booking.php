@@ -32,6 +32,19 @@ class Booking extends Model
         return $this->hasMany(AgentExpense::class, 'booking_id', 'id');
     }
 
+    public function loadExpensesForDisplay(): self
+    {
+        $this->setRelation(
+            'expenses',
+            AgentExpense::forBooking($this->id)
+                ->with(['service.serviceCategory'])
+                ->orderBy('id')
+                ->get()
+        );
+
+        return $this;
+    }
+
 
 
     public function company()

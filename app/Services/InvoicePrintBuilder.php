@@ -6,6 +6,7 @@ use App\Mappers\InvoicePrintSectionMapper;
 use App\Mappers\ServiceCategoryStatusMapper;
 use App\Models\Booking;
 use App\Models\BookingService;
+use App\Models\AgentExpense;
 use App\Models\Invoice;
 use Illuminate\Support\Collection;
 
@@ -55,7 +56,7 @@ class InvoicePrintBuilder
         $additionalItems = $this->sortPrintServices($additionalItems);
 
         // Agent expenses from app: receipt-named ones → receipts, rest → bayatah/additional
-        $agentExpenseRows = $booking->expenses()
+        $agentExpenseRows = AgentExpense::forBooking($booking->id)
             ->with(['service.serviceCategory'])
             ->whereHas('service.serviceCategory', function ($q) {
                 $q->where(function ($inner) {

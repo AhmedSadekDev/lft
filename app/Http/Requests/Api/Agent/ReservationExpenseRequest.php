@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Agent;
 
+use App\Http\Requests\Api\Agent\Concerns\MapsAgentExpenseNotes;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\ResponseTrait;
@@ -9,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 
 class ReservationExpenseRequest extends FormRequest
 {
-    use ResponseTrait;
+    use ResponseTrait, MapsAgentExpenseNotes;
 
     public function authorize()
     {

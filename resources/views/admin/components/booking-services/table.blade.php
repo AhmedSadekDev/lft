@@ -87,10 +87,10 @@
                         {{ $expense->id }}
                     </td>
                     <td>
-                        {{ $expense->service->name }}
+                        {{ $expense->service?->name ?? __('main.not_found') }}
                     </td>
                     <td>
-                        {{ $expense->notes }}
+                        {{ filled($expense->notes) ? $expense->notes : '—' }}
                     </td>
                     <td class="services_total_price" data-price="{{ $expense->value }}">
                         {{ $expense->value }}

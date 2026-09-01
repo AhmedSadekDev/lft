@@ -71,4 +71,14 @@ class AgentExpense extends Model
     {
         return $this->belongsTo(DeliveryPolicy::class);
     }
+
+    public function scopeForBooking($query, int $bookingId)
+    {
+        return $query->where(function ($q) use ($bookingId) {
+            $q->where('booking_id', $bookingId)
+                ->orWhereHas('bookingContainer', function ($containerQuery) use ($bookingId) {
+                    $containerQuery->where('booking_id', $bookingId);
+                });
+        });
+    }
 }

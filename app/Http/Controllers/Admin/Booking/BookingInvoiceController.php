@@ -29,6 +29,7 @@ class BookingInvoiceController extends Controller
      */
     public function create(Request $request, Booking $booking)
     {
+        $booking->loadExpensesForDisplay();
         $company = $booking->company;
         $invoice_number = Invoice::getNextInvoiceNumberForCompany($company->id);
 
@@ -118,6 +119,8 @@ class BookingInvoiceController extends Controller
             return redirect()->back()->with('error', 'هذه الفاتورة لا يمكن عرضها لأن الحجز غير موجود');
         }
 
+        $booking->loadExpensesForDisplay();
+
         $printData = (new InvoicePrintBuilder())->build($booking_invoice);
 
         // Backward-compatible aliases used by older partials
@@ -152,6 +155,8 @@ class BookingInvoiceController extends Controller
         $booking = $booking_invoice->booking;
         if (!$booking)
             return redirect()->back()->with('error', 'هذه الفاتورة لا يمكن تعديلها لأن الحجز غير موجود');
+
+        $booking->loadExpensesForDisplay();
 
         $transportation_total = $booking->transportation_total_price;
         $taxed_services_total = $booking->taxed_services_total_price;
