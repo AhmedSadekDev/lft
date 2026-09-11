@@ -141,6 +141,19 @@
             </div>
         </div>
 
+        <div class="col-md-6 js-representative-fields" style="display: none;">
+            <div class="form-group">
+                {!! Form::label('agent_id', 'المندوب', ['class' => 'required-field']) !!}
+                {!! Form::select('agent_id', ['' => 'اختر المندوب'] + collect($agents ?? [])->toArray(),
+                    old('agent_id', isset($receipt) ? ($receipt->bookingService?->agent_id) : null), [
+                    'class' => 'form-control selectpicker',
+                    'id'    => 'agent_id',
+                    'data-live-search' => 'true',
+                ]) !!}
+                @error('agent_id') <small class="text-danger">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
         <div class="col-md-6 js-supplier-fields" style="display: none;">
             <div class="form-group">
                 {!! Form::label('supplier_invoice_number', 'رقم فاتورة المورد', ['class' => 'required-field']) !!}
@@ -197,18 +210,30 @@
 <script>
     function toggleSupplierFields() {
         var source = document.getElementById('payment_source').value;
-        var fields = document.querySelectorAll('.js-supplier-fields');
+        var supplierFields = document.querySelectorAll('.js-supplier-fields');
+        var repFields     = document.querySelectorAll('.js-representative-fields');
         var supplierSelect = document.getElementById('supplier_id');
-        var invoiceInput = document.getElementById('supplier_invoice_number');
+        var invoiceInput   = document.getElementById('supplier_invoice_number');
+        var agentSelect    = document.getElementById('agent_id');
 
         if (source === 'supplier') {
-            fields.forEach(function (el) { el.style.display = 'block'; });
+            supplierFields.forEach(function (el) { el.style.display = 'block'; });
+            repFields.forEach(function (el)      { el.style.display = 'none'; });
             supplierSelect.setAttribute('required', 'required');
             invoiceInput.setAttribute('required', 'required');
-        } else {
-            fields.forEach(function (el) { el.style.display = 'none'; });
+            if (agentSelect) agentSelect.removeAttribute('required');
+        } else if (source === 'representative') {
+            supplierFields.forEach(function (el) { el.style.display = 'none'; });
+            repFields.forEach(function (el)      { el.style.display = 'block'; });
             supplierSelect.removeAttribute('required');
             invoiceInput.removeAttribute('required');
+            if (agentSelect) agentSelect.setAttribute('required', 'required');
+        } else {
+            supplierFields.forEach(function (el) { el.style.display = 'none'; });
+            repFields.forEach(function (el)      { el.style.display = 'none'; });
+            supplierSelect.removeAttribute('required');
+            invoiceInput.removeAttribute('required');
+            if (agentSelect) agentSelect.removeAttribute('required');
         }
     }
 

@@ -11,6 +11,8 @@ use App\Models\Receipt;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Supplier;
+use App\Models\Agent;
+use App\Models\AgentExpense;
 use App\Services\BookingSupplierReceiptSync;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -75,17 +77,19 @@ class ReceiptController extends Controller
                 // so it appears on the order + invoice receipts section.
                 if (!empty($data['booking_id']) && !empty($validated['service_id'])) {
                     $paymentType = $this->mapPaymentType($data['payment_source'] ?? null);
+                    $agentId     = isset($validated['agent_id']) ? (int) $validated['agent_id'] : null;
 
                     $bookingService = BookingService::create([
-                        'booking_id' => $data['booking_id'],
-                        'service_id' => (int) $validated['service_id'],
-                        'price' => $data['cost'],
-                        'note' => $data['notes'] ?? null,
-                        'payment_type' => $paymentType,
-                        'supplier_id' => $data['supplier_id'] ?? null,
-                        'supplier_invoice_number' => $data['supplier_invoice_number'] ?? null,
-                        'image' => $request->file('image'),
-                        'created_by' => auth()->id(),
+                        'booking_id'             => $data['booking_id'],
+                        'service_id'             => (int) $validated['service_id'],
+                        'price'                  => $data['cost'],
+                        'note'                   => $data['notes'] ?? null,
+                        'payment_type'           => $paymentType,
+                        'supplier_id'            => $data['supplier_id'] ?? null,
+                        'supplier_invoice_number'=> $data['supplier_invoice_number'] ?? null,
+                        'image'                  => $request->file('image'),
+                        'created_by'             => auth()->id(),
+                        'agent_id'               => $agentId,
                     ]);
 
                     if ($paymentType === 'supplier') {
@@ -94,6 +98,30 @@ class ReceiptController extends Controller
                         Receipt::create(array_merge($data, [
                             'booking_service_id' => $bookingService->id,
                         ]));
+
+                        // خصم وليت المندوب + إنشاء سجل مصروف حتى يظهر في التطبيق والداشبورد
+                        if ($paymentType === 'agent' && $agentId) {
+                            $agent = Agent::find($agentId);
+                            if ($agent) {
+                                $agent->wallet = (float) ($agent->wallet ?? 0) - (float) $data['cost'];
+                                $agent->save();
+
+                                $serviceName     = $bookingService->fresh()->service?->name ?? 'خدمة';
+                                $transactionName = "{$serviceName} - طلب رقم {$data['booking_id']}";
+
+                                AgentExpense::create([
+                                    'agent_id'           => $agentId,
+                                    'booking_service_id' => $bookingService->id,
+                                    'booking_id'         => $data['booking_id'],
+                                    'service_id'         => (int) $validated['service_id'],
+                                    'type'               => AgentExpense::generalExpenses,
+                                    'value'              => (float) $data['cost'],
+                                    'notes'              => $transactionName,
+                                    'user_id'            => auth()->id(),
+                                    'admin_approval'     => 1,
+                                ]);
+                            }
+                        }
                     }
 
                     return;
@@ -267,23 +295,25 @@ class ReceiptController extends Controller
     private function formInputs(array $overrides = []): array
     {
         $serviceTypes = ServiceCategory::orderBy('title')->pluck('title', 'id');
-        $suppliers = Supplier::orderBy('name')->pluck('name', 'id');
+        $suppliers    = Supplier::orderBy('name')->pluck('name', 'id');
+        $agents       = Agent::orderBy('name')->pluck('name', 'id');
         $bookings = Booking::query()
             ->orderByDesc('id')
             ->limit(200)
             ->get(['id', 'booking_number']);
 
         return array_merge([
-            'suppliers' => $suppliers,
-            'bookings' => $bookings,
-            'service_types' => $serviceTypes,
-            'services' => Service::pluck('name', 'id'),
+            'suppliers'    => $suppliers,
+            'agents'       => $agents,
+            'bookings'     => $bookings,
+            'service_types'=> $serviceTypes,
+            'services'     => Service::pluck('name', 'id'),
         ], $overrides);
     }
 
     private function normalizedReceiptData(array $data): array
     {
-        unset($data['booking_number'], $data['service_type_id'], $data['service_id'], $data['image']);
+        unset($data['booking_number'], $data['service_type_id'], $data['service_id'], $data['image'], $data['agent_id']);
 
         if (($data['payment_source'] ?? null) !== Receipt::PAYMENT_SOURCE_SUPPLIER) {
             $data['supplier_id'] = null;

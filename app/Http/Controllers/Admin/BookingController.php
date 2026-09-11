@@ -43,14 +43,14 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        $bookings = Booking::query()
-            ->with(['company', 'factory', 'invoice']);
+        $query = Booking::query()
+            ->with(['company', 'factory', 'invoice', 'bookingContainers']);
 
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $bookings->where(function($query) use ($search) {
-                $query->where('booking_number', 'like', '%' . $search . '%')
+            $query->where(function($q) use ($search) {
+                $q->where('booking_number', 'like', '%' . $search . '%')
                     ->orWhere('employee_name', 'like', '%' . $search . '%')
                     ->orWhereHas('bookingContainers', function($container) use($search){
                         $container->where('container_no', 'like', '%' . $search . '%');
@@ -66,37 +66,53 @@ class BookingController extends Controller
 
         // Date range filter
         if ($request->filled('date_from') || $request->filled('date_to')) {
-            $bookings->filterDateRange(request('date_from'), request('date_to'));
+            $query->filterDateRange(request('date_from'), request('date_to'));
         }
 
         // Company filter
         if ($request->filled("company")) {
-            $bookings->filterCompany(request('company'));
+            $query->filterCompany(request('company'));
         }
 
         // Tax status filter
         if ($request->filled("tax_status")) {
-            $bookings->filterTaxStatus(request('tax_status'));
+            $query->filterTaxStatus(request('tax_status'));
         }
 
         // Invoice status filter
         if ($request->filled("invoice_status")) {
             if ($request->invoice_status == '1') {
-                $bookings->whereHas('invoice');
+                $query->whereHas('invoice');
             } else {
-                $bookings->whereDoesntHave('invoice');
+                $query->whereDoesntHave('invoice');
             }
+        }
+
+        // Calculate counts for each stage tab based on the current filtered query
+        $stageCounts = [
+            'all'       => (clone $query)->count(),
+            'assigned'  => (clone $query)->filterStage('assigned')->count(),
+            'waiting'   => (clone $query)->filterStage('waiting')->count(),
+            'loading'   => (clone $query)->filterStage('loading')->count(),
+            'unloading' => (clone $query)->filterStage('unloading')->count(),
+            'invoiced'  => (clone $query)->filterStage('invoiced')->count(),
+        ];
+
+        // Stage filter
+        $currentStage = $request->get('stage', $request->get('status', 'all'));
+        if ($currentStage && $currentStage !== 'all') {
+            $query->filterStage($currentStage);
         }
 
         // Per page filter
         $perPage = $request->get('per_page', 15);
         $perPage = min(max((int)$perPage, 15), 100); // Between 15 and 100
 
-        $bookings = $bookings->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
+        $bookings = $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
 
         $companies = Company::query()->get();
 
-        return view('admin.bookings.index', compact('bookings', 'companies'));
+        return view('admin.bookings.index', compact('bookings', 'companies', 'stageCounts', 'currentStage'));
     }
 
     private function getCreateFormInputs()

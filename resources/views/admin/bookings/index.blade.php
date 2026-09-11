@@ -175,6 +175,54 @@
         .table-container {
             min-height: 400px;
         }
+        .stage-tabs-wrapper {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .stage-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13.5px;
+            transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .stage-tab-btn:hover {
+            background: #f8f9fa;
+            color: #007bff;
+            border-color: #b8daff;
+            transform: translateY(-1px);
+            text-decoration: none;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+        }
+        .stage-tab-btn.active {
+            background: #007bff;
+            color: #fff;
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+        .stage-tab-btn .badge {
+            font-size: 11px;
+            padding: 3px 7px;
+            border-radius: 20px;
+        }
+        .stage-tab-btn.active .badge {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+        .stage-tab-btn:not(.active) .badge {
+            background: #e9ecef;
+            color: #495057;
+        }
         @media (max-width: 768px) {
             .pagination-wrapper {
                 flex-direction: column;
@@ -197,11 +245,48 @@
             .pagination-next span {
                 display: none;
             }
+            .stage-tabs-wrapper {
+                gap: 6px;
+            }
+            .stage-tab-btn {
+                padding: 7px 12px;
+                font-size: 12px;
+            }
         }
     </style>
 
     <div class="container-fluid">
         @include('layouts.includes.breadcrumb', ['page' => __('main.bookings')])
+
+        <!-- Status / Stage Tabs -->
+        @php
+            $currentStage = $currentStage ?? request('stage', request('status', 'all'));
+            $tabItems = [
+                'all'       => ['label' => 'الكل', 'icon' => 'fas fa-layer-group', 'count' => $stageCounts['all'] ?? 0],
+                'assigned'  => ['label' => 'التخصيص', 'icon' => 'fas fa-tasks', 'count' => $stageCounts['assigned'] ?? 0],
+                'waiting'   => ['label' => 'الانتظار', 'icon' => 'fas fa-hourglass-half', 'count' => $stageCounts['waiting'] ?? 0],
+                'loading'   => ['label' => 'التحميل', 'icon' => 'fas fa-truck-loading', 'count' => $stageCounts['loading'] ?? 0],
+                'unloading' => ['label' => 'التعتيق', 'icon' => 'fas fa-dolly', 'count' => $stageCounts['unloading'] ?? 0],
+                'invoiced'  => ['label' => 'فواتير منتهية', 'icon' => 'fas fa-file-invoice-dollar', 'count' => $stageCounts['invoiced'] ?? 0],
+            ];
+        @endphp
+        <div class="stage-tabs-wrapper">
+            @foreach($tabItems as $stageKey => $tab)
+                @php
+                    $isActive = ($currentStage == $stageKey) || ($stageKey == 'all' && (empty($currentStage) || $currentStage == 'all'));
+                    $queryParams = request()->except(['stage', 'status', 'page']);
+                    if ($stageKey !== 'all') {
+                        $queryParams['stage'] = $stageKey;
+                    }
+                @endphp
+                <a href="{{ route('bookings.index', $queryParams) }}"
+                   class="stage-tab-btn {{ $isActive ? 'active' : '' }}">
+                    <i class="{{ $tab['icon'] }}"></i>
+                    <span>{{ $tab['label'] }}</span>
+                    <span class="badge">{{ $tab['count'] }}</span>
+                </a>
+            @endforeach
+        </div>
 
         <!-- Filters Card -->
         <div class="card filter-card mb-4">
@@ -225,6 +310,19 @@
                                         placeholder="{{ __('admin.search') }}...">
                                 <i class="fas fa-search search-icon"></i>
                             </div>
+                        </div>
+
+                        <!-- Stage Filter -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">المرحلة</label>
+                            <select name="stage" class="form-control">
+                                <option value="" {{ ($currentStage == 'all' || empty($currentStage)) ? 'selected' : '' }}>{{ __('admin.all') }}</option>
+                                <option value="assigned" {{ $currentStage == 'assigned' ? 'selected' : '' }}>التخصيص (Assigned)</option>
+                                <option value="waiting" {{ $currentStage == 'waiting' ? 'selected' : '' }}>الانتظار (Waiting)</option>
+                                <option value="loading" {{ $currentStage == 'loading' ? 'selected' : '' }}>التحميل (Loading)</option>
+                                <option value="unloading" {{ $currentStage == 'unloading' ? 'selected' : '' }}>التعتيق (Unloading)</option>
+                                <option value="invoiced" {{ $currentStage == 'invoiced' ? 'selected' : '' }}>فواتير منتهية (Invoiced)</option>
+                            </select>
                         </div>
 
                         <!-- Date From Filter -->
@@ -284,7 +382,7 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="col-md-1 mb-3 d-flex align-items-end">
+                        <div class="col-md-2 mb-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-search"></i> {{ __('admin.search') }}
                             </button>
@@ -292,10 +390,27 @@
                     </div>
 
                     <!-- Active Filters -->
-                    @if(request()->hasAny(['search', 'arrival_date', 'company', 'tax_status', 'invoice_status']))
+                    @if(request()->hasAny(['search', 'arrival_date', 'company', 'tax_status', 'invoice_status', 'stage', 'status']))
                         <div class="row mt-2">
                             <div class="col-12">
                                 <small class="text-muted">الفلاتر النشطة:</small>
+                                @if(request('stage') && request('stage') !== 'all')
+                                    @php
+                                        $stageLabels = [
+                                            'assigned' => 'التخصيص',
+                                            'waiting' => 'الانتظار',
+                                            'loading' => 'التحميل',
+                                            'unloading' => 'التعتيق',
+                                            'invoiced' => 'فواتير منتهية',
+                                        ];
+                                    @endphp
+                                    <span class="filter-badge">
+                                        المرحلة: {{ $stageLabels[request('stage')] ?? request('stage') }}
+                                        <a href="{{ route('bookings.index', request()->except(['stage', 'status'])) }}" class="ml-2 text-danger">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </span>
+                                @endif
                                 @if(request('search'))
                                     <span class="filter-badge">
                                         بحث: {{ request('search') }}
@@ -365,7 +480,7 @@
                     @endif
                     @if($bookings->count() > 0)
                         <a class="btn btn-success ml-2"
-                            href="{{ route('booking_container.export', request()->only(['search', 'date_from', 'date_to', 'company', 'tax_status', 'invoice_status'])) }}"
+                            href="{{ route('booking_container.export', request()->only(['search', 'date_from', 'date_to', 'company', 'tax_status', 'invoice_status', 'stage'])) }}"
                             title="{{ __('admin.export') }}">
                             <i class="fas fa-download"></i> {{ __('admin.export') }}
                         </a>
@@ -381,6 +496,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>المرحلة</th>
                                     <th>{{ __('admin.company_name') }}</th>
                                     <th>{{ __('admin.responsible_employee') }}</th>
                                     <th>{{ __('main.factory') }}</th>
@@ -397,6 +513,12 @@
                                 @foreach ($bookings as $booking)
                                     <tr>
                                         <td><strong>{{ $booking->id }}</strong></td>
+                                        <td>
+                                            @php $stageInfo = $booking->stage_info; @endphp
+                                            <span class="badge {{ $stageInfo['badge'] }} badge-custom" style="white-space: nowrap;">
+                                                <i class="{{ $stageInfo['icon'] }} mr-1"></i> {{ $stageInfo['label'] }}
+                                            </span>
+                                        </td>
                                         <td>{{ $booking->company->name ?? '__' }}</td>
                                         <td>{{ $booking->employee_name ?? '__' }}</td>
                                         <td>{{ $booking?->factory?->name ?? '__' }}</td>

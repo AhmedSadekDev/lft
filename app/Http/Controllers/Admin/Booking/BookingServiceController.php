@@ -14,6 +14,7 @@ use App\Models\Agent;
 use App\Models\Supplier;
 use App\Models\VaultTransaction;
 use App\Models\BankTrnsaction;
+use App\Models\AgentExpense;
 use App\Services\BookingSupplierReceiptSync;
 use Illuminate\Support\Facades\DB;
 
@@ -244,10 +245,27 @@ class BookingServiceController extends Controller
 
                         VaultTransaction::create([
                             'agient_id' => $agentId,
-                            'name' => $transaction_name,
-                            'amount' => $price,
-                            'type' => $transaction_type,
+                            'name'      => $transaction_name,
+                            'amount'    => $price,
+                            'type'      => $transaction_type,
                         ]);
+
+                        // ربط الخصم بسجل مصروف مندوب حتى يظهر في قوائم المصروفات
+                        if ($action === 'return') {
+                            AgentExpense::where('booking_service_id', $booking_service->id)->delete();
+                        } else {
+                            AgentExpense::create([
+                                'agent_id'           => $agentId,
+                                'booking_service_id' => $booking_service->id,
+                                'booking_id'         => $booking_service->booking_id,
+                                'service_id'         => $booking_service->service_id,
+                                'type'               => AgentExpense::generalExpenses,
+                                'value'              => $price,
+                                'notes'              => $transaction_name,
+                                'user_id'            => auth()->id(),
+                                'admin_approval'     => 1,
+                            ]);
+                        }
                     }
                 }
                 break;

@@ -16,8 +16,8 @@ class SpecificationBookingResource extends JsonResource
         $superagent_booking_containers = BookingContainer::where('created_at', '>=', now()->startOfDay())
             ->where('created_at', '<=', now()->endOfDay())
             ->where(function ($query) {
-            $query->whereIn('status', [0, 1, 2, 3]);
-        })->get();
+                $query->whereIn('status', [0, 1, 2, 3]);
+            })->get();
 
         // تحديد المرحلة من الـ request
         $stage = $request->get('stage');
@@ -27,11 +27,11 @@ class SpecificationBookingResource extends JsonResource
 
         // حالة تنفيذ المندوب لكل مراحل الطلب
         $isSpecificationDone = $hasBookingContainers
-            && $allContainers->every(fn ($container) => (int) $container->status >= 1);
+            && $allContainers->every(fn($container) => (int) $container->status >= 1);
         $isLoadingDone = $hasBookingContainers
-            && $allContainers->every(fn ($container) => (int) $container->status >= 2);
+            && $allContainers->every(fn($container) => (int) $container->status >= 2);
         $isUnloadingDone = $hasBookingContainers
-            && $allContainers->every(fn ($container) => (int) $container->status >= 3);
+            && $allContainers->every(fn($container) => (int) $container->status >= 3);
 
         // 1. Specification (التخصيص)
         $specificationContainers = $allContainers->filter(function ($container) {

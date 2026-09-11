@@ -83,11 +83,41 @@ class ShippingAgentController extends Controller
         });
 
         /* =======================
-         * 2) LOADING
+         * 2) WAITING
+         * ======================= */
+        $waiting_yards = Yard::whereHas('bookingContainers', function ($qc) use ($superagent_booking_containers) {
+                $qc->where('booking_containers.superagent_loading_approved', 0)
+                   ->where('booking_containers.superagent_specification_approved', 1)
+                   ->where('booking_containers.is_in_loading', 0)
+                   ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $waiting = $waiting_yards->map(function ($yard) {
+            $containers = $yard->bookingContainers()
+                ->where('superagent_loading_approved', 0)
+                ->where('superagent_specification_approved', 1)
+                ->where('is_in_loading', 0)
+                ->get();
+
+            return [
+                'type'       => 'waiting',
+                'entity'     => 'yard',
+                'id'         => $yard->id,
+                'title'      => $yard->title ?? '',
+                'items_type' => 'booking_containers',
+                'items'      => BookingContainerResource::collection($containers),
+            ];
+        });
+
+        /* =======================
+         * 3) LOADING
          * ======================= */
         $yards = Yard::whereHas('bookingContainers', function ($qc) use ($superagent_booking_containers) {
                 $qc->where('booking_containers.superagent_loading_approved', 0)
                    ->where('booking_containers.superagent_specification_approved', 1)
+                   ->where('booking_containers.is_in_loading', 1)
                    ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());
             })
             ->orderBy('id', 'desc')
@@ -97,6 +127,7 @@ class ShippingAgentController extends Controller
             $containers = $yard->bookingContainers()
                 ->where('superagent_loading_approved', 0)
                 ->where('superagent_specification_approved', 1)
+                ->where('is_in_loading', 1)
                 ->get();
 
             return [
@@ -142,7 +173,7 @@ class ShippingAgentController extends Controller
         });
 
         // دمج الكل في Collection واحدة
-        $merged = $specification->concat($loading)->concat($unloading)->values();
+        $merged = $specification->concat($waiting)->concat($loading)->concat($unloading)->values();
 
         // Resource موحّد لكل عنصر
         $data = SuperagentAssignmentResource::collection($merged);
@@ -247,7 +278,10 @@ class ShippingAgentController extends Controller
 
 
         $yards = Yard::whereHas("bookingContainers", function ($qc) use ($superagent_booking_containers) {
-            $qc->where('superagent_loading_approved', 0)->where('superagent_specification_approved', 1)->whereIn("booking_containers.id", $superagent_booking_containers->pluck("id")->toArray());
+            $qc->where('superagent_loading_approved', 0)
+               ->where('superagent_specification_approved', 1)
+               ->where('booking_containers.is_in_loading', 1)
+               ->whereIn("booking_containers.id", $superagent_booking_containers->pluck("id")->toArray());
         })->orderBy("id", "desc")->get();
 
 

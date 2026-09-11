@@ -69,7 +69,8 @@ Route::group(['middleware' => 'localization'], function () {
         Route::group(['controller' => BookingContainerController::class], function () {
 
             Route::get("booking/specification", "specification");
-
+            Route::get("booking/waiting", "waiting");
+            Route::post("booking/move_to_loading", "move_to_loading");
             Route::get("booking/loading", "loading");
 
             Route::get("booking/unloading", "unloading");

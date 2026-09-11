@@ -63,6 +63,11 @@ class AgentExpense extends Model
     {
         return $this->belongsTo(Service::class);
     }
+
+    public function bookingService(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\BookingService::class);
+    }
     public function getTitleAttribute()
     {
         return ($this->service?->serviceCategory?->title ?? "") . "  -  " . ($this->service?->name ?? "");

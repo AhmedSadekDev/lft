@@ -49,19 +49,33 @@ class BookingContainerController extends Controller
                     ->get();
             }
 
-            // 2) loading
+            // 2) waiting (قائمة الانتظار بعد التخصيص وقبل النقل للتحميل)
+            $waitingItems = collect();
+            if (!$stageType || $stageType === 'waiting') {
+                $waitingItems = BookingContainer::with($with)
+                    ->select('*')
+                    ->selectRaw("'waiting' as stage_type")
+                    ->where('superagent_specification_approved', 1)
+                    ->where('is_in_loading', 0)
+                    ->where('superagent_loading_approved', 0)
+                    ->where('superagent_unloading_approved', 0)
+                    ->get();
+            }
+
+            // 3) loading (قائمة التحميل بعد النقل من الانتظار)
             $loadingItems = collect();
             if (!$stageType || $stageType === 'loading') {
                 $loadingItems = BookingContainer::with($with)
                     ->select('*')
                     ->selectRaw("'loading' as stage_type")
                     ->where('superagent_specification_approved', 1)
+                    ->where('is_in_loading', 1)
                     ->where('superagent_loading_approved', 0)
                     ->where('superagent_unloading_approved', 0)
                     ->get();
             }
 
-            // 3) unloading
+            // 4) unloading
             $unloadingItems = collect();
             if (!$stageType || $stageType === 'unloading') {
                 $unloadingItems = BookingContainer::with($with)
@@ -73,10 +87,11 @@ class BookingContainerController extends Controller
                     ->get();
             }
 
-            // دمج مع أولوية أعلى مرحلة (unloading > loading > specification) + إزالة التكرار + ترتيب
+            // دمج مع أولوية أعلى مرحلة (unloading > loading > waiting > specification) + إزالة التكرار + ترتيب
             // ترتيب حسب id تنازلي (الأحدث أولاً) مثل الداش بورد
             $merged = $unloadingItems
                 ->merge($loadingItems)
+                ->merge($waitingItems)
                 ->merge($specItems)
                 ->unique('id')
                 ->sortByDesc('id')
@@ -103,6 +118,7 @@ class BookingContainerController extends Controller
             return $this->returnError(500, $ex->getMessage());
         }
     }
+
     public function specification(Request $request)
     {
         try {
@@ -126,7 +142,7 @@ class BookingContainerController extends Controller
                 ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
                 ->groupBy('bookings.id')
                 ->orderBy('bookings.id', 'desc')
-                ->paginate(100);
+                ->paginate((int) $request->get('per_page', 100));
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
 
@@ -139,14 +155,20 @@ class BookingContainerController extends Controller
         }
     }
 
-    public function loading(Request $request)
+    /**
+     * GET /superagent/booking/waiting
+     * قائمة الانتظار (بعد التخصيص وقبل النقل للتحميل)
+     */
+    public function waiting(Request $request)
     {
         try {
-            $request->merge(['stage' => 'loading']);
-            $bookings = Booking::has('bookingContainers') // Ensure there are containers
+            $request->merge(['stage' => 'waiting']);
+            $bookings = Booking::has('bookingContainers')
                 ->whereHas('bookingContainers', function ($qc) {
-                    $qc->whereIn('status', [0, 1, 2])
-                    ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 0);
+                    $qc->where('superagent_specification_approved', 1)
+                       ->where('is_in_loading', 0)
+                       ->where('superagent_loading_approved', 0)
+                       ->where('superagent_unloading_approved', 0);
                 })
                 ->with(['bookingContainers'])
                 ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
@@ -154,7 +176,103 @@ class BookingContainerController extends Controller
                 ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
                 ->groupBy('bookings.id')
                 ->orderBy('bookings.id', 'desc')
-                ->paginate(100);
+                ->paginate((int) $request->get('per_page', 100));
+            $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
+
+            return $this->returnAllData($data, __('alerts.success'));
+        } catch (\Exception $ex) {
+            return $this->returnError(500, $ex->getMessage());
+        }
+    }
+
+    /**
+     * POST /superagent/booking/move_to_loading
+     * نقل طلبات/حاويات محددة من قائمة الانتظار إلى قائمة التحميل
+     */
+    public function move_to_loading(Request $request)
+    {
+        try {
+            $bookingIds = $request->get('booking_ids') ?? $request->get('booking_id');
+            $containerIds = $request->get('booking_container_ids') ?? $request->get('booking_container_id');
+            $toLoading = $request->boolean('to_loading', true);
+
+            $bookingIds = is_array($bookingIds) ? array_filter($bookingIds) : ($bookingIds ? [$bookingIds] : []);
+            $containerIds = is_array($containerIds) ? array_filter($containerIds) : ($containerIds ? [$containerIds] : []);
+
+            if (empty($bookingIds) && empty($containerIds)) {
+                return $this->returnError(400, 'يجب تحديد معرفات الطلبات أو الحاويات (booking_ids or booking_container_ids)');
+            }
+
+            $query = BookingContainer::query();
+            if (!empty($bookingIds) && !empty($containerIds)) {
+                $query->where(function ($q) use ($bookingIds, $containerIds) {
+                    $q->whereIn('booking_id', $bookingIds)->orWhereIn('id', $containerIds);
+                });
+            } elseif (!empty($bookingIds)) {
+                $query->whereIn('booking_id', $bookingIds);
+            } else {
+                $query->whereIn('id', $containerIds);
+            }
+
+            $now = now();
+            $query->update([
+                'is_in_loading' => $toLoading ? 1 : 0,
+                'moved_to_loading_at' => $toLoading ? $now : null,
+            ]);
+
+            // Update daily containers and agents if exist
+            if (!empty($containerIds)) {
+                \App\Models\DailyBookingContainer::whereIn('booking_container_id', $containerIds)->update([
+                    'is_in_loading' => $toLoading ? 1 : 0,
+                    'moved_to_loading_at' => $toLoading ? $now : null,
+                ]);
+                \App\Models\BookingContainerAgent::whereIn('booking_container_id', $containerIds)->update([
+                    'is_in_loading' => $toLoading ? 1 : 0,
+                    'moved_to_loading_at' => $toLoading ? $now : null,
+                ]);
+            }
+            if (!empty($bookingIds)) {
+                $allContainers = BookingContainer::whereIn('booking_id', $bookingIds)->pluck('id')->toArray();
+                if (!empty($allContainers)) {
+                    \App\Models\DailyBookingContainer::whereIn('booking_container_id', $allContainers)->update([
+                        'is_in_loading' => $toLoading ? 1 : 0,
+                        'moved_to_loading_at' => $toLoading ? $now : null,
+                    ]);
+                    \App\Models\BookingContainerAgent::whereIn('booking_container_id', $allContainers)->update([
+                        'is_in_loading' => $toLoading ? 1 : 0,
+                        'moved_to_loading_at' => $toLoading ? $now : null,
+                    ]);
+                }
+            }
+
+            $message = $toLoading 
+                ? 'تم نقل الطلبات المحددة إلى قائمة التحميل بنجاح' 
+                : 'تمت إعادة الطلبات المحددة إلى قائمة الانتظار';
+
+            return $this->returnResponseSuccessMessage($message);
+        } catch (\Exception $ex) {
+            return $this->returnError(500, $ex->getMessage());
+        }
+    }
+
+    public function loading(Request $request)
+    {
+        try {
+            $request->merge(['stage' => 'loading']);
+            $bookings = Booking::has('bookingContainers') // Ensure there are containers
+                ->whereHas('bookingContainers', function ($qc) {
+                    $qc->where('superagent_specification_approved', 1)
+                       ->where('is_in_loading', 1)
+                       ->where('superagent_loading_approved', 0)
+                       ->where('superagent_unloading_approved', 0);
+                })
+                ->with(['bookingContainers'])
+                ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
+                ->select('bookings.*')
+                ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
+                ->groupBy('bookings.id')
+                ->orderBy('bookings.id', 'desc')
+                ->paginate((int) $request->get('per_page', 100));
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
             return $this->returnAllData($data, __('alerts.success'));
@@ -179,7 +297,7 @@ class BookingContainerController extends Controller
                 ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
                 ->groupBy('bookings.id')
                 ->orderBy('bookings.id', 'desc')
-                ->paginate(100);
+                ->paginate((int) $request->get('per_page', 100));
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
 
@@ -225,6 +343,8 @@ class BookingContainerController extends Controller
                     $request->merge(['stage' => 'loading']);
                 } elseif ($typeId == 2) {
                     $request->merge(['stage' => 'unloading']);
+                } elseif ($typeId == 3) {
+                    $request->merge(['stage' => 'waiting']);
                 }
             }
 

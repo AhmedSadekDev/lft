@@ -270,11 +270,12 @@ class AgentController extends Controller
         $message = '';
 
         if ($request->type_id == 0) {
-
+            $now = now();
             foreach ($container->booking->bookingContainers as $con) {
 
                 $con->update([
                     'superagent_specification_approved'   => 1,
+                    'specification_approved_at' => $now,
                     'status' => 1
                 ]);
             }
@@ -283,9 +284,13 @@ class AgentController extends Controller
             $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
             $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
 
-            // إشعار المناديب الحاليين ثم إزالة التعيين بالكامل (لا نقل لنفس المندوب للتحميل)
+            // تحديث تعيين المندوب وتسجيل وقت الاعتماد ليظل ظاهراً لمدة 24 ساعة
             $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
-            BookingContainerAgent::whereIn('booking_container_id', $containerIds)->delete();
+            BookingContainerAgent::whereIn('booking_container_id', $containerIds)->update([
+                'superagent_specification_approved' => 1,
+                'specification_approved_at' => $now,
+                'booking_container_status' => 1
+            ]);
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([
@@ -326,17 +331,23 @@ class AgentController extends Controller
                 }
             }
         } elseif ($request->type_id == 1) {
+            $now = now();
             $container->update([
                 'superagent_loading_approved'   => 1,
+                'loading_approved_at' => $now,
                 'status' => 2
             ]);
 
             $bookingContainerAgents = BookingContainerAgent::where('booking_container_id', $container->id)->get();
             $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $container->id)->get();
 
-            // إشعار ثم إزالة التعيين بالكامل لهذه الحاوية فقط (لا نقل لنفس المندوب للتعتيق)
+            // تحديث تعيين المندوب وتسجيل وقت الاعتماد ليظل ظاهراً لمدة 24 ساعة
             $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
-            BookingContainerAgent::where('booking_container_id', $container->id)->delete();
+            BookingContainerAgent::where('booking_container_id', $container->id)->update([
+                'superagent_loading_approved' => 1,
+                'loading_approved_at' => $now,
+                'booking_container_status' => 2
+            ]);
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([
@@ -377,17 +388,23 @@ class AgentController extends Controller
                 }
             }
         } elseif ($request->type_id == 2) {
-
+            $now = now();
             $container->update([
                 'superagent_unloading_approved'   => 1,
+                'unloading_approved_at' => $now,
                 'status' => 3
             ]);
 
             $bookingContainerAgents = BookingContainerAgent::where('booking_container_id', $container->id)->get();
             $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $container->id)->get();
 
+            // تحديث تعيين المندوب وتسجيل وقت الاعتماد ليظل ظاهراً لمدة 24 ساعة
             $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
-            BookingContainerAgent::where('booking_container_id', $container->id)->delete();
+            BookingContainerAgent::where('booking_container_id', $container->id)->update([
+                'superagent_unloading_approved' => 1,
+                'unloading_approved_at' => $now,
+                'booking_container_status' => 3
+            ]);
 
             foreach ($bookingContainerDaily as $item) {
                 $item->update([

@@ -36,12 +36,17 @@ class BookingContainerActionController extends Controller
 
             $booking_container_ids =  $booking->bookingContainers()->where("booking_containers.status", 0)->pluck("id")->toArray();
 
+            $now = now();
             $booking->bookingContainers()->where("booking_containers.status", 0)->update([
-                "status" => 1
+                "status" => 1,
+                "specification_completed_at" => $now
             ]);
 
-            // إزالة المندوب/المناديب بالكامل بعد التخصيص — المدير يعيّن مندوب التحميل من جديد
-            BookingContainerAgent::whereIn("booking_container_id", $booking_container_ids)->delete();
+            // يظل المندوب معيناً حتى اعتماد المسؤول
+            BookingContainerAgent::whereIn("booking_container_id", $booking_container_ids)->update([
+                "booking_container_status" => 1,
+                "specification_completed_at" => $now
+            ]);
 
             $dailyContainers = DailyBookingContainer::whereIn("booking_container_id", $booking_container_ids);
 
@@ -103,12 +108,17 @@ class BookingContainerActionController extends Controller
             $agent = auth()->guard("agent")->user();
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
+            $now = now();
             $booking_container->update([
-                "status" => 2
+                "status" => 2,
+                "loading_completed_at" => $now
             ]);
 
-            // إزالة المندوب بالكامل بعد التحميل — المدير يعيّن مندوب التعتيق من جديد
-            BookingContainerAgent::where("booking_container_id", $booking_container->id)->delete();
+            // يظل المندوب معيناً للحاوية حتى يعتمد المسؤول التحميل (Approve)
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->update([
+                "booking_container_status" => 2,
+                "loading_completed_at" => $now
+            ]);
 
             $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
@@ -178,16 +188,17 @@ class BookingContainerActionController extends Controller
             $agent = auth()->guard("agent")->user();
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
-            // if (!$booking_container->superagent_loading_approved) {
-            //     return $this->returnError(400, __('main.superagent_not_approved'));
-            // }
-
+            $now = now();
             $booking_container->update([
-                "status" => 3
+                "status" => 3,
+                "unloading_completed_at" => $now
             ]);
 
-            // إزالة المندوب بالكامل بعد التعتيق
-            BookingContainerAgent::where("booking_container_id", $booking_container->id)->delete();
+            // يظل المندوب معيناً للحاوية حتى يعتمد المسؤول التعتيق (Approve)
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->update([
+                "booking_container_status" => 3,
+                "unloading_completed_at" => $now
+            ]);
 
             $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 

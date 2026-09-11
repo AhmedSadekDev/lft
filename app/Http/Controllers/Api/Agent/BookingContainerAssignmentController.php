@@ -25,14 +25,41 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("booking_container_status", 1)->orWherePivot('superagent_loading_approved', 0)->get();
+            $cutoff = now()->subHours(24);
+            $agent_booking_containers = $agent->agent_booking_containers()
+                ->where('booking_container_agents.superagent_specification_approved', 1)
+                ->where(function ($q) use ($cutoff) {
+                    $q->where(function ($sub) {
+                        $sub->where('booking_container_agents.is_in_loading', 1)
+                            ->where('booking_container_agents.superagent_loading_approved', 0);
+                    })->orWhere(function ($q2) use ($cutoff) {
+                          $q2->where('booking_container_agents.superagent_loading_approved', 1)
+                             ->where(function ($q3) use ($cutoff) {
+                                 $q3->where('booking_container_agents.loading_approved_at', '>=', $cutoff)
+                                    ->orWhereNull('booking_container_agents.loading_approved_at')
+                                    ->orWhere('booking_container_agents.updated_at', '>=', $cutoff);
+                             });
+                      });
+                })
+                ->get();
 
-            $yards = Yard::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers) {
-                $qc->where('superagent_specification_approved', 1)->where(function ($query) {
-                    $query->where("status", 1)->orWhere('superagent_loading_approved', 0);
-                })->whereIn("booking_containers.id", $agent_booking_containers->pluck("id")->toArray());
+            $yards = Yard::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers, $cutoff) {
+                $qc->where('booking_containers.superagent_specification_approved', 1)
+                   ->where(function ($q) use ($cutoff) {
+                       $q->where(function ($sub) {
+                           $sub->where('booking_containers.is_in_loading', 1)
+                               ->where('booking_containers.superagent_loading_approved', 0);
+                       })->orWhere(function ($q2) use ($cutoff) {
+                             $q2->where('booking_containers.superagent_loading_approved', 1)
+                                ->where(function ($q3) use ($cutoff) {
+                                    $q3->where('booking_containers.loading_approved_at', '>=', $cutoff)
+                                       ->orWhereNull('booking_containers.loading_approved_at')
+                                       ->orWhere('booking_containers.updated_at', '>=', $cutoff);
+                                });
+                         });
+                   })
+                   ->whereIn("booking_containers.id", $agent_booking_containers->pluck("id")->toArray());
             })->orderBy("id", "desc")->get();
-            // dd($yards);
 
             $data = LoadingYardResource::collection($yards);
 
@@ -49,14 +76,33 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            // get assignments
-            $agent_booking_containers = $agent->agent_booking_containers()->wherePivot("booking_container_status", 0)->orWherePivot('superagent_specification_approved', 0)->get();
-
+            $cutoff = now()->subHours(24);
+            $agent_booking_containers = $agent->agent_booking_containers()
+                ->where(function ($q) use ($cutoff) {
+                    $q->where('booking_container_agents.superagent_specification_approved', 0)
+                      ->orWhere(function ($q2) use ($cutoff) {
+                          $q2->where('booking_container_agents.superagent_specification_approved', 1)
+                             ->where(function ($q3) use ($cutoff) {
+                                 $q3->where('booking_container_agents.specification_approved_at', '>=', $cutoff)
+                                    ->orWhereNull('booking_container_agents.specification_approved_at')
+                                    ->orWhere('booking_container_agents.updated_at', '>=', $cutoff);
+                             });
+                      });
+                })
+                ->get();
 
             // fetch shipping_agents that contain assignments
-            $shipping_agent_ids = Booking::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers) {
-                $qc->where(function ($query) {
-                    $query->where("status", 0)->orWhere('superagent_specification_approved', 0);
+            $shipping_agent_ids = Booking::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers, $cutoff) {
+                $qc->where(function ($query) use ($cutoff) {
+                    $query->where('booking_containers.superagent_specification_approved', 0)
+                          ->orWhere(function ($q2) use ($cutoff) {
+                              $q2->where('booking_containers.superagent_specification_approved', 1)
+                                 ->where(function ($q3) use ($cutoff) {
+                                     $q3->where('booking_containers.specification_approved_at', '>=', $cutoff)
+                                        ->orWhereNull('booking_containers.specification_approved_at')
+                                        ->orWhere('booking_containers.updated_at', '>=', $cutoff);
+                                 });
+                          });
                 })->whereIn("id", $agent_booking_containers->pluck("id")->toArray());
             })
                 ->orderBy("id", "desc")->get()->pluck("shipping_agent_id")->toArray();
@@ -81,18 +127,38 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            // get all available assignments
+            $cutoff = now()->subHours(24);
             $agent_booking_containers = $agent->agent_booking_containers()
-                ->wherePivot("superagent_unloading_approved", 0)
-                ->wherePivot('superagent_specification_approved', 1)
-                ->wherePivot('superagent_loading_approved', 1)
+                ->where('booking_container_agents.superagent_specification_approved', 1)
+                ->where('booking_container_agents.superagent_loading_approved', 1)
+                ->where(function ($q) use ($cutoff) {
+                    $q->where('booking_container_agents.superagent_unloading_approved', 0)
+                      ->orWhere(function ($q2) use ($cutoff) {
+                          $q2->where('booking_container_agents.superagent_unloading_approved', 1)
+                             ->where(function ($q3) use ($cutoff) {
+                                 $q3->where('booking_container_agents.unloading_approved_at', '>=', $cutoff)
+                                    ->orWhereNull('booking_container_agents.unloading_approved_at')
+                                    ->orWhere('booking_container_agents.updated_at', '>=', $cutoff);
+                             });
+                      });
+                })
                 ->get();
 
             // fetch shipping_agents that contain available assignments
-            $shipping_agent_ids = Booking::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers) {
-                $qc->where(function ($query) {
-                    $query->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 1);
-                })->whereIn("id", $agent_booking_containers->pluck("id")->toArray());
+            $shipping_agent_ids = Booking::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers, $cutoff) {
+                $qc->where('booking_containers.superagent_specification_approved', 1)
+                   ->where('booking_containers.superagent_loading_approved', 1)
+                   ->where(function ($query) use ($cutoff) {
+                       $query->where('booking_containers.superagent_unloading_approved', 0)
+                             ->orWhere(function ($q2) use ($cutoff) {
+                                 $q2->where('booking_containers.superagent_unloading_approved', 1)
+                                    ->where(function ($q3) use ($cutoff) {
+                                        $q3->where('booking_containers.unloading_approved_at', '>=', $cutoff)
+                                           ->orWhereNull('booking_containers.unloading_approved_at')
+                                           ->orWhere('booking_containers.updated_at', '>=', $cutoff);
+                                    });
+                             });
+                   })->whereIn("id", $agent_booking_containers->pluck("id")->toArray());
             })->orderBy("id", "desc")->get()->pluck("shipping_agent_id")->toArray();
 
             $shipping_agents = shippingAgent::whereIn("id", $shipping_agent_ids)->get();

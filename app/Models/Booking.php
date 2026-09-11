@@ -317,6 +317,131 @@ class Booking extends Model
         });
     }
 
+    public function scopeFilterStage(Builder $query, ?string $stage)
+    {
+        $query->when($stage && $stage !== 'all', function (Builder $query) use ($stage) {
+            switch ($stage) {
+                case 'assigned':
+                case 'specification':
+                case '0':
+                    $query->whereHas('bookingContainers', function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->where('status', 0)
+                                ->orWhere(function ($q2) {
+                                    $q2->where('status', 1)->where('superagent_specification_approved', 0);
+                                });
+                        });
+                    });
+                    break;
+
+                case 'waiting':
+                case 'waiting_loading':
+                    $query->whereHas('bookingContainers', function ($q) {
+                        $q->where('superagent_specification_approved', 1)
+                          ->where('is_in_loading', 0)
+                          ->where('superagent_loading_approved', 0);
+                    });
+                    break;
+
+                case 'loading':
+                case '1':
+                    $query->whereHas('bookingContainers', function ($q) {
+                        $q->where('superagent_specification_approved', 1)
+                          ->where('is_in_loading', 1)
+                          ->where('superagent_loading_approved', 0);
+                    });
+                    break;
+
+                case 'unloading':
+                case 'discharge':
+                case '2':
+                    $query->whereHas('bookingContainers', function ($q) {
+                        $q->where('superagent_loading_approved', 1)
+                          ->where('superagent_unloading_approved', 0);
+                    });
+                    break;
+
+                case 'invoiced':
+                case 'closed':
+                case 'finished':
+                case '3':
+                    $query->where(function ($sub) {
+                        $sub->whereHas('invoice')
+                            ->orWhereHas('bookingContainers', function ($qc) {
+                                $qc->where('superagent_unloading_approved', 1);
+                            });
+                    });
+                    break;
+            }
+        });
+    }
+
+    public function getStageInfoAttribute(): array
+    {
+        $containers = $this->relationLoaded('bookingContainers') ? $this->bookingContainers : $this->bookingContainers()->get();
+
+        if ($this->relationLoaded('invoice') ? $this->invoice : $this->invoice()->exists()) {
+            return [
+                'key'   => 'invoiced',
+                'label' => 'فواتير منتهية',
+                'badge' => 'badge-dark',
+                'icon'  => 'fas fa-check-double',
+            ];
+        }
+
+        if ($containers->isEmpty()) {
+            return [
+                'key'   => 'assigned',
+                'label' => 'التخصيص',
+                'badge' => 'badge-secondary',
+                'icon'  => 'fas fa-tasks',
+            ];
+        }
+
+        if ($containers->every(fn($c) => $c->superagent_unloading_approved == 1)) {
+            return [
+                'key'   => 'invoiced',
+                'label' => 'فواتير منتهية',
+                'badge' => 'badge-dark',
+                'icon'  => 'fas fa-check-double',
+            ];
+        }
+
+        if ($containers->contains(fn($c) => $c->superagent_loading_approved == 1 && $c->superagent_unloading_approved == 0)) {
+            return [
+                'key'   => 'unloading',
+                'label' => 'التعتيق',
+                'badge' => 'badge-info',
+                'icon'  => 'fas fa-dolly',
+            ];
+        }
+
+        if ($containers->contains(fn($c) => $c->superagent_specification_approved == 1 && $c->is_in_loading == 1 && $c->superagent_loading_approved == 0)) {
+            return [
+                'key'   => 'loading',
+                'label' => 'التحميل',
+                'badge' => 'badge-primary',
+                'icon'  => 'fas fa-truck-loading',
+            ];
+        }
+
+        if ($containers->contains(fn($c) => $c->superagent_specification_approved == 1 && $c->is_in_loading == 0 && $c->superagent_loading_approved == 0)) {
+            return [
+                'key'   => 'waiting',
+                'label' => 'الانتظار',
+                'badge' => 'badge-warning text-dark',
+                'icon'  => 'fas fa-hourglass-half',
+            ];
+        }
+
+        return [
+            'key'   => 'assigned',
+            'label' => 'التخصيص',
+            'badge' => 'badge-secondary',
+            'icon'  => 'fas fa-tasks',
+        ];
+    }
+
     protected static function booted()
     {
         static::creating(function ($post) {

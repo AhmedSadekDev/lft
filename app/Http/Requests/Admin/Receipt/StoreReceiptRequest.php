@@ -39,6 +39,11 @@ class StoreReceiptRequest extends FormRequest
                 'string',
                 'max:255',
             ],
+            'agent_id' => [
+                'nullable',
+                'required_if:payment_source,' . Receipt::PAYMENT_SOURCE_REPRESENTATIVE,
+                'exists:agents,id',
+            ],
             'notes' => ['nullable', 'string', 'max:2000'],
             'image' => ['nullable', 'mimes:png,jpg,jpeg', 'max:5000'],
         ];
@@ -74,9 +79,13 @@ class StoreReceiptRequest extends FormRequest
     {
         if ($this->input('payment_source') !== Receipt::PAYMENT_SOURCE_SUPPLIER) {
             $this->merge([
-                'supplier_id' => null,
+                'supplier_id'             => null,
                 'supplier_invoice_number' => null,
             ]);
+        }
+
+        if ($this->input('payment_source') !== Receipt::PAYMENT_SOURCE_REPRESENTATIVE) {
+            $this->merge(['agent_id' => null]);
         }
 
         if ($this->input('service_id') === 'to_be_disabled' || $this->input('service_id') === '') {
