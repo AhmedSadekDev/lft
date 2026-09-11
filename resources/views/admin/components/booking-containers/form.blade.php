@@ -89,9 +89,7 @@
                 <small class="text-danger">{{ $errors->first('yard_id') }}</small>
             </div>
         </div>
-        {{--  --}}
-        {{--  --}}
-        {{--  --}}
+
         <div class="col-md-6 col-sm-12">
             <div class="form-group{{ $errors->has('container_id') ? ' has-error' : '' }}">
                 {!! Form::label('container_id', __('admin.container')) !!}

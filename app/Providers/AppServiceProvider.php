@@ -18,7 +18,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // تفعيل Telescope في بيئة local فقط، وفقط إذا كانت الحزمة مثبّتة
+        // (يمنع انهيار الموقع على السيرفر عند تشغيل composer install --no-dev)
+        if ($this->app->environment('local') && class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 
     /**

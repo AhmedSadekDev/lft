@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leader for Trans — وصف النظام</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            line-height: 1.8;
+            color: #1a1a2e;
+            background: #f5f7fa;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 3rem 3.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,.08);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #2563eb;
+            margin-bottom: .5rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.15rem;
+            color: #64748b;
+        }
+
+        .meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            font-size: .9rem;
+            color: #475569;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            color: #2563eb;
+            margin: 2rem 0 1rem;
+            padding-bottom: .4rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: #334155;
+            margin: 1.5rem 0 .75rem;
+        }
+
+        h4 {
+            font-size: 1rem;
+            color: #475569;
+            margin: 1.2rem 0 .5rem;
+        }
+
+        p { margin-bottom: .75rem; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: .92rem;
+        }
+
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: .6rem .8rem;
+            text-align: right;
+        }
+
+        th {
+            background: #2563eb;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) { background: #f8fafc; }
+
+        .workflow {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: .82rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .diagram {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: .78rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre;
+            direction: ltr;
+            text-align: center;
+        }
+
+        blockquote {
+            background: #eff6ff;
+            border-right: 4px solid #2563eb;
+            padding: .75rem 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: .92rem;
+            color: #334155;
+        }
+
+        ul { margin: .5rem 1.5rem 1rem 0; }
+        li { margin-bottom: .35rem; }
+
+        .value-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: .5rem 1rem;
+            margin: 1rem 0;
+        }
+
+        .value-num {
+            background: #2563eb;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e2e8f0;
+            color: #64748b;
+            font-size: .88rem;
+        }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .container { box-shadow: none; padding: 1.5rem; }
+            h2 { page-break-after: avoid; }
+            table { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>Leader for Trans — نظام ليدر</h1>
+        <div class="subtitle">وصف شامل للنظام</div>
+        <div class="meta">
+            <span>الإصدار: 1.0</span>
+            <span>التاريخ: يوليو 2026</span>
+            <span>leaderfortrans.com</span>
+            <span>booking@leaderfortrans.com</span>
+        </div>
+    </div>
+
+    <h2>1. نظرة عامة</h2>
+    <p><strong>Leader for Trans</strong> (نظام ليدر) هو منصة متكاملة لإدارة عمليات <strong>نقل وتحريك الحاويات</strong> وخدمات <strong>الشحن البري واللوجستيات</strong>، مصممة خصيصاً لشركات النقل في <strong>السوق المصري</strong>.</p>
+    <p>يربط النظام بين <strong>المكتب الإداري</strong>، <strong>فريق العمل الميداني</strong>، و<strong>العملاء (الشركات)</strong> في منصة واحدة تغطي دورة العمل الكاملة من <strong>تسجيل الحجز</strong> حتى <strong>الفوترة الضريبية</strong> و<strong>تحصيل المدفوعات</strong> و<strong>التقارير المالية</strong>.</p>
+
+    <table>
+        <tr><th>البند</th><th>التفاصيل</th></tr>
+        <tr><td>اللغة الأساسية</td><td>العربية (مع دعم الإنجليزية)</td></tr>
+        <tr><td>العملة</td><td>الجنيه المصري (ج.م)</td></tr>
+        <tr><td>التوقيت</td><td>توقيت القاهرة</td></tr>
+        <tr><td>السوق المستهدف</td><td>مصر — مع تكامل الفواتير الإلكترونية مع مصلحة الضرائب</td></tr>
+    </table>
+
+    <h2>2. فكرة التطبيق والمشكلة التي يحلها</h2>
+    <p>شركات نقل الحاويات تعتمد على عمليات متعددة ومتداخلة: حجوزات من عملاء مختلفين، حاويات متعددة لكل حجز، مندوبين ميدانيين ومشرفين، سيارات وسائقين، مصاريف يومية وعهدة مالية، فواتير ضريبية ومتابعة مالية لكل عميل.</p>
+    <p><strong>النظام يحل هذه التعقيدات</strong> عبر ربط أربع واجهات رئيسية:</p>
+    <ol>
+        <li><strong>لوحة تحكم مركزية</strong> — للإدارة والمحاسبة</li>
+        <li><strong>تطبيقات موبايل</strong> — للمندوبين والمشرفين الميدانيين</li>
+        <li><strong>بوابة العميل</strong> — لمتابعة الشحنات وإدارة الحساب</li>
+        <li><strong>تطبيق سطح مكتب</strong> — لإرسال الفواتير الإلكترونية لمصلحة الضرائب</li>
+    </ol>
+
+    <h2>3. المستخدمون وأدوارهم</h2>
+    <table>
+        <tr><th>الدور</th><th>القناة</th><th>الوظيفة</th></tr>
+        <tr><td>موظفو الإدارة</td><td>لوحة تحكم ويب</td><td>إدارة كاملة للعمليات، المالية، التقارير، والفواتير</td></tr>
+        <tr><td>الشركة (العميل)</td><td>تطبيق / بوابة العميل</td><td>متابعة حجوزاتها، تحديث بياناتها، إدارة موظفيها</td></tr>
+        <tr><td>موظف الشركة</td><td>تطبيق / بوابة العميل</td><td>يرى الحجوزات المخصصة له فقط</td></tr>
+        <tr><td>المشرف الميداني</td><td>تطبيق موبايل</td><td>إشراف على المندوبين، توزيع المهام، اعتماد المصاريف</td></tr>
+        <tr><td>المندوب الميداني</td><td>تطبيق موبايل</td><td>تنفيذ العمليات الميدانية، رفع المستندات، تسجيل المصاريف</td></tr>
+        <tr><td>محاسب الفواتير</td><td>تطبيق سطح مكتب</td><td>تجميع وإرسال الفواتير الإلكترونية للضرائب</td></tr>
+    </table>
+
+    <h2>4. مكونات النظام</h2>
+
+    <h3>4.1 لوحة التحكم الإدارية</h3>
+
+    <h4>أ) إدارة العمليات واللوجستيات</h4>
+    <ul>
+        <li><strong>لوحة معلومات</strong> — مؤشرات الأداء والرسوم البيانية</li>
+        <li><strong>الحجوزات</strong> — صادر / وارد / تخليص جمركي، حاويات متعددة، خدمات، مستندات، بوليصات تسليم</li>
+        <li><strong>الحاويات، الساحات، وكلاء الشحن، المدن والمناطق</strong></li>
+        <li><strong>لوحة توزيع المندوبين</strong></li>
+    </ul>
+
+    <h4>ب) إدارة العملاء</h4>
+    <ul>
+        <li>الشركات — الرقم الضريبي، نوع الفوترة، الرصيد الافتتاحي، ترقيم الفواتير</li>
+        <li>الشركات الخاصة — بيانات الكيان القانوني للفاتورة</li>
+        <li>موظفو الشركات، المصانع والفروع</li>
+    </ul>
+
+    <h4>ج) الأسطول</h4>
+    <ul>
+        <li>السيارات (مع محفظة مالية)، السائقون، رحلات السيارات، مدفوعات السيارات</li>
+    </ul>
+
+    <h4>د) فريق العمل الميداني</h4>
+    <ul>
+        <li>المشرفون والمندوبون — محافظ، عهدة مالية، تحويلات، تقارير ومصاريف</li>
+    </ul>
+
+    <h4>هـ) الخدمات والتسعير</h4>
+    <ul>
+        <li>فئات الخدمات، كتalog الخدمات، أسعار النقل والخدمات لكل شركة (Excel)</li>
+    </ul>
+
+    <h4>و) المالية والمحاسبة</h4>
+    <ul>
+        <li>البنوك، الخزنة، الفواتير (PDF + ETA)، مدفوعات الفواتير</li>
+        <li>كشف حساب الشركة، إيصالات الدفع، إدارة الشيكات</li>
+        <li>كشف حساب السيارات، المركز المالي، الأرباح والخسائر</li>
+    </ul>
+
+    <h4>ز) إدارة المحتوى والنظام</h4>
+    <ul>
+        <li>صفحات، خدمات، آراء، رعاة، إعدادات، اتصل بنا</li>
+        <li>الصلاحيات، المستخدمون، اختبار الإشعارات</li>
+    </ul>
+
+    <h3>4.2 تطبيق المندوب الميداني</h3>
+    <table>
+        <tr><th>المجال</th><th>الوظائف</th></tr>
+        <tr><td>الحساب</td><td>تسجيل دخول، تعيين كلمة مرور، استعادة عبر OTP</td></tr>
+        <tr><td>المحفظة والعهدة</td><td>عرض الرصيد، مصاريف عامة وحجز، شحن محافظ السيارات</td></tr>
+        <tr><td>بوليصات التسليم</td><td>إنشاء، تعديل، مصاريف، تسوية</td></tr>
+        <tr><td>عمليات الحجز</td><td>تخصيص → تحميل → تعتيق + رفع مستندات</td></tr>
+        <tr><td>الإشعارات</td><td>Push Notifications + إشعارات داخل التطبيق</td></tr>
+    </table>
+
+    <h3>4.3 تطبيق المشرف الميداني</h3>
+    <ul>
+        <li>لوحة رئيسية، إدارة الحاويات والمندوبين</li>
+        <li>اعتماد المصاريف، تغيير حالة الحاويات</li>
+        <li>مهام وكلاء الشحن، شحن محافظ المندوبين</li>
+        <li>إشعارات المشرف + إشعارات كل المندوبين</li>
+    </ul>
+
+    <h3>4.4 بوابة العميل</h3>
+    <ul>
+        <li>تسجيل دخول للشركة وموظفيها</li>
+        <li>متابعة عامة بدون تسجيل — إدخال رقم الحجز</li>
+        <li>عرض الحجوزات، إدارة الموظفين، تحديث بيانات الشركة</li>
+        <li>بريد إلكتروني تلقائي مع رابط تتبع عند إنشاء حجز أو تغيير حالة</li>
+    </ul>
+
+    <h3>4.5 تطبيق سطح المكتب للفوترة</h3>
+    <ul>
+        <li>عرض الطلبات، بناء فواتير، إرسال جماعي لمصلحة الضرائب (ETA)</li>
+    </ul>
+
+    <h2>5. دورة حياة الحجز</h2>
+    <div class="workflow">1. الإدارة تنشئ الحجز → بريد للعميل مع رابط التتبع
+2. المشرف يوزّع المندوبين على الحاويات
+3. المندوب ينفّذ: تخصيص → تحميل → تعتيق → انتهى + مستندات + إشعارات
+4. المندوب ينشئ بوليصة تسليم + مصاريف + تسوية
+5. الإدارة تصدر الفاتورة → PDF + ETA
+6. تسجيل المدفوعات → كشف حساب → تقارير مالية</div>
+
+    <h3>مراحل الحاوية التشغيلية</h3>
+    <table>
+        <tr><th>المرحلة</th><th>الوصف</th></tr>
+        <tr><td>تخصيص (Specification)</td><td>تخصيص الحاوية في الساحة وأوراق التخصيص</td></tr>
+        <tr><td>تحميل (Loading)</td><td>تحميل الحاوية من المصنع / الفرع</td></tr>
+        <tr><td>تعتيق (Unloading)</td><td>تفريغ الحاوية في الوجهة</td></tr>
+        <tr><td>انتهى (Finished)</td><td>اكتمال العملية</td></tr>
+    </table>
+
+    <h2>6. النظام المالي</h2>
+    <h3>العهدة والمحافظ</h3>
+    <p>عهدة مالية للمندوبين والمشرفين، محفظة لكل مندوب/مشرف/سيارة، تحويلات بين المندوبين، مصاريف متنوعة، تسوية بوليصة التسليم مع عمولة المكتب.</p>
+
+    <h3>الفوترة</h3>
+    <p>تجميع أسعار النقل والخدمات، حساب الضريبة والخصم، PDF، ربط مباشر بمصلحة الضرائب المصرية (ETA).</p>
+
+    <h3>المحاسبة</h3>
+    <p>كشف حساب الشركة، إيصالات دفع، إدارة الشيكات، تقارير المركز المالي والأرباح والخسائر، تصدير Excel.</p>
+
+    <h2>7. الإشعارات والتكاملات</h2>
+    <table>
+        <tr><th>التكامل</th><th>الغرض</th></tr>
+        <tr><td>Firebase FCM</td><td>إشعارات الموبايل (تحويلات، تغيير حالة)</td></tr>
+        <tr><td>البريد الإلكتروني</td><td>OTP، حجز جديد، تحديث حالة، تعيين كلمة مرور</td></tr>
+        <tr><td>مصلحة الضرائب (ETA)</td><td>الفواتير الإلكترونية</td></tr>
+        <tr><td>Excel / PDF</td><td>استيراد/تصدير وتقارير</td></tr>
+    </table>
+    <blockquote>المدفوعات تُسجّل يدوياً (نقدي / شيك / بنك). OTP يُرسل عبر البريد الإلكتروني وليس SMS.</blockquote>
+
+    <h2>8. الأمان والصلاحيات</h2>
+    <ul>
+        <li>JWT لجميع واجهات API</li>
+        <li>جلسات ويب للوحة الإدارة</li>
+        <li>صلاحيات تفصيلية لكل وحدة (عرض / إضافة / تعديل / حذف)</li>
+    </ul>
+
+    <h2>9. ملخص القيمة للعميل</h2>
+    <div class="value-grid">
+        <div class="value-num">1</div><div>رقمنة كاملة لعمليات نقل الحاويات من الحجز حتى التحصيل</div>
+        <div class="value-num">2</div><div>ربط المكتب بالميدان في الوقت الفعلي مع مستندات وإشعارات فورية</div>
+        <div class="value-num">3</div><div>شفافية للعميل — تتبع الحجز عبر الإنترنت مع تنبيهات بريدية</div>
+        <div class="value-num">4</div><div>امتثال ضريبي — فواتير إلكترونية متوافقة مع مصلحة الضرائب المصرية</div>
+        <div class="value-num">5</div><div>محاسبة متكاملة — كشوف حساب، شيكات، خزنة، بنوك، أرباح وخسائر</div>
+        <div class="value-num">6</div><div>تحكم مالي للميدان — عهدة، محافظ، مصاريف، وتسويات منظمة</div>
+        <div class="value-num">7</div><div>تقارير ولوحة معلومات — قرارات مبنية على بيانات فورية</div>
+    </div>
+
+    <h2>10. هيكل النظام</h2>
+    <div class="diagram">              ┌─────────────────────┐
+              │   لوحة التحكم       │
+              │   (الإدارة)         │
+              └──────────┬──────────┘
+                         │
+    ┌────────────────────┼────────────────────┐
+    │                    │                    │
+    ▼                    ▼                    ▼
+┌─────────┐      ┌─────────┐      ┌─────────┐
+│ المندوب │      │ المشرف  │      │ العميل  │
+└─────────┘      └─────────┘      └─────────┘
+    │                    │                    │
+    └────────────────────┼────────────────────┘
+                         │
+              ┌──────────▼──────────┐
+              │  قاعدة البيانات    │
+              │  + API مركزي       │
+              └──────────┬──────────┘
+                         │
+    ┌────────────────────┼────────────────────┐
+    ▼                    ▼                    ▼
+ Firebase           مصلحة الضرائب        البريد
+ (إشعارات)            ETA              الإلكتروني</div>
+
+    <div class="footer">
+        <p>للاستفسارات: booking@leaderfortrans.com</p>
+        <p><strong>© 2026 Leader for Trans — جميع الحقوق محفوظة</strong></p>
+    </div>
+
+</div>
+</body>
+</html>
