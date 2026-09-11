@@ -32,7 +32,7 @@ class BookingContainerObserver
     {
         if ($bookingContainer->isDirty('status')) {
             $newStatus = $bookingContainer->getOriginal('status');
-            Notification::send($bookingContainer->booking?->company, new BookingContainerStatus($bookingContainer));
+            // Notification::send($bookingContainer->booking?->company, new BookingContainerStatus($bookingContainer));
         }
     }
 

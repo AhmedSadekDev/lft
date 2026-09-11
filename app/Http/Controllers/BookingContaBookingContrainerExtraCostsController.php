@@ -7,8 +7,6 @@ use App\Models\BookingContainer;
 use App\Models\BookingContrainerExtraCosts;
 use App\Models\Car;
 use App\Models\Driver;
-use App\Models\Vault;
-use App\Models\VaultTransaction;
 use Illuminate\Http\Request;
 
 class BookingContaBookingContrainerExtraCostsController extends Controller
@@ -26,7 +24,7 @@ class BookingContaBookingContrainerExtraCostsController extends Controller
 
     public function create($container)
     {
-        $bookingContainer = BookingContainer::findOrFail($container);
+        $bookingContainer = BookingContainer::with('booking.invoice')->findOrFail($container);
         $booking_containers = BookingContainer::all();
         $cars = Car::all();
         $drivers = Driver::all();
@@ -50,17 +48,8 @@ class BookingContaBookingContrainerExtraCostsController extends Controller
 
     public function store(StoreExtraExpense $request)
     {
-        $vault = Vault::first();
-
-        if ($vault->amount < $request->value) {
-            return back()->with('error', __("main.wallet_does_not_have_enough_amount"));
-        }
-        
-        VaultTransaction::create([
-            'name' => $request->name,
-            'amount' => $request->value,
-            'type' => 0
-        ]);
+        // لا يتم خصم المبلغ من الخزنة عند إضافة المصروف الإضافي
+        // سيتم الخصم فقط عند السداد (payment)
 
         $container = BookingContainer::find($request->booking_container_id);
         $data = $request->all();
@@ -77,7 +66,7 @@ class BookingContaBookingContrainerExtraCostsController extends Controller
     public function update(StoreExtraExpense $request, $id)
     {
         $expense = BookingContrainerExtraCosts::find($id);
-        
+
         $expense->update($request->all());
 
         $id = BookingContainer::find($request->booking_container_id)->booking_id;

@@ -36,10 +36,9 @@
                     <thead class="thead-light">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">{{ __('main.operation_name') }}</th>
+                            <th scope="col">اسم البنك</th>
                             <th scope="col">{{ __('main.balance') }}</th>
-                            <th scope="col">{{ __('admin.created_at') }}</th>
-                            <th scope="col"></th>
+                            <th scope="col">الاجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,7 +55,6 @@
                                     {{ $bank->amount }}
                                 </td>
 
-                                <td>{{ $bank->created_at }}</td>
 
                                 <td>
                                     <div class="row">

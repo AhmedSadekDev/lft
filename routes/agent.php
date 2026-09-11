@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Agent\BookingContainerActionController;
 use App\Http\Controllers\Api\Agent\BookingContainerAssignmentController;
 use App\Http\Controllers\Api\Agent\BookingPaperController;
 use App\Http\Controllers\Api\Agent\CityController;
+use App\Http\Controllers\Api\Agent\WalletController;
 use App\Http\Controllers\Api\Agent\YardController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,9 +30,9 @@ Route::group(['middleware' => 'localization'], function () {
 
     // Route::group(['middleware' => 'guest:agent'], function () {
 
-        //login
+    //login
 
-        Route::post('login', [LoginController::class, 'login']);
+    Route::post('login', [LoginController::class, 'login']);
     // });
 
     //set password
@@ -47,8 +48,8 @@ Route::group(['middleware' => 'localization'], function () {
 
 
         //wallet
-        Route::get('wallets', [\App\Http\Controllers\Api\Agent\WalletController::class, 'index']);
-        Route::post('charge-cars-wallet', [\App\Http\Controllers\Api\Agent\WalletController::class, 'chargeCarWallet']);
+        Route::get('wallets', [WalletController::class, 'index']);
+        Route::post('charge-cars-wallet', [WalletController::class, 'chargeCarWallet']);
 
 
         //fetch_profile
@@ -72,12 +73,16 @@ Route::group(['middleware' => 'localization'], function () {
 
         //make_general_expenses
         Route::post('make_general_expenses', [ExpenseController::class, 'make_general_expenses']);
+        //update_expense
+        Route::post('update_expense', [ExpenseController::class, 'update_expense']);
 
         //fetch_all_expenses
         Route::any('fetch_all_expenses', [ExpenseController::class, 'fetch_all_expenses']);
 
         //fetch_latest_expenses
         Route::get('fetch_latest_expenses', [ExpenseController::class, 'fetch_latest_expenses']);
+        //delete_expense
+        Route::post('delete_expense', [ExpenseController::class, 'delete_expense']);
 
 
 
@@ -97,6 +102,8 @@ Route::group(['middleware' => 'localization'], function () {
 
         //create_delivery_policy
         Route::post('create_delivery_policy', [DeliveryPolicyController::class, 'create_delivery_policy']);
+        //update_delivery_policy
+        Route::post('update_delivery_policy', [DeliveryPolicyController::class, 'update_delivery_policy']);
         //fetch_delivery_policies
         Route::get('fetch_delivery_policies', [DeliveryPolicyController::class, 'fetch_delivery_policies']);
         //delivery_policy_details
@@ -105,6 +112,8 @@ Route::group(['middleware' => 'localization'], function () {
         Route::post('delivery_policy_expenses', [DeliveryPolicyController::class, 'delivery_policy_expenses']);
         //settle_delivery_policy
         Route::post('settle_delivery_policy', [DeliveryPolicyController::class, 'settle_delivery_policy']);
+        //delete_delivery_policy
+        Route::post('delete_delivery_policy', [DeliveryPolicyController::class, 'delete_delivery_policy']);
 
 
         //make_car_expenses
@@ -114,6 +123,7 @@ Route::group(['middleware' => 'localization'], function () {
         Route::group(['controller' => NotificationController::class], function () {
 
             Route::post("fetch_your_notifications", "fetch_notifications");
+            Route::post("mark_notification_read", "mark_as_read");
         });
 
 
@@ -173,4 +183,5 @@ Route::group(['middleware' => 'localization'], function () {
 
     //fetch_yards
     Route::get('fetch_yards', [YardController::class, 'fetch_yards']);
+    Route::get('fetch_yard_bookings', [YardController::class, 'fetch_yard_bookings']);
 });

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InvoiceRequest;
 use App\Models\Booking;
 use App\Models\Invoice;
-use Illuminate\Database\Eloquent\Collection;
+use App\Services\InvoicePrintBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -29,10 +29,9 @@ class BookingInvoiceController extends Controller
      */
     public function create(Request $request, Booking $booking)
     {
+        $booking->loadExpensesForDisplay();
         $company = $booking->company;
-        $invoice_number = date("Y") . '-'
-            . invoiceNumberTrim($company->id) . '-'
-            . invoiceNumberTrim(count($company->invoices) + 1);
+        $invoice_number = Invoice::getNextInvoiceNumberForCompany($company->id);
 
         $transportation_total = $booking->transportation_total_price;
         $taxed_services_total = $booking->taxed_services_total_price;
@@ -64,18 +63,19 @@ class BookingInvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
+            // dd($request->all());
             $company = $booking->company;
             $company = $booking->company;
-            $invoice_number = date("Y") . '-'
-                . invoiceNumberTrim($company->id) . '-'
-                . invoiceNumberTrim(
-                    Invoice::getMaxCompanyInvoiceNumber($company->id)
-                        + 1
-                );
+            // $invoice_number = date("Y") . '-'
+            //     . invoiceNumberTrim($company->id) . '-'
+            //     . invoiceNumberTrim(
+            //         Invoice::getMaxCompanyInvoiceNumber($company->id)
+            //             + 1
+            //     );
 
             $invoice_data = array_merge(
                 [
-                    'invoice_number' => $invoice_number,
+                    'invoice_number' => $request->invoice_number,
                     'booking_id' => $booking->id,
 
                     'transportation_json' => $booking->bookingContainers,
@@ -88,13 +88,12 @@ class BookingInvoiceController extends Controller
                 ],
                 $request->only([
                     'value_added_tax',
-                    'sales_tax',
                     'discount'
                 ])
             );
             $invoice = Invoice::create($invoice_data);
             DB::commit();
-            return redirect()->route('bookings.index')->with('success', __('alerts.added_successfully'));
+            return redirect()->route('bookings.show', $booking)->with('success', __('alerts.added_successfully'));
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -115,57 +114,34 @@ class BookingInvoiceController extends Controller
      */
     public function show(Invoice $booking_invoice)
     {
-        // first page rows limit with header and footer
-        $fpr_hf_limit = 6;
-        // first page rows limit with header only
-        $fpr_h_limit = 8;
-        // middle page rows limit
-        $mpr_limit = 10;
-        // last page rows limit with footer only
-        $lpr_limit = 8;
-
         $booking = $booking_invoice->booking;
-        $invoice_rows = $booking->bookingContainers
-            ->concat($booking->getTaxedServices);
-        $fpr = [];
-        $mps = [];
-        $lpr = [];
+        if (!$booking) {
+            return redirect()->back()->with('error', 'هذه الفاتورة لا يمكن عرضها لأن الحجز غير موجود');
+        }
 
-        $fpr = $invoice_rows->shift(
-            count($invoice_rows) <= $fpr_hf_limit ? $fpr_hf_limit : $fpr_h_limit
-        );
+        $booking->loadExpensesForDisplay();
 
-        $mps_count = floor(count($invoice_rows) / $mpr_limit);
-        $mps_modulus = count($invoice_rows) % $mpr_limit;
-        if ($mps_modulus <= $lpr_limit)
-            $lpr = $invoice_rows->pop($mps_modulus);
-        else
-            $mps_count++;
+        $printData = (new InvoicePrintBuilder())->build($booking_invoice);
 
-
-        for ($i = 0; $i < $mps_count; $i++)
-            $mps[] = $invoice_rows->shift($mpr_limit);
-
-        if (!is_array($fpr) && !($fpr instanceof Collection))
-            $fpr = [$fpr];
-        foreach ($mps as $key => $mp)
-            if (!is_array($mp) && !($mp instanceof Collection))
-                $mps[$key] = [$mp];
-        if (!is_array($lpr) && !($lpr instanceof Collection))
-            $lpr = [$lpr];
+        // Backward-compatible aliases used by older partials
+        $attachment_rows = $printData['receipt']['items']
+            ->concat($printData['additional']['items'])
+            ->values();
 
         return view('admin.bookings.booking-invoices.show', [
             'invoice' => $booking_invoice,
-            'fpr' => $fpr,
-            'mps' => $mps,
-            'lpr' => $lpr,
-            'fpr_hf_limit' => $fpr_hf_limit,
-            'fpr_h_limit' => $fpr_h_limit,
-            'mpr_limit' => $mpr_limit,
-            'lpr_limit' => $lpr_limit,
             'booking' => $booking,
-            'attachment_rows' => $booking->getUnTaxedServices
-        ])->render();
+            'printData' => $printData,
+            'taxGroup' => $printData['tax'],
+            'receiptGroup' => $printData['receipt'],
+            'additionalGroup' => $printData['additional'],
+            'combinedItems' => $printData['combined_items'],
+            'combinedTotal' => $printData['combined_total'],
+            'attachment_rows' => $attachment_rows,
+            'agent_expenses_attachment_total' => $printData['additional']['items']
+                ->filter(fn ($item) => is_object($item) && ($item->type ?? null) === 'agent_expense_attachment')
+                ->sum(fn ($item) => (float) ($item->expense->value ?? $item->price ?? 0)),
+        ]);
     }
 
     /**
@@ -180,6 +156,8 @@ class BookingInvoiceController extends Controller
         if (!$booking)
             return redirect()->back()->with('error', 'هذه الفاتورة لا يمكن تعديلها لأن الحجز غير موجود');
 
+        $booking->loadExpensesForDisplay();
+
         $transportation_total = $booking->transportation_total_price;
         $taxed_services_total = $booking->taxed_services_total_price;
         $untaxed_services_total = $booking->untaxed_services_total_price;
@@ -191,6 +169,7 @@ class BookingInvoiceController extends Controller
 
             'invoice'           => $booking_invoice,
             'booking'           => $booking,
+            'invoice_number'    => $booking->invoice->invoice_number,
 
             'transportation_total' => $transportation_total,
             'taxed_services_total' => $taxed_services_total,
@@ -223,10 +202,10 @@ class BookingInvoiceController extends Controller
                     'transportation_total_before_vat' => $booking->transportation_total_price,
                     'taxed_services_total_before_vat' => $booking->taxed_services_total_price,
                     'untaxed_services_total_before_vat' => $booking->untaxed_services_total_price,
+                    'invoice_number' => $request->invoice_number
                 ],
                 $request->only([
                     'value_added_tax',
-                    'sales_tax',
                     'discount'
                 ])
             );
@@ -237,11 +216,7 @@ class BookingInvoiceController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             \Illuminate\Support\Facades\Log::error($th);
-            if (!$th->getMessage()) {
-                redirect()->back()->with('error', $th->getResponse()?->getData());
-            } elseif ($th->getMessage()) {
-                redirect()->back()->with('error', $th->getMessage());
-            }
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 
@@ -251,8 +226,34 @@ class BookingInvoiceController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(Invoice $booking_invoice)
     {
-        //
+        DB::beginTransaction();
+        try {
+            if ($booking_invoice->invoicePayments()->exists()) {
+                DB::rollBack();
+                return redirect()
+                    ->back()
+                    ->with('error', 'لا يمكن حذف الفاتورة بعد تسجيل أي عملية سداد عليها');
+            }
+
+            $booking = $booking_invoice->booking;
+            $booking_invoice->delete();
+            DB::commit();
+
+            if ($booking) {
+                return redirect()
+                    ->route('bookings.show', $booking->id)
+                    ->with('success', __('alerts.deleted_successfully'));
+            }
+
+            return redirect()
+                ->route('bookings.index')
+                ->with('success', __('alerts.deleted_successfully'));
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            \Illuminate\Support\Facades\Log::error($th);
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

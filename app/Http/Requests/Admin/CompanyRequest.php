@@ -26,15 +26,17 @@ class CompanyRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'          => ['required'],
-            'email'         => request()->method() == 'POST' ? ['required', 'email', 'unique:companies,email'] : ['required', 'email', 'unique:companies,email,' . $this->company->id],
-            'address'       => ['required', 'max:255'],
-            'phone'         => ['required', 'numeric', 'digits_between:9,12'],
-            'taxed'         => ['required'],
-            'tax_no'        => request()->method() == 'POST' ? ['required', 'numeric', 'min:0', 'unique:companies,tax_no', 'digits_between:1,20'] : ['required', 'numeric', 'min:0', 'unique:companies,tax_no,' . $this->company->id, 'digits_between:1,20'],
-            'bill_type'     => ['required', 'in:1,2'],
-            'attachments'   => ['sometimes', 'nullable'],
-            'attachments.*' => ['sometimes', 'nullable', 'mimes:pdf,csv,xls,xlsx,doc,docx,png,jpeg,jpg', 'max:2048'],
+            'name'              => ['required'],
+            'email'             => request()->method() == 'POST' ? ['required', 'email', 'unique:companies,email'] : ['required', 'email', 'unique:companies,email,' . $this->company->id],
+            'address'           => ['required', 'max:255'],
+            'phone'             => ['required', 'numeric', 'digits_between:9,12'],
+            'taxed'             => ['required'],
+            'private_company_id' => ['nullable', 'exists:private_companies,id'],
+            'tax_no'            => request()->method() == 'POST' ? ['required', 'numeric', 'min:0', 'unique:companies,tax_no', 'digits_between:1,20'] : ['required', 'numeric', 'min:0', 'unique:companies,tax_no,' . $this->company->id, 'digits_between:1,20'],
+            'opening_balance'   => ['nullable', 'numeric', 'min:0'],
+            'bill_type'         => ['required', 'in:1,2'],
+            'attachments'       => ['sometimes', 'nullable'],
+            'attachments.*'     => ['sometimes', 'nullable', 'mimes:pdf,csv,xls,xlsx,doc,docx,png,jpeg,jpg', 'max:2048'],
         ];
     }
 

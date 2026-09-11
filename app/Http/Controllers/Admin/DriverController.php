@@ -23,12 +23,22 @@ class DriverController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $input = [
-            'drivers' => Driver::all(),
-        ];
-        return view('admin.drivers.index', $input);
+        $query = Driver::query();
+
+        // تطبيق البحث إذا كان موجود
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        }
+
+        $drivers = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();
+
+        return view('admin.drivers.index', compact('drivers'));
     }
     /**
      * Show the form for creating a new resource.
@@ -39,7 +49,7 @@ class DriverController extends Controller
     {
         $input = [
             'method'    => 'POST',
-            'action'    => route('drivers.store') 
+            'action'    => route('drivers.store')
         ];
 
         return view('admin.drivers.create', $input);

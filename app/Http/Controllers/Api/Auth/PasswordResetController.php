@@ -9,13 +9,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Requests\Api\Auth\ResetPasswordRequest;
 use App\Http\Requests\Api\Auth\VerifyEmailRequest;
-use App\Services\loginService;
+use App\Services\LoginService;
 
 class PasswordResetController extends Controller
 {
     protected $passwordResetService, $loginService;
 
-    public function __construct(PasswordResetService $passwordResetService, loginService $loginService){
+    public function __construct(PasswordResetService $passwordResetService, LoginService $loginService){
         $this->passwordResetService = $passwordResetService;
         $this->loginService = $loginService;
     }

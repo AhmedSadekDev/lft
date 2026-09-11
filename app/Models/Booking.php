@@ -24,10 +24,25 @@ class Booking extends Model
     */
 
 
-    
 
-    public function expenses(){
-        return $this->hasMany(AgentExpense::class);
+
+    public function expenses()
+    {
+        // مصروفات مرتبطة بالحجز عبر booking_id (يُعبَّأ من التطبيق/الداش من الحاوية أو من بوليصة التوصيل)
+        return $this->hasMany(AgentExpense::class, 'booking_id', 'id');
+    }
+
+    public function loadExpensesForDisplay(): self
+    {
+        $this->setRelation(
+            'expenses',
+            AgentExpense::forBooking($this->id)
+                ->with(['service.serviceCategory'])
+                ->orderBy('id')
+                ->get()
+        );
+
+        return $this;
     }
 
 
@@ -35,6 +50,11 @@ class Booking extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function receipts()
+    {
+        return $this->hasMany(Receipt::class);
     }
 
     public function factory()
@@ -208,13 +228,13 @@ class Booking extends Model
     {
         // $x = $this->expenses->sum('value') ;
         // $y = 0;
-        
+
         // foreach($this->bookingContainers as $container) {
         //     foreach($container->delivery_policies as $policy) {
         //         $y += $policy->money_transfer->value;
         //     }
         // }
-        
+
         // return $x + $y;
 
         return $this->bookingContainers->sum('price');
@@ -263,6 +283,19 @@ class Booking extends Model
             $query->whereDate('created_at', $date);
         });
     }
+
+    public function scopeFilterDateRange(Builder $query, ?string $dateFrom, ?string $dateTo)
+    {
+        $query->when($dateFrom || $dateTo, function (Builder $query) use ($dateFrom, $dateTo) {
+            if ($dateFrom && $dateTo) {
+                $query->whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59']);
+            } elseif ($dateFrom) {
+                $query->whereDate('created_at', '>=', $dateFrom);
+            } elseif ($dateTo) {
+                $query->whereDate('created_at', '<=', $dateTo);
+            }
+        });
+    }
     public function scopeFilterSearch(Builder $query, ?string $search)
     {
         $query->when($search, function (Builder $query) use ($search) {
@@ -282,6 +315,131 @@ class Booking extends Model
         $query->when($tax_status, function (Builder $query) use ($tax_status) {
             $query->where('taxed', $tax_status);
         });
+    }
+
+    public function scopeFilterStage(Builder $query, ?string $stage)
+    {
+        $query->when($stage && $stage !== 'all', function (Builder $query) use ($stage) {
+            switch ($stage) {
+                case 'assigned':
+                case 'specification':
+                case '0':
+                    $query->whereHas('bookingContainers', function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->where('status', 0)
+                                ->orWhere(function ($q2) {
+                                    $q2->where('status', 1)->where('superagent_specification_approved', 0);
+                                });
+                        });
+                    });
+                    break;
+
+                case 'waiting':
+                case 'waiting_loading':
+                    $query->whereHas('bookingContainers', function ($q) {
+                        $q->where('superagent_specification_approved', 1)
+                          ->where('is_in_loading', 0)
+                          ->where('superagent_loading_approved', 0);
+                    });
+                    break;
+
+                case 'loading':
+                case '1':
+                    $query->whereHas('bookingContainers', function ($q) {
+                        $q->where('superagent_specification_approved', 1)
+                          ->where('is_in_loading', 1)
+                          ->where('superagent_loading_approved', 0);
+                    });
+                    break;
+
+                case 'unloading':
+                case 'discharge':
+                case '2':
+                    $query->whereHas('bookingContainers', function ($q) {
+                        $q->where('superagent_loading_approved', 1)
+                          ->where('superagent_unloading_approved', 0);
+                    });
+                    break;
+
+                case 'invoiced':
+                case 'closed':
+                case 'finished':
+                case '3':
+                    $query->where(function ($sub) {
+                        $sub->whereHas('invoice')
+                            ->orWhereHas('bookingContainers', function ($qc) {
+                                $qc->where('superagent_unloading_approved', 1);
+                            });
+                    });
+                    break;
+            }
+        });
+    }
+
+    public function getStageInfoAttribute(): array
+    {
+        $containers = $this->relationLoaded('bookingContainers') ? $this->bookingContainers : $this->bookingContainers()->get();
+
+        if ($this->relationLoaded('invoice') ? $this->invoice : $this->invoice()->exists()) {
+            return [
+                'key'   => 'invoiced',
+                'label' => 'فواتير منتهية',
+                'badge' => 'badge-dark',
+                'icon'  => 'fas fa-check-double',
+            ];
+        }
+
+        if ($containers->isEmpty()) {
+            return [
+                'key'   => 'assigned',
+                'label' => 'التخصيص',
+                'badge' => 'badge-secondary',
+                'icon'  => 'fas fa-tasks',
+            ];
+        }
+
+        if ($containers->every(fn($c) => $c->superagent_unloading_approved == 1)) {
+            return [
+                'key'   => 'invoiced',
+                'label' => 'فواتير منتهية',
+                'badge' => 'badge-dark',
+                'icon'  => 'fas fa-check-double',
+            ];
+        }
+
+        if ($containers->contains(fn($c) => $c->superagent_loading_approved == 1 && $c->superagent_unloading_approved == 0)) {
+            return [
+                'key'   => 'unloading',
+                'label' => 'التعتيق',
+                'badge' => 'badge-info',
+                'icon'  => 'fas fa-dolly',
+            ];
+        }
+
+        if ($containers->contains(fn($c) => $c->superagent_specification_approved == 1 && $c->is_in_loading == 1 && $c->superagent_loading_approved == 0)) {
+            return [
+                'key'   => 'loading',
+                'label' => 'التحميل',
+                'badge' => 'badge-primary',
+                'icon'  => 'fas fa-truck-loading',
+            ];
+        }
+
+        if ($containers->contains(fn($c) => $c->superagent_specification_approved == 1 && $c->is_in_loading == 0 && $c->superagent_loading_approved == 0)) {
+            return [
+                'key'   => 'waiting',
+                'label' => 'الانتظار',
+                'badge' => 'badge-warning text-dark',
+                'icon'  => 'fas fa-hourglass-half',
+            ];
+        }
+
+        return [
+            'key'   => 'assigned',
+            'label' => 'التخصيص',
+            'badge' => 'badge-secondary',
+            'icon'  => 'fas fa-tasks',
+        ];
     }
 
     protected static function booted()

@@ -20,11 +20,15 @@ class OTP extends Model
         'agent_id',
         'superagent_id',
         'otp',
-        'expire_at'
+        'expire_at',
+        'employee_id'
     ];
 
     public const  AddToPermission = false;
-
+    
+    public function employee(){
+        return $this->belongsTo(Employee::class);
+    }
     public function user(){
         return $this->belongsTo(User::class);
     }

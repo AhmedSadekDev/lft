@@ -10,21 +10,26 @@ class Payingcar extends Model
     use HasFactory;
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
-    
+
     public function car()
     {
         return $this->belongsTo(Car::class);
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function delivery_policy()
+    {
+        return $this->belongsTo(DeliveryPolicy::class);
     }
 
     public function moneyTransfers()
     {
         return $this->MorphMany(MoneyTransfer::class, "transfered");
     }
-    
-    
+
+
 }

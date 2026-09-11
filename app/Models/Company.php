@@ -27,6 +27,8 @@ class Company extends Authenticatable implements JWTSubject
         'phone',
         'tax_no',
         'taxed',
+        'private_company_id',
+        'opening_balance',
         'password',
         'session_id',
         'bill_type',
@@ -36,7 +38,8 @@ class Company extends Authenticatable implements JWTSubject
     ];
 
     protected $casts = [
-        'attachments' => 'array'
+        'attachments' => 'array',
+        'opening_balance' => 'double',
     ];
 
     protected $hidden = [
@@ -224,5 +227,10 @@ class Company extends Authenticatable implements JWTSubject
     public function companyInvoices()
     {
         return $this->hasMany(companyInvoices::class);
+    }
+
+    public function privateCompany()
+    {
+        return $this->belongsTo(PrivateCompany::class, 'private_company_id');
     }
 }

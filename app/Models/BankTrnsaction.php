@@ -25,4 +25,14 @@ class BankTrnsaction extends Model
     {
         return $this->type == 1 ? __('main.credit') : __("main.debit");
     }
+    public function typeText()
+    {
+        if($this->type == 0){
+            return __('main.debit');
+        } elseif($this->type == 1){
+            return __('main.credit');
+        } else{
+            return __('main.transfer');
+        }
+    }
 }

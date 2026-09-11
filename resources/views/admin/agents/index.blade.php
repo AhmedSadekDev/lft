@@ -37,7 +37,6 @@
                             <th scope="col">{{ __('admin.email') }}</th>
                             <th scope="col">{{ __('admin.phone') }}</th>
                             <th scope="col">{{ __('admin.financial_custody') }}</th>
-                            <th scope="col">{{ __('admin.created_at') }}</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -63,7 +62,6 @@
                                 </td>
 
 
-                                <td>{{ $agent->created_at }}</td>
                                 <td>
                                     <div class="row">
                                         <div class="col-md-3 mr-3">

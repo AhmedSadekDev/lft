@@ -11,7 +11,7 @@
             <div class="card-header flex-wrap  align-items-center py-5">
                 <div class="card-toolbar">
                     <div class="">
-                       
+
                     </div>
 
 
@@ -86,7 +86,7 @@
                     </thead>
                     <tbody>
                         @foreach ($payments as $shipment)
-                           
+
                             <tr>
                                 <th scope="row">{{ $shipment->id }}</th>
                                 <td>{{ $shipment->value }}</td>
@@ -94,7 +94,7 @@
                                     <img width="50" src="{{ asset($shipment->image) }}" alt="">
                                 </td>
                                 <td>{{ $shipment->created_at }}</td>
-                                
+
 
                                 <td>
                                     <div class="row">
@@ -133,7 +133,7 @@
                 cancelButtonText: "{{ __('alerts.cancel') }}",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = '{{ route('shipments.destroy', ':id') }}';
+                    var url = '{{ route('car_payments.destroy', ':id') }}';
                     url = url.replace(':id', id);
                     var token = '{{ csrf_token() }}';
                     $.ajaxSetup({

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Mappers\InvoicePrintSectionMapper;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ServiceCategoryRequest extends FormRequest
 {
@@ -29,6 +31,7 @@ class ServiceCategoryRequest extends FormRequest
             'description'   => ['sometimes', 'nullable', 'array'],
             'description.*' => ['sometimes', 'nullable', 'string', 'max:2000'],
             'service_status'=> ['required'],
+            'invoice_print_section' => ['required', Rule::in(InvoicePrintSectionMapper::getValidValues())],
         ];
     }
 
@@ -44,6 +47,7 @@ class ServiceCategoryRequest extends FormRequest
             'title.ar'          => __('admin.ar_title'),
             'description.en'    => __('admin.en_description'),
             'description.ar'    => __('admin.ar_description'),
+            'invoice_print_section' => __('admin.invoice_print_section'),
         ];
     }
 }

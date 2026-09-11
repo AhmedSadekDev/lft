@@ -207,6 +207,24 @@
                     </div>
                     <!--end::Date-->
                 </div>
+                <div class="form-group col-md-6">
+                    <label for="image" class="font-weight-bold">اختر صورة أو ملف</label>
+                    <input type="file" name="image" id="image" class="form-control">
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="type" class="font-weight-bold">نوع الملف</label>
+                    <select name="type" id="type" class="form-control">
+                        <option>اختر نوع الملف</option>
+                        <option value="0">جواب تخصيص</option>
+                        <option value="1">صورة الحاوية</option>
+                        <option value="6">جواب التحميل</option>
+                        <option value="5">صورة سيل ملاحي</option>
+                        <option value="4">جواب التعتيق</option>
+                        <option value="8">اذن شحن</option>
+                        <option value="9">أخرى</option>
+                    </select>
+                </div>
             </div>
 
             <div class="row justify-content-end">
@@ -226,7 +244,7 @@
 
                 <div class="containers-divs">
 
-                    <div class="row   px-4 py-4 mt-4 mb-4 containers-div" id="containers">
+                    <div class="row px-4 py-4 mt-4 mb-4 containers-div booking-container-block" id="containers">
 
                         <div class="row align-items-center justify-content-between container-1 col-xl-12 ">
 
@@ -235,7 +253,7 @@
                                     {!! Form::label('branch_id', __('admin.branch')) !!}
                                     <select name="containers[0][branch_id]" id="branch_id" class="form-control"
                                         required>
-                                        <option disabled">{{ __('admin.select') }}</option>
+                                        <option value="" disabled>{{ __('admin.select') }}</option>
                                         @foreach ($branches as $id => $name)
                                             <option value="{{ $id }}"
                                                 {{ old('containers.0.branch_id') == $id || $branchId == $id ? 'selected class=selected' : '' }}>
@@ -262,7 +280,7 @@
                                         <option value="to_be_disabled">{{ __('admin.select') }}</option>
                                         @foreach ($containers_type->all() as $id => $name)
                                             <option value="{{ $id }}"
-                                                {{ old('containers.0.container_id') == $id || $group[0]->branch_id == $id ? 'selected class=selected' : '' }}>
+                                                {{ old('containers.0.container_id') == $id || (isset($group[0]) && $group[0]->container_id == $id) ? 'selected' : '' }}>
                                                 {{ $name }}
                                             </option>
                                         @endforeach
@@ -389,7 +407,7 @@
             @empty
 
                 <div class="containers-divs">
-                    <div class="row   px-4 py-4 mt-4 mb-4 containers-div" id="containers">
+                    <div class="row px-4 py-4 mt-4 mb-4 containers-div booking-container-block" id="containers">
 
                         <div class="row align-items-center justify-content-between container-1 col-xl-12 ">
 
@@ -420,7 +438,6 @@
                                         array_replace(['to_be_disabled' => __('admin.select')], $containers_type->all()),
                                         old('containers.0.container_id'),
                                         [
-                                            'id' => 'container_id',
                                             'class' => 'form-control',
                                             'required' => 'required',
                                         ],
@@ -543,7 +560,12 @@
                 </div>
             @endforelse
 
-            {!! Form::submit(__('admin.submit'), ['class' => 'btn btn-success font-weight-bolder text-uppercase px-9 py-4']) !!}
+            <div class="booking-submit-wrap">
+                <button type="submit" class="booking-submit-btn">
+                    <i class="fas fa-check"></i>
+                    {{ __('admin.submit') }}
+                </button>
+            </div>
             {!! Form::close() !!}
 
         </div>
@@ -554,34 +576,79 @@
     <script>
         var company_employees = {!! json_encode($company_employees) !!};
 
-        $('#company_id').on('change', loadEmployees);
+        $('#company_id').on('change', function() { loadEmployees($(this).val()); });
 
-        function loadEmployees() {
-            var company_id = $('#company_id').val();
-
-            $('#employee_id option').remove();
-            $('#employee_id').append(
+        function loadEmployees(company_id) {
+            company_id = company_id || $('#company_id').val();
+            var $empSelect = $('#employee_id');
+            if (!$empSelect.length) return;
+            $empSelect.find('option').remove();
+            $empSelect.append(
                 '<option value="to_be_disabled" disabled="disabled" selected="selected">{{ __('admin.select') }}</option>'
             );
             var available_employees = company_employees[company_id];
-            for (const emp in available_employees) {
-                $('#employee_id').append(`<option value="${emp}">${available_employees[emp]}</option>`)
+            if (available_employees) {
+                for (const emp in available_employees) {
+                    $empSelect.append('<option value="' + emp + '">' + available_employees[emp] + '</option>');
+                }
             }
         }
 
-        $(document).ready(function() {
-            // Add new container
-            $(document).on('click', '.add-container-btn', function() {
-                var newContainer = $('.containers-div').first().clone();
-                newContainer.find('.delete-div').removeClass('d-none');
-                newContainer.appendTo('.containers-div').parent();
-            });
+        function companyEmployee(companyId) {
+            if (!companyId) return;
+            loadEmployees(companyId);
+        }
 
-            // Delete container
-            $(document).on('click', '.delete-container', function() {
-                $(this).closest('.containers-div').remove();
-            });
+        $(document).ready(function () {
+    let containerIndex = $(".containers-div").length; // Track index for new containers
+
+    // Add new container
+    $(document).on("click", ".add-container-btn", function (e) {
+        e.preventDefault();
+
+        // Get the last container
+        let lastContainer = $(".containers-div").last();
+        let newContainer = lastContainer.clone(); // Clone the last container
+
+        // Increment the index for the new container
+        containerIndex++;
+
+        // Update input names and IDs for uniqueness
+        newContainer.find("select, input").each(function () {
+            let name = $(this).attr("name");
+            let id = $(this).attr("id");
+
+            if (name) {
+                // Replace the index in the name (e.g., containers[0][branch_id] -> containers[1][branch_id])
+                let newName = name.replace(/\[\d+\]/, "[" + containerIndex + "]");
+                $(this).attr("name", newName);
+            }
+            if (id) {
+                // Replace the index in the ID (e.g., branch_id_0 -> branch_id_1)
+                let newId = id.replace(/\d+/, containerIndex);
+                $(this).attr("id", newId);
+            }
+
+            // Clear values for inputs
+            if ($(this).is("input")) {
+                $(this).val("");
+            }
         });
+
+        // Show the delete button for the new container
+        newContainer.find(".delete-div").removeClass("d-none");
+
+        // Append the new container after the last one
+        lastContainer.after(newContainer);
+    });
+
+    // Delete container
+    $(document).on("click", ".delete-container", function () {
+        if ($(".containers-div").length > 1) {
+            $(this).closest(".containers-div").remove();
+        }
+    });
+});
     </script>
     <script>
         $(function() {
@@ -614,6 +681,11 @@
 
         @if (isset($booking) || !is_null(old('company_id')))
             companyEmployee(`{{ $booking->company_id ?? old('company_id') }}`);
+            @if (isset($booking) && $booking->employee_id)
+            $('#employee_id').val('{{ $booking->employee_id }}');
+            @elseif (old('employee_id'))
+            $('#employee_id').val('{{ old('employee_id') }}');
+            @endif
         @endif
 
         // @if (

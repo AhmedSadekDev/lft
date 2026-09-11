@@ -24,4 +24,8 @@ class Car extends Model
     {
         return $this->hasMany(DeliveryPolicy::class);
     }
+    public function payingcars()
+    {
+        return $this->hasMany(Payingcar::class);
+    }
 }

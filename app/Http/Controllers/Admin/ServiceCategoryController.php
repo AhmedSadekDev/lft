@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ServiceCategoryRequest;
+use App\Mappers\InvoicePrintSectionMapper;
 use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
 
@@ -41,6 +42,7 @@ class ServiceCategoryController extends Controller
             'method' => 'POST',
             'action' => route('serviceCategories.store'),
             'status' => [ 0 => __('admin.taxed'), 1 => __('admin.untaxed'), 2 => __('admin.not_added')],
+            'print_sections' => InvoicePrintSectionMapper::getAll(app()->getLocale()),
         ];
 
         return view('admin.serviceCategories.create', $input);
@@ -82,6 +84,7 @@ class ServiceCategoryController extends Controller
             'method' => 'PUT',
             'action' => route('serviceCategories.update', $serviceCategory),
             'status' => [ 0 => __('admin.taxed'), 1 => __('admin.untaxed'), 2 => __('admin.not_added')],
+            'print_sections' => InvoicePrintSectionMapper::getAll(app()->getLocale()),
         ];
 
         return view('admin.serviceCategories.edit', $input);

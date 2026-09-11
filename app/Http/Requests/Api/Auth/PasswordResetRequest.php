@@ -29,7 +29,18 @@ class PasswordResetRequest extends FormRequest
     {
 
         return [
-            'email' => ['string', 'email:dns', 'exists:companies,email'],
+            'email'     => [
+                'required',
+                'email:rfc,dns',
+                function ($attribute, $value, $fail) {
+                    $companyExists = \App\Models\Company::where('email', $value)->exists();
+                    $employeeExists = \App\Models\Employee::where('email', $value)->exists();
+                    
+                    if (! $companyExists && ! $employeeExists) {
+                        $fail(__('validation.exists'));
+                    }
+                }
+            ],
         ];
     }
 

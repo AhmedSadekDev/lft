@@ -17,15 +17,39 @@ class AgentExpense extends Model
 
     protected $imageFolder = 'agent_expenses';
 
+    protected static function booted(): void
+    {
+        static::saving(function (AgentExpense $expense) {
+            if ($expense->booking_container_id) {
+                $bookingId = BookingContainer::query()
+                    ->whereKey($expense->booking_container_id)
+                    ->value('booking_id');
+                if ($bookingId !== null) {
+                    $expense->booking_id = $bookingId;
+                }
+            } elseif ($expense->delivery_policy_id) {
+                $policy = DeliveryPolicy::query()
+                    ->with(['booking_containers:id,booking_id'])
+                    ->find($expense->delivery_policy_id);
+                $container = $policy?->booking_containers->first();
+                if ($container) {
+                    $expense->booking_container_id = $expense->booking_container_id ?: $container->id;
+                    $expense->booking_id = $container->booking_id;
+                }
+            }
+        });
+    }
+
     public function getCreatedAtAttribute($value)
     {
         return date('Y-m-d', strtotime($value));
     }
-    public function getImageAttribute($value)
-    {
-        return asset('/storage/' . $this->imageFolder . '/' . $value);
-    }
+    
 
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
     public function bookingContainer()
     {
         return $this->belongsTo(BookingContainer::class);
@@ -39,6 +63,11 @@ class AgentExpense extends Model
     {
         return $this->belongsTo(Service::class);
     }
+
+    public function bookingService(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\BookingService::class);
+    }
     public function getTitleAttribute()
     {
         return ($this->service?->serviceCategory?->title ?? "") . "  -  " . ($this->service?->name ?? "");
@@ -46,5 +75,15 @@ class AgentExpense extends Model
     public function delivery_policy()
     {
         return $this->belongsTo(DeliveryPolicy::class);
+    }
+
+    public function scopeForBooking($query, int $bookingId)
+    {
+        return $query->where(function ($q) use ($bookingId) {
+            $q->where('booking_id', $bookingId)
+                ->orWhereHas('bookingContainer', function ($containerQuery) use ($bookingId) {
+                    $containerQuery->where('booking_id', $bookingId);
+                });
+        });
     }
 }

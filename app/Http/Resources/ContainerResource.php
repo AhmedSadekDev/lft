@@ -21,7 +21,7 @@ class ContainerResource extends JsonResource
             'container_size'    => $this->container->size,
             'container_type'    => $this->container->type,
             'last_status'       => $this->status ?? 'Gate out empty',
-            'date'              => $this->created_at ?? now(),
+            'date'              => $this->arrival_date ?? now(),
         ];
     }
 }

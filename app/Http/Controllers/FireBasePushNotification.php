@@ -1,64 +1,180 @@
 <?php
+
 namespace App\Http\Controllers;
 
-
+use App\Models\Superagent;
 use Google\Auth\Credentials\ServiceAccountCredentials;
 use Google\Auth\HttpHandler\HttpHandlerFactory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
-class FireBasePushNotification
+class FireBasePushNotification extends Controller
 {
+    private string $url;
+    private string $scope = 'https://www.googleapis.com/auth/firebase.messaging';
+    private ?array $token = null;
 
-    private $url = 'https://fcm.googleapis.com/v1/projects/amani-32c87/messages:send';
-    private $scope = "https://www.googleapis.com/auth/firebase.messaging";
-    private $token;
-    
     public function __construct()
     {
-        // Provide the path where you stored the json token, in my case, I stored it in database        
-        $creadentials = new ServiceAccountCredentials($this->scope, storage_path('app/firebase.json'));
-        $this->token = $creadentials->fetchAuthToken(HttpHandlerFactory::build());
+        $projectId = config('services.firebase.project_id', 'leaderfortrans-779a4');
+        $this->url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
     }
-    
-    public function to($device, $body, $title = "My favorite App")
+
+    private function getAccessToken(): string
     {
+        if ($this->token !== null) {
+            return $this->token['access_token'];
+        }
+
+        $credentials = $this->loadServiceAccountCredentials();
+        $auth = new ServiceAccountCredentials($this->scope, $credentials);
+
+        try {
+            $this->token = $auth->fetchAuthToken(HttpHandlerFactory::build());
+        } catch (\Throwable $e) {
+            Log::error('Firebase auth failed', [
+                'message' => $e->getMessage(),
+                'credentials_path' => config('services.firebase.credentials'),
+                'client_email' => $credentials['client_email'] ?? null,
+            ]);
+
+            throw new RuntimeException(
+                'Firebase authentication failed. Verify storage/app/firebase.json on the server (valid service account key, unmodified private_key).',
+                0,
+                $e
+            );
+        }
+
+        if (empty($this->token['access_token'])) {
+            throw new RuntimeException('Firebase authentication returned no access token.');
+        }
+
+        return $this->token['access_token'];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function loadServiceAccountCredentials(): array
+    {
+        $path = config('services.firebase.credentials', storage_path('app/firebase.json'));
+
+        if (! is_readable($path)) {
+            throw new RuntimeException("Firebase credentials file not found or not readable: {$path}");
+        }
+
+        $json = json_decode((string) file_get_contents($path), true);
+
+        if (! is_array($json)) {
+            throw new RuntimeException("Firebase credentials file is not valid JSON: {$path}");
+        }
+
+        if (! empty($json['private_key'])) {
+            // cPanel/FTP uploads often store literal "\n" instead of real newlines.
+            $json['private_key'] = str_replace('\\n', "\n", $json['private_key']);
+        }
+
+        return $json;
+    }
+
+    public function to($device, $body, $title = 'My favorite App', $extraData = [])
+    {
+        $type = $extraData['type']
+            ?? $extraData['type_action']
+            ?? $extraData['action_type']
+            ?? null;
+
+        $typeAction = $extraData['type_action']
+            ?? $extraData['action_type']
+            ?? $type;
+
+        if ($type !== null) {
+            $extraData['type'] = $type;
+        }
+
+        if ($typeAction !== null) {
+            $extraData['type_action'] = $typeAction;
+        }
+
         $data = [
             'token' => $device,
             'title' => $title,
-            'body' => $body
+            'body' => $body,
+            'data' => $extraData,
         ];
-    
+
         return $this->send($data);
     }
-    
+
     public function send($data)
     {
         $headers = [
-            'Authorization: Bearer ' . $this->token['access_token'],
-            'Content-Type: application/json'
+            'Authorization: Bearer ' . $this->getAccessToken(),
+            'Content-Type: application/json',
         ];
-    
+
         $fields = [
             'message' => [
                 'token' => $data['token'],
                 'notification' => [
                     'title' => $data['title'],
-                    'body' => $data['body']
-                ]
-            ]
+                    'body' => $data['body'],
+                ],
+            ],
         ];
-    
+
+        if (! empty($data['data'])) {
+            $fields['message']['data'] = array_map('strval', $data['data']);
+        }
+
         $fields = json_encode($fields);
-    
+        info($fields);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-    
+
         $result = curl_exec($ch);
         curl_close($ch);
-    
+        info($result);
         return $result;
+    }
+
+    public function index()
+    {
+        $input = [
+            'method' => 'POST',
+            'action' => route('fcm.send'),
+        ];
+
+        return view('admin.fcm.index', $input);
+    }
+
+    public function sendNotification(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string',
+            'body' => 'required|string',
+        ]);
+
+        try {
+            $superAdminTokens = Superagent::whereNotNull('device_token')->get();
+            foreach ($superAdminTokens as $token) {
+                $result = $this->to($token->device_token, $request->body, $request->title);
+                $response = json_decode($result, true);
+
+                if (isset($response['name'])) {
+                    continue;
+                }
+            }
+            return redirect()->back()->with('success', __('alerts.success') . ' - ' . __('Notification sent successfully'));
+
+            return redirect()->back()->with('error', __('Notification failed: ') . ($response['error']['message'] ?? 'Unknown error'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', __('Notification failed: ') . $e->getMessage());
+        }
     }
 }

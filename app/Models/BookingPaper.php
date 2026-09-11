@@ -13,6 +13,7 @@ class BookingPaper extends Model
     const loading = 1;
     const unloading = 2;
     const carPaper = 3;
+    const loadingAnswer = 6;
     protected $guarded = [];
 
 
@@ -24,7 +25,7 @@ class BookingPaper extends Model
     {
         return $this->morphOne(Image::class, 'imageable');
     }
-    
+
     public function agent()
     {
         return $this->belongsTo(Agent::class);

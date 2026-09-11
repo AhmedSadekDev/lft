@@ -65,6 +65,11 @@ return [
     'financial_custody_superagents' => 'عهده الماليه للمندوبين المسؤلين',
     'you dont have enougth money' => 'انت لا تملك المال الكافى',
     'custody_transfer' => 'تحويل عهده',
+    'office_commission' => 'دخان المكتب',
+    'settle_delivery_policy' => 'تسوية البوليصة',
+    'transfer_to_agent' => 'تحويل لمندوب',
+    'transfer_to_vault' => 'تحويل لخزنه',
+    'from_dashboard' => 'من لوحة التحكم',
 
     'cars'       => 'السيارات',
     'drivers'       => 'السائقين',
@@ -74,6 +79,9 @@ return [
 
     "spend_money" =>  "أنفق مبلغًا قيمته :value من حسابك المالي",
     "transfer_money" => "قم بتحويل مبلغ قيمته :value إلى :name",
+    "received_office_commission" => "استلم دخان مكتب بقيمة :value",
+    "transfer_custody_to_driver" => "حول عهدة بقيمة :value للسائق :name",
+    "settle_delivery_policy_transaction" => "تسوية بوليصة بقيمة :value مع :name",
     "agent_done_specification" => "تم تحديد حاوية برقم :container_no",
     "agent_done_loading" => "تم تحميل حاوية برقم :container_no",
     "agent_done_unloading" => "تم تفريغ حاوية برقم :container_no",
@@ -97,6 +105,7 @@ return [
     'credit' => 'إيداع',
     "vault_balance" => 'ميزانية الخزنة',
     "banks" => 'البنوك',
+    "bank" => 'البنك',
     "balance" => 'الرصيد',
     "Tax_invoices" => 'الفواتير الضريبية',
     "Navigation_line" => 'الخط الملاحى',
@@ -105,7 +114,10 @@ return [
     "General_tax" => 'ضريبة عامة',
     "Total_invoice_before_tax" => 'إجمالي الفاتورة قبل الضريبة',
     'Total_invoice_after_tax' => 'اجمالي الفاتورة بعد الضريبة',
-    'download_all_invoices' => 'تحميل الفواتير'
+    'download_all_invoices' => 'تحميل الفواتير',
+    'no_data_available' => 'لا توجد بيانات متاحة',
+    'currency' => 'ج.م',
+    'container_not_written_yet' => 'لم يتم كتابه رقم الحاويه بعد'
 
 
 ];

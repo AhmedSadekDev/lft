@@ -20,18 +20,17 @@ class AgentCarTranferController extends Controller
     {
         $agent = Agent::findOrFail($id);
 
-        $items = AgentCarTranfer::query();
+        $itemsQuery = AgentCarTranfer::with(['car', 'agent', 'user']);
 
-
-        if($request->filled('date_from')) {
-            $items->whereDate('created_at', '>=', $request->date_from);
+        if($request->filled('from')) {
+            $itemsQuery->where('created_at', '>=', $request->from);
         }
 
-        if($request->filled('date_to')) {
-            $items->whereDate('created_at', '<=', $request->date_to);
+        if($request->filled('to')) {
+            $itemsQuery->where('created_at', '<=', $request->to);
         }
 
-        $items = $items->where('agent_id', $agent->id)->get();
+        $items = $itemsQuery->where('agent_id', $agent->id)->latest()->get();
 
         return view('admin.agents_car_tranfer.index', compact('agent', 'items'));
     }
@@ -64,7 +63,7 @@ class AgentCarTranferController extends Controller
         ]);
 
         $data['user_id'] = auth()->user()->id;
-        
+
         if($request->hasFile('image')) {
             $imageName = time() . '_transaction.' . $request->image->extension();
             $this->uploadImage($request->image, $imageName, 'banks');
@@ -109,7 +108,7 @@ class AgentCarTranferController extends Controller
         ]);
 
         $item = AgentCarTranfer::findOrFail($id);
-        
+
         if($request->hasFile('image')) {
             $imageName = time() . '_transaction.' . $request->image->extension();
             $this->uploadImage($request->image, $imageName, 'banks', $item->image);

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Agent\TransferAgentRequest;
 use App\Http\Resources\Api\Agent\NameResource;
 use App\Models\Agent;
+use App\Models\Vault;
+use App\Models\VaultTransaction;
 use App\Models\AppNotification;
 use App\Models\MoneyTransfer;
 use App\Services\SaveNotification;
@@ -53,8 +55,24 @@ class TransferAgentController extends Controller
             $agent->save();
             
             $transAgent = Agent::find($request->agent_id);
-            $transAgent->wallet = $transAgent->wallet + $request->value;
-            $transAgent->save();
+            if($transAgent)
+            {
+                $transAgent->wallet = $transAgent->wallet + $request->value;
+                $transAgent->save();
+            }
+            if($request->vault)
+            {
+                VaultTransaction::create([
+                    'agient_id' => $agent->id,
+                    'name' => 'تحويل الي الخزنه',
+                    'amount' => $request->value,
+                    'type' => 1
+                ]);
+                $Vault = Vault::first();
+                $Vault->amount += $request->value;
+                $Vault->save();
+            }
+            
 
             $this->saveLogActivity($agent->id, Agent::class, $moneyTransfer->id, MoneyTransfer::class);
 

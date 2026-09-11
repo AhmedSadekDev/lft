@@ -34,6 +34,9 @@ Route::group(['middleware' => 'localization'], function () {
         Route::post('verifyOtp', [OtpController::class, 'verifyOtp']);
         Route::post('resetPassword', [OtpController::class, 'resetPassword']);
     // });
+
+    Route::get("booking/details", [BookingContainerController::class, "details"]);
+
     Route::group(['middleware' => 'auth:superagent'], function () {
 
         //agent expensess-approve
@@ -58,7 +61,7 @@ Route::group(['middleware' => 'localization'], function () {
 
         //home
         Route::get('fetch_home', [HomeController::class, 'fetch_home']);
-        
+
         Route::post('change-container-status', [AgentController::class, 'changeStatus']);
 
 
@@ -66,10 +69,12 @@ Route::group(['middleware' => 'localization'], function () {
         Route::group(['controller' => BookingContainerController::class], function () {
 
             Route::get("booking/specification", "specification");
-
+            Route::get("booking/waiting", "waiting");
+            Route::post("booking/move_to_loading", "move_to_loading");
             Route::get("booking/loading", "loading");
 
             Route::get("booking/unloading", "unloading");
+            Route::get("booking/missions/all", "all");
         });
 
         //agents
@@ -102,6 +107,7 @@ Route::group(['middleware' => 'localization'], function () {
 
             Route::post("booking/save_specification_booking_yard", "save_specification_booking_yard");
 
+            Route::get("booking/all", "all");
             Route::get("booking/specification_assignments", "specification_assignments");
 
             Route::get("booking/unloading_assignments", "unloading_assignments");
@@ -115,7 +121,10 @@ Route::group(['middleware' => 'localization'], function () {
 
             Route::post("fetch_your_notifications", "fetch_notifications");
             Route::post("fetch_agents_notifications", "fetch_agents_notifications");
+            Route::post("mark_notification_read", "mark_as_read");
         });
         Route::get('fetch_yards', [YardController::class, 'fetch_yards']);
+        Route::get('fetch_active_yards', [YardController::class, 'fetch_active_yards']);
+        Route::get('fetch_yard_bookings', [YardController::class, 'fetch_yard_bookings']);
     });
 });

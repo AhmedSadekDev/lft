@@ -93,6 +93,7 @@ if(!function_exists('adminDbTablesPermissions')){
      */
     function adminDbTablesPermissions(){
         $adminPermissions = [
+            'dashboard',
             'companies',
             'superagents',
             'agents',
@@ -123,6 +124,8 @@ if(!function_exists('adminDbTablesPermissions')){
             'shipments',
             'vaults',
             'banks',
+            'accounts',
+            'suppliers',
         ];
 
 
@@ -294,7 +297,22 @@ if (!function_exists('custom_size_base64')) {
     }
 }
 
+if (!function_exists('has_app_permission')) {
+    /**
+     * Safe Spatie permission check — returns false if the permission row is missing.
+     */
+    function has_app_permission(string $permission): bool
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
 
-
-
+        try {
+            return $user->hasPermissionTo($permission);
+        } catch (\Spatie\Permission\Exceptions\PermissionDoesNotExist $e) {
+            return false;
+        }
+    }
+}
 

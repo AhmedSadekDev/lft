@@ -16,6 +16,7 @@ class SimpleBookingContainer2Resource extends JsonResource
             'factory_name' => $this->branch->factory->name ?? "",
             'container_type'    => $this->container?->type ?? null,
             'branch'            => $this->branch?->name ?? null,
+            'branch_address'            => $this->branch?->address ?? null,
             'sail_of_number'    => $this->sail_of_number,
             'container_number'  => $this->container_no,
             'arrival_date'      => $this->arrival_date,

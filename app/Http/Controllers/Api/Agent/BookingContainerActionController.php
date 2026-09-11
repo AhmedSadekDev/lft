@@ -20,10 +20,12 @@ use App\Models\Note;
 use App\Models\Superagent;
 use App\Services\SaveNotification;
 use App\Services\SendNotification;
+use App\Traits\HandlesAgentImageUploads;
 use Illuminate\Http\Request;
 
 class BookingContainerActionController extends Controller
 {
+    use HandlesAgentImageUploads;
     public function done_specification(BookingRequest $request)
     {
         try {
@@ -34,16 +36,19 @@ class BookingContainerActionController extends Controller
 
             $booking_container_ids =  $booking->bookingContainers()->where("booking_containers.status", 0)->pluck("id")->toArray();
 
+            $now = now();
             $booking->bookingContainers()->where("booking_containers.status", 0)->update([
-                "status" => 1
+                "status" => 1,
+                "specification_completed_at" => $now
             ]);
 
-            BookingContainerAgent::where("booking_container_status", 0)->whereIn("booking_container_id", $booking_container_ids)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 1
+            // يظل المندوب معيناً حتى اعتماد المسؤول
+            BookingContainerAgent::whereIn("booking_container_id", $booking_container_ids)->update([
+                "booking_container_status" => 1,
+                "specification_completed_at" => $now
             ]);
 
-
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container_ids);
+            $dailyContainers = DailyBookingContainer::whereIn("booking_container_id", $booking_container_ids);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
 
@@ -60,12 +65,29 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
-            SendNotification::send($agent->device_token ?? "", $title, $text);
+            $first_container_id = !empty($booking_container_ids) ? $booking_container_ids[0] : ($booking->bookingContainers()->first()?->id ?? null);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $first_container_id, 0);
+            // SendNotification::send($agent->device_token ?? "", $title, $text);
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
-                SendNotification::send($superAgent->device_token ?? "", $title, $text);
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_specification: Sending notification to all superagents', [
+                'booking_id' => $booking->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
+
+            foreach ($superAgents as $superAgent) {
+                $notificationData = [
+                    'booking_id' => $booking->id,
+                    'booking_container_id' => $first_container_id,
+                    'type_id' => 0,
+                    'action_type' => 'specification' // تخصيص
+                ];
+                \Illuminate\Support\Facades\Log::info('done_specification: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
+                SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
 
@@ -86,15 +108,19 @@ class BookingContainerActionController extends Controller
             $agent = auth()->guard("agent")->user();
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
+            $now = now();
             $booking_container->update([
-                "status" => 2
+                "status" => 2,
+                "loading_completed_at" => $now
             ]);
 
-            BookingContainerAgent::whereBookingContainerId($booking_container->id)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 2
+            // يظل المندوب معيناً للحاوية حتى يعتمد المسؤول التحميل (Approve)
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->update([
+                "booking_container_status" => 2,
+                "loading_completed_at" => $now
             ]);
 
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container->id);
+            $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
                 $dailyContainer->update([
@@ -110,13 +136,37 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
-            SendNotification::send($agent->device_token ?? "", $title, $text);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $booking_container->id, 1);
+            
+            if ($agent->device_token) {
+                $notificationData = [
+                    'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 1,
+                    'action_type' => 'loading' // تحميل
+                ];
+                SendNotification::send($agent->device_token, $title, $text, $notificationData);
+            }
 
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_loading: Sending notification to all superagents', [
+                'booking_container_id' => $booking_container->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
-                SendNotification::send($superAgent->device_token ?? "", $title, $text);
+            foreach ($superAgents as $superAgent) {
+                $notificationData = [
+                    'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 1,
+                    'action_type' => 'loading' // تحميل
+                ];
+                \Illuminate\Support\Facades\Log::info('done_loading: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
+                SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
             $this->saveLogActivity(auth()->guard("agent")->user()->id, Agent::class, $booking_container->id, BookingContainer::class, $booking_container->status);
@@ -138,19 +188,19 @@ class BookingContainerActionController extends Controller
             $agent = auth()->guard("agent")->user();
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
-            // if (!$booking_container->superagent_loading_approved) {
-            //     return $this->returnError(400, __('main.superagent_not_approved'));
-            // }
-
+            $now = now();
             $booking_container->update([
-                "status" => 3
+                "status" => 3,
+                "unloading_completed_at" => $now
             ]);
 
-            BookingContainerAgent::whereBookingContainerId($booking_container->id)->whereAgentId($agent->id)->update([
-                "booking_container_status" => 3
+            // يظل المندوب معيناً للحاوية حتى يعتمد المسؤول التعتيق (Approve)
+            BookingContainerAgent::where("booking_container_id", $booking_container->id)->update([
+                "booking_container_status" => 3,
+                "unloading_completed_at" => $now
             ]);
 
-            $dailyContainers = DailyBookingContainer::whereBookingContainerId($booking_container->id);
+            $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
 
             foreach ($dailyContainers->get() as $dailyContainer) {
                 $dailyContainer->update([
@@ -166,12 +216,37 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            SaveNotification::create($title, $text, null, null, AppNotification::all);
-            SendNotification::send($agent->device_token ?? "", $title, $text);
+            SaveNotification::create($title, $text, null, null, AppNotification::all, $booking_container->id, 2);
+            
+            if ($agent->device_token) {
+                $notificationData = [
+                    'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 2,
+                    'action_type' => 'unloading' // تعتيق
+                ];
+                SendNotification::send($agent->device_token, $title, $text, $notificationData);
+            }
 
-            $superAgentsIds = $dailyContainers->distinct()->pluck('superagent_id')->toArray();
-            foreach (Superagent::whereIn('id', $superAgentsIds)->get() as $superAgent) {
-                SendNotification::send($superAgent->device_token ?? "", $title, $text);
+            $superAgents = Superagent::get();
+            \Illuminate\Support\Facades\Log::info('done_unloading: Sending notification to all superagents', [
+                'booking_container_id' => $booking_container->id,
+                'superagents_count' => $superAgents->count(),
+            ]);
+
+            foreach ($superAgents as $superAgent) {
+                $notificationData = [
+                    'booking_id' => $booking_container->booking_id,
+                    'booking_container_id' => $booking_container->id,
+                    'type_id' => 2,
+                    'action_type' => 'unloading' // تعتيق
+                ];
+                \Illuminate\Support\Facades\Log::info('done_unloading: Sending notification to superagent', [
+                    'superagent_id' => $superAgent->id,
+                    'name' => $superAgent->name,
+                    'device_token' => $superAgent->device_token,
+                ]);
+                SendNotification::send($superAgent->device_token ?? "", $title, $text, $notificationData);
             }
 
             $this->saveLogActivity(auth()->guard("agent")->user()->id, Agent::class, $booking_container->id, BookingContainer::class, $booking_container->status);
@@ -187,6 +262,10 @@ class BookingContainerActionController extends Controller
     }
     public function send_notes(NoteRequest $request)
     {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) {
+            return $response;
+        }
+
         try {
 
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
@@ -200,12 +279,18 @@ class BookingContainerActionController extends Controller
 
             $note = Note::create($data);
 
-            if ($request->images && count($request->images) > 0) {
-                foreach ($request->images as $image) {
-                    $image_data["image"] = $image;
-                    $image_data["imageable_id"] = $note->id;
-                    $image_data["imageable_type"] = "App\Models\Note";
-                    Image::create($image_data);
+            if ($request->hasFile('images') || $request->has('images')) {
+                if (! $request->hasFile('images')) {
+                    return $this->returnError(422, 'فشل رفع صور الملاحظة: الحجم كبير جداً أو انقطع الاتصال أثناء الرفع.');
+                }
+
+                foreach ($request->file('images') as $index => $image) {
+                    $upload = $this->imageUploadService()->storeUploadedFile($image, 'notes');
+                    if (! $upload['ok']) {
+                        return $this->returnError(422, $upload['error'] ?? ('فشل رفع صورة الملاحظة رقم ' . ($index + 1)));
+                    }
+
+                    $this->attachStoredImage($upload['path'], $note->id, Note::class);
                 }
             }
             $response = new NoteResource($note);

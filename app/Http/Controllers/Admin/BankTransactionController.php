@@ -7,6 +7,7 @@ use App\Models\Vault;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Models\BankTrnsaction;
+use App\Models\InvoicePayment;
 use App\Models\companyInvoices;
 use App\Http\Traits\ImagesTrait;
 use App\Models\VaultTransaction;
@@ -87,7 +88,6 @@ class BankTransactionController extends Controller
             'company_id' => 'required_if:type,1|exists:companies,id',
             'image' => 'nullable|mimes:jpg,png,jpeg', // Changed to nullable to handle cases without images
         ]);
-        
         $data['user_id'] = auth()->user()->id;
     
         DB::beginTransaction();
@@ -95,7 +95,6 @@ class BankTransactionController extends Controller
         try {
             $bank = Bank::findOrFail($request->bank_id);
             $vault = Vault::firstOrFail();
-    
             // Handle image upload
             if ($request->hasFile('image')) {
                 $imageName = time() . '_transaction.' . $request->image->extension();
@@ -103,7 +102,6 @@ class BankTransactionController extends Controller
                 $this->uploadImage($request->image, $imageName, $imagePath);
                 $data['image'] = "Admin/images/{$imagePath}/{$imageName}";
             }
-    
             switch ($request->type) {
                 case 2:
                     $transBank = Bank::findOrFail($request->trans_bank_id);
@@ -117,6 +115,7 @@ class BankTransactionController extends Controller
                 case 0:
                     if ($bank->amount < $request->amount) {
                         DB::rollBack();
+                        INFO('bank_wallet_does_not_have_enough_amount');
                         return redirect()->back()->with('error', __('main.bank_wallet_does_not_have_enough_amount'));
                     }
     
@@ -124,7 +123,6 @@ class BankTransactionController extends Controller
                     $vault->amount += $request->amount;
     
                     $vault->save();
-                    
                     VaultTransaction::create([
                         'bank_id' => $bank->id,
                         'name' => $request->name,
@@ -137,7 +135,8 @@ class BankTransactionController extends Controller
                         'name' => $request->name,
                         'date' => $request->date,
                         'amount' => $request->amount,
-                        'type' => 1,
+                        'type' => $request->type,
+                        'user_id' => auth()->user()->id,
                         'image' => $data['image'] ?? null // Use null if image is not set
                     ]);
                     break;
@@ -217,7 +216,8 @@ class BankTransactionController extends Controller
                         'name' => $request->name,
                         'amount' => $request->amount,
                         'date' => $request->date,
-                        'type' => 1,
+                        'type' => $request->type,
+                        'user_id' => auth()->user()->id,
                         'image' => $data['image'] ?? null
                     ]);
     
@@ -332,8 +332,8 @@ class BankTransactionController extends Controller
 
             $transaction->amount = $newAmount;
             $transaction->date = $request->date;
+            $transaction->type = $request->type;
             $transaction->save();
-
             $bank->save();
             if ($transBank) {
                 $transBank->save();
@@ -353,10 +353,42 @@ class BankTransactionController extends Controller
 
     public function destroy($id)
     {
-        $shipment = BankTrnsaction::findOrFail($id);
+        $transaction = BankTrnsaction::findOrFail($id);
 
-        $shipment->delete();
+        DB::beginTransaction();
 
-        return response()->json(['staus' => true, 'msg' => __('alerts.deleted_successfully')], 200);
+        try {
+            // حذف سداد شركة من شاشة البنك يجب أن يرجع الأثر على كشف الشركة
+            if ((int) $transaction->type === 0 && !is_null($transaction->company_id)) {
+                $bank = Bank::find($transaction->bank_id);
+                if ($bank) {
+                    $bank->amount = ($bank->amount ?? 0) + (float) $transaction->amount;
+                    $bank->save();
+                }
+
+                $relatedPaymentsCount = InvoicePayment::where('bank_transaction_id', $transaction->id)->count();
+
+                if ($relatedPaymentsCount > 0) {
+                    // حذف السداد المرتبط من invoice_payments ليعود كمبلغ مستحق
+                    InvoicePayment::where('bank_transaction_id', $transaction->id)->delete();
+                } elseif (!is_null($transaction->company_id) && str_contains((string) $transaction->name, 'سداد الرصيد الافتتاحي')) {
+                    // سداد رصيد افتتاحي: إرجاع الرصيد الافتتاحي مرة أخرى
+                    $company = Company::find($transaction->company_id);
+                    if ($company) {
+                        $company->opening_balance = ($company->opening_balance ?? 0) + (float) $transaction->amount;
+                        $company->save();
+                    }
+                }
+            }
+
+            $transaction->delete();
+
+            DB::commit();
+
+            return response()->json(['staus' => true, 'msg' => __('alerts.deleted_successfully')], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['staus' => false, 'msg' => $e->getMessage()], 500);
+        }
     }
 }

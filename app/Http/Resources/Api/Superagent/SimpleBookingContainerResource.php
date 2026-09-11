@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Api\Superagent;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Api\Superagent\AgentResource;
 
 class SimpleBookingContainerResource extends JsonResource
 {

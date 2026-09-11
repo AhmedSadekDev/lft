@@ -78,12 +78,30 @@
             <!--begin::Select -->
             <div class="form-group">
                 {!! Form::label('taxed_input', __('admin.taxed_status')) !!}
-                {!! Form::select('taxed', [0 => __('admin.no'), 1 => __('admin.yes')], old('taxed'), [
+                {!! Form::select('taxed', [0 => __('admin.no'), 1 => __('admin.yes')], old('taxed', isset($company) ? $company->taxed : null), [
                     'id' => 'add_vat_input',
                     'class' => 'form-control',
                     'placeholder' => __('admin.taxed_status'),
                 ]) !!}
                 @error('taxed')
+                    <span class="form-text text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <!--end::Select-->
+        </div>
+        <!-- For loop this div -->
+
+        <!-- For loop this div -->
+        <div class="col-md-6 col-sm-12" id="private_company_wrapper" style="display: none;">
+            <!--begin::Select -->
+            <div class="form-group">
+                {!! Form::label('private_company_input', 'الشركة الخاصة') !!}
+                {!! Form::select('private_company_id', $privateCompanies ?? [], old('private_company_id', isset($company) ? $company->private_company_id : null), [
+                    'id' => 'private_company_input',
+                    'class' => 'form-control',
+                    'placeholder' => 'اختر الشركة الخاصة',
+                ]) !!}
+                @error('private_company_id')
                     <span class="form-text text-danger">{{ $message }}</span>
                 @enderror
             </div>
@@ -101,6 +119,24 @@
                     'placeholder' => __('admin.phone'),
                 ]) !!}
                 @error('phone')
+                    <small class="aleart text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
+        <!-- For loop this div -->
+
+        <!-- For loop this div -->
+        <div class="col-md-6 col-sm-12">
+            <div class="form-group">
+                {!! Form::label('input_opening_balance', 'الرصيد الافتتاحي') !!}
+                {!! Form::number('opening_balance', old('opening_balance', isset($company) ? $company->opening_balance : null), [
+                    'class' => 'form-control',
+                    'id' => 'input_opening_balance',
+                    'placeholder' => 'الرصيد الافتتاحي',
+                    'step' => '0.01',
+                    'min' => '0',
+                ]) !!}
+                @error('opening_balance')
                     <small class="aleart text-danger">{{ $message }}</small>
                 @enderror
             </div>
@@ -159,3 +195,28 @@
 </form>
 {!! Form::close() !!}
 <!-- /.card-body -->
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        // Function to toggle private company select visibility
+        function togglePrivateCompanySelect() {
+            var taxedValue = $('#add_vat_input').val();
+            if (taxedValue == '1') {
+                $('#private_company_wrapper').slideDown();
+            } else {
+                $('#private_company_wrapper').slideUp();
+                $('#private_company_input').val('');
+            }
+        }
+
+        // Check on page load
+        togglePrivateCompanySelect();
+
+        // Listen for changes
+        $('#add_vat_input').on('change', function() {
+            togglePrivateCompanySelect();
+        });
+    });
+</script>
+@endpush

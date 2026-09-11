@@ -15,6 +15,7 @@ use App\Imports\AdminsImport;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TransportationsImport;
+use App\Exports\CompanyTransportationExport;
 
 class CompanyTransportationController extends Controller
 {
@@ -160,5 +161,21 @@ class CompanyTransportationController extends Controller
     {
         Excel::import(new TransportationsImport(), $request->file);
         return redirect()->back()->with(['success' => __('alerts.added_successfully')]);
+    }
+
+    /**
+     * Export company transportations to Excel
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function export(Request $request)
+    {
+        $companyId = $request->get('company_id');
+        $fileName = $companyId
+            ? 'transportations_' . Company::find($companyId)?->name . '.xlsx'
+            : 'transportations.xlsx';
+
+        return Excel::download(new CompanyTransportationExport($companyId), $fileName);
     }
 }

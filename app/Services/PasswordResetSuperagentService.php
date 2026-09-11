@@ -26,22 +26,25 @@ Class PasswordResetSuperagentService{
             return new OtpResource($otp);
         }
 
-        abort(response()->json(__('auth.invalid_email'), 404));
+        abort(404, __('auth.invalid_email'));
     }
 
     public function verifyOtp($request)
     {
         $superagent = Superagent::whereEmail($request->email)->first();
 
+        if (!$superagent) {
+            abort(404, __('alerts.failed'));
+        }
+
         $verificationCode = OTP::where('superagent_id', $superagent->id)->where('otp', $request->otp)->first();
         $now = Carbon::now();
 
         if($verificationCode && $now->isAfter($verificationCode->expire_at)){
-            abort(response()->json(__('auth.expired_otp'), 404));
+            abort(404, __('auth.expired_otp'));
         }
 
-
-        if($superagent && $verificationCode){
+        if($verificationCode){
             // Expire The OTP
             $verificationCode->update([
                 'expire_at' => Carbon::now()
@@ -49,7 +52,8 @@ Class PasswordResetSuperagentService{
 
             return response()->json([ 'message' => __('auth.verified')], 200);
         }
-        abort(response()->json(__('alerts.failed'), 404));
+
+        abort(404, __('alerts.failed'));
     }
 
     public function resetPassword($request){

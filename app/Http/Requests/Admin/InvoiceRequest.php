@@ -33,7 +33,7 @@ class InvoiceRequest extends FormRequest
         return [
             'value_added_tax' => 'required|numeric|between:0,100.00',
             'sales_tax' => 'required|numeric|between:0,100.00',
-            'discount' => 'required|numeric|between:0,100.00'
+            'discount' => 'required|numeric'
         ];
     }
 

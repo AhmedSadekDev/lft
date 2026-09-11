@@ -35,7 +35,8 @@
 <!-- =================== \CDNs =================== -->
 <script>
     $(document).ready(function() {
-        $('table').DataTable({
+        // تهيئة DataTable على جميع الجداول ما عدا التي تحتوي على class no-datatable
+        $('table:not(.no-datatable)').DataTable({
             "order": [
                 [0, 'desc']
             ],
