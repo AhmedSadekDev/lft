@@ -36,28 +36,15 @@ class BookingContainerActionController extends Controller
 
             $booking_container_ids =  $booking->bookingContainers()->where("booking_containers.status", 0)->pluck("id")->toArray();
 
-            $now = now();
-            $booking->bookingContainers()->where("booking_containers.status", 0)->update([
-                "status" => 1,
-                "specification_completed_at" => $now
-            ]);
-
-            // يظل المندوب معيناً حتى اعتماد المسؤول
-            BookingContainerAgent::whereIn("booking_container_id", $booking_container_ids)->update([
-                "booking_container_status" => 1,
-                "specification_completed_at" => $now
-            ]);
-
-            $dailyContainers = DailyBookingContainer::whereIn("booking_container_id", $booking_container_ids);
-
-            foreach ($dailyContainers->get() as $dailyContainer) {
-
-                $dailyContainer->update([
-                    "booking_container_status" => 1
-                ]);
-            }
-
-
+            $changed = \Illuminate\Support\Facades\DB::transaction(function () use ($booking_container_ids, $agent) {
+                $changed = false;
+                sort($booking_container_ids);
+                foreach ($booking_container_ids as $id) {
+                    $changed = app(\App\Services\ContainerStageService::class)->complete($id, 0, $agent->id) || $changed;
+                }
+                return $changed;
+            });
+            if (!$changed) { return $this->returnSuccessMessage(__('alerts.success')); }
 
             $title = __('new_notification');
             $text = __('booking_specification', [
@@ -97,7 +84,7 @@ class BookingContainerActionController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -108,27 +95,12 @@ class BookingContainerActionController extends Controller
             $agent = auth()->guard("agent")->user();
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
-            $now = now();
-            $booking_container->update([
-                "status" => 2,
-                "loading_completed_at" => $now
-            ]);
-
-            // يظل المندوب معيناً للحاوية حتى يعتمد المسؤول التحميل (Approve)
-            BookingContainerAgent::where("booking_container_id", $booking_container->id)->update([
-                "booking_container_status" => 2,
-                "loading_completed_at" => $now
-            ]);
-
-            $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
-
-            foreach ($dailyContainers->get() as $dailyContainer) {
-                $dailyContainer->update([
-                    "booking_container_status" => 2
-                ]);
+            if (!app(\App\Services\ContainerStageService::class)->complete($booking_container->id, 1, $agent->id)) {
+                return $this->returnAllData((new BookingContainerResource($booking_container))->forStage(1), __('alerts.success'));
             }
+            $booking_container->refresh();
 
-            $data = new BookingContainerResource($booking_container);
+            $data = (new BookingContainerResource($booking_container))->forStage(1);
 
             $title = __('new_notification');
             $text = __('container_loaded', [
@@ -177,7 +149,7 @@ class BookingContainerActionController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -188,27 +160,12 @@ class BookingContainerActionController extends Controller
             $agent = auth()->guard("agent")->user();
             $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
 
-            $now = now();
-            $booking_container->update([
-                "status" => 3,
-                "unloading_completed_at" => $now
-            ]);
-
-            // يظل المندوب معيناً للحاوية حتى يعتمد المسؤول التعتيق (Approve)
-            BookingContainerAgent::where("booking_container_id", $booking_container->id)->update([
-                "booking_container_status" => 3,
-                "unloading_completed_at" => $now
-            ]);
-
-            $dailyContainers = DailyBookingContainer::where("booking_container_id", $booking_container->id);
-
-            foreach ($dailyContainers->get() as $dailyContainer) {
-                $dailyContainer->update([
-                    "booking_container_status" => 3
-                ]);
+            if (!app(\App\Services\ContainerStageService::class)->complete($booking_container->id, 2, $agent->id)) {
+                return $this->returnAllData((new BookingContainerResource($booking_container))->forStage(2), __('alerts.success'));
             }
+            $booking_container->refresh();
 
-            $data = new BookingContainerResource($booking_container);
+            $data = (new BookingContainerResource($booking_container))->forStage(2);
 
             $title = __('new_notification');
             $text = __('container_unloaded', [
@@ -257,7 +214,7 @@ class BookingContainerActionController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
     public function send_notes(NoteRequest $request)
@@ -301,7 +258,7 @@ class BookingContainerActionController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 

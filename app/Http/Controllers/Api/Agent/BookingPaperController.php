@@ -30,12 +30,18 @@ class BookingPaperController extends Controller
         try {
             return DB::transaction(function () use ($request) {
                 $booking = Booking::whereId($request->booking_id)->firstOrFail();
+                $containers = $booking->bookingContainers()->orderBy('id')->lockForUpdate()->get();
+                foreach ($containers as $container) {
+                    app(\App\Services\ContainerStageService::class)->assertAssigned($container, 0, auth('agent')->id());
+                    abort_if($container->status >= 1, 409, 'Specification operational data is already completed');
+                }
+
 
                 $booking->update([
                     'yard_id' => $request->yard_id,
                 ]);
 
-                foreach ($booking->bookingContainers as $container) {
+                foreach ($containers as $container) {
                     $container->update([
                         'yard_id' => $request->yard_id,
                     ]);
@@ -66,6 +72,8 @@ class BookingPaperController extends Controller
 
                 return $this->returnSuccessMessage(__('alerts.success'));
             });
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e) {
+            return $this->returnError($e->getStatusCode(), $e->getMessage());
         } catch (\RuntimeException $e) {
             return $this->returnError(422, $e->getMessage());
         } catch (\Exception $e) {
@@ -81,7 +89,12 @@ class BookingPaperController extends Controller
 
         try {
             return DB::transaction(function () use ($request) {
-                $booking_container = BookingContainer::whereId($request->booking_container_id)->firstOrFail();
+                $booking_container = BookingContainer::lockForUpdate()->findOrFail($request->booking_container_id);
+                $service = app(\App\Services\ContainerStageService::class);
+                $service->assertAssigned($booking_container, 1, auth('agent')->id());
+                $service->assertAvailable($booking_container, 1);
+                abort_if($booking_container->status >= 2, 409, 'Operational data is locked after completion; late receipts use the expenses endpoint');
+
 
                 $booking_container->update([
                     'container_no' => $request->container_number,
@@ -96,6 +109,8 @@ class BookingPaperController extends Controller
                     __('alerts.success')
                 );
             });
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e) {
+            return $this->returnError($e->getStatusCode(), $e->getMessage());
         } catch (\RuntimeException $e) {
             return $this->returnError(422, $e->getMessage());
         } catch (\Exception $e) {
@@ -111,7 +126,12 @@ class BookingPaperController extends Controller
 
         try {
             return DB::transaction(function () use ($request) {
-                $booking_container = BookingContainer::whereId($request->booking_container_id)->firstOrFail();
+                $booking_container = BookingContainer::lockForUpdate()->findOrFail($request->booking_container_id);
+                $service = app(\App\Services\ContainerStageService::class);
+                $service->assertAssigned($booking_container, 2, auth('agent')->id());
+                $service->assertAvailable($booking_container, 2);
+                abort_if($booking_container->status >= 3, 409, 'Operational data is locked after completion; late receipts use the expenses endpoint');
+
 
                 $booking_container->update([
                     'sail_of_number' => $request->sail_of_number,
@@ -126,6 +146,8 @@ class BookingPaperController extends Controller
                     __('alerts.success')
                 );
             });
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e) {
+            return $this->returnError($e->getStatusCode(), $e->getMessage());
         } catch (\RuntimeException $e) {
             return $this->returnError(422, $e->getMessage());
         } catch (\Exception $e) {
@@ -141,7 +163,13 @@ class BookingPaperController extends Controller
 
         try {
             return DB::transaction(function () use ($request) {
-                $booking_container = BookingContainer::whereId($request->booking_container_id)->firstOrFail();
+                $request->validate(['type_id' => 'required|integer|in:1,2']);
+                $booking_container = BookingContainer::lockForUpdate()->findOrFail($request->booking_container_id);
+                $service = app(\App\Services\ContainerStageService::class);
+                $service->assertAssigned($booking_container, (int) $request->type_id, auth('agent')->id());
+                $service->assertAvailable($booking_container, (int) $request->type_id);
+                abort_if($booking_container->status >= (int) $request->type_id + 1, 409, 'Operational data is already completed');
+
 
                 if ($request->hasFile('images') || $request->has('images')) {
                     if (! $request->hasFile('images')) {
@@ -174,6 +202,8 @@ class BookingPaperController extends Controller
                     __('alerts.success')
                 );
             });
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e) {
+            return $this->returnError($e->getStatusCode(), $e->getMessage());
         } catch (\RuntimeException $e) {
             return $this->returnError(422, $e->getMessage());
         } catch (\Exception $e) {
@@ -188,11 +218,13 @@ class BookingPaperController extends Controller
         }
 
         BookingPaper::where([
-            'booking_id' => $booking_container->booking_id,
+            'booking_container_id' => $booking_container->id,
             'type' => $type,
+            'agent_id' => auth('agent')->id(),
         ])->delete();
 
         $paper = BookingPaper::create([
+            'agent_id' => auth('agent')->id(),
             'booking_container_id' => $booking_container->id,
             'booking_id' => $booking_container->booking_id,
             'type' => $type,

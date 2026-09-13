@@ -10,7 +10,13 @@
         
         
             {!! Form::model($container, ['url' => route('booking_containers_agents.update', $container->id), 'method' => 'POST', 'enctype' => 'multipart/form-data', 'files' => true]) !!}
+                <input type="hidden" name="type_id" value="{{ $stageType }}">
                 <div class="card-body">
+                    <div class="mb-4">
+                        @foreach([0 => 'التخصيص', 1 => 'التحميل', 2 => 'التعتيق'] as $type => $label)
+                            <a class="btn {{ $stageType === $type ? 'btn-primary' : 'btn-light' }}" href="{{ request()->url() }}?type_id={{ $type }}">{{ $label }}</a>
+                        @endforeach
+                    </div>
                     <div class="row">
                         <!-- For loop this div -->
                         <div class="col-sm-12">

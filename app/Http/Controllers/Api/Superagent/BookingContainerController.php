@@ -115,7 +115,7 @@ class BookingContainerController extends Controller
             return $this->returnAllData($data, __('alerts.success'));
 
         } catch (\Throwable $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -151,7 +151,7 @@ class BookingContainerController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -181,7 +181,7 @@ class BookingContainerController extends Controller
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -214,36 +214,7 @@ class BookingContainerController extends Controller
                 $query->whereIn('id', $containerIds);
             }
 
-            $now = now();
-            $query->update([
-                'is_in_loading' => $toLoading ? 1 : 0,
-                'moved_to_loading_at' => $toLoading ? $now : null,
-            ]);
-
-            // Update daily containers and agents if exist
-            if (!empty($containerIds)) {
-                \App\Models\DailyBookingContainer::whereIn('booking_container_id', $containerIds)->update([
-                    'is_in_loading' => $toLoading ? 1 : 0,
-                    'moved_to_loading_at' => $toLoading ? $now : null,
-                ]);
-                \App\Models\BookingContainerAgent::whereIn('booking_container_id', $containerIds)->update([
-                    'is_in_loading' => $toLoading ? 1 : 0,
-                    'moved_to_loading_at' => $toLoading ? $now : null,
-                ]);
-            }
-            if (!empty($bookingIds)) {
-                $allContainers = BookingContainer::whereIn('booking_id', $bookingIds)->pluck('id')->toArray();
-                if (!empty($allContainers)) {
-                    \App\Models\DailyBookingContainer::whereIn('booking_container_id', $allContainers)->update([
-                        'is_in_loading' => $toLoading ? 1 : 0,
-                        'moved_to_loading_at' => $toLoading ? $now : null,
-                    ]);
-                    \App\Models\BookingContainerAgent::whereIn('booking_container_id', $allContainers)->update([
-                        'is_in_loading' => $toLoading ? 1 : 0,
-                        'moved_to_loading_at' => $toLoading ? $now : null,
-                    ]);
-                }
-            }
+            app(\App\Services\ContainerStageService::class)->moveToLoading($query->pluck('id')->all(), $toLoading);
 
             $message = $toLoading 
                 ? 'تم نقل الطلبات المحددة إلى قائمة التحميل بنجاح' 
@@ -251,7 +222,7 @@ class BookingContainerController extends Controller
 
             return $this->returnResponseSuccessMessage($message);
         } catch (\Exception $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -278,7 +249,7 @@ class BookingContainerController extends Controller
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -305,7 +276,7 @@ class BookingContainerController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -364,7 +335,7 @@ class BookingContainerController extends Controller
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 }

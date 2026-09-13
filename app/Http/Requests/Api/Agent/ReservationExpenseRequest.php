@@ -25,14 +25,14 @@ class ReservationExpenseRequest extends FormRequest
     public function rules()
     {
         return [
-            'value'     => 'required|numeric', 
+            'value'     => 'required|numeric|min:0.01',
             'booking_id'  => 'required|exists:bookings,id',
             // 'service_category_id'  => 'required|exists:service_categories,id',
             'service_id'  => 'required|exists:services,id',
             'notes'     => 'sometimes',
             'image'         => 'sometimes|mimes:png,jpg,jpeg|max:10000',
             'booking_container_id' => 'required|exists:booking_containers,id',
-            'type_id' => 'required'
+            'type_id' => 'required|integer|in:0,1,2'
 
         ];
     }

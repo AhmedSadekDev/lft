@@ -49,51 +49,9 @@ class ExpenseController extends Controller
     public function destroy($id)
     {
         try {
-            $expense = AgentExpense::with(['delivery_policy.money_transfer', 'agent'])->findOrFail($id);
-
-            DB::beginTransaction();
-
-            // إذا كان المصروف مرتبط بعهدة، إرجاع القيمة للعهدة
-            if ($expense->delivery_policy_id && $expense->delivery_policy) {
-                $deliveryPolicy = $expense->delivery_policy;
-
-                // التحقق من أن العهدة لم يتم تسويتها
-                if ($deliveryPolicy->is_settled == 1) {
-                    DB::rollBack();
-                    if (request()->ajax() || request()->wantsJson()) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => __('main.delivery_policy is settled')
-                        ], 400);
-                    }
-                    return back()->with('error', __('main.delivery_policy is settled'));
-                }
-
-                // إرجاع القيمة للعهدة عن طريق زيادة قيمة money_transfer
-                if ($deliveryPolicy->money_transfer) {
-                    $moneyTransfer = $deliveryPolicy->money_transfer;
-                    $moneyTransfer->update([
-                        'value' => $moneyTransfer->value + $expense->value
-                    ]);
-                }
-            } else {
-                // إذا لم يكن مرتبط بعهدة، إرجاع القيمة للمحفظة
-                if ($expense->agent) {
-                    $expense->agent->update(['wallet' => $expense->agent->wallet + $expense->value]);
-                }
-            }
-
-            // delete image file if exists
-            if ($expense->image_agent_expenses) {
-                $path = public_path('Admin/images/expenses/' . $expense->image_agent_expenses);
-                if (file_exists($path)) {
-                    @unlink($path);
-                }
-            }
-
-            $expense->delete();
-
-            DB::commit();
+            request()->validate(['version' => 'required|integer|min:1']);
+            $expense = AgentExpense::findOrFail($id);
+            app(\App\Services\StageExpenseService::class)->change((int) $expense->agent_id, $expense->id, (int) request('version'), null, null, true);
 
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json([

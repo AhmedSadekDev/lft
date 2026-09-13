@@ -63,22 +63,30 @@ class AgentController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : ($ex instanceof \Illuminate\Validation\ValidationException ? 422 : 500), $ex->getMessage());
         }
     }
 
     public function assign_agents(Request $request)
     {
         try {
+            $request->validate(['type_id' => 'sometimes|integer|in:0,1,2', 'agent_ids' => 'present|array', 'agent_ids.*' => 'required|integer|exists:agents,id']);
             $superagent = auth()->guard("superagent")->user();
 
-            // Get booking_container_ids as array
-            $booking_container_ids = is_array($request->booking_container_id)
-                ? $request->booking_container_id
-                : [$request->booking_container_id];
-
-            // Get all booking containers
-            $booking_containers = BookingContainer::whereIn('booking_id', $booking_container_ids)->get();
+            $request->validate([
+                'booking_container_ids' => 'sometimes|array|min:1',
+                'booking_container_ids.*' => 'required|integer|exists:booking_containers,id',
+                'booking_ids' => 'sometimes|array|min:1',
+                'booking_ids.*' => 'required|integer|exists:bookings,id',
+            ]);
+            // Keep the historical singular parameter's booking-id meaning; new clients use explicit arrays.
+            if ($request->has('booking_container_ids')) {
+                $booking_containers = BookingContainer::whereIn('id', $request->booking_container_ids)->orderBy('id')->get();
+            } else {
+                $ids = $request->input('booking_ids', $request->booking_container_id);
+                $ids = is_array($ids) ? $ids : [$ids];
+                $booking_containers = BookingContainer::whereIn('booking_id', $ids)->orderBy('id')->get();
+            }
 
             if ($booking_containers->isEmpty()) {
                 return $this->returnError(404, __('Booking container not found'));
@@ -91,30 +99,18 @@ class AgentController extends Controller
 
             $processed_containers = [];
 
-            // Process each booking container
-            foreach ($booking_containers as $booking_container) {
-                // Delete existing records for the given booking container
-                BookingContainerAgent::where('booking_container_id', $booking_container->id)->delete();
-
-                // Re-create BookingContainerAgent records
-                if (count($agent_ids)) {
-                    foreach ($agent_ids as $agentId) {
-                        BookingContainerAgent::create([
-                            'booking_container_id' => $booking_container->id,
-                            'agent_id' => $agentId,
-                            'booking_container_status' => $booking_container->status,
-                            'superagent_specification_approved' => $booking_container->superagent_specification_approved,
-                            'superagent_loading_approved' => $booking_container->superagent_loading_approved,
-                            'superagent_unloading_approved' => $booking_container->superagent_unloading_approved,
-                        ]);
-                    }
+            $assignmentTypes = DB::transaction(function () use ($booking_containers, $agent_ids, $request) {
+                $types = [];
+                foreach ($booking_containers as $container) {
+                    $types[$container->id] = app(\App\Services\ContainerStageService::class)->assign(
+                        $container->id, $agent_ids, $request->filled('type_id') ? (int) $request->type_id : null
+                    );
                 }
-
-                // Refresh to get updated agents relationship
-                $booking_container->refresh();
-
-                // Load agents relationship with pivot
-                $booking_container->load('agents');
+                return $types;
+            });
+            foreach ($booking_containers as $booking_container) {
+                $assignmentType = $assignmentTypes[$booking_container->id];
+                $booking_container->load(['agents' => fn ($q) => $q->where('booking_container_agents.stage_type', $assignmentType)]);
 
                 // Notify each agent
                 foreach ($booking_container->agents as $agent) {
@@ -124,8 +120,8 @@ class AgentController extends Controller
                         'agent' => $agent->name
                     ]);
 
-                    $notificationTypeId = $this->getContainerNotificationTypeId($booking_container);
-                    $notificationType = $this->getContainerNotificationType($booking_container);
+                    $notificationTypeId = $assignmentType;
+                    $notificationType = \App\Services\ContainerStageService::NAMES[$assignmentType];
 
                     SaveNotification::create(
                         $title,
@@ -159,7 +155,7 @@ class AgentController extends Controller
             // Response
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : ($ex instanceof \Illuminate\Validation\ValidationException ? 422 : 500), $ex->getMessage());
         }
     }
     public function assign_specification_booking(BookingAgentRequest $request)
@@ -192,8 +188,7 @@ class AgentController extends Controller
                 $booking_containers = $booking->bookingContainers()->where("booking_containers.status", 0)->get();
 
                 foreach ($booking_containers as $booking_container) {
-                    $booking_container->agents()->wherePivot('booking_container_status', '=', $booking_container->status)->detach($agent_ids);
-                    $booking_container->agents()->attach($agent_ids, ["booking_container_status" => $booking_container->status]);
+                    app(\App\Services\ContainerStageService::class)->assign($booking_container->id, $agent_ids, 0);
                 }
             }
 
@@ -240,7 +235,7 @@ class AgentController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : ($ex instanceof \Illuminate\Validation\ValidationException ? 422 : 500), $ex->getMessage());
         }
     }
 
@@ -270,34 +265,17 @@ class AgentController extends Controller
         $message = '';
 
         if ($request->type_id == 0) {
-            $now = now();
-            foreach ($container->booking->bookingContainers as $con) {
-
-                $con->update([
-                    'superagent_specification_approved'   => 1,
-                    'specification_approved_at' => $now,
-                    'status' => 1
-                ]);
-            }
-
-            $containerIds = $container->booking->bookingContainers->pluck('id')->toArray();
-            $bookingContainerAgents = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->get();
-            $bookingContainerDaily = DailyBookingContainer::whereIn('booking_container_id', $containerIds)->get();
-
-            // تحديث تعيين المندوب وتسجيل وقت الاعتماد ليظل ظاهراً لمدة 24 ساعة
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
-            BookingContainerAgent::whereIn('booking_container_id', $containerIds)->update([
-                'superagent_specification_approved' => 1,
-                'specification_approved_at' => $now,
-                'booking_container_status' => 1
-            ]);
-
-            foreach ($bookingContainerDaily as $item) {
-                $item->update([
-                    'booking_container_status' => 1,
-                    'superagent_specification_approved'   => 1,
-                ]);
-            }
+            $containerIds = $container->booking->bookingContainers->pluck('id')->sort()->values()->all();
+            $stageService = app(\App\Services\ContainerStageService::class);
+            $agentIds = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->where('stage_type', 0)->pluck('agent_id')->unique()->all();
+            $changed = DB::transaction(function () use ($containerIds, $stageService) {
+                $changed = false;
+                foreach ($containerIds as $id) {
+                    $changed = $stageService->approve($id, 0) || $changed;
+                }
+                return $changed;
+            });
+            if (!$changed) { return $this->returnAllData('', __('alerts.success')); }
             $message = 'تم تخصيص حاويات الطلب ' . $container->booking_id;
 
             // Send Firebase notifications to agents
@@ -331,30 +309,10 @@ class AgentController extends Controller
                 }
             }
         } elseif ($request->type_id == 1) {
-            $now = now();
-            $container->update([
-                'superagent_loading_approved'   => 1,
-                'loading_approved_at' => $now,
-                'status' => 2
-            ]);
-
-            $bookingContainerAgents = BookingContainerAgent::where('booking_container_id', $container->id)->get();
-            $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $container->id)->get();
-
-            // تحديث تعيين المندوب وتسجيل وقت الاعتماد ليظل ظاهراً لمدة 24 ساعة
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
-            BookingContainerAgent::where('booking_container_id', $container->id)->update([
-                'superagent_loading_approved' => 1,
-                'loading_approved_at' => $now,
-                'booking_container_status' => 2
-            ]);
-
-            foreach ($bookingContainerDaily as $item) {
-                $item->update([
-                    'booking_container_status' => 2,
-                    'superagent_loading_approved' => 1
-                ]);
-            }
+            $stageService = app(\App\Services\ContainerStageService::class);
+            $agentIds = $stageService->assignments($container->id, 1)->pluck('agent_id')->unique()->all();
+            if (!$stageService->approve($container->id, 1)) { return $this->returnAllData('', __('alerts.success')); }
+            $container->refresh();
             $message = 'تم تحميل حاوية رقم ' . $container->container_no;
 
             // Send Firebase notifications to agents
@@ -388,31 +346,10 @@ class AgentController extends Controller
                 }
             }
         } elseif ($request->type_id == 2) {
-            $now = now();
-            $container->update([
-                'superagent_unloading_approved'   => 1,
-                'unloading_approved_at' => $now,
-                'status' => 3
-            ]);
-
-            $bookingContainerAgents = BookingContainerAgent::where('booking_container_id', $container->id)->get();
-            $bookingContainerDaily = DailyBookingContainer::where('booking_container_id', $container->id)->get();
-
-            // تحديث تعيين المندوب وتسجيل وقت الاعتماد ليظل ظاهراً لمدة 24 ساعة
-            $agentIds = $bookingContainerAgents->pluck('agent_id')->unique()->toArray();
-            BookingContainerAgent::where('booking_container_id', $container->id)->update([
-                'superagent_unloading_approved' => 1,
-                'unloading_approved_at' => $now,
-                'booking_container_status' => 3
-            ]);
-
-            foreach ($bookingContainerDaily as $item) {
-                $item->update([
-                    'booking_container_status' => 3,
-                    'superagent_unloading_approved' => 1
-                ]);
-            }
-
+            $stageService = app(\App\Services\ContainerStageService::class);
+            $agentIds = $stageService->assignments($container->id, 2)->pluck('agent_id')->unique()->all();
+            if (!$stageService->approve($container->id, 2)) { return $this->returnAllData('', __('alerts.success')); }
+            $container->refresh();
             $message = 'تم تعتيق حاوية رقم ' . $container->container_no;
 
             // Send Firebase notifications to agents
@@ -528,47 +465,7 @@ class AgentController extends Controller
 
         $container =  BookingContainer::find($request->booking_container_id);
 
-        // update the container status
-        if ($container->status == 1) {
-            $container->update([
-                'status'  => 0
-            ]);
-        } elseif ($container->status == 2) {
-            $container->update([
-                'status'  => 1
-            ]);
-        }
-
-        // update the container at the agent status
-        $agentContainer = BookingContainerAgent::where("booking_container_id", $request->booking_container_id)->first();
-
-        if ($agentContainer) {
-            if ($agentContainer->booking_container_status == 1) {
-                $agentContainer->update([
-                    'booking_container_status'  => 0
-                ]);
-            } elseif ($agentContainer->booking_container_status == 2) {
-                $agentContainer->update([
-                    'booking_container_status'  => 1
-                ]);
-            }
-        }
-
-        // update the daily container at the super agent
-        $dailyContainer = DailyBookingContainer::where("booking_container_id", $request->booking_container_id)->first();
-
-        if ($dailyContainer) {
-            if ($dailyContainer->booking_container_status == 1) {
-                $dailyContainer->update([
-                    'booking_container_status'  => 0
-                ]);
-            } elseif ($dailyContainer->booking_container_status == 2) {
-                $dailyContainer->update([
-                    'booking_container_status'  => 1
-                ]);
-            }
-        }
-
+        app(\App\Services\ContainerStageService::class)->rewind($container->id, (int) $container->status - 1);
 
         return $this->returnAllData('', __('alerts.success'));
     }

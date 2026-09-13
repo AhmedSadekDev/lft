@@ -39,6 +39,10 @@ Route::group(['middleware' => 'localization'], function () {
 
     Route::group(['middleware' => 'auth:superagent'], function () {
 
+        Route::get('booking/stage_receipts', [\App\Http\Controllers\Api\Superagent\ContainerStageController::class, 'receipts']);
+        Route::get('booking/pending_stage_receipts', [\App\Http\Controllers\Api\Superagent\ContainerStageController::class, 'pending']);
+        Route::post('booking/close_stage_receipts', [\App\Http\Controllers\Api\Superagent\ContainerStageController::class, 'close']);
+
         //agent expensess-approve
         Route::post('container-step-approve', [AgentController::class, 'approve']);
         Route::get('containers-expenses', [AgentController::class, 'expenses']);

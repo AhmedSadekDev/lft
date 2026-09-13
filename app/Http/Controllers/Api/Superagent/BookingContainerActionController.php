@@ -42,7 +42,7 @@ class BookingContainerActionController extends Controller
                 __('alerts.success')
             );
         } catch (\Exception $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -51,10 +51,7 @@ class BookingContainerActionController extends Controller
     {
         try {
 
-            BookingContainer::whereId($request->booking_container_id)
-                ->update([
-                    'status' => 2
-                ]);
+            app(\App\Services\ContainerStageService::class)->complete((int) $request->booking_container_id, 1);
 
             $data = BookingContainerResource::collection(
                 BookingContainer::whereId($request->booking_container_id)->get()
@@ -62,7 +59,7 @@ class BookingContainerActionController extends Controller
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -71,10 +68,7 @@ class BookingContainerActionController extends Controller
     {
         try {
 
-            BookingContainer::whereId($request->booking_container_id)
-                ->update([
-                    'status' => 3
-                ]);
+            app(\App\Services\ContainerStageService::class)->complete((int) $request->booking_container_id, 2);
 
             $data = BookingContainerResource::collection(
                 BookingContainer::whereId($request->booking_container_id)->get()
@@ -82,7 +76,7 @@ class BookingContainerActionController extends Controller
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -135,7 +129,7 @@ class BookingContainerActionController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -175,7 +169,7 @@ class BookingContainerActionController extends Controller
 
             return $this->returnAllData($response, __('alerts.success'));
         } catch (\Exception $ex) {
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 
@@ -203,7 +197,7 @@ class BookingContainerActionController extends Controller
         } catch (\Exception $ex) {
 
 
-            return $this->returnError(500, $ex->getMessage());
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
 }

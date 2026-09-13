@@ -44,7 +44,7 @@
                             <td>{{ $allExpense->created_at ?? "" }}</td>
                             <td>
                                 <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
-                                    onclick="DeleteExpense('{{ $allExpense->id }}')">
+                                    onclick="DeleteExpense('{{ $allExpense->id }}', '{{ $allExpense->version }}')">
                                     <i class="fas fa-trash text-danger"></i>
                                 </button>
                             </td>
@@ -62,7 +62,7 @@
 @push('js')
     <script>
 
-        function DeleteExpense(id) {
+        function DeleteExpense(id, version) {
             Swal.fire({
                 title: "{{ __('alerts.are_you_sure') }}",
                 text: "{{ __('alerts.not_revert_information') }}",
@@ -83,6 +83,7 @@
                     });
                     $.ajax({
                         url: url,
+                        data: { version: version },
                         type: 'DELETE',
                         method: 'DELETE',
                         success: function(response, textStatus, xhr) {

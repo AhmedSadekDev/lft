@@ -25,41 +25,8 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $cutoff = now()->subHours(24);
-            $agent_booking_containers = $agent->agent_booking_containers()
-                ->where('booking_container_agents.superagent_specification_approved', 1)
-                ->where(function ($q) use ($cutoff) {
-                    $q->where(function ($sub) {
-                        $sub->where('booking_container_agents.is_in_loading', 1)
-                            ->where('booking_container_agents.superagent_loading_approved', 0);
-                    })->orWhere(function ($q2) use ($cutoff) {
-                          $q2->where('booking_container_agents.superagent_loading_approved', 1)
-                             ->where(function ($q3) use ($cutoff) {
-                                 $q3->where('booking_container_agents.loading_approved_at', '>=', $cutoff)
-                                    ->orWhereNull('booking_container_agents.loading_approved_at')
-                                    ->orWhere('booking_container_agents.updated_at', '>=', $cutoff);
-                             });
-                      });
-                })
-                ->get();
-
-            $yards = Yard::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers, $cutoff) {
-                $qc->where('booking_containers.superagent_specification_approved', 1)
-                   ->where(function ($q) use ($cutoff) {
-                       $q->where(function ($sub) {
-                           $sub->where('booking_containers.is_in_loading', 1)
-                               ->where('booking_containers.superagent_loading_approved', 0);
-                       })->orWhere(function ($q2) use ($cutoff) {
-                             $q2->where('booking_containers.superagent_loading_approved', 1)
-                                ->where(function ($q3) use ($cutoff) {
-                                    $q3->where('booking_containers.loading_approved_at', '>=', $cutoff)
-                                       ->orWhereNull('booking_containers.loading_approved_at')
-                                       ->orWhere('booking_containers.updated_at', '>=', $cutoff);
-                                });
-                         });
-                   })
-                   ->whereIn("booking_containers.id", $agent_booking_containers->pluck("id")->toArray());
-            })->orderBy("id", "desc")->get();
+            $ids = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, 1)->pluck('id');
+            $yards = Yard::whereHas('bookingContainers', fn ($q) => $q->whereIn('booking_containers.id', $ids))->orderByDesc('id')->get();
 
             $data = LoadingYardResource::collection($yards);
 
@@ -78,6 +45,7 @@ class BookingContainerAssignmentController extends Controller
             /** @var Agent $agent */
             $cutoff = now()->subHours(24);
             $agent_booking_containers = $agent->agent_booking_containers()
+                ->wherePivot('stage_type', 0)
                 ->where(function ($q) use ($cutoff) {
                     $q->where('booking_container_agents.superagent_specification_approved', 0)
                       ->orWhere(function ($q2) use ($cutoff) {
@@ -127,43 +95,9 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $cutoff = now()->subHours(24);
-            $agent_booking_containers = $agent->agent_booking_containers()
-                ->where('booking_container_agents.superagent_specification_approved', 1)
-                ->where('booking_container_agents.superagent_loading_approved', 1)
-                ->where(function ($q) use ($cutoff) {
-                    $q->where('booking_container_agents.superagent_unloading_approved', 0)
-                      ->orWhere(function ($q2) use ($cutoff) {
-                          $q2->where('booking_container_agents.superagent_unloading_approved', 1)
-                             ->where(function ($q3) use ($cutoff) {
-                                 $q3->where('booking_container_agents.unloading_approved_at', '>=', $cutoff)
-                                    ->orWhereNull('booking_container_agents.unloading_approved_at')
-                                    ->orWhere('booking_container_agents.updated_at', '>=', $cutoff);
-                             });
-                      });
-                })
-                ->get();
+            $ids = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, 2)->pluck('id');
+            $shipping_agents = shippingAgent::whereHas('bookingContainers', fn ($q) => $q->whereIn('booking_containers.id', $ids))->orderByDesc('id')->get();
 
-            // fetch shipping_agents that contain available assignments
-            $shipping_agent_ids = Booking::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers, $cutoff) {
-                $qc->where('booking_containers.superagent_specification_approved', 1)
-                   ->where('booking_containers.superagent_loading_approved', 1)
-                   ->where(function ($query) use ($cutoff) {
-                       $query->where('booking_containers.superagent_unloading_approved', 0)
-                             ->orWhere(function ($q2) use ($cutoff) {
-                                 $q2->where('booking_containers.superagent_unloading_approved', 1)
-                                    ->where(function ($q3) use ($cutoff) {
-                                        $q3->where('booking_containers.unloading_approved_at', '>=', $cutoff)
-                                           ->orWhereNull('booking_containers.unloading_approved_at')
-                                           ->orWhere('booking_containers.updated_at', '>=', $cutoff);
-                                    });
-                             });
-                   })->whereIn("id", $agent_booking_containers->pluck("id")->toArray());
-            })->orderBy("id", "desc")->get()->pluck("shipping_agent_id")->toArray();
-
-            $shipping_agents = shippingAgent::whereIn("id", $shipping_agent_ids)->get();
-
-            //return data
             $data = UnloadingShippingAgentResource::collection($shipping_agents);
 
 
@@ -216,7 +150,7 @@ class BookingContainerAssignmentController extends Controller
             /** @var Agent $agent */
             // get agent_booking_containers
 
-            $agent_booking_containers = $agent->agent_booking_containers()
+            $agent_booking_containers = \App\Models\BookingContainer::whereHas('agents', fn ($q) => $q->where('agents.id', $agent->id))
                 ->whereDoesntHave('delivery_policies')
                 ->get();
 
@@ -236,46 +170,14 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $agent_booking_containers = $agent->booking_containers();
-            $booking_containers = $agent->agent_booking_containers();
-
-            // get agent_booking_containers specification
-            $daily_specification_assignments = $agent_booking_containers->where("booking_container_status", 0); //->count();
-            $finished_specification_assignments_count = $booking_containers->where("booking_containers.id", $daily_specification_assignments->get()->pluck("booking_container_id")->toArray())->where("status", "!=", 0)->count();
-
-            $daily_specification_assignments_count = $daily_specification_assignments->count();
-
-            $specification_assignments = [
-                "daily_specification_assignments_count" => $daily_specification_assignments_count,
-                "finished_specification_assignments_count" => $finished_specification_assignments_count,
-            ];
-            // get agent_booking_containers loading
-            $daily_loading_assignments = $agent_booking_containers->where("booking_container_status", 1);
-            $finished_loading_assignments_count = $booking_containers->where("booking_containers.id", $daily_loading_assignments->get()->pluck("booking_container_id")->toArray())->where("status", "!=", 1)->count();
-
-            $daily_loading_assignments_count = $daily_loading_assignments->count();
-
-            $loading_assignments = [
-                "daily_loading_assignments_count" => $daily_loading_assignments_count,
-                "finished_loading_assignments_count" => $finished_loading_assignments_count,
-            ];
-
-            // get agent_booking_containers unloading
-            $daily_unloading_assignments = $agent_booking_containers->where("booking_container_status", 1);
-            $finished_unloading_assignments_count = $booking_containers->where("booking_containers.id", $daily_unloading_assignments->get()->pluck("booking_container_id")->toArray())->where("status", "!=", 1)->count();
-
-            $daily_unloading_assignments_count = $daily_unloading_assignments->count();
-
-            $unloading_assignments = [
-                "daily_unloading_assignments_count" => $daily_unloading_assignments_count,
-                "finished_unloading_assignments_count" => $finished_unloading_assignments_count,
-            ];
-
-            $data = [
-                "specification_assignments" => (object)$specification_assignments,
-                "loading_assignments" => (object)$loading_assignments,
-                "unloading_assignments" => (object)$unloading_assignments,
-            ];
+            $data = [];
+            foreach (\App\Services\ContainerStageService::NAMES as $type => $name) {
+                $query = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, $type);
+                $data[$name.'_assignments'] = [
+                    'daily_'.$name.'_assignments_count' => (clone $query)->count(),
+                    'finished_'.$name.'_assignments_count' => (clone $query)->where('status', '>=', $type + 1)->count(),
+                ];
+            }
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $Exception) {

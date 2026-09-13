@@ -25,12 +25,12 @@ class GeneralExpenseRequest extends FormRequest
     public function rules()
     {
         return [
-            'value'     => 'required|numeric',
+            'value'     => 'required|numeric|min:0.01',
             // 'service_category_id'  => 'required|exists:service_categories,id',
             'service_id'  => 'required|exists:services,id',
             'notes'     => 'sometimes',
             'booking_container_id' => 'nullable|exists:booking_containers,id',
-            'type_id' => 'nullable'
+            'type_id' => 'required_with:booking_container_id|nullable|integer|in:0,1,2'
         ];
     }
 

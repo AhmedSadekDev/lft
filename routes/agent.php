@@ -138,7 +138,7 @@ Route::group(['middleware' => 'localization'], function () {
     Route::get('fetch_cars', [CarController::class, 'fetch_cars']);
 
     //booking container actions
-    Route::group(['controller' => BookingContainerActionController::class], function () {
+    Route::group(['controller' => BookingContainerActionController::class, 'middleware' => 'auth:agent'], function () {
 
         Route::post("booking/done_specification", "done_specification");
 
@@ -173,7 +173,7 @@ Route::group(['middleware' => 'localization'], function () {
     });
 
     //save booking papers
-    Route::group(['controller' => BookingPaperController::class], function () {
+    Route::group(['controller' => BookingPaperController::class, 'middleware' => 'auth:agent'], function () {
 
         Route::post("booking/save_specification_booking_yard", "save_specification_booking_yard");
         Route::post("booking/save_loading_booking_container", "save_loading_booking_container");

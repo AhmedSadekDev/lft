@@ -18,7 +18,7 @@ class SimpleBookingContainerResource extends JsonResource
             'arrival_date'      => $this->arrival_date,
             "yard_title" => $this?->booking?->yard?->title ?? "",
             "yard_id" => $this?->booking?->yard?->id ?? "",
-            'responsible_agents' => AgentResource::collection($this->agents()->wherePivot('booking_container_status', $this->status)->get())
+            'responsible_agents' => AgentResource::collection($this->agents()->wherePivot('stage_type', $request->filled('type_id') ? (int) $request->type_id : app(\App\Services\ContainerStageService::class)->currentType($this->resource))->get())
         ];
     }
 }

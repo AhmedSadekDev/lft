@@ -14,9 +14,10 @@ class BookingAgentExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'version' => ['required', 'integer', 'min:1'],
             'service_type_id' => ['required', 'exists:service_categories,id'],
             'service_id' => ['required', 'exists:services,id'],
-            'value' => ['required', 'numeric', 'min:0'],
+            'value' => ['required', 'numeric', 'min:0.01'],
             'notes' => ['nullable', 'string'],
             'image' => ['sometimes', 'nullable', 'mimes:png,jpg,jpeg', 'max:5000'],
         ];

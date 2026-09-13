@@ -92,7 +92,7 @@ class Agent extends  Authenticatable implements JWTSubject
     }
     public function getNumberOfBookingsAttribute()
     {
-        $number_of_bookings = count($this->booking_containers()->whereDate("created_at", now())->get());
+        $number_of_bookings = $this->booking_containers()->whereDate("created_at", now())->distinct()->count("booking_container_id");
         return $number_of_bookings;
     }
     public function agent_booking_containers(): BelongsToMany
@@ -100,6 +100,7 @@ class Agent extends  Authenticatable implements JWTSubject
         return $this->belongsToMany(BookingContainer::class, "booking_container_agents", "agent_id", "booking_container_id")
             ->withPivot(
                 "booking_container_status",
+                "stage_type",
                 "superagent_specification_approved",
                 "superagent_loading_approved",
                 "superagent_unloading_approved",

@@ -165,57 +165,17 @@ class BookingContainerController extends Controller
             $validatedData = $request->validated();
             unset($validatedData['factory_id']);
 
-            // Updating the booking_container with validated request data
-            $invoiceTransportationRow = $booking_container->update($validatedData);
-
-            // Fetching related models
-            $bookingAgent = BookingContainerAgent::where('booking_container_id', $booking_container->id)->first();
-            $dailyBooking = DailyBookingContainer::where("booking_container_id", $booking_container->id)->first();
-
-            // Define the updates based on status
-            $containerUpdates = [
-                0 => [
-                    'superagent_specification_approved' => 0,
-                    'superagent_loading_approved' => 0,
-                    'superagent_unloading_approved' => 0,
-                    'booking_container_status' => 0
-                ],
-                1 => [
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 0,
-                    'superagent_unloading_approved' => 0,
-                    'booking_container_status' => 1
-                ],
-                2 => [
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 1,
-                    'superagent_unloading_approved' => 0,
-                    'booking_container_status' => 1
-                ],
-                3 => [
-                    'superagent_specification_approved' => 1,
-                    'superagent_loading_approved' => 1,
-                    'superagent_unloading_approved' => 1,
-                    'booking_container_status' => 1
-                ]
-            ];
-
-            // Get the update data for the current status
-            $statusUpdate = $containerUpdates[$request->status] ?? $containerUpdates[0];
-
-            // Update booking_container, bookingAgent, and dailyBooking
-            $booking_container->update([
-                'superagent_specification_approved' => $statusUpdate['superagent_specification_approved'],
-                'superagent_loading_approved' => $statusUpdate['superagent_loading_approved'],
-                'superagent_unloading_approved' => $statusUpdate['superagent_unloading_approved']
-            ]);
-
-            // Check for null and update only if the model exists
-            if ($bookingAgent) {
-                $bookingAgent->update($statusUpdate);
+            $booking_container = BookingContainer::lockForUpdate()->findOrFail($booking_container->id);
+            $targetStatus = isset($validatedData['status']) ? (int) $validatedData['status'] : (int) $booking_container->status;
+            if ($targetStatus < (int) $booking_container->status) {
+                app(\App\Services\ContainerStageService::class)->rewind($booking_container->id, $targetStatus);
+                $booking_container->refresh();
             }
-            if ($dailyBooking) {
-                $dailyBooking->update($statusUpdate);
+            unset($validatedData['status'], $validatedData['superagent_specification_approved'], $validatedData['superagent_loading_approved'], $validatedData['superagent_unloading_approved']);
+            $oldStatus = (int) $booking_container->status;
+            $booking_container->update($validatedData);
+            for ($type = $oldStatus; $type < $targetStatus; $type++) {
+                app(\App\Services\ContainerStageService::class)->approve($booking_container->id, $type);
             }
 
             DB::commit();

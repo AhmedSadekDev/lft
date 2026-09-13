@@ -9,11 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AgentExpense extends Model
 {
-    use HasFactory, FileAttributes;
+    use HasFactory, FileAttributes, \Illuminate\Database\Eloquent\SoftDeletes;
+
+    public const DELETED_AT = 'voided_at';
 
     const generalExpenses = 1;
     const carExpenses = 2;
     protected $guarded = [];
+
+    protected $attributes = ['version' => 1];
+
+    protected $casts = ['version' => 'integer', 'type_id' => 'integer'];
 
     protected $imageFolder = 'agent_expenses';
 

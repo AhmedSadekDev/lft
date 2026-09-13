@@ -13,45 +13,13 @@ class UnloadingShippingAgentResource extends JsonResource
 
         $agent = auth()->guard('agent')->user();
 
-        $cutoff = now()->subHours(24);
-        $agent_booking_container_ids = $agent->agent_booking_containers()
-            ->wherePivot('superagent_specification_approved', 1)
-            ->wherePivot('superagent_loading_approved', 1)
-            ->where(function ($q) use ($cutoff) {
-                $q->where('booking_container_agents.superagent_unloading_approved', 0)
-                  ->orWhere(function ($q2) use ($cutoff) {
-                      $q2->where('booking_container_agents.superagent_unloading_approved', 1)
-                         ->where(function ($q3) use ($cutoff) {
-                             $q3->where('booking_container_agents.unloading_approved_at', '>=', $cutoff)
-                                ->orWhereNull('booking_container_agents.unloading_approved_at')
-                                ->orWhere('booking_container_agents.updated_at', '>=', $cutoff);
-                         });
-                  });
-            })
-            ->pluck("booking_containers.id")
-            ->toArray();
-
-        $bookingContainers = $this->bookingContainers()
-            ->where('booking_containers.superagent_specification_approved', 1)
-            ->where('booking_containers.superagent_loading_approved', 1)
-            ->where(function ($q) use ($cutoff) {
-                $q->where('booking_containers.superagent_unloading_approved', 0)
-                  ->orWhere(function ($q2) use ($cutoff) {
-                      $q2->where('booking_containers.superagent_unloading_approved', 1)
-                         ->where(function ($q3) use ($cutoff) {
-                             $q3->where('booking_containers.unloading_approved_at', '>=', $cutoff)
-                                ->orWhereNull('booking_containers.unloading_approved_at')
-                                ->orWhere('booking_containers.updated_at', '>=', $cutoff);
-                         });
-                  });
-            })
-            ->whereIn("booking_containers.id", $agent_booking_container_ids)
-            ->get();
+        $ids = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, 2)->pluck('id');
+        $bookingContainers = $this->bookingContainers()->whereIn('booking_containers.id', $ids)->with('stages')->get();
 
         return [
             "id" => $this->id,
             "title" => $this->title ?? "",
-            "booking_containers" => BookingContainerResource::collection($bookingContainers)
+            "booking_containers" => $bookingContainers->map(fn ($container) => (new BookingContainerResource($container))->forStage(2))
 
         ];
     }

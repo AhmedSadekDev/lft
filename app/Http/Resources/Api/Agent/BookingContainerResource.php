@@ -7,6 +7,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class BookingContainerResource extends JsonResource
 {
 
+    private ?int $contextType = null;
+
+    public function forStage(int $type): self
+    {
+        $this->contextType = $type;
+        return $this;
+    }
+
     public function toArray($request)
     {
         // تحديد المرحلة الحالية للحاوية
@@ -48,6 +56,29 @@ class BookingContainerResource extends JsonResource
             $isApproved = true;
         }
 
+        $operationalStage = $currentStage;
+        $contextType = $this->contextType;
+        if ($contextType === null && $request->filled('type_id') && in_array((string) $request->type_id, ['0', '1', '2'], true)) {
+            $contextType = (int) $request->type_id;
+        }
+        $contextType = $contextType ?? array_search($currentStage, \App\Services\ContainerStageService::NAMES, true);
+        $canUpload = false;
+        $canComplete = false;
+        $receiptsClosed = false;
+        $receiptVersion = 1;
+        if ($contextType !== false) {
+            $currentStage = \App\Services\ContainerStageService::NAMES[$contextType];
+            $isApproved = (bool) $this->{'superagent_'.$currentStage.'_approved'};
+            $isCompleted = $isApproved || (bool) $this->{$currentStage.'_completed_at'} || $this->status >= $contextType + 1;
+            $stage = $this->stages->firstWhere('type_id', $contextType);
+            $receiptsClosed = (bool) $stage?->receipts_closed_at;
+            $receiptVersion = $stage?->version ?? 1;
+            $assigned = app(\App\Services\ContainerStageService::class)->assignments($this->id, $contextType)->where('agent_id', auth('agent')->id())->exists();
+            $available = $contextType === 0 || ($contextType === 1 && $this->superagent_specification_approved && ($this->is_in_loading || $this->superagent_loading_approved)) || ($contextType === 2 && $this->superagent_loading_approved);
+            $canUpload = $assigned && $available && !$receiptsClosed;
+            $canComplete = $assigned && $available && !$isCompleted;
+        }
+
         $stageStatus = 'pending';
         if ($isApproved) {
             $stageStatus = 'approved';
@@ -82,7 +113,12 @@ class BookingContainerResource extends JsonResource
             "moved_to_loading_at" => $this->moved_to_loading_at,
             "status_color" => $statusColor,
             "card_header_color" => $statusColor,
-            "can_upload_receipts" => true,
+            "can_upload_receipts" => $canUpload,
+            "can_complete_stage" => $canComplete,
+            "operational_stage" => $operationalStage,
+            "type_id" => $contextType === false ? null : $contextType,
+            "receipts_closed" => $receiptsClosed,
+            "receipts_version" => $receiptVersion,
             "specification_approved_at" => $this->specification_approved_at,
             "loading_approved_at" => $this->loading_approved_at,
             "unloading_approved_at" => $this->unloading_approved_at,

@@ -8,6 +8,7 @@
     'enctype' => 'multipart/form-data',
 ]) !!}
 
+<input type="hidden" name="version" value="{{ $agentExpense->version }}">
 <div class="card-body">
     <div class="row">
         <div class="col-md-6 col-sm-12">

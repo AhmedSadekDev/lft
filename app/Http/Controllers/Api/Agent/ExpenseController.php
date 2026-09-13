@@ -20,144 +20,60 @@ class ExpenseController extends Controller
 {
     use HandlesAgentImageUploads, ImagesTrait;
 
+    private function expenseFailure(\Throwable $e)
+    {
+        if ($e instanceof \Illuminate\Validation\ValidationException) {
+            return $this->returnError(422, $e->validator->errors()->first());
+        }
+        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+            return $this->returnError(404, 'Receipt not found');
+        }
+        return $this->returnError($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $e->getStatusCode() : 500, $e->getMessage());
+    }
+
+    private function expenseImage(Request $request)
+    {
+        $stored = $this->storeAdminExpenseImage($request, 'image', false);
+        if ($stored instanceof \Illuminate\Http\JsonResponse) {
+            throw new \RuntimeException(json_decode($stored->getContent(), true)['message'] ?? 'Image upload failed');
+        }
+        return $stored;
+    }
+
     public function update_expense(Request $request)
     {
-        if ($response = $this->rejectIfPayloadTooLarge($request)) {
-            return $response;
-        }
-
+        if ($response = $this->rejectIfPayloadTooLarge($request)) { return $response; }
         try {
-            $request->validate([
-                'id' => 'required|exists:agent_expenses,id',
-                'value' => 'required|numeric',
-                'service_id' => 'sometimes|exists:services,id',
-                'notes' => 'sometimes',
-                'booking_container_id' => 'sometimes|exists:booking_containers,id',
-                'type_id' => 'sometimes',
-                'image' => 'sometimes|mimes:png,jpg,jpeg|max:10000',
+            $data = $request->validate([
+                'id' => 'required|integer|exists:agent_expenses,id',
+                'version' => 'required|integer|min:1',
+                'value' => 'required|numeric|min:0.01',
+                'service_id' => 'sometimes|integer|exists:services,id',
+                'notes' => 'sometimes|nullable|string',
+                'image' => 'sometimes|image|max:10000',
             ]);
-
-            $agent = auth()->guard('agent')->user();
-            $expense = AgentExpense::findOrFail($request->id);
-
-            if ($expense->agent_id !== $agent->id) {
-                return $this->returnError(403, __('main.not_allowed'));
+            $expense = AgentExpense::findOrFail($data['id']);
+            foreach (['booking_container_id', 'type_id'] as $field) {
+                abort_if($request->has($field) && (string) $request->$field !== (string) $expense->$field, 422, 'Receipt container and stage cannot be changed');
             }
-
-            // Adjust wallet by difference
-            $oldValue = (float) $expense->value;
-            $newValue = (float) $request->value;
-            $diff = $newValue - $oldValue;
-
-            if ($diff > 0 && $agent->wallet < $diff) {
-                return $this->returnError(200, __('main.you dont have enougth money'));
-            }
-
-            DB::beginTransaction();
-
-            // Handle image replacement if provided
-            $imageName = $expense->image_agent_expenses;
-            if ($request->hasFile('image') || $request->has('image')) {
-                $stored = $this->storeAdminExpenseImage($request, 'image', false);
-                if ($stored instanceof \Illuminate\Http\JsonResponse) {
-                    DB::rollBack();
-                    return $stored;
-                }
-                if ($stored) {
-                    if ($imageName) {
-                        $oldPath = public_path('Admin/images/expenses/' . $imageName);
-                        if (file_exists($oldPath)) {
-                            @unlink($oldPath);
-                        }
-                    }
-                    $imageName = $stored;
-                }
-            }
-
-            // Update expense fields
-            $expense->update([
-                'value' => $newValue,
-                'service_id' => $request->input('service_id', $expense->service_id),
-                'notes' => $request->input('notes', $request->input('text', $expense->notes)),
-                'booking_container_id' => $request->input('booking_container_id', $expense->booking_container_id),
-                'type_id' => $request->input('type_id', $expense->type_id),
-                'image_agent_expenses' => $imageName,
-            ]);
-
-            // Update wallet
-            if ($diff !== 0.0) {
-                $agent->update(['wallet' => $agent->wallet - $diff]);
-            }
-
-            DB::commit();
-
-            return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
-        } catch (\Exception $Exception) {
-            if (DB::transactionLevel() > 0) {
-                DB::rollBack();
-            }
-            return $this->returnError(401, $Exception->getMessage());
-        }
+            unset($data['id'], $data['version'], $data['image']);
+            app(\App\Services\StageExpenseService::class)->change(
+                auth('agent')->id(), $expense->id, (int) $request->version, $data,
+                $request->hasFile('image') ? fn () => $this->expenseImage($request) : null
+            );
+            return $this->returnAllData(new ExpenseResource($expense->fresh()), __('alerts.success'));
+        } catch (\Throwable $e) { return $this->expenseFailure($e); }
     }
 
     public function delete_expense(Request $request)
     {
         try {
-            $request->validate([
-                'id' => 'required|exists:agent_expenses,id',
-            ]);
-
-            $agent = auth()->guard('agent')->user();
-            $expense = AgentExpense::with('delivery_policy.money_transfer')->findOrFail($request->id);
-
-            if ($expense->agent_id !== $agent->id) {
-                return $this->returnError(403, __('main.not_allowed'));
-            }
-
-            DB::beginTransaction();
-
-            // إذا كان المصروف مرتبط بعهدة، إرجاع القيمة للعهدة
-            if ($expense->delivery_policy_id && $expense->delivery_policy) {
-                $deliveryPolicy = $expense->delivery_policy;
-
-                // التحقق من أن العهدة لم يتم تسويتها
-                if ($deliveryPolicy->is_settled == 1) {
-                    DB::rollBack();
-                    return $this->returnError(200, __('main.delivery_policy is settled'));
-                }
-
-                // إرجاع القيمة للعهدة عن طريق زيادة قيمة money_transfer
-                if ($deliveryPolicy->money_transfer) {
-                    $moneyTransfer = $deliveryPolicy->money_transfer;
-                    $moneyTransfer->update([
-                        'value' => $moneyTransfer->value + $expense->value
-                    ]);
-                }
-            } else {
-                // إذا لم يكن مرتبط بعهدة، إرجاع القيمة للمحفظة
-                $agent->update(['wallet' => $agent->wallet + $expense->value]);
-            }
-
-            // delete image file if exists
-            if ($expense->image_agent_expenses) {
-                $path = public_path('Admin/images/expenses/' . $expense->image_agent_expenses);
-                if (file_exists($path)) {
-                    @unlink($path);
-                }
-            }
-
-            $expense->delete();
-
-            DB::commit();
-
+            $request->validate(['id' => 'required|integer|exists:agent_expenses,id', 'version' => 'required|integer|min:1']);
+            app(\App\Services\StageExpenseService::class)->change(auth('agent')->id(), (int) $request->id, (int) $request->version, null);
             return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
-        } catch (\Exception $Exception) {
-            if (DB::transactionLevel() > 0) {
-                DB::rollBack();
-            }
-            return $this->returnError(401, $Exception->getMessage());
-        }
+        } catch (\Throwable $e) { return $this->expenseFailure($e); }
     }
+
     public function fetch_financial_custody()
     {
         try {
@@ -181,110 +97,41 @@ class ExpenseController extends Controller
     }
     public function make_general_expenses(GeneralExpenseRequest $request)
     {
-        if ($response = $this->rejectIfPayloadTooLarge($request)) {
-            return $response;
-        }
-
-        try {
-
-            $agent = auth()->guard('agent')->user();
-
-            if ($agent->wallet < $request->value) {
-                return $this->returnError(200, __('main.you dont have enougth money'));
-            }
-
-            $imageName = null;
-            if ($request->hasFile('image') || $request->has('image')) {
-                $stored = $this->storeAdminExpenseImage($request, 'image', false);
-                if ($stored instanceof \Illuminate\Http\JsonResponse) {
-                    return $stored;
-                }
-                $imageName = $stored;
-            }
-            $data = $request->validated();
-            $data["agent_id"] = $agent->id;
-            $data["type"] = 1;
-            $data["image_agent_expenses"] = $imageName;
-            $data['type_id'] = $request->type_id;
-            $data['booking_container_id'] = $request->booking_container_id;
-
-            // تعيين booking_id من booking_container_id
-            if ($request->booking_container_id) {
-                $bookingContainer = BookingContainer::find($request->booking_container_id);
-                if ($bookingContainer) {
-                    $data['booking_id'] = $bookingContainer->booking_id;
-                }
-            }
-
-            $expense =  AgentExpense::create($data);
-
-            $agent->update(['wallet' => $agent->wallet - $request->value]);
-
-            $this->saveLogActivity($agent->id, Agent::class, $expense->id, AgentExpense::class);
-
-
-            return $this->returnResponseSuccessMessage(__('alerts.Expense saved successfully'), 200);
-        } catch (\Exception $Exception) {
-            return $this->returnError(401, $Exception->getMessage());
-        }
+        return $this->createExpense($request, 1);
     }
+
     public function make_reservation_expenses(ReservationExpenseRequest $request)
     {
-        if ($response = $this->rejectIfPayloadTooLarge($request)) {
-            return $response;
-        }
-
-        try {
-            $agent = auth()->guard('agent')->user();
-
-            if ($agent->wallet < $request->value) {
-                return $this->returnError(200, __('main.you dont have enougth money'));
-            }
-
-            $data = $request->validated();
-            $imageName = null;
-            if ($request->hasFile('image') || $request->has('image')) {
-                $stored = $this->storeAdminExpenseImage($request, 'image', false);
-                if ($stored instanceof \Illuminate\Http\JsonResponse) {
-                    return $stored;
-                }
-                $imageName = $stored;
-            }
-            $data["agent_id"] = $agent->id;
-            $data["type"] = 2;
-            $data["image_agent_expenses"] = $imageName;
-            $data['type_id'] = $request->type_id;
-            $data['booking_container_id'] = $request->booking_container_id;
-
-            // تعيين booking_id من booking_container_id
-            if ($request->booking_container_id) {
-                $bookingContainer = BookingContainer::find($request->booking_container_id);
-                if ($bookingContainer) {
-                    $data['booking_id'] = $bookingContainer->booking_id;
-                }
-            }
-
-            $expense = AgentExpense::create([
-                'agent_id' => $agent->id,
-                'type' => 2,
-                'image_agent_expenses' => $imageName,
-                'type_id' => $request->type_id,
-                'service_id' => $request->service_id,
-                'value' => $request->value,
-                'notes' => $data['notes'] ?? null,
-                'booking_container_id' => $request->booking_container_id,
-                'booking_id' => $data['booking_id'] ?? null,
-            ]);
-
-            $agent->update(['wallet' => $agent->wallet - $request->value]);
-
-            $this->saveLogActivity($agent->id, Agent::class, $expense->id, AgentExpense::class);
-
-            return $this->returnResponseSuccessMessage(__('alerts.Expense saved successfully'), 200);
-        } catch (\Exception $Exception) {
-            return $this->returnError(401, $Exception->getMessage());
-        }
+        return $this->createExpense($request, 2);
     }
+
+    private function createExpense(Request $request, int $type)
+    {
+        if ($response = $this->rejectIfPayloadTooLarge($request)) { return $response; }
+        try {
+            $request->validate(['request_key' => 'required|string|max:80', 'image' => 'sometimes|image|max:10000']);
+            $data = $request->only(['value', 'service_id', 'notes', 'booking_container_id', 'type_id']);
+            $data['type'] = $type;
+            if ($request->filled('booking_container_id')) {
+                $container = BookingContainer::findOrFail($request->booking_container_id);
+                abort_if($request->filled('booking_id') && (int) $request->booking_id !== (int) $container->booking_id, 422, 'Container does not belong to booking');
+                $data['booking_id'] = $container->booking_id;
+            }
+            $fingerprintData = $data;
+            ksort($fingerprintData);
+            $fingerprintData['image_hash'] = $request->hasFile('image') ? hash_file('sha256', $request->file('image')->getRealPath()) : null;
+            $fingerprint = hash('sha256', json_encode($fingerprintData));
+            $expense = app(\App\Services\StageExpenseService::class)->create(
+                auth('agent')->id(), $data, $request->request_key, $fingerprint,
+                fn () => $request->hasFile('image') ? $this->expenseImage($request) : null
+            );
+            if ($expense->wasRecentlyCreated) {
+                $this->saveLogActivity(auth('agent')->id(), Agent::class, $expense->id, AgentExpense::class, (int) $expense->type_id);
+            }
+            return $this->returnAllData(new ExpenseResource($expense), __('alerts.Expense saved successfully'));
+        } catch (\Throwable $e) { return $this->expenseFailure($e); }
+    }
+
     public function fetch_all_expenses()
     {
         try {

@@ -36,7 +36,7 @@ class BookingContainerResource extends JsonResource
             "notes" => NoteResource::collection($this->notes),
             "is_today" => $is_today ? 1 : 0,
             "booking_id" => $this->booking_id ?? "",
-            'responsible_agents' => AgentResource::collection($this->agents()->wherePivot('booking_container_status', $this->status)->get()),
+            'responsible_agents' => AgentResource::collection($this->agents()->wherePivot('stage_type', $request->filled('type_id') ? (int) $request->type_id : app(\App\Services\ContainerStageService::class)->currentType($this->resource))->get()),
             'specification_latter' => optional($this->bookingPapers->where('type', 0)->last())->image->image ?? '',
             'container_image' => optional($this->bookingPapers->where('type', 1)->last())->image->image ?? '',
             'loading_answer' => optional($this->bookingPapers->where('type', 6)->last())->image->image ?? '',

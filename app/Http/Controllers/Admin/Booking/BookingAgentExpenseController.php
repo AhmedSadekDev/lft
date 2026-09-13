@@ -53,61 +53,17 @@ class BookingAgentExpenseController extends Controller
     public function update(BookingAgentExpenseRequest $request, Booking $booking, AgentExpense $agent_expense)
     {
         $this->authorizeBookingExpense($booking, $agent_expense);
-        $agent_expense->load(['delivery_policy.money_transfer', 'agent']);
-
-        DB::beginTransaction();
         try {
-            $oldValue = (float) $agent_expense->value;
-            $newValue = (float) $request->validated('value');
-            $diff = $newValue - $oldValue;
-
-            if ($agent_expense->delivery_policy_id && $agent_expense->delivery_policy) {
-                $policy = $agent_expense->delivery_policy;
-                if ((int) $policy->is_settled === 1) {
-                    DB::rollBack();
-
-                    return redirect()
-                        ->back()
-                        ->withInput()
-                        ->with('error', __('main.delivery_policy is settled'));
-                }
-                if ($diff !== 0.0 && $policy->money_transfer) {
-                    $moneyTransfer = $policy->money_transfer;
-                    $moneyTransfer->update([
-                        'value' => ((float) $moneyTransfer->value) - $diff,
-                    ]);
-                }
-            } else {
-                $agent = $agent_expense->agent;
-                if ($agent && $diff > 0 && (float) $agent->wallet < $diff) {
-                    DB::rollBack();
-
-                    return redirect()
-                        ->back()
-                        ->withInput()
-                        ->with('error', __('main.you dont have enougth money'));
-                }
-                if ($agent && $diff !== 0.0) {
-                    $agent->update(['wallet' => ((float) $agent->wallet) - $diff]);
-                }
-            }
-
-            $imageName = $agent_expense->getRawOriginal('image_agent_expenses');
-            if ($request->hasFile('image')) {
-                $newImageName = time() . '_expenses.' . $request->image->extension();
-                $oldPath = $imageName ? 'Admin/images/expenses/' . $imageName : null;
-                $this->uploadImage($request->image, $newImageName, 'expenses', $oldPath);
-                $imageName = $newImageName;
-            }
-
-            $agent_expense->update([
-                'service_id' => $request->validated('service_id'),
-                'value' => $newValue,
-                'notes' => $request->validated('notes') ?? null,
-                'image_agent_expenses' => $imageName,
-            ]);
-
-            DB::commit();
+            app(\App\Services\StageExpenseService::class)->change(
+                (int) $agent_expense->agent_id, $agent_expense->id, (int) $request->validated('version'),
+                ['service_id' => $request->validated('service_id'), 'value' => $request->validated('value'), 'notes' => $request->validated('notes')],
+                $request->hasFile('image') ? function () use ($request) {
+                    $name = (string) \Illuminate\Support\Str::uuid().'_expenses.'.$request->image->extension();
+                    $this->uploadImage($request->image, $name, 'expenses', null);
+                    return $name;
+                } : null,
+                true
+            );
 
             $referer = session('booking_agent_expense_edit_referrer')
                 ?? route('bookings.show', ['booking' => $booking->id]);
@@ -115,7 +71,6 @@ class BookingAgentExpenseController extends Controller
 
             return redirect($referer)->with('success', __('alerts.updated_successfully'));
         } catch (\Throwable $e) {
-            DB::rollBack();
 
             return redirect()
                 ->back()

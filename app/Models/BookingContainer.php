@@ -17,6 +17,11 @@ class BookingContainer extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    public function stages()
+    {
+        return $this->hasMany(BookingContainerStage::class);
+    }
+
     public function booking()
     {
         return $this->belongsTo(Booking::class);
