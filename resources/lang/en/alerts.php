@@ -43,4 +43,5 @@ return [
     'active'                    => 'Active',
     'inactive'                  => 'Inactive',
     'Expense saved successfully' => 'Expense saved successfully',
+    'branch_must_match_booking_factory' => 'The container branch must belong to the booking factory',
 ];

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\ResponseTrait;
+use Illuminate\Validation\Rule;
 
 class BookingContainerRequest extends FormRequest
 {
@@ -18,9 +19,13 @@ class BookingContainerRequest extends FormRequest
         return true;
     }
 
-    // protected function prepareForValidation()
-    // {
-    // }
+    protected function bookingFactoryId(): ?int
+    {
+        $booking = $this->route('booking')
+            ?? $this->route('booking_container')?->booking;
+
+        return $booking?->factory_id ? (int) $booking->factory_id : null;
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -29,6 +34,8 @@ class BookingContainerRequest extends FormRequest
      */
     public function rules()
     {
+        $factoryId = $this->bookingFactoryId();
+
         return [
             'container_no' => [
                 'nullable',
@@ -38,14 +45,20 @@ class BookingContainerRequest extends FormRequest
                 'nullable',
                 'string'
             ],
-            'factory_id' => [
+            'factory_id' => array_values(array_filter([
                 'nullable',
-                'exists:factories,id'
-            ],
-            'branch_id' => [
+                $factoryId
+                    ? Rule::in([$factoryId])
+                    : 'exists:factories,id',
+            ])),
+            'branch_id' => array_values(array_filter([
                 'nullable',
-                'exists:branches,id'
-            ],
+                $factoryId
+                    ? Rule::exists('branches', 'id')->where(
+                        fn ($query) => $query->where('factory_id', $factoryId)
+                    )
+                    : 'exists:branches,id',
+            ])),
             'arrival_date' => [
                 'nullable',
                 'date'
@@ -88,10 +101,20 @@ class BookingContainerRequest extends FormRequest
         return [
             'company_id'    => __('main.company'),
             'container_id'  => __('main.container'),
+            'factory_id'    => __('main.factory'),
+            'branch_id'     => __('admin.branch'),
             'departure_id'  => __('admin.departure_location'),
             'loading_id'    => __('admin.loading_location'),
             'aging_id'      => __('admin.aging_location'),
             'price'         => __('admin.price'),
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'factory_id.in' => __('alerts.branch_must_match_booking_factory'),
+            'branch_id.exists' => __('alerts.branch_must_match_booking_factory'),
         ];
     }
 }

@@ -47,9 +47,11 @@ class BookingContainerController extends Controller
                 ->toArray();
         }
 
-        $factories = Factory::whereHas('branches')
-            ->with('branches')
-            ->get();
+        $factoriesQuery = Factory::whereHas('branches')->with('branches');
+        if ($booking->factory_id) {
+            $factoriesQuery->whereKey($booking->factory_id);
+        }
+        $factories = $factoriesQuery->get();
 
         $factory_branches = [];
         foreach ($factories as $factory)
@@ -57,7 +59,8 @@ class BookingContainerController extends Controller
                 $factory_branches[$factory->id][$branch->id] = $branch->name;
 
         return [
-            'factories' => Factory::whereHas('branches')->pluck('name', 'id'),
+            'booking' => $booking,
+            'factories' => $factories->pluck('name', 'id'),
             'factory_branches' => $factory_branches,
             'cities_and_regions' => CitiesAndRegions::pluck('title', 'id'),
             'company_prices' => $company_prices,
@@ -69,14 +72,18 @@ class BookingContainerController extends Controller
 
     public function create(Booking $booking)
     {
+        $formInputs = $this->getCreateFormInputs($booking);
         $inputs = array_merge(
-            $this->getCreateFormInputs($booking),
+            $formInputs,
             [
                 'method'    => 'POST',
                 'action'    => route(
                     'booking-containers.store',
                     ['booking' => $booking->id]
-                )
+                ),
+                'branches' => $booking->factory_id
+                    ? ($formInputs['factory_branches'][$booking->factory_id] ?? [])
+                    : [],
             ]
         );
 
@@ -129,16 +136,15 @@ class BookingContainerController extends Controller
     public function edit(
         BookingContainer $booking_container
     ) {
-        $booking_container->factory_id = $booking_container->branch->factory_id;
+        $booking = $booking_container->booking;
+        $booking_container->factory_id = $booking?->factory_id ?? $booking_container->branch?->factory_id;
+        $formInputs = $this->getCreateFormInputs($booking);
         $inputs = array_merge(
-            $this->getCreateFormInputs($booking_container->booking),
+            $formInputs,
             [
-                'branches' => $booking_container
-                    ->branch
-                    ->factory
-                    ->branches
-                    ->pluck('name', 'id')
-                    ->toArray(),
+                'branches' => $booking_container->factory_id
+                    ? ($formInputs['factory_branches'][$booking_container->factory_id] ?? [])
+                    : ($booking_container->branch?->factory?->branches->pluck('name', 'id')->toArray() ?? []),
                 'booking_container' => $booking_container,
                 'method'    => 'PUT',
                 'action'    => route(

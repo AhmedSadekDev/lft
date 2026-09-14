@@ -57,7 +57,7 @@
                         <td>{{ $container->container?->full_name }}</td>
                         <td>
                             <div class="col-md-12">
-                                {{ $container->branch?->factory->name . ':' }}
+                                {{ ($booking->factory?->name ?? $container->branch?->factory?->name) . ':' }}
                             </div>
                             <div class="col-md-12">
                                 <small class="badge badge-pill badge-light">

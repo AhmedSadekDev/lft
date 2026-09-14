@@ -31,14 +31,24 @@
         <div class="col-md-6 col-sm-12">
             <div class="form-group{{ $errors->has('factory_id') ? ' has-error' : '' }}">
                 {!! Form::label('factory_id', __('admin.factory')) !!}
+                @php
+                    $selectedFactoryId = old(
+                        'factory_id',
+                        $booking->factory_id
+                            ?? (isset($booking_container) ? $booking_container->factory_id : null)
+                    );
+                @endphp
                 {!! Form::select(
                     'factory_id',
                     array_replace(['to_be_disabled' => __('admin.select')], $factories->all()),
-                    old('factory_id'),
-                    [
+                    $selectedFactoryId,
+                    array_filter([
                         'id' => 'factory_id',
                         'class' => 'form-control',
-                    ],
+                        'required' => 'required',
+                        'readonly' => !empty($booking->factory_id) ? 'readonly' : null,
+                        'style' => !empty($booking->factory_id) ? 'pointer-events:none;background:#e9ecef;' : null,
+                    ]),
                 ) !!}
                 <small class="text-danger">{{ $errors->first('factory_id') }}</small>
             </div>
@@ -256,5 +266,9 @@
                 $('#branch_id').append(`<option value='${branch}'>${available_branches[branch]}</option>`);
             };
         }
+
+        @if (!empty($booking->factory_id) && empty(old('branch_id')) && !isset($booking_container))
+            updateBranches();
+        @endif
     </script>
 @endpush

@@ -6,6 +6,7 @@ use App\Mappers\BookingTypeMapper;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class BookingRequest extends FormRequest
 {
@@ -58,7 +59,13 @@ class BookingRequest extends FormRequest
             'type_of_action'    => ['required'],
             'containers' => ['required', 'array', 'min:1'],
             // 'containers.*.factory_id' => ['required', 'numeric',],
-            'containers.*.branch_id' => ['required', 'numeric',],
+            'containers.*.branch_id' => [
+                'required',
+                'numeric',
+                Rule::exists('branches', 'id')->where(
+                    fn ($query) => $query->where('factory_id', $this->input('factory_id'))
+                ),
+            ],
             'containers.*.container_id' => ['required', 'numeric',],
             'containers.*.arrival_date' => ['required', 'date',],
             'containers.*.containers_count' => ['required', 'numeric', 'min:1'],
@@ -113,9 +120,17 @@ class BookingRequest extends FormRequest
     {
         return [
             'factory_id'        =>  __('main.factory'),
+            'containers.*.branch_id' => __('admin.branch'),
             'arrival_dates.*'   => __('admin.arrival_date'),
             'branches.*'        => __('admin.branch'),
             'container_no.*'    => __('admin.container_no'),
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'containers.*.branch_id.exists' => __('alerts.branch_must_match_booking_factory'),
         ];
     }
 
