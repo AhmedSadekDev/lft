@@ -34,26 +34,14 @@ class AgentImageUploadService
         $relativePath = trim($folder, '/') . '/' . $storedName;
 
         try {
-            if ($destination === self::ADMIN_PUBLIC) {
-                $directory = public_path('Admin/images/' . trim($folder, '/'));
-                if (! is_dir($directory)) {
-                    mkdir($directory, 0755, true);
-                }
-                $fullPath = $directory . DIRECTORY_SEPARATOR . $storedName;
-                $this->writeCompressedImage($file, $fullPath);
+            $directory = $destination === self::ADMIN_PUBLIC
+                ? public_path('Admin/images/' . trim($folder, '/'))
+                : storage_path('app/public/' . trim($folder, '/'));
 
-                return [
-                    'ok' => true,
-                    'path' => $relativePath,
-                    'filename' => $storedName,
-                    'error' => null,
-                ];
+            if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
+                throw new \RuntimeException('تعذر إنشاء مجلد حفظ الصور على السيرفر.');
             }
 
-            $directory = storage_path('app/public/' . trim($folder, '/'));
-            if (! is_dir($directory)) {
-                mkdir($directory, 0755, true);
-            }
             $fullPath = $directory . DIRECTORY_SEPARATOR . $storedName;
             $this->writeCompressedImage($file, $fullPath);
 
@@ -83,8 +71,17 @@ class AgentImageUploadService
         string $destination = self::STORAGE_DISK,
         bool $required = false
     ): array {
-        if ($request->hasFile($field)) {
-            $result = $this->storeUploadedFile($request->file($field), $folder, $destination);
+        $file = $this->extractUploadedFile($request, $field);
+        if ($file instanceof UploadedFile) {
+            $result = $this->storeUploadedFile($file, $folder, $destination);
+            $result['skipped'] = false;
+
+            return $result;
+        }
+
+        $base64 = $this->extractBase64Image($request->input($field));
+        if ($base64 !== null) {
+            $result = $this->storeBinaryImage($base64, $folder, $destination);
             $result['skipped'] = false;
 
             return $result;
@@ -132,19 +129,129 @@ class AgentImageUploadService
         }
 
         if ($request->isMethod('POST') && empty($request->all()) && empty($_FILES) && $contentLength > 0) {
-            return 'فشل استقبال الطلب: الحجم كبير جداً أو انقطع الاتصال أثناء الرفع.';
+            return 'فشل استقبال الطلب: الحجم كبير جداً أو انقطع الاتصال أثناء الرفع. جرّب صورة أصغر أو ارفع صورة واحدة فقط.';
         }
 
         return null;
     }
 
+    private function extractUploadedFile(Request $request, string $field): ?UploadedFile
+    {
+        $file = $request->file($field);
+
+        if ($file instanceof UploadedFile) {
+            return $file;
+        }
+
+        if (is_array($file)) {
+            foreach ($file as $item) {
+                if ($item instanceof UploadedFile) {
+                    return $item;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function extractBase64Image(mixed $value): ?string
+    {
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        if (preg_match('/^data:image\/[a-zA-Z0-9.+-]+;base64,/', $value) === 1) {
+            $encoded = substr($value, strpos($value, ',') + 1);
+            $binary = base64_decode($encoded, true);
+
+            return $binary === false || $binary === '' ? null : $binary;
+        }
+
+        // Raw base64 payload (Flutter sometimes sends this without a data-URI prefix).
+        if (strlen($value) < 256 || preg_match('/\s/', $value) || ! preg_match('/^[A-Za-z0-9+\/=]+$/', $value)) {
+            return null;
+        }
+
+        $binary = base64_decode($value, true);
+        if ($binary === false || strlen($binary) < 24) {
+            return null;
+        }
+
+        if (@getimagesizefromstring($binary) === false) {
+            return null;
+        }
+
+        return $binary;
+    }
+
+    /**
+     * @return array{ok: bool, path: ?string, filename: ?string, error: ?string}
+     */
+    private function storeBinaryImage(string $binary, string $folder, string $destination): array
+    {
+        $storedName = 'image_' . time() . '_' . Str::random(6) . '.jpg';
+        $relativePath = trim($folder, '/') . '/' . $storedName;
+
+        try {
+            $directory = $destination === self::ADMIN_PUBLIC
+                ? public_path('Admin/images/' . trim($folder, '/'))
+                : storage_path('app/public/' . trim($folder, '/'));
+
+            if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
+                throw new \RuntimeException('تعذر إنشاء مجلد حفظ الصور على السيرفر.');
+            }
+
+            $fullPath = $directory . DIRECTORY_SEPARATOR . $storedName;
+            $tmp = tempnam(sys_get_temp_dir(), 'agent_img_');
+            if ($tmp === false || file_put_contents($tmp, $binary) === false) {
+                throw new \RuntimeException('تعذر تجهيز الصورة للرفع.');
+            }
+
+            try {
+                $uploaded = new UploadedFile($tmp, $storedName, 'image/jpeg', null, true);
+                $this->writeCompressedImage($uploaded, $fullPath);
+            } finally {
+                @unlink($tmp);
+            }
+
+            return [
+                'ok' => true,
+                'path' => $relativePath,
+                'filename' => $storedName,
+                'error' => null,
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'ok' => false,
+                'path' => null,
+                'filename' => null,
+                'error' => 'فشل حفظ الصورة على السيرفر: ' . $e->getMessage(),
+            ];
+        }
+    }
+
     private function clientAttemptedImageUpload(Request $request, string $field): bool
     {
-        if ($request->hasFile($field)) {
+        if ($this->extractUploadedFile($request, $field) instanceof UploadedFile) {
+            return true;
+        }
+
+        if (! $request->exists($field) && ! $request->has($field)) {
             return false;
         }
 
-        return $request->exists($field) || $request->has($field);
+        $value = $request->input($field);
+
+        if ($value === null || $value === '' || $value === []) {
+            return false;
+        }
+
+        return true;
     }
 
     private function missingUploadMessage(string $field): string
@@ -160,14 +267,14 @@ class AgentImageUploadService
 
         $label = $labels[$field] ?? $field;
 
-        return "فشل رفع {$label}: الحجم كبير جداً، الملف غير صالح، أو انقطع الاتصال أثناء الرفع.";
+        return "فشل رفع {$label}: أرسل الملف كـ multipart/form-data أو base64 لصورة صالحة، وتأكد أن الحجم ضمن الحد المسموح.";
     }
 
     private function uploadErrorMessage(UploadedFile $file): string
     {
         return match ($file->getError()) {
             UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'حجم الصورة أكبر من الحد المسموح على السيرفر.',
-            UPLOAD_ERR_PARTIAL => 'تم رفع جزء من الصورة فقط بسبب انقطاع الاتصال.',
+            UPLOAD_ERR_PARTIAL => 'تم رفع جزء من الصورة فقط بسبب انقطاع الاتصال. أعد المحاولة بصورة أصغر.',
             UPLOAD_ERR_NO_FILE => 'لم يتم إرسال ملف صورة.',
             UPLOAD_ERR_NO_TMP_DIR, UPLOAD_ERR_CANT_WRITE, UPLOAD_ERR_EXTENSION => 'خطأ في إعدادات السيرفر أثناء رفع الصورة.',
             default => 'فشل رفع الصورة: ' . $file->getErrorMessage(),
@@ -183,7 +290,8 @@ class AgentImageUploadService
 
     private function writeCompressedImage(UploadedFile $file, string $fullPath, int $maxWidth = 1280, int $quality = 75): void
     {
-        if (strtolower((string) $file->getClientOriginalExtension()) === 'pdf') {
+        $extension = strtolower((string) $file->getClientOriginalExtension());
+        if ($extension === 'pdf') {
             $file->move(dirname($fullPath), basename($fullPath));
 
             return;
@@ -195,14 +303,24 @@ class AgentImageUploadService
             return;
         }
 
-        $contents = @file_get_contents($file->getRealPath());
+        $realPath = $file->getRealPath();
+        if ($realPath === false) {
+            throw new \RuntimeException('تعذر قراءة ملف الصورة.');
+        }
+
+        $contents = @file_get_contents($realPath);
         if ($contents === false) {
             throw new \RuntimeException('تعذر قراءة ملف الصورة.');
         }
 
         $image = @imagecreatefromstring($contents);
+        unset($contents);
+
         if ($image === false) {
-            $file->move(dirname($fullPath), basename($fullPath));
+            // Keep original bytes for formats GD cannot decode (e.g. HEIC).
+            if (! @copy($realPath, $fullPath) && ! $file->move(dirname($fullPath), basename($fullPath))) {
+                throw new \RuntimeException('تعذر حفظ ملف الصورة.');
+            }
 
             return;
         }
@@ -216,8 +334,6 @@ class AgentImageUploadService
             imagecopyresampled($resized, $image, 0, 0, 0, 0, $maxWidth, $newHeight, $width, $height);
             imagedestroy($image);
             $image = $resized;
-            $width = $maxWidth;
-            $height = $newHeight;
         }
 
         if (! imagejpeg($image, $fullPath, $quality)) {

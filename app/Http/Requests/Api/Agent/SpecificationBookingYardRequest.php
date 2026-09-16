@@ -27,8 +27,7 @@ class SpecificationBookingYardRequest extends FormRequest
             'booking_id'  => 'required|exists:bookings,id',
             'booking_container_id' => 'required|exists:booking_containers,id',
             'yard_id'  => 'required|exists:yards,id',
-            'image'         => 'sometimes|mimes:png,jpg,jpeg|max:10000'
-
+            'image'         => 'sometimes|nullable',
         ];
     }
 

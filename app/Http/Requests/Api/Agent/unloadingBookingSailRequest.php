@@ -26,8 +26,9 @@ class unloadingBookingSailRequest extends FormRequest
         return [
             'booking_container_id'  => 'required|exists:booking_containers,id',
             'sail_of_number'  => 'required',
-            'image'         => 'sometimes|mimes:png,jpg,jpeg|max:10000'
-
+            'image'         => 'sometimes|nullable',
+            'unloading_image' => 'sometimes|nullable',
+            'unloading_image_sail' => 'sometimes|nullable',
         ];
     }
 

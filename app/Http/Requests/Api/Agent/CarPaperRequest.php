@@ -25,9 +25,8 @@ class CarPaperRequest extends FormRequest
     {
         return [
             'booking_container_id'  => 'required|exists:booking_containers,id',
-            "images" => "array",
-            'images.*'         => 'sometimes|mimes:png,jpg,jpeg|max:10000'
-
+            'images' => 'sometimes|array',
+            'images.*' => 'sometimes|nullable|file|max:20480',
         ];
     }
 

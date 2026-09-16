@@ -48,25 +48,28 @@ class BookingPaperController extends Controller
                 }
 
                 if ($request->hasFile('image') || $request->has('image')) {
-                    BookingPaper::where(['booking_id' => $request->booking_id, 'type' => 0])->delete();
-
-                    $paper = BookingPaper::create([
-                        'booking_id' => $booking->id,
-                        'type' => 0,
-                        'booking_container_id' => $request->booking_container_id,
-                    ]);
-
-                    $stored = $this->storeMorphImageFromRequest(
+                    $upload = $this->imageUploadService()->resolveRequestImage(
                         $request,
                         'image',
                         self::IMAGE_FOLDER,
-                        $paper->id,
-                        BookingPaper::class,
-                        true
+                        \App\Services\AgentImageUploadService::STORAGE_DISK,
+                        false
                     );
 
-                    if ($stored instanceof \Illuminate\Http\JsonResponse) {
-                        throw new \RuntimeException(json_decode($stored->getContent(), true)['message'] ?? 'فشل رفع الصورة');
+                    if (! empty($upload['skipped'])) {
+                        // no image payload
+                    } elseif (empty($upload['ok']) || empty($upload['path'])) {
+                        throw new \RuntimeException($upload['error'] ?? 'فشل رفع الصورة');
+                    } else {
+                        BookingPaper::where(['booking_id' => $request->booking_id, 'type' => 0])->delete();
+
+                        $paper = BookingPaper::create([
+                            'booking_id' => $booking->id,
+                            'type' => 0,
+                            'booking_container_id' => $request->booking_container_id,
+                        ]);
+
+                        $this->attachStoredImage($upload['path'], $paper->id, BookingPaper::class);
                     }
                 }
 
@@ -213,8 +216,20 @@ class BookingPaperController extends Controller
 
     private function savePaperImage(Request $request, string $field, int $type, BookingContainer $booking_container): void
     {
-        if (! $request->hasFile($field) && ! $request->has($field)) {
+        $upload = $this->imageUploadService()->resolveRequestImage(
+            $request,
+            $field,
+            self::IMAGE_FOLDER,
+            \App\Services\AgentImageUploadService::STORAGE_DISK,
+            false
+        );
+
+        if (! empty($upload['skipped'])) {
             return;
+        }
+
+        if (empty($upload['ok']) || empty($upload['path'])) {
+            throw new \RuntimeException($upload['error'] ?? "فشل رفع الصورة ({$field})");
         }
 
         BookingPaper::where([
@@ -230,23 +245,6 @@ class BookingPaperController extends Controller
             'type' => $type,
         ]);
 
-        $stored = $this->storeMorphImageFromRequest(
-            $request,
-            $field,
-            self::IMAGE_FOLDER,
-            $paper->id,
-            BookingPaper::class,
-            true
-        );
-
-        if ($stored instanceof \Illuminate\Http\JsonResponse) {
-            $payload = json_decode($stored->getContent(), true);
-            throw new \RuntimeException($payload['message'] ?? 'فشل رفع الصورة');
-        }
-
-        if ($stored === null) {
-            throw new \RuntimeException($this->imageUploadService()->resolveRequestImage($request, $field, self::IMAGE_FOLDER)['error']
-                ?? "فشل رفع الصورة ({$field})");
-        }
+        $this->attachStoredImage($upload['path'], $paper->id, BookingPaper::class);
     }
 }

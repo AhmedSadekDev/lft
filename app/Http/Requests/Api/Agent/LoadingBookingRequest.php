@@ -26,10 +26,9 @@ class LoadingBookingRequest extends FormRequest
         return [
             'booking_container_id'  => 'required|exists:booking_containers,id',
             'container_number' => 'required',
-            'image'         => 'sometimes|mimes:png,jpg,jpeg|max:10000',
-            'specification_latter' => 'sometimes|mimes:png,jpg,jpeg|max:10000',
-            'loading_answer' => 'sometimes|mimes:png,jpg,jpeg,pdf|max:10000'
-
+            'image'         => 'sometimes|nullable',
+            'specification_latter' => 'sometimes|nullable',
+            'loading_answer' => 'sometimes|nullable',
         ];
     }
 
