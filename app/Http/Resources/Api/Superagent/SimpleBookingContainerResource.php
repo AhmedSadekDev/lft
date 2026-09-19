@@ -13,7 +13,7 @@ class SimpleBookingContainerResource extends JsonResource
 
         return [
             'id'       => $this->id,
-            'factory_name' => $this->branch->factory->name ?? "",
+            'factory_name' => $this->factory_name,
             'container_number'  => $this->container_no,
             'arrival_date'      => $this->arrival_date,
             "yard_title" => $this?->booking?->yard?->title ?? "",

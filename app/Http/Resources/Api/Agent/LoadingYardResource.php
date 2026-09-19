@@ -13,7 +13,10 @@ class LoadingYardResource extends JsonResource
         $agent = auth()->guard('agent')->user();
         
         $ids = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, 1)->pluck('id');
-        $bookingContainers = $this->bookingContainers()->whereIn('booking_containers.id', $ids)->with('stages')->get();
+        $bookingContainers = $this->bookingContainers()
+            ->whereIn('booking_containers.id', $ids)
+            ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'stages'])
+            ->get();
 
         return [
             "id" => $this->id,

@@ -26,6 +26,7 @@ class BookingContainerController extends Controller
             // نفس العلاقات اللي كانت بتتجاب في القديم عشان نتجنب N+1
             $with = [
                 'booking.company',
+                'booking.factory',
                 'booking.yard',
                 'branch.factory',
                 'container',
@@ -321,7 +322,9 @@ class BookingContainerController extends Controller
 
             // Eager load booking containers and relations to prevent N+1 queries
             $booking->load([
+                'factory',
                 'bookingContainers.booking.company',
+                'bookingContainers.booking.factory',
                 'bookingContainers.booking.yard',
                 'bookingContainers.branch.factory',
                 'bookingContainers.container',

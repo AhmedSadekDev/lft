@@ -93,7 +93,7 @@ class BookingContainerResource extends JsonResource
             "id" => $this->id,
             'company_name' => $this->booking->company->name ?? "",
             // 'factory_name' => $this->booking?->thirdBookings?->factory?->name ?? "",
-            'factory_name' => $this->branch->factory->name ?? "",
+            'factory_name' => $this->factory_name,
             'container_type'    => $this->container?->type ?? null,
             'branch'            => $this->branch?->name ?? null,
             'sail_of_number'    => $this->sail_of_number,

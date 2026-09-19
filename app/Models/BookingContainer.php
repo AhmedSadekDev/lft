@@ -67,6 +67,19 @@ class BookingContainer extends Model
         return $this->belongsTo(Branch::class);
     }
 
+    /**
+     * اسم المصنع المعروض: نفس منطق الداش بورد
+     * (مصنع الطلب أولاً، ثم مصنع فرع الحاوية).
+     */
+    public function getFactoryNameAttribute(): string
+    {
+        return (string) (
+            $this->booking?->factory?->name
+            ?? $this->branch?->factory?->name
+            ?? ''
+        );
+    }
+
     public function container()
     {
         return $this->belongsTo(Container::class);

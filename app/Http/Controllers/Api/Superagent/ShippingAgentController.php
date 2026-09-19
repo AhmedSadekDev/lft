@@ -96,6 +96,7 @@ class ShippingAgentController extends Controller
 
         $waiting = $waiting_yards->map(function ($yard) {
             $containers = $yard->bookingContainers()
+                ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])
                 ->where('superagent_loading_approved', 0)
                 ->where('superagent_specification_approved', 1)
                 ->where('is_in_loading', 0)
@@ -125,6 +126,7 @@ class ShippingAgentController extends Controller
 
         $loading = $yards->map(function ($yard) {
             $containers = $yard->bookingContainers()
+                ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])
                 ->where('superagent_loading_approved', 0)
                 ->where('superagent_specification_approved', 1)
                 ->where('is_in_loading', 1)
@@ -157,6 +159,7 @@ class ShippingAgentController extends Controller
 
         $unloading = $unload_shipping_agents->map(function ($agent) {
             $containers = $agent->bookingContainers()
+                ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])
                 ->where('superagent_loading_approved', 1)
                 ->where('superagent_specification_approved', 1)
                 ->where('superagent_unloading_approved', 0)

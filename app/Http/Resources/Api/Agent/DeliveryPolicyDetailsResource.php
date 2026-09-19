@@ -42,8 +42,10 @@ class SimpleBookingContainerResource extends JsonResource
             "booking_number" => $this->booking->booking_number ?? "",
             "container_size" => $this->container?->size ?? "",
             // 'factory_name' => $this->factory->name ?? "",
-            'factory_name' => $this->branch->factory->name ?? "",
-            'factory_email' => $this->branch->factory->email ?? "",
+            'factory_name' => $this->factory_name,
+            'factory_email' => $this->booking?->factory?->email
+                ?? $this->branch?->factory?->email
+                ?? "",
 
             // 'factory_email' => $this->factory->email ?? "",
             'arrival_date'      => $this->arrival_date,

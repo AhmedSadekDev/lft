@@ -14,7 +14,11 @@ class LoadingYardResource extends JsonResource
             ->wherePivot("created_at", "<=", now()->endOfDay())
             ->get();
             
-        $bookingContainers = $this->bookingContainers()->where('superagent_loading_approved', 0)->where("superagent_specification_approved", 1)->get();
+        $bookingContainers = $this->bookingContainers()
+            ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])
+            ->where('superagent_loading_approved', 0)
+            ->where("superagent_specification_approved", 1)
+            ->get();
 
 
         return [
