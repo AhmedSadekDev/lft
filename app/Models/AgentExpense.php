@@ -92,4 +92,11 @@ class AgentExpense extends Model
                 });
         });
     }
+
+    public function scopeVisibleToAgent($query)
+    {
+        return $query->whereDoesntHave('booking.invoice')
+            ->whereDoesntHave('bookingContainer.booking.invoice')
+            ->whereDoesntHave('delivery_policy.booking_containers.booking.invoice');
+    }
 }

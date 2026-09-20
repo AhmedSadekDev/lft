@@ -46,6 +46,7 @@ class YardController extends Controller
 
             // Get bookings that belong to the specified yard and have containers assigned to this agent
             $bookings = Booking::where('yard_id', $request->yard_id)
+                ->whereDoesntHave('invoice')
                 ->whereHas('bookingContainers', function ($query) use ($agent_booking_containers) {
                     $query->whereIn('booking_containers.id', $agent_booking_containers->pluck('id')->toArray());
                 })

@@ -45,6 +45,7 @@ class BookingContainerAssignmentController extends Controller
             /** @var Agent $agent */
             $cutoff = now()->subHours(24);
             $agent_booking_containers = $agent->agent_booking_containers()
+                ->whereDoesntHave('booking.invoice')
                 ->wherePivot('stage_type', 0)
                 ->where(function ($q) use ($cutoff) {
                     $q->where('booking_container_agents.superagent_specification_approved', 0)
@@ -125,8 +126,9 @@ class BookingContainerAssignmentController extends Controller
             // fetch bookings that don't have an invoice
             $bookings = Booking::whereIn("id", $booking_ids_without_invoices)
                 ->when($word != null, function ($q) use ($word) {
-                    $q->where("booking_number", "LIKE", "%$word%")->orWhereHas("bookingContainers", function ($q) use ($word) {
-                        $q->where("container_no", "LIKE", "%$word%");
+                    $q->where(function ($search) use ($word) {
+                        $search->where("booking_number", "LIKE", "%$word%")
+                            ->orWhereHas("bookingContainers", fn ($containers) => $containers->where("container_no", "LIKE", "%$word%"));
                     });
                 })
                 ->orderBy("id", "desc")
@@ -151,6 +153,7 @@ class BookingContainerAssignmentController extends Controller
             // get agent_booking_containers
 
             $agent_booking_containers = \App\Models\BookingContainer::whereHas('agents', fn ($q) => $q->where('agents.id', $agent->id))
+                ->whereDoesntHave('booking.invoice')
                 ->whereDoesntHave('delivery_policies')
                 ->get();
 

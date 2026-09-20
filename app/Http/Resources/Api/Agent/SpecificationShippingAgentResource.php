@@ -13,6 +13,7 @@ class SpecificationShippingAgentResource extends JsonResource
 
         $cutoff = now()->subHours(24);
         $agentAssignment = $request->user()->agent_booking_containers()->wherePivot('stage_type', 0)
+            ->whereDoesntHave('booking.invoice')
             ->where(function ($q) use ($cutoff) {
                 $q->where('booking_container_agents.superagent_specification_approved', 0)
                   ->orWhere(function ($q2) use ($cutoff) {

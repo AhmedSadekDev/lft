@@ -144,7 +144,7 @@ class ExpenseController extends Controller
             if (request()->booking_id) {
                 $bookingId = request()->booking_id;
 
-                $expensesQuery = $agent->expenses()
+                $expensesQuery = $agent->expenses()->visibleToAgent()
                     ->where(function ($query) use ($bookingId) {
                         // المصروفات التي لها booking_id مباشرة يساوي الحجز المطلوب
                         $query->where('booking_id', $bookingId)
@@ -167,27 +167,29 @@ class ExpenseController extends Controller
                 $expenses = $expensesQuery->get();
             } elseif ($type == 1) {
                 $financial_custodies = $agent->sended_financial_custodies()
+                    ->whereDoesntHave('delivery_policy.booking_containers.booking.invoice')
                     ->where("delivery_policy_id", "!=", null)
                     ->whereDate("created_at", now())
                     ->get();
-                $expenses = $agent->expenses()
+                $expenses = $agent->expenses()->visibleToAgent()
                     ->whereDate("created_at", now())
                     ->where("delivery_policy_id", "!=", null)
                     ->get();
             } elseif ($type == 2) {
-                $expenses = $agent->expenses()
+                $expenses = $agent->expenses()->visibleToAgent()
                     ->whereDate("created_at", now())
                     ->where("type", 2)
                     ->get();
             } elseif (request()->delivery_policy_id) {
-                $expenses = $agent->expenses()
+                $expenses = $agent->expenses()->visibleToAgent()
                     ->where("delivery_policy_id", request()->delivery_policy_id)
                     ->get();
             } else {
                 $financial_custodies = $agent->sended_financial_custodies()
+                    ->whereDoesntHave('delivery_policy.booking_containers.booking.invoice')
                     ->whereDate("created_at", now())
                     ->get();
-                $expenses = $agent->expenses()
+                $expenses = $agent->expenses()->visibleToAgent()
                     ->whereDate("created_at", now())
                     ->get();
             }
@@ -209,8 +211,8 @@ class ExpenseController extends Controller
 
             $agent = auth()->guard('agent')->user();
 
-            $financial_custodies = $agent->sended_financial_custodies()->whereDate("created_at", now())->get();
-            $expenses = $agent->expenses()->whereDate("created_at", now())->get();
+            $financial_custodies = $agent->sended_financial_custodies()->whereDoesntHave('delivery_policy.booking_containers.booking.invoice')->whereDate("created_at", now())->get();
+            $expenses = $agent->expenses()->visibleToAgent()->whereDate("created_at", now())->get();
 
             // Merge the collections
             $merged = $financial_custodies->concat($expenses);

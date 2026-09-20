@@ -18,6 +18,7 @@ class NotificationController extends Controller
             $agent = auth('agent')->user();
 
             $notifications = AppNotification::with('bookingContainer:id,booking_id')
+                ->whereDoesntHave('bookingContainer.booking.invoice')
                 ->where(function ($query) use ($agent) {
                 $query->where('type', AppNotification::all)
                     ->orWhere(function ($q) use ($agent) {

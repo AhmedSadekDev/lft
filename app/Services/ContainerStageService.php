@@ -24,6 +24,7 @@ class ContainerStageService
 
     public function assertAssigned(BookingContainer $container, int $type, int $agentId): void
     {
+        abort_if($container->booking()->whereHas('invoice')->exists(), 409, 'تم إصدار فاتورة لهذا الطلب، ولم يعد متاحاً للمندوب.');
         abort_unless($this->assignments($container->id, $type)->where('agent_id', $agentId)->lockForUpdate()->first(), 403, 'المندوب غير مكلف بهذه المرحلة');
     }
 
@@ -189,7 +190,7 @@ class ContainerStageService
 
     public function visibleContainers(int $agentId, int $type)
     {
-        $query = BookingContainer::whereHas('agents', function ($q) use ($agentId, $type) {
+        $query = BookingContainer::whereDoesntHave('booking.invoice')->whereHas('agents', function ($q) use ($agentId, $type) {
             $q->where('agents.id', $agentId)->where('booking_container_agents.stage_type', $type);
         })->whereDoesntHave('stages', function ($q) use ($type) {
             $q->where('type_id', $type)->whereNotNull('receipts_closed_at');

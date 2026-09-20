@@ -162,7 +162,7 @@ class DeliveryPolicyController extends Controller
             $agent = auth()->guard('agent')->user();
 
 
-            $delivery_policies = DeliveryPolicy::with([
+            $delivery_policies = DeliveryPolicy::whereDoesntHave('booking_containers.booking.invoice')->with([
                 'car',
                 'driver',
                 'money_transfer',

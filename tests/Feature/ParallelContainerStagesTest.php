@@ -22,6 +22,19 @@ class ParallelContainerStagesTest extends TestCase
         // Isolated schema: never migrate, truncate, or connect to the project's real database.
         config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
         DB::purge('sqlite');
+        Schema::create('invoices', function (Blueprint $t) {
+            $t->id();
+            $t->unsignedBigInteger('booking_id');
+        });
+        Schema::create('delivery_policies', fn (Blueprint $t) => $t->id());
+        foreach (['companies', 'factories', 'branches', 'containers'] as $table) {
+            Schema::create($table, fn (Blueprint $t) => $t->id());
+        }
+        Schema::create('delivery_policy_containers', function (Blueprint $t) {
+            $t->id();
+            $t->unsignedBigInteger('delivery_policy_id');
+            $t->unsignedBigInteger('booking_container_id');
+        });
         Schema::create('agents', function (Blueprint $t) {
             $t->id();
             $t->decimal('wallet', 12, 2)->default(1000);
@@ -133,6 +146,85 @@ class ParallelContainerStagesTest extends TestCase
     private function receipt(string $key = 'receipt-1', int $agent = 1, int $type = 1, int $amount = 100): AgentExpense
     {
         return app(StageExpenseService::class)->create($agent, ['booking_container_id' => 1, 'type_id' => $type, 'value' => $amount], $key, hash('sha256', "$type:$amount"), fn () => null);
+    }
+
+    public function test_invoice_hides_all_phases_from_every_assigned_agent(): void
+    {
+        $service = app(ContainerStageService::class);
+        $service->assign(1, [1, 2], 0);
+        $service->assign(1, [1, 2], 1);
+        $service->approve(1, 1);
+        $service->assign(1, [1, 2], 2);
+        DB::table('invoices')->insert(['booking_id' => 1]);
+
+        foreach ([1, 2] as $agentId) {
+            $this->actingAs(Agent::find($agentId), 'agent');
+            foreach (ContainerStageService::NAMES as $type => $name) {
+                $this->assertSame(0, $service->visibleContainers($agentId, $type)->count());
+                $this->getJson('/api/agent/booking/fetch_'.$name.'_assignments')
+                    ->assertOk()->assertJsonPath('data', []);
+            }
+            $this->getJson('/api/agent/booking/fetch_home_statistics')->assertOk()
+                ->assertJsonPath('data.loading_assignments.daily_loading_assignments_count', 0);
+            $this->postJson('/api/agent/booking/fetch_bookings')->assertOk()->assertJsonPath('data', []);
+            $this->getJson('/api/agent/booking/fetch_booking_containers')->assertOk()->assertJsonPath('data', []);
+        }
+
+        // The dashboard still has the order, containers and original assignments.
+        $this->assertNotNull(\App\Models\Booking::find(1));
+        $this->assertSame(1, BookingContainer::count());
+        $this->assertSame(6, DB::table('booking_container_agents')->count());
+    }
+
+    public function test_invoice_blocks_stale_agent_writes_and_persisted_expense_and_policy_references(): void
+    {
+        $expense = $this->receipt();
+        DB::table('delivery_policies')->insert(['id' => 1]);
+        DB::table('delivery_policy_containers')->insert(['delivery_policy_id' => 1, 'booking_container_id' => 1]);
+        DB::table('invoices')->insert(['booking_id' => 1]);
+        $this->actingAs(Agent::find(1), 'agent');
+
+        $requests = [
+            ['booking/done_specification', ['booking_id' => 1]],
+            ['booking/done_loading', ['booking_container_id' => 1]],
+            ['booking/done_unloading', ['booking_container_id' => 1]],
+            ['booking/send_notes', ['booking_container_id' => 1, 'notes' => 'late']],
+            ['booking/save_specification_booking_yard', ['booking_id' => 1]],
+            ['booking/save_loading_booking_container', ['booking_container_id' => 1]],
+            ['booking/save_unloading_booking_sail', ['booking_container_id' => 1]],
+            ['booking/send_car_papers', ['booking_container_id' => 1]],
+            ['make_reservation_expenses', ['booking_id' => 1]],
+            ['make_general_expenses', ['booking_container_id' => 1]],
+            ['update_expense', ['id' => $expense->id, 'value' => 120, 'version' => 1]],
+            ['delete_expense', ['id' => $expense->id, 'version' => 1]],
+            ['create_delivery_policy', ['booking_container_ids' => [999, 1]]],
+            ['update_delivery_policy', ['id' => 1, 'booking_container_ids' => [999]]],
+            ['delete_delivery_policy', ['id' => 1]],
+            ['settle_delivery_policy', ['delivery_policy_id' => 1]],
+            ['make_car_expenses', ['delivery_policy_id' => 1]],
+            ['delivery_policy_details', ['delivery_policy_id' => 1]],
+        ];
+        foreach ($requests as [$path, $data]) {
+            $this->postJson('/api/agent/'.$path, $data)->assertStatus(409)->assertJsonPath('status', false);
+        }
+        $this->assertSame(1, AgentExpense::count());
+        $this->assertSame(100.0, (float) $expense->fresh()->value);
+        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(0, DB::table('notes')->count());
+        $this->assertSame(0, AgentExpense::visibleToAgent()->count());
+        $this->assertConflict(fn () => $this->receipt('after-invoice'));
+        $this->assertConflict(fn () => app(ContainerStageService::class)->complete(1, 1, 1));
+    }
+
+    public function test_booking_search_cannot_restore_an_invoiced_or_unassigned_order(): void
+    {
+        Schema::table('booking_containers', fn (Blueprint $t) => $t->string('container_no')->nullable());
+        BookingContainer::find(1)->update(['container_no' => 'MATCH']);
+        DB::table('bookings')->insert(['id' => 2, 'booking_number' => 'MATCH']);
+        DB::table('invoices')->insert(['booking_id' => 1]);
+        $this->actingAs(Agent::find(1), 'agent');
+        $this->postJson('/api/agent/booking/fetch_bookings', ['word' => 'MATCH'])
+            ->assertOk()->assertJsonPath('data', []);
     }
 
     private function assertConflict(callable $callback, int $status = 409): void
@@ -252,7 +344,9 @@ class ParallelContainerStagesTest extends TestCase
         $service->assign(1, [1], 2);
         $this->travel(3)->days();
         $this->actingAs(Agent::find(1), 'agent');
-        $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()
+        $response = $this->getJson('/api/agent/booking/fetch_loading_assignments');
+        $this->assertSame(200, $response->status(), $response->getContent());
+        $response->assertOk()
             ->assertJsonPath('data.0.booking_containers.0.stage_type', 'loading')
             ->assertJsonPath('data.0.booking_containers.0.operational_stage', 'unloading')
             ->assertJsonPath('data.0.booking_containers.0.can_upload_receipts', true)
