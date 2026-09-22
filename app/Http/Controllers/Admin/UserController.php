@@ -86,7 +86,7 @@ class UserController extends Controller
     public function edit($id)
     {
         if (auth()->user()->id == $id) {
-            abort(404);
+            return redirect()->route('profile.edit');
         }
 
         $user = User::findOrFail($id);

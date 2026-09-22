@@ -110,9 +110,9 @@ class ContainerStageService
         });
     }
 
-    public function approve(int $containerId, int $type): bool
+    public function approve(int $containerId, int $type, ?int $superagentId = null): bool
     {
-        return DB::transaction(function () use ($containerId, $type) {
+        return DB::transaction(function () use ($containerId, $type, $superagentId) {
             $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
             $this->assertAvailable($container, $type);
             $name = self::NAMES[$type];
@@ -120,7 +120,8 @@ class ContainerStageService
             if ($container->$flag) {
                 return false;
             }
-            $values = [$flag => 1, $name.'_approved_at' => now(), $name.'_completed_at' => $container->{$name.'_completed_at'} ?: now()];
+            $now = now();
+            $values = [$flag => 1, $name.'_approved_at' => $now, $name.'_completed_at' => $container->{$name.'_completed_at'} ?: $now];
             $container->update($values + ['status' => max((int) $container->status, $type + 1)]);
             $this->assignments($containerId, $type)->update($values);
             DailyBookingContainer::where('booking_container_id', $containerId)->update([$flag => 1, 'booking_container_status' => $container->status]);
@@ -129,17 +130,36 @@ class ContainerStageService
                 $this->assign($containerId, $this->assignments($containerId, 0)->pluck('agent_id')->all(), 1);
             }
 
+            // Auto-close receipts on approval so the agent loses visibility immediately
+            // and the manager no longer needs a separate close step.
+            $stage = BookingContainerStage::lockForUpdate()->firstOrCreate([
+                'booking_container_id' => $containerId,
+                'type_id'              => $type,
+            ]);
+            if (! $stage->receipts_closed_at) {
+                $stage->update([
+                    'receipts_closed_at' => $now,
+                    'receipts_closed_by' => $superagentId,
+                    'version'            => $stage->version + 1,
+                ]);
+            }
+
             return true;
         });
     }
 
+    /**
+     * Manual receipt close (fallback). Approve auto-closes; this method handles
+     * edge cases where receipts were not yet closed (e.g. stage was approved before
+     * this feature was deployed, or expenses were added after approval).
+     */
     public function closeReceipts(int $containerId, int $type, int $superagentId, int $version): BookingContainerStage
     {
         return DB::transaction(function () use ($containerId, $type, $superagentId, $version) {
             $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
             $stage = $this->receipts($container, $type);
             if ($stage->receipts_closed_at) {
-                return $stage;
+                return $stage; // already closed — idempotent
             }
             abort_unless($container->{'superagent_'.self::NAMES[$type].'_approved'}, 409, 'يجب اعتماد انتهاء المرحلة أولاً');
             abort_unless($stage->version === $version, 409, 'تغيرت إيصالات المرحلة؛ راجعها مجدداً قبل الإقفال');

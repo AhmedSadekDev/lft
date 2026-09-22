@@ -150,10 +150,20 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            // get agent_booking_containers
+            $service = app(\App\Services\ContainerStageService::class);
 
-            $agent_booking_containers = \App\Models\BookingContainer::whereHas('agents', fn ($q) => $q->where('agents.id', $agent->id))
-                ->whereDoesntHave('booking.invoice')
+            // Collect visible containers across all stages.
+            // visibleContainers() already filters by:
+            //   - agent assignment for that stage type
+            //   - receipts_closed_at (container disappears once receipts are closed)
+            //   - invoice existence (whereDoesntHave booking.invoice)
+            $ids = $service->visibleContainers($agent->id, 0)
+                ->pluck('id')
+                ->merge($service->visibleContainers($agent->id, 1)->pluck('id'))
+                ->merge($service->visibleContainers($agent->id, 2)->pluck('id'))
+                ->unique();
+
+            $agent_booking_containers = \App\Models\BookingContainer::whereIn('id', $ids)
                 ->whereDoesntHave('delivery_policies')
                 ->get();
 

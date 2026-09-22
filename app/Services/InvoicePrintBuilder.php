@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Mappers\InvoicePrintSectionMapper;
-use App\Mappers\ServiceCategoryStatusMapper;
 use App\Models\Booking;
 use App\Models\BookingService;
 use App\Models\AgentExpense;
@@ -44,10 +43,15 @@ class InvoicePrintBuilder
         foreach ($booking->bookingServices as $bookingService) {
             $section = $this->resolveServiceSection($bookingService);
 
+            // HIDDEN categories are never included in any print section
+            if ($section === InvoicePrintSectionMapper::HIDDEN) {
+                continue;
+            }
+
             match ($section) {
-                InvoicePrintSectionMapper::TAX => $taxItems->push($bookingService),
+                InvoicePrintSectionMapper::TAX     => $taxItems->push($bookingService),
                 InvoicePrintSectionMapper::RECEIPT => $receiptItems->push($bookingService),
-                default => $additionalItems->push($bookingService),
+                default                            => $additionalItems->push($bookingService),
             };
         }
 
@@ -59,17 +63,10 @@ class InvoicePrintBuilder
         $agentExpenseRows = AgentExpense::forBooking($booking->id)
             ->with(['service.serviceCategory'])
             ->whereHas('service.serviceCategory', function ($q) {
-                $q->where(function ($inner) {
-                    $inner->where('invoice_print_section', InvoicePrintSectionMapper::ADDITIONAL)
-                        ->orWhere('invoice_print_section', InvoicePrintSectionMapper::RECEIPT)
-                        ->orWhere(function ($fallback) {
-                            $fallback->whereNull('invoice_print_section')
-                                ->whereIn('service_status', [
-                                    ServiceCategoryStatusMapper::UNTAXED,
-                                    ServiceCategoryStatusMapper::NOT_INVOICED,
-                                ]);
-                        });
-                });
+                $q->whereIn('invoice_print_section', [
+                    InvoicePrintSectionMapper::ADDITIONAL,
+                    InvoicePrintSectionMapper::RECEIPT,
+                ]);
             })
             ->orderBy('id')
             ->get()
@@ -147,19 +144,15 @@ class InvoicePrintBuilder
 
     public function resolveServiceSection(BookingService $bookingService): string
     {
-        $fullName = (string) ($bookingService->full_name ?? '');
-        if ($this->looksLikeReceipt($fullName)) {
-            return InvoicePrintSectionMapper::RECEIPT;
-        }
-
         $category = $bookingService->service?->serviceCategory;
         if ($category && filled($category->invoice_print_section)
             && in_array($category->invoice_print_section, InvoicePrintSectionMapper::getValidValues(), true)
         ) {
-            return $category->invoice_print_section;
+            return $category->invoice_print_section; // includes HIDDEN
         }
 
-        return InvoicePrintSectionMapper::fromServiceStatus($category?->service_status ?? null);
+        // An unset print destination means this category must not be printed.
+        return InvoicePrintSectionMapper::HIDDEN;
     }
 
     private function looksLikeReceipt(string $fullName): bool

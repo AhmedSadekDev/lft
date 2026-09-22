@@ -85,6 +85,7 @@ class BookingContainerController extends Controller
                     ->where('superagent_specification_approved', 1)
                     ->where('superagent_loading_approved', 1)
                     ->where('superagent_unloading_approved', 0)
+                    ->whereNotNull('unloading_completed_at') // المندوب أنهى التعتيق فعلاً
                     ->get();
             }
 
@@ -258,10 +259,12 @@ class BookingContainerController extends Controller
     {
         try {
             $request->merge(['stage' => 'unloading']);
-            $bookings = Booking::has('bookingContainers') // Ensure there are containers
+            $bookings = Booking::has('bookingContainers')
                 ->whereHas('bookingContainers', function ($qc) {
-                    $qc->whereIn('status', [0, 1, 2, 3])
-                    ->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->where('superagent_loading_approved', 1);
+                    $qc->where('superagent_specification_approved', 1)
+                       ->where('superagent_loading_approved', 1)
+                       ->where('superagent_unloading_approved', 0)
+                       ->whereNotNull('unloading_completed_at'); // المندوب أنهى التعتيق فعلاً
                 })
                 ->with(['bookingContainers'])
                 ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')

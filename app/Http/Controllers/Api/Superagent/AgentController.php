@@ -268,10 +268,10 @@ class AgentController extends Controller
             $containerIds = $container->booking->bookingContainers->pluck('id')->sort()->values()->all();
             $stageService = app(\App\Services\ContainerStageService::class);
             $agentIds = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->where('stage_type', 0)->pluck('agent_id')->unique()->all();
-            $changed = DB::transaction(function () use ($containerIds, $stageService) {
+            $changed = DB::transaction(function () use ($containerIds, $stageService, $superagent) {
                 $changed = false;
                 foreach ($containerIds as $id) {
-                    $changed = $stageService->approve($id, 0) || $changed;
+                    $changed = $stageService->approve($id, 0, $superagent->id) || $changed;
                 }
                 return $changed;
             });
@@ -311,7 +311,7 @@ class AgentController extends Controller
         } elseif ($request->type_id == 1) {
             $stageService = app(\App\Services\ContainerStageService::class);
             $agentIds = $stageService->assignments($container->id, 1)->pluck('agent_id')->unique()->all();
-            if (!$stageService->approve($container->id, 1)) { return $this->returnAllData('', __('alerts.success')); }
+            if (!$stageService->approve($container->id, 1, $superagent->id)) { return $this->returnAllData('', __('alerts.success')); }
             $container->refresh();
             $message = 'تم تحميل حاوية رقم ' . $container->container_no;
 
@@ -348,7 +348,7 @@ class AgentController extends Controller
         } elseif ($request->type_id == 2) {
             $stageService = app(\App\Services\ContainerStageService::class);
             $agentIds = $stageService->assignments($container->id, 2)->pluck('agent_id')->unique()->all();
-            if (!$stageService->approve($container->id, 2)) { return $this->returnAllData('', __('alerts.success')); }
+            if (!$stageService->approve($container->id, 2, $superagent->id)) { return $this->returnAllData('', __('alerts.success')); }
             $container->refresh();
             $message = 'تم تعتيق حاوية رقم ' . $container->container_no;
 

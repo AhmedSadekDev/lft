@@ -68,7 +68,8 @@
                     <div class="form-group">
                         <label for="passwordInput">{{ __('admin.password') }}</label>
                         <input class="form-control" id="passwordInput" type="password" name="password"
-                            value="{{ old('password') }}">
+                            autocomplete="new-password" minlength="8">
+                        <small class="text-muted">{{ __('profile.leave_blank') }}</small>
                         @error('password')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror

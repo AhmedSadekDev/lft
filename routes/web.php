@@ -164,6 +164,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     });
 
     Route::get('/', DashbaordController::class)->name('main');
+    Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [\App\Http\Controllers\Admin\ProfileController::class, 'password'])->middleware('throttle:6,1')->name('profile.password');
 
     // ----------------- Permissions -----------------
     Route::resource('permissions', PermissionController::class);
