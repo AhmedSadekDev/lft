@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'edit' => 'Edit my profile',
     'title' => 'My profile',
     'details' => 'Account details',
     'change_password' => 'Change password',

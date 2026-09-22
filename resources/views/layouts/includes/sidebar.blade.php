@@ -41,12 +41,6 @@
                 data-menu-dropdown-timeout="500">
                 <!--begin::Menu Nav-->
                 <ul class="menu-nav pt-0">
-                    <li class="menu-item {{ request()->routeIs('profile.*') ? 'menu-item-active' : '' }}">
-                        <a href="{{ route('profile.edit') }}" class="menu-link">
-                            <span class="svg-icon menu-icon"><i class="fas fa-user-circle"></i></span>
-                            <span class="menu-text">{{ __('profile.title') }}</span>
-                        </a>
-                    </li>
                     <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
                         <a href="{{ route('main') }}" class="menu-link">
                             <span class="svg-icon menu-icon">
@@ -806,6 +800,11 @@
                         </div>
                         <div class="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-right">
                             <ul class="navi navi-hover py-4">
+                                <li class="navi-item">
+                                    <a class="dropdown-item navi-link" href="{{ route('profile.edit') }}">
+                                        <span class="navi-text">{{ __('profile.edit') }}</span>
+                                    </a>
+                                </li>
                                 <!--begin::Item-->
                                 <li class="navi-item">
                                     <a class="dropdown-item navi-link" href="{{ route('logout') }}"
