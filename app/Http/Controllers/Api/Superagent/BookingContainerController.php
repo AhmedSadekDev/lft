@@ -204,22 +204,38 @@ class BookingContainerController extends Controller
                 return $this->returnError(400, 'يجب تحديد معرفات الطلبات أو الحاويات (booking_ids or booking_container_ids)');
             }
 
-            $query = BookingContainer::query();
-            if (!empty($bookingIds) && !empty($containerIds)) {
-                $query->where(function ($q) use ($bookingIds, $containerIds) {
-                    $q->whereIn('booking_id', $bookingIds)->orWhereIn('id', $containerIds);
-                });
-            } elseif (!empty($bookingIds)) {
-                $query->whereIn('booking_id', $bookingIds);
-            } else {
+            $query = BookingContainer::query()
+                ->where('superagent_specification_approved', 1)
+                ->where('superagent_loading_approved', 0)
+                ->where('superagent_unloading_approved', 0);
+
+            // الحاوية هي وحدة العمل: لو اتبعت حاويات محددة انقلهم فقط
+            if (!empty($containerIds)) {
                 $query->whereIn('id', $containerIds);
+            } elseif (!empty($bookingIds)) {
+                // توافق قديم: نقل كل حاويات الانتظار في الطلب فقط
+                $query->whereIn('booking_id', $bookingIds)->where('is_in_loading', $toLoading ? 0 : 1);
+            } else {
+                return $this->returnError(400, 'يجب تحديد معرفات الحاويات (booking_container_ids)');
             }
 
-            app(\App\Services\ContainerStageService::class)->moveToLoading($query->pluck('id')->all(), $toLoading);
+            // عند النقل للتحميل تأكد أنها في الانتظار؛ والعكس عند الإرجاع
+            if ($toLoading) {
+                $query->where('is_in_loading', 0);
+            } else {
+                $query->where('is_in_loading', 1);
+            }
 
-            $message = $toLoading 
-                ? 'تم نقل الطلبات المحددة إلى قائمة التحميل بنجاح' 
-                : 'تمت إعادة الطلبات المحددة إلى قائمة الانتظار';
+            $ids = $query->pluck('id')->all();
+            if (empty($ids)) {
+                return $this->returnError(404, 'لا توجد حاويات مطابقة للنقل');
+            }
+
+            app(\App\Services\ContainerStageService::class)->moveToLoading($ids, $toLoading);
+
+            $message = $toLoading
+                ? 'تم نقل الحاويات المحددة إلى قائمة التحميل بنجاح'
+                : 'تمت إعادة الحاويات المحددة إلى قائمة الانتظار';
 
             return $this->returnResponseSuccessMessage($message);
         } catch (\Exception $ex) {
@@ -238,7 +254,12 @@ class BookingContainerController extends Controller
                        ->where('superagent_loading_approved', 0)
                        ->where('superagent_unloading_approved', 0);
                 })
-                ->with(['bookingContainers'])
+                ->with(['bookingContainers' => function ($q) {
+                    $q->where('superagent_specification_approved', 1)
+                      ->where('is_in_loading', 1)
+                      ->where('superagent_loading_approved', 0)
+                      ->where('superagent_unloading_approved', 0);
+                }])
                 ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
                 ->select('bookings.*')
                 ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
@@ -264,7 +285,11 @@ class BookingContainerController extends Controller
                        ->where('superagent_loading_approved', 1)
                        ->where('superagent_unloading_approved', 0);
                 })
-                ->with(['bookingContainers'])
+                ->with(['bookingContainers' => function ($q) {
+                    $q->where('superagent_specification_approved', 1)
+                      ->where('superagent_loading_approved', 1)
+                      ->where('superagent_unloading_approved', 0);
+                }])
                 ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
                 ->select('bookings.*')
                 ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')

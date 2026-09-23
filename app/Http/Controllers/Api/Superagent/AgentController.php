@@ -242,8 +242,10 @@ class AgentController extends Controller
     public function approve(Request $request)
     {
         $rules = [
-            'booking_container_id'  => 'required',
-            'type_id' => 'required|in:0,1,2'
+            'booking_container_id'  => 'nullable|integer|exists:booking_containers,id',
+            'booking_container_ids' => 'nullable|array|min:1',
+            'booking_container_ids.*' => 'integer|exists:booking_containers,id',
+            'type_id' => 'required|in:0,1,2',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -252,146 +254,111 @@ class AgentController extends Controller
             return $this->returnError(500, $validator->errors()->first());
         }
 
-        $container = BookingContainer::find($request->booking_container_id);
+        $containerIds = $request->get('booking_container_ids');
+        $containerIds = is_array($containerIds) ? array_values(array_unique(array_filter($containerIds))) : [];
+        if (empty($containerIds) && $request->filled('booking_container_id')) {
+            $containerIds = [(int) $request->booking_container_id];
+        }
 
+        if (empty($containerIds)) {
+            return $this->returnError(400, 'يجب تحديد حاوية واحدة على الأقل (booking_container_id أو booking_container_ids)');
+        }
 
-        if (!$container) {
+        $containers = BookingContainer::whereIn('id', $containerIds)->orderBy('id')->get();
+        if ($containers->count() !== count($containerIds)) {
             return $this->returnError(500, __('main.not_found'));
         }
 
-
         $superagent = auth()->guard("superagent")->user();
-
+        $typeId = (int) $request->type_id;
+        $stageService = app(\App\Services\ContainerStageService::class);
         $message = '';
 
-        if ($request->type_id == 0) {
-            $containerIds = $container->booking->bookingContainers->pluck('id')->sort()->values()->all();
-            $stageService = app(\App\Services\ContainerStageService::class);
-            $agentIds = BookingContainerAgent::whereIn('booking_container_id', $containerIds)->where('stage_type', 0)->pluck('agent_id')->unique()->all();
-            $changed = DB::transaction(function () use ($containerIds, $stageService, $superagent) {
-                $changed = false;
-                foreach ($containerIds as $id) {
-                    $changed = $stageService->approve($id, 0, $superagent->id) || $changed;
-                }
-                return $changed;
-            });
-            if (!$changed) { return $this->returnAllData('', __('alerts.success')); }
-            $message = 'تم تخصيص حاويات الطلب ' . $container->booking_id;
+        // وحدة العمل = الحاوية (المحددة فقط)، مش كل البوكينج
+        $agentIds = BookingContainerAgent::whereIn('booking_container_id', $containerIds)
+            ->where('stage_type', $typeId)
+            ->pluck('agent_id')
+            ->unique()
+            ->all();
 
-            // Send Firebase notifications to agents
-            $agents = Agent::whereIn('id', $agentIds)->get();
-            foreach ($agents as $agent) {
-                $title = __('new_notification');
+        $changed = DB::transaction(function () use ($containerIds, $stageService, $superagent, $typeId) {
+            $changed = false;
+            foreach ($containerIds as $id) {
+                $changed = $stageService->approve($id, $typeId, $superagent->id) || $changed;
+            }
+
+            return $changed;
+        });
+
+        if (!$changed) {
+            return $this->returnAllData('', __('alerts.success'));
+        }
+
+        $first = $containers->first();
+        if ($typeId === 0) {
+            $message = count($containerIds) > 1
+                ? 'تم اعتماد تخصيص ' . count($containerIds) . ' حاوية'
+                : 'تم تخصيص حاوية الطلب ' . ($first->booking_id ?? '');
+        } elseif ($typeId === 1) {
+            $message = count($containerIds) > 1
+                ? 'تم اعتماد تحميل ' . count($containerIds) . ' حاوية'
+                : 'تم تحميل حاوية رقم ' . ($first->container_no ?? $first->id);
+        } else {
+            $message = count($containerIds) > 1
+                ? 'تم اعتماد تعتيق ' . count($containerIds) . ' حاوية'
+                : 'تم تعتيق حاوية رقم ' . ($first->container_no ?? $first->id);
+        }
+
+        $agents = Agent::whereIn('id', $agentIds)->get();
+        foreach ($agents as $agent) {
+            $title = __('new_notification');
+            if ($typeId === 0) {
                 $text = __('booking_specification_approved', [
-                    'booking_number' => $container->booking->booking_number ?? ''
+                    'booking_number' => $first->booking->booking_number ?? '',
                 ]);
-
-                SaveNotification::create(
-                    $title,
-                    $text,
-                    $agent->id,
-                    Agent::class,
-                    AppNotification::specific,
-                    $container->id,
-                    0
-                );
-
-                if ($agent->device_token) {
-                    $notificationData = [
-                        'booking_id' => $container->booking_id,
-                        'booking_container_id' => $container->id,
-                        'type_id' => 0,
-                        'type' => 'specification',
-                        'type_action' => 'specification',
-                        'action_type' => 'specification',
-                    ];
-                    SendNotification::send($agent->device_token, $title, $text, $notificationData);
-                }
-            }
-        } elseif ($request->type_id == 1) {
-            $stageService = app(\App\Services\ContainerStageService::class);
-            $agentIds = $stageService->assignments($container->id, 1)->pluck('agent_id')->unique()->all();
-            if (!$stageService->approve($container->id, 1, $superagent->id)) { return $this->returnAllData('', __('alerts.success')); }
-            $container->refresh();
-            $message = 'تم تحميل حاوية رقم ' . $container->container_no;
-
-            // Send Firebase notifications to agents
-            $agents = Agent::whereIn('id', $agentIds)->get();
-            foreach ($agents as $agent) {
-                $title = __('new_notification');
+            } elseif ($typeId === 1) {
                 $text = __('booking_loading_approved', [
-                    'container_no' => $container->container_no ?? ''
+                    'container_no' => $first->container_no ?? '',
                 ]);
-
-                SaveNotification::create(
-                    $title,
-                    $text,
-                    $agent->id,
-                    Agent::class,
-                    AppNotification::specific,
-                    $container->id,
-                    1
-                );
-
-                if ($agent->device_token) {
-                    $notificationData = [
-                        'booking_id' => $container->booking_id,
-                        'booking_container_id' => $container->id,
-                        'type_id' => 1,
-                        'type' => 'loading',
-                        'type_action' => 'loading',
-                        'action_type' => 'loading',
-                    ];
-                    SendNotification::send($agent->device_token, $title, $text, $notificationData);
-                }
-            }
-        } elseif ($request->type_id == 2) {
-            $stageService = app(\App\Services\ContainerStageService::class);
-            $agentIds = $stageService->assignments($container->id, 2)->pluck('agent_id')->unique()->all();
-            if (!$stageService->approve($container->id, 2, $superagent->id)) { return $this->returnAllData('', __('alerts.success')); }
-            $container->refresh();
-            $message = 'تم تعتيق حاوية رقم ' . $container->container_no;
-
-            // Send Firebase notifications to agents
-            $agents = Agent::whereIn('id', $agentIds)->get();
-            foreach ($agents as $agent) {
-                $title = __('new_notification');
+            } else {
                 $text = __('booking_unloading_approved', [
-                    'container_no' => $container->container_no ?? ''
+                    'container_no' => $first->container_no ?? '',
                 ]);
+            }
 
-                SaveNotification::create(
-                    $title,
-                    $text,
-                    $agent->id,
-                    Agent::class,
-                    AppNotification::specific,
-                    $container->id,
-                    2
-                );
+            SaveNotification::create(
+                $title,
+                $text,
+                $agent->id,
+                Agent::class,
+                AppNotification::specific,
+                $first->id,
+                $typeId
+            );
 
-                if ($agent->device_token) {
-                    $notificationData = [
-                        'booking_id' => $container->booking_id,
-                        'booking_container_id' => $container->id,
-                        'type_id' => 2,
-                        'type' => 'unloading',
-                        'type_action' => 'unloading',
-                        'action_type' => 'unloading',
-                    ];
-                    SendNotification::send($agent->device_token, $title, $text, $notificationData);
-                }
+            if ($agent->device_token) {
+                $notificationData = [
+                    'booking_id' => $first->booking_id,
+                    'booking_container_id' => $first->id,
+                    'booking_container_ids' => $containerIds,
+                    'type_id' => $typeId,
+                    'type' => $typeId === 0 ? 'specification' : ($typeId === 1 ? 'loading' : 'unloading'),
+                    'type_action' => $typeId === 0 ? 'specification' : ($typeId === 1 ? 'loading' : 'unloading'),
+                    'action_type' => $typeId === 0 ? 'specification' : ($typeId === 1 ? 'loading' : 'unloading'),
+                ];
+                SendNotification::send($agent->device_token, $title, $text, $notificationData);
             }
         }
 
         // إرسال الإشعار للموظف والشركة
-        if ($container->booking->employee) {
-            Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
+        foreach ($containers as $container) {
+            if ($container->booking->employee) {
+                Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
+            }
+            if ($container->booking->company) {
+                Notification::send($container->booking->company, new ConatinerStatus($container, $message));
+            }
         }
-        if ($container->booking->company) {
-            Notification::send($container->booking->company, new ConatinerStatus($container, $message));
-        }
-
 
         return $this->returnAllData("", __('alerts.success'));
     }

@@ -125,11 +125,8 @@ class ContainerStageService
             $container->update($values + ['status' => max((int) $container->status, $type + 1)]);
             $this->assignments($containerId, $type)->update($values);
             DailyBookingContainer::where('booking_container_id', $containerId)->update([$flag => 1, 'booking_container_status' => $container->status]);
-            // Keep the existing specification -> loading handoff; unloading is assigned explicitly.
-            if ($type === 0 && ! $this->assignments($containerId, 1)->exists()) {
-                $this->assign($containerId, $this->assignments($containerId, 0)->pluck('agent_id')->all(), 1);
-            }
 
+            // لا تنقل نفس المندوب تلقائياً للمرحلة التالية — التعيين يتم يدوياً لكل مرحلة
             return true;
         });
     }
