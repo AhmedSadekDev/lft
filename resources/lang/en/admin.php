@@ -312,7 +312,7 @@ return [
     // -----------  /Code Related  ------------
     'containers_count' => 'Containers Count',
     'add_container' => 'Add Container',
-    'responsible_employee' => 'Responsible Employee',
+    'responsible_employee' => 'Notes',
     "papers" => "Papers",
     'not_taxed' => 'Not Taxed',
 

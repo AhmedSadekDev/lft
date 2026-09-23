@@ -127,7 +127,7 @@ class BookingContainer extends Model
 
     public function getContainerTypeAttribute()
     {
-        return $this->container->type;
+        return $this->container?->type ?? '';
     }
 
     public function last_movement()

@@ -33,7 +33,7 @@ class BookingController extends Controller
     {
         $this->middleware('permission:bookings.index')->only('index');
         $this->middleware('permission:bookings.create')->only(['create', 'store']);
-        $this->middleware('permission:bookings.udpate')->only(['edit', 'udpate']);
+        $this->middleware('permission:bookings.update')->only(['edit', 'update']);
         $this->middleware('permission:bookings.delete')->only('destroy');
     }
         /**

@@ -355,7 +355,7 @@ return [
     'car_number' => 'رقم السياره',
     'containers_count' => 'عدد الحاويات',
     'add_container' => 'إضافة حاويه',
-    'responsible_employee' => 'الموظف العناية',
+    'responsible_employee' => 'ملاحظات',
     "papers" => "الأوراق",
     'not_taxed' => 'غير ضريبي',
 

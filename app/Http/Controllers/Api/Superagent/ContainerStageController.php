@@ -16,8 +16,10 @@ class ContainerStageController extends Controller
     {
         $data = $request->validate(['type_id' => 'required|integer|in:1,2']);
         $type = (int) $data['type_id'];
-        $name = ContainerStageService::NAMES[$type];
-        $containers = BookingContainer::where('superagent_'.$name.'_approved', 1)
+        $containers = BookingContainer::query()
+            ->when($type === 1, fn ($q) => $q->where('superagent_specification_approved', 1)
+                ->where(fn ($q) => $q->where('is_in_loading', 1)->orWhere('superagent_loading_approved', 1)))
+            ->when($type === 2, fn ($q) => $q->where('superagent_loading_approved', 1))
             ->whereHas('agents', fn ($q) => $q->where('booking_container_agents.stage_type', $type))
             ->whereDoesntHave('stages', fn ($q) => $q->where('type_id', $type)->whereNotNull('receipts_closed_at'))
             ->with(['stages', 'agents' => fn ($q) => $q->where('booking_container_agents.stage_type', $type)])

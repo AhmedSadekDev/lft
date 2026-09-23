@@ -85,7 +85,6 @@ class BookingContainerController extends Controller
                     ->where('superagent_specification_approved', 1)
                     ->where('superagent_loading_approved', 1)
                     ->where('superagent_unloading_approved', 0)
-                    ->whereNotNull('unloading_completed_at') // المندوب أنهى التعتيق فعلاً
                     ->get();
             }
 
@@ -263,8 +262,7 @@ class BookingContainerController extends Controller
                 ->whereHas('bookingContainers', function ($qc) {
                     $qc->where('superagent_specification_approved', 1)
                        ->where('superagent_loading_approved', 1)
-                       ->where('superagent_unloading_approved', 0)
-                       ->whereNotNull('unloading_completed_at'); // المندوب أنهى التعتيق فعلاً
+                       ->where('superagent_unloading_approved', 0);
                 })
                 ->with(['bookingContainers'])
                 ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')

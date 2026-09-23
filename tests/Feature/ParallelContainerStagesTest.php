@@ -318,7 +318,7 @@ class ParallelContainerStagesTest extends TestCase
         $service = app(ContainerStageService::class);
         $this->assertConflict(fn () => $service->complete(1, 1, 2), 403);
         $this->assertConflict(fn () => $service->assign(1, [2], 2));
-        $this->assertConflict(fn () => $service->closeReceipts(1, 1, 7, 1));
+        $this->assertConflict(fn () => $service->closeReceipts(1, 2, 7, 1));
         $this->assertSame(0, AgentExpense::count());
     }
 
@@ -413,6 +413,86 @@ class ParallelContainerStagesTest extends TestCase
         $data['receipts_version'] = 2;
         $this->postJson('/api/superagent/booking/close_stage_receipts', $data)->assertOk()->assertJsonPath('data.receipts_closed_by', 7);
         $this->assertSame(0, app(ContainerStageService::class)->visibleContainers(1, 1)->count());
+    }
+
+    public function test_superagent_can_close_loading_receipts_without_moving_to_unloading(): void
+    {
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+        $this->receipt();
+        $before = BookingContainer::find(1)->getAttributes();
+
+        $this->getJson('/api/superagent/booking/pending_stage_receipts?type_id=1')
+            ->assertOk()->assertJsonPath('data.data.0.booking_container_id', 1);
+        $data = ['booking_container_id' => 1, 'type_id' => 1, 'receipts_version' => 1];
+        $this->postJson('/api/superagent/booking/close_stage_receipts', $data)->assertStatus(409);
+        $data['receipts_version'] = 2;
+        $this->postJson('/api/superagent/booking/close_stage_receipts', $data)
+            ->assertOk()->assertJsonPath('data.receipts_closed_by', 7);
+        $this->postJson('/api/superagent/booking/close_stage_receipts', $data)->assertOk();
+        $this->assertSame($before, BookingContainer::find(1)->getAttributes());
+        $this->assertSame(1, app(ContainerStageService::class)->currentType(BookingContainer::find(1)));
+        $this->getJson('/api/superagent/booking/pending_stage_receipts?type_id=1')
+            ->assertOk()->assertJsonPath('data.data', []);
+        $this->assertConflict(fn () => $this->receipt('after-close'));
+
+        $this->assertTrue(app(ContainerStageService::class)->approve(1, 1, 7));
+        $this->assertSame(2, app(ContainerStageService::class)->currentType(BookingContainer::find(1)));
+    }
+
+    public function test_loading_receipts_cannot_close_while_waiting_for_loading(): void
+    {
+        BookingContainer::find(1)->update(['is_in_loading' => false]);
+        $this->assertConflict(fn () => app(ContainerStageService::class)->closeReceipts(1, 1, 7, 1));
+        $this->assertSame(0, BookingContainerStage::count());
+    }
+
+    /** @dataProvider loadingReceiptStates */
+    public function test_loading_approval_keeps_container_visible_for_unloading_assignment(bool $closeReceipts): void
+    {
+        Schema::table('booking_containers', fn (Blueprint $t) => $t->date('arrival_date')->nullable());
+        Schema::table('delivery_policy_containers', fn (Blueprint $t) => $t->timestamps());
+        $service = app(ContainerStageService::class);
+        $service->complete(1, 1, 1);
+        if ($closeReceipts) {
+            $service->closeReceipts(1, 1, 7, 1);
+        }
+        $service->approve(1, 1, 7);
+        $this->assertNull(BookingContainer::find(1)->unloading_completed_at);
+        $this->assertFalse($service->assignments(1, 2)->exists());
+
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+        $this->getJson('/api/superagent/booking/loading')
+            ->assertOk()->assertJsonPath('data.data', []);
+        $unloading = $this->getJson('/api/superagent/booking/unloading');
+        $this->assertSame(200, $unloading->status(), $unloading->getContent());
+        $unloading->assertJsonPath('data.data.0.booking_containers.0.id', 1);
+        foreach (['', '?stage_type=unloading'] as $query) {
+            $this->getJson('/api/superagent/booking/missions/all'.$query)
+                ->assertOk()->assertJsonPath('data.data.0.id', 1)
+                ->assertJsonPath('data.data.0.type', 'unloading');
+        }
+
+        // Loading receipts and the new unloading assignment retain separate visibility.
+        $this->actingAs(Agent::find(1), 'agent');
+        $loading = $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk();
+        if ($closeReceipts) {
+            $loading->assertJsonPath('data', []);
+        } else {
+            $loading->assertJsonPath('data.0.booking_containers.0.id', 1);
+        }
+        $service->assign(1, [2], 2);
+        $this->actingAs(Agent::find(2), 'agent');
+        $this->getJson('/api/agent/booking/fetch_unloading_assignments')
+            ->assertOk()->assertJsonPath('data.0.booking_containers.0.id', 1);
+    }
+
+    public static function loadingReceiptStates(): array
+    {
+        return ['open receipts' => [false], 'closed receipts' => [true]];
     }
 
     public function test_approved_expenses_cannot_be_edited_by_the_agent(): void

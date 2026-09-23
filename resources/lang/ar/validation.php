@@ -204,8 +204,8 @@ return [
         'permit_end_date' => ' تاريخ انتهاء التصريح ',
         'container_no' => 'رقم الحاوية',
         'sail_of_number' => 'السيل الملاحى',
-        'responsible_employee' => 'موظف العناية',
-        'employee_name' => 'اسم الموظف',
+        'responsible_employee' => 'ملاحظات',
+        'employee_name' => 'ملاحظات',
         'factory_id' => 'المصنع',
     ],
 ];

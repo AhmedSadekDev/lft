@@ -21,10 +21,10 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
     public function collection()
     {
         return BookingContainer::whereIn('id', $this->ids)
-            ->with(['container', 'delivery_policies.money_transfer', 'delivery_policies', 'departure', 'loading', 'aging'])
+            ->with(['booking.employee', 'booking.company', 'booking.factory', 'booking.invoice', 'booking.shippingAgent', 'container', 'delivery_policies.money_transfer', 'delivery_policies.car', 'delivery_policies.driver', 'departure', 'loading', 'aging'])
             ->get()
             ->map(function ($item) {
-                switch ($item->booking->type_of_action) {
+                switch ($item->booking?->type_of_action) {
                     case 0:
                         $typePolicy = 'تصدير';
                         break;
@@ -70,6 +70,8 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
                     'date' => $item->created_at ?? $item->updated_at,
                     'invoice_no' => $item->booking ? ($item->booking->invoice ? $item->booking->invoice->invoice_number : null) : null,
                     'company_name' => $item->booking ? ($item->booking->company ? $item->booking->company->name : null) : null,
+                    'employee' => $item->booking?->employee?->name ?? '',
+                    'notes' => $item->booking?->employee_name ?? '',
                     'container_no' => $containerNo,
                     'factory' => $item->booking ? ($item->booking->factory ? $item->booking->factory->name : null) : null,
                     'booking_number' => $item->booking ? $item->booking->booking_number : null,
@@ -100,6 +102,8 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
             'تاريخ الطلب',
             'رقم الفاتورة',
             'الشركة',
+            'الموظف',
+            'ملاحظات',
             'رقم الحاوية',
             'المصنع',
             'رقم الحجز',
