@@ -350,13 +350,15 @@ class AgentController extends Controller
             }
         }
 
-        // إرسال الإشعار للموظف والشركة
-        foreach ($containers as $container) {
-            if ($container->booking->employee) {
-                Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
-            }
-            if ($container->booking->company) {
-                Notification::send($container->booking->company, new ConatinerStatus($container, $message));
+        // إرسال إيميلات التحميل والتعتيق فقط للموظف والشركة.
+        if (in_array($typeId, [1, 2], true)) {
+            foreach ($containers as $container) {
+                if ($container->booking->employee) {
+                    Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
+                }
+                if ($container->booking->company) {
+                    Notification::send($container->booking->company, new ConatinerStatus($container, $message));
+                }
             }
         }
 

@@ -27,12 +27,12 @@ class CompanyRequest extends FormRequest
     {
         return [
             'name'              => ['required'],
-            'email'             => request()->method() == 'POST' ? ['required', 'email', 'unique:companies,email'] : ['required', 'email', 'unique:companies,email,' . $this->company->id],
+            'email'             => ['required', 'email'],
             'address'           => ['required', 'max:255'],
             'phone'             => ['required', 'numeric', 'digits_between:9,12'],
             'taxed'             => ['required'],
             'private_company_id' => ['nullable', 'exists:private_companies,id'],
-            'tax_no'            => request()->method() == 'POST' ? ['required', 'numeric', 'min:0', 'unique:companies,tax_no', 'digits_between:1,20'] : ['required', 'numeric', 'min:0', 'unique:companies,tax_no,' . $this->company->id, 'digits_between:1,20'],
+            'tax_no'            => ['required', 'numeric', 'min:0', 'digits_between:1,20'],
             'opening_balance'   => ['nullable', 'numeric', 'min:0'],
             'bill_type'         => ['required', 'in:1,2'],
             'attachments'       => ['sometimes', 'nullable'],
