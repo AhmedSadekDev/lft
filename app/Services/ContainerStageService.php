@@ -122,11 +122,27 @@ class ContainerStageService
             }
             $now = now();
             $values = [$flag => 1, $name.'_approved_at' => $now, $name.'_completed_at' => $container->{$name.'_completed_at'} ?: $now];
+            // بعد اعتماد التخصيص انقل الحاوية مباشرة للتحميل بدون انتظار 24 ساعة / قائمة الانتظار.
+            if ($type === 0) {
+                $values['is_in_loading'] = 1;
+                $values['moved_to_loading_at'] = $container->moved_to_loading_at ?: $now;
+            }
             $container->update($values + ['status' => max((int) $container->status, $type + 1)]);
             $this->assignments($containerId, $type)->update($values);
-            DailyBookingContainer::where('booking_container_id', $containerId)->update([$flag => 1, 'booking_container_status' => $container->status]);
+            $dailyUpdate = [$flag => 1, 'booking_container_status' => $container->status];
+            if ($type === 0) {
+                $dailyUpdate['is_in_loading'] = 1;
+            }
+            DailyBookingContainer::where('booking_container_id', $containerId)->update($dailyUpdate);
 
-            // لا تنقل نفس المندوب تلقائياً للمرحلة التالية — التعيين يتم يدوياً لكل مرحلة
+            // انسخ مندوبي التخصيص لمرحلة التحميل إن لم يكونوا مكلفين بها بعد.
+            if ($type === 0) {
+                $agentIds = $this->assignments($containerId, 0)->pluck('agent_id')->all();
+                if ($agentIds) {
+                    $this->assign($containerId, $agentIds, 1);
+                }
+            }
+
             return true;
         });
     }

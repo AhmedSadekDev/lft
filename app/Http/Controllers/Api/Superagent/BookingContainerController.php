@@ -120,38 +120,83 @@ class BookingContainerController extends Controller
         }
     }
 
+    private function stageContainerConstraints(string $stage): \Closure
+    {
+        return match ($stage) {
+            'specification' => function ($q) {
+                $q->where(function ($query) {
+                    $query->where('status', 0)
+                        ->orWhere(function ($q2) {
+                            $q2->where('status', 1)
+                                ->where('superagent_specification_approved', 0);
+                        });
+                });
+            },
+            'waiting' => function ($q) {
+                $q->where('superagent_specification_approved', 1)
+                    ->where('is_in_loading', 0)
+                    ->where('superagent_loading_approved', 0)
+                    ->where('superagent_unloading_approved', 0);
+            },
+            'loading' => function ($q) {
+                $q->where('superagent_specification_approved', 1)
+                    ->where('is_in_loading', 1)
+                    ->where('superagent_loading_approved', 0)
+                    ->where('superagent_unloading_approved', 0);
+            },
+            'unloading' => function ($q) {
+                $q->where('superagent_specification_approved', 1)
+                    ->where('superagent_loading_approved', 1)
+                    ->where('superagent_unloading_approved', 0);
+            },
+            default => fn ($q) => $q,
+        };
+    }
+
+    /**
+     * قائمة الحجوزات مع حاويات المرحلة الحالية فقط (مش كل حاويات البوكينج).
+     */
+    private function paginateBookingsForStage(Request $request, string $stage)
+    {
+        $request->merge(['stage' => $stage]);
+        $constrain = $this->stageContainerConstraints($stage);
+
+        return Booking::query()
+            ->whereHas('bookingContainers', $constrain)
+            ->with([
+                'bookingContainers' => function ($q) use ($constrain) {
+                    $constrain($q);
+                    $q->with([
+                        'booking.company',
+                        'booking.factory',
+                        'booking.yard',
+                        'branch.factory',
+                        'container',
+                        'notes',
+                        'agents',
+                        'delivery_policies.money_transfer',
+                        'bookingPapers.image',
+                    ]);
+                },
+            ])
+            ->whereExists(function ($query) use ($constrain) {
+                $query->selectRaw('1')
+                    ->from('booking_containers')
+                    ->whereColumn('booking_containers.booking_id', 'bookings.id');
+                $constrain($query);
+            })
+            ->orderByDesc('bookings.id')
+            ->paginate((int) $request->get('per_page', 100));
+    }
+
     public function specification(Request $request)
     {
         try {
-            $request->merge(['stage' => 'specification']);
-            $bookings = Booking::has('bookingContainers') // Ensure there are containers
-                ->whereHas('bookingContainers', function ($qc) {
-                    // الحاويات التي تحتاج موافقة على التخصيص:
-                    // 1. status = 0 (لم يتم التخصيص بعد)
-                    // 2. status = 1 و superagent_specification_approved = 0 (تم التخصيص لكن لم يتم الموافقة)
-                    $qc->where(function($q) {
-                        $q->where('status', 0)
-                          ->orWhere(function($q2) {
-                              $q2->where('status', 1)
-                                 ->where('superagent_specification_approved', 0);
-                          });
-                    });
-                })
-                ->with(['bookingContainers'])
-                ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
-                ->select('bookings.*')
-                ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
-                ->groupBy('bookings.id')
-                ->orderBy('bookings.id', 'desc')
-                ->paginate((int) $request->get('per_page', 100));
+            $bookings = $this->paginateBookingsForStage($request, 'specification');
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
-
             return $this->returnAllData($data, __('alerts.success'));
-
         } catch (\Exception $ex) {
-
-
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
@@ -163,21 +208,7 @@ class BookingContainerController extends Controller
     public function waiting(Request $request)
     {
         try {
-            $request->merge(['stage' => 'waiting']);
-            $bookings = Booking::has('bookingContainers')
-                ->whereHas('bookingContainers', function ($qc) {
-                    $qc->where('superagent_specification_approved', 1)
-                       ->where('is_in_loading', 0)
-                       ->where('superagent_loading_approved', 0)
-                       ->where('superagent_unloading_approved', 0);
-                })
-                ->with(['bookingContainers'])
-                ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
-                ->select('bookings.*')
-                ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
-                ->groupBy('bookings.id')
-                ->orderBy('bookings.id', 'desc')
-                ->paginate((int) $request->get('per_page', 100));
+            $bookings = $this->paginateBookingsForStage($request, 'waiting');
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
             return $this->returnAllData($data, __('alerts.success'));
@@ -246,31 +277,11 @@ class BookingContainerController extends Controller
     public function loading(Request $request)
     {
         try {
-            $request->merge(['stage' => 'loading']);
-            $bookings = Booking::has('bookingContainers') // Ensure there are containers
-                ->whereHas('bookingContainers', function ($qc) {
-                    $qc->where('superagent_specification_approved', 1)
-                       ->where('is_in_loading', 1)
-                       ->where('superagent_loading_approved', 0)
-                       ->where('superagent_unloading_approved', 0);
-                })
-                ->with(['bookingContainers' => function ($q) {
-                    $q->where('superagent_specification_approved', 1)
-                      ->where('is_in_loading', 1)
-                      ->where('superagent_loading_approved', 0)
-                      ->where('superagent_unloading_approved', 0);
-                }])
-                ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
-                ->select('bookings.*')
-                ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
-                ->groupBy('bookings.id')
-                ->orderBy('bookings.id', 'desc')
-                ->paginate((int) $request->get('per_page', 100));
+            $bookings = $this->paginateBookingsForStage($request, 'loading');
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
@@ -278,31 +289,11 @@ class BookingContainerController extends Controller
     public function unloading(Request $request)
     {
         try {
-            $request->merge(['stage' => 'unloading']);
-            $bookings = Booking::has('bookingContainers')
-                ->whereHas('bookingContainers', function ($qc) {
-                    $qc->where('superagent_specification_approved', 1)
-                       ->where('superagent_loading_approved', 1)
-                       ->where('superagent_unloading_approved', 0);
-                })
-                ->with(['bookingContainers' => function ($q) {
-                    $q->where('superagent_specification_approved', 1)
-                      ->where('superagent_loading_approved', 1)
-                      ->where('superagent_unloading_approved', 0);
-                }])
-                ->join('booking_containers', 'bookings.id', '=', 'booking_containers.booking_id')
-                ->select('bookings.*')
-                ->selectRaw('MIN(booking_containers.arrival_date) as min_arrival_date')
-                ->groupBy('bookings.id')
-                ->orderBy('bookings.id', 'desc')
-                ->paginate((int) $request->get('per_page', 100));
+            $bookings = $this->paginateBookingsForStage($request, 'unloading');
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
-
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {
-
-
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
     }
