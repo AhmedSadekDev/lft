@@ -9,13 +9,14 @@ class SpecificationBookingResource extends JsonResource
 
     public function toArray($request)
     {
-        $agentAssignment = $request->user()->agent_booking_containers->pluck('id')->toArray();
-
+        $containers = ($this->bookingContainers ?? collect())->values();
 
         return [
             "id" => $this->id,
             "booking_number" => $this->booking_number ?? "",
-            "booking_containers" => BookingContainerResource::collection($this->bookingContainers->whereIn('id', $agentAssignment))
+            "booking_containers" => $containers->map(
+                fn ($container) => (new BookingContainerResource($container))->forStage(0)
+            )->values(),
         ];
     }
 }

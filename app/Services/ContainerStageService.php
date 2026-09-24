@@ -74,15 +74,25 @@ class ContainerStageService
             // Replace only this phase's assignees; other phases retain their access.
             $this->assignments($containerId, $type)->whereNotIn('agent_id', $agentIds)->delete();
             foreach (array_unique($agentIds) as $agentId) {
-                $this->assignments($containerId, $type)->firstOrCreate(['agent_id' => $agentId], [
+                $row = [
                     'booking_container_id' => $containerId,
+                    'agent_id' => $agentId,
                     'stage_type' => $type,
                     'booking_container_status' => $type,
                     'superagent_specification_approved' => (int) $container->superagent_specification_approved,
                     'superagent_loading_approved' => (int) $container->superagent_loading_approved,
                     'superagent_unloading_approved' => (int) $container->superagent_unloading_approved,
                     'is_in_loading' => (int) $container->is_in_loading,
-                ]);
+                ];
+                // updateOrCreate يضمن stage_type حتى لو كان الصف القديم بـ null
+                BookingContainerAgent::updateOrCreate(
+                    [
+                        'booking_container_id' => $containerId,
+                        'agent_id' => $agentId,
+                        'stage_type' => $type,
+                    ],
+                    $row
+                );
             }
 
             return $type;
@@ -207,15 +217,16 @@ class ContainerStageService
 
     public function visibleContainers(int $agentId, int $type)
     {
+        abort_unless(isset(self::NAMES[$type]), 422, 'مرحلة غير صحيحة');
+        $flag = 'superagent_'.self::NAMES[$type].'_approved';
+        // بعد اعتماد التشغيل تختفي الحاوية فورًا من قائمة المندوب للمرحلة الحالية.
         $query = BookingContainer::whereDoesntHave('booking.invoice')->whereHas('agents', function ($q) use ($agentId, $type) {
             $q->where('agents.id', $agentId)->where('booking_container_agents.stage_type', $type);
-        })->whereDoesntHave('stages', function ($q) use ($type) {
+        })->where($flag, 0)->whereDoesntHave('stages', function ($q) use ($type) {
             $q->where('type_id', $type)->whereNotNull('receipts_closed_at');
         });
         if ($type === 1) {
-            $query->where('superagent_specification_approved', 1)->where(function ($q) {
-                $q->where('is_in_loading', 1)->orWhere('superagent_loading_approved', 1);
-            });
+            $query->where('superagent_specification_approved', 1)->where('is_in_loading', 1);
         } elseif ($type === 2) {
             $query->where('superagent_loading_approved', 1);
         }

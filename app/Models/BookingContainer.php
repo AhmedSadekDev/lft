@@ -92,7 +92,16 @@ class BookingContainer extends Model
 
     public function agents(): BelongsToMany
     {
-        return $this->belongsToMany(Agent::class, "booking_container_agents")->withPivot('booking_container_status')->withTimestamps();
+        return $this->belongsToMany(Agent::class, "booking_container_agents")
+            ->withPivot(
+                'booking_container_status',
+                'stage_type',
+                'superagent_specification_approved',
+                'superagent_loading_approved',
+                'superagent_unloading_approved',
+                'is_in_loading'
+            )
+            ->withTimestamps();
     }
 
     public function getCreatedAtAttribute($value)

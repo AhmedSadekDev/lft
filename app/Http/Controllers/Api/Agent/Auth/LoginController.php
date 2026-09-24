@@ -38,11 +38,12 @@ class LoginController extends Controller
 
                 $agent = auth()->guard('agent')->user();
 
-
-                $agent->update([
-                    'session_id' => $token,
-                    'device_token' => $request->device_token ?? ""
-                ]);
+                $updates = ['session_id' => $token];
+                // لا تمسح device_token لو الموبايل مبعتش قيمة جديدة
+                if ($request->filled('device_token')) {
+                    $updates['device_token'] = $request->device_token;
+                }
+                $agent->update($updates);
 
 
                 return $this->returnAllData(new AgentResource($agent), __('alerts.success'));

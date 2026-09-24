@@ -9,9 +9,14 @@ class SpecificationShippingAgentResource extends JsonResource
 
     public function toArray($request)
     {
-        $agentAssignment = $request->user()->agent_booking_containers()->wherePivot('stage_type', 0)
+        $agent = $request->user();
+        $agentAssignment = $agent->agent_booking_containers()
             ->whereDoesntHave('booking.invoice')
-            ->where('booking_container_agents.superagent_specification_approved', 0)
+            ->where(function ($q) {
+                $q->where('booking_container_agents.stage_type', 0)
+                    ->orWhereNull('booking_container_agents.stage_type');
+            })
+            ->where('booking_containers.superagent_specification_approved', 0)
             ->pluck('booking_containers.id')
             ->toArray();
 
@@ -23,9 +28,13 @@ class SpecificationShippingAgentResource extends JsonResource
                     $q->where("booking_containers.superagent_specification_approved", 0)
                         ->whereIn('booking_containers.id', $agentAssignment);
                 })
+                    ->with(['bookingContainers' => function ($q) use ($agentAssignment) {
+                        $q->where('superagent_specification_approved', 0)
+                            ->whereIn('id', $agentAssignment)
+                            ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'stages']);
+                    }])
                     ->get()
             )
-
         ];
     }
 }

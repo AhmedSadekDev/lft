@@ -28,6 +28,17 @@ class SendNotification
         try {
             $firebase = new FireBasePushNotification();
             $result = $firebase->to($token, $text, $title, $data);
+            $decoded = json_decode((string) $result, true);
+
+            if (is_array($decoded) && isset($decoded['error'])) {
+                Log::error('Push notification rejected by FCM', [
+                    'token' => $token,
+                    'title' => $title,
+                    'error' => $decoded['error'],
+                ]);
+
+                return false;
+            }
 
             Log::info('Push notification sent successfully', [
                 'token' => $token,

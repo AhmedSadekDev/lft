@@ -93,9 +93,13 @@ class AgentController extends Controller
             }
 
             // Filter out null and invalid agent IDs
-            $agent_ids = array_filter($request->agent_ids ?? [], function ($id) {
+            $agent_ids = array_values(array_unique(array_filter($request->agent_ids ?? [], function ($id) {
                 return $id !== null && Agent::find($id) !== null;
-            });
+            })));
+
+            if (empty($agent_ids)) {
+                return $this->returnError(422, 'يجب اختيار مندوب واحد على الأقل');
+            }
 
             $processed_containers = [];
 
@@ -167,32 +171,62 @@ class AgentController extends Controller
             // Get booking_ids as array
             $booking_ids = is_array($request->booking_id)
                 ? $request->booking_id
-                : [$request->booking_id];
+                : ($request->filled('booking_id') ? [$request->booking_id] : []);
 
-            // Validate all booking IDs exist
-            $bookings = Booking::whereIn('id', $booking_ids)->get();
-
-            if ($bookings->isEmpty()) {
-                return $this->returnError(404, __('Booking not found'));
-            }
+            $containerIds = $request->input('booking_container_ids', $request->input('booking_container_id'));
+            $containerIds = is_array($containerIds) ? array_filter($containerIds) : ($containerIds ? [$containerIds] : []);
 
             // Filter out null and invalid agent IDs
-            $agent_ids = array_filter($request->agent_ids ?? [], function ($id) {
+            $agent_ids = array_values(array_unique(array_filter($request->agent_ids ?? [], function ($id) {
                 return $id !== null && Agent::find($id) !== null;
-            });
+            })));
+
+            if (empty($agent_ids)) {
+                return $this->returnError(422, 'يجب اختيار مندوب واحد على الأقل');
+            }
+
+            $specScope = function ($q) {
+                $q->where('superagent_specification_approved', 0)
+                    ->where(function ($query) {
+                        $query->where('status', 0)
+                            ->orWhere(function ($q2) {
+                                $q2->where('status', 1)
+                                    ->where('superagent_specification_approved', 0);
+                            });
+                    });
+            };
+
+            if (! empty($containerIds)) {
+                $booking_containers = BookingContainer::whereIn('id', $containerIds)
+                    ->where($specScope)
+                    ->orderBy('id')
+                    ->get();
+            } elseif (! empty($booking_ids)) {
+                $bookings = Booking::whereIn('id', $booking_ids)->get();
+                if ($bookings->isEmpty()) {
+                    return $this->returnError(404, __('Booking not found'));
+                }
+                $booking_containers = BookingContainer::whereIn('booking_id', $bookings->pluck('id'))
+                    ->where($specScope)
+                    ->orderBy('id')
+                    ->get();
+            } else {
+                return $this->returnError(422, 'يجب تحديد طلب أو حاويات');
+            }
+
+            if ($booking_containers->isEmpty()) {
+                return $this->returnError(404, 'لا توجد حاويات في مرحلة التخصيص للتكليف');
+            }
 
             $agents = Agent::whereIn("id", $agent_ids)->get();
 
-            // Process each booking
-            foreach ($bookings as $booking) {
-                $booking_containers = $booking->bookingContainers()->where("booking_containers.status", 0)->get();
-
+            DB::transaction(function () use ($booking_containers, $agent_ids) {
                 foreach ($booking_containers as $booking_container) {
                     app(\App\Services\ContainerStageService::class)->assign($booking_container->id, $agent_ids, 0);
                 }
-            }
+            });
 
-            // Notify each agent
+            // Notify each agent once per assigned container
             foreach ($agents as $agent) {
                 $title = __('new_notification');
                 $text = __('booking_assigned', [
@@ -200,26 +234,21 @@ class AgentController extends Controller
                     'agent' => $agent->name
                 ]);
 
-                // Save and send one notification for each booking.
-                foreach ($bookings as $booking) {
-                    $notificationContainer = $booking->bookingContainers()
-                        ->where('booking_containers.status', 0)
-                        ->first();
-
+                foreach ($booking_containers as $booking_container) {
                     SaveNotification::create(
                         $title,
                         $text,
                         $agent->id,
                         Agent::class,
                         AppNotification::specific,
-                        $notificationContainer?->id,
+                        $booking_container->id,
                         0
                     );
 
                     if ($agent->device_token) {
                         $notificationData = [
-                            'booking_id' => $booking->id,
-                            'booking_container_id' => $notificationContainer?->id ?? '',
+                            'booking_id' => $booking_container->booking_id,
+                            'booking_container_id' => $booking_container->id,
                             'type_id' => 0,
                             'type' => 'specification',
                             'type_action' => 'specification',
@@ -229,12 +258,9 @@ class AgentController extends Controller
                     }
                 }
             }
-            //response
 
             return $this->returnResponseSuccessMessage(__('alerts.success'));
         } catch (\Exception $ex) {
-
-
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : ($ex instanceof \Illuminate\Validation\ValidationException ? 422 : 500), $ex->getMessage());
         }
     }
@@ -272,7 +298,6 @@ class AgentController extends Controller
         $superagent = auth()->guard("superagent")->user();
         $typeId = (int) $request->type_id;
         $stageService = app(\App\Services\ContainerStageService::class);
-        $message = '';
 
         // وحدة العمل = الحاوية (المحددة فقط)، مش كل البوكينج
         $agentIds = BookingContainerAgent::whereIn('booking_container_id', $containerIds)
@@ -295,20 +320,6 @@ class AgentController extends Controller
         }
 
         $first = $containers->first();
-        if ($typeId === 0) {
-            $message = count($containerIds) > 1
-                ? 'تم اعتماد تخصيص ' . count($containerIds) . ' حاوية'
-                : 'تم تخصيص حاوية الطلب ' . ($first->booking_id ?? '');
-        } elseif ($typeId === 1) {
-            $message = count($containerIds) > 1
-                ? 'تم اعتماد تحميل ' . count($containerIds) . ' حاوية'
-                : 'تم تحميل حاوية رقم ' . ($first->container_no ?? $first->id);
-        } else {
-            $message = count($containerIds) > 1
-                ? 'تم اعتماد تعتيق ' . count($containerIds) . ' حاوية'
-                : 'تم تعتيق حاوية رقم ' . ($first->container_no ?? $first->id);
-        }
-
         $agents = Agent::whereIn('id', $agentIds)->get();
         foreach ($agents as $agent) {
             $title = __('new_notification');
@@ -350,21 +361,163 @@ class AgentController extends Controller
             }
         }
 
-        // إرسال إيميلات التحميل والتعتيق فقط للموظف والشركة.
-        if (in_array($typeId, [1, 2], true)) {
-            foreach ($containers as $container) {
-                if ($container->booking->employee) {
-                    Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
-                }
-                if ($container->booking->company) {
-                    Notification::send($container->booking->company, new ConatinerStatus($container, $message));
-                }
-            }
-        }
-
+        // إيميل الحالة يُرسل عبر send_stage_email فقط — لا يُرسل مع الاعتماد.
         return $this->returnAllData("", __('alerts.success'));
     }
 
+    /**
+     * Send stage status email without approving or moving the container.
+     */
+    public function send_stage_email(Request $request)
+    {
+        try {
+            [$containers, $typeId] = $this->resolveStageNotifyRequest($request);
+            $message = $this->stageNotifyMessage($containers, $typeId);
+            $sent = 0;
+
+            foreach ($containers as $container) {
+                $this->assertStageReadyForNotify($container, $typeId);
+                $container->loadMissing(['booking.employee', 'booking.company']);
+                if ($container->booking?->employee) {
+                    Notification::send($container->booking->employee, new ConatinerStatus($container, $message));
+                    $sent++;
+                }
+                if ($container->booking?->company) {
+                    Notification::send($container->booking->company, new ConatinerStatus($container, $message));
+                    $sent++;
+                }
+            }
+
+            abort_if($sent === 0, 422, 'لا يوجد بريد للمستلمين');
+
+            return $this->returnAllData(['sent' => $sent], __('alerts.success'));
+        } catch (\Throwable $e) {
+            return $this->returnError(
+                $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $e->getStatusCode() : ($e instanceof \Illuminate\Validation\ValidationException ? 422 : 500),
+                $e instanceof \Illuminate\Validation\ValidationException ? $e->validator->errors()->first() : $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Build WhatsApp share URLs without approving or moving the container.
+     */
+    public function send_stage_whatsapp(Request $request)
+    {
+        try {
+            [$containers, $typeId] = $this->resolveStageNotifyRequest($request);
+            $message = $this->stageNotifyMessage($containers, $typeId);
+            $links = [];
+
+            foreach ($containers as $container) {
+                $this->assertStageReadyForNotify($container, $typeId);
+                $container->loadMissing(['booking.company', 'booking.employee']);
+                $phone = $this->stageWhatsappPhone($container, $typeId);
+                abort_if(! $phone, 422, 'لا يوجد رقم واتساب للمستلمين');
+                $links[] = [
+                    'booking_container_id' => $container->id,
+                    'phone' => $phone,
+                    'whatsapp_url' => 'https://wa.me/'.$phone.'?text='.rawurlencode($this->stageWhatsappText($container, $message)),
+                ];
+            }
+
+            return $this->returnAllData(['links' => $links], __('alerts.success'));
+        } catch (\Throwable $e) {
+            return $this->returnError(
+                $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $e->getStatusCode() : ($e instanceof \Illuminate\Validation\ValidationException ? 422 : 500),
+                $e instanceof \Illuminate\Validation\ValidationException ? $e->validator->errors()->first() : $e->getMessage()
+            );
+        }
+    }
+
+    private function resolveStageNotifyRequest(Request $request): array
+    {
+        $data = $request->validate([
+            'booking_container_id' => 'nullable|integer|exists:booking_containers,id',
+            'booking_container_ids' => 'nullable|array|min:1',
+            'booking_container_ids.*' => 'integer|exists:booking_containers,id',
+            'type_id' => 'required|in:0,1,2',
+        ]);
+
+        $containerIds = is_array($data['booking_container_ids'] ?? null)
+            ? array_values(array_unique(array_filter($data['booking_container_ids'])))
+            : [];
+        if (empty($containerIds) && ! empty($data['booking_container_id'])) {
+            $containerIds = [(int) $data['booking_container_id']];
+        }
+        abort_if(empty($containerIds), 400, 'يجب تحديد حاوية واحدة على الأقل (booking_container_id أو booking_container_ids)');
+
+        $containers = BookingContainer::whereIn('id', $containerIds)->orderBy('id')->get();
+        abort_unless($containers->count() === count($containerIds), 404, __('main.not_found'));
+
+        return [$containers, (int) $data['type_id']];
+    }
+
+    private function assertStageReadyForNotify(BookingContainer $container, int $typeId): void
+    {
+        $name = \App\Services\ContainerStageService::NAMES[$typeId];
+        abort_if((int) $container->{'superagent_'.$name.'_approved'} === 1, 409, 'المرحلة معتمدة بالفعل؛ استخدم زر التأكيد فقط للنقل');
+        app(\App\Services\ContainerStageService::class)->assertAvailable($container, $typeId);
+        $completed = $container->{$name.'_completed_at'} || (int) $container->status >= $typeId + 1;
+        abort_unless($completed, 409, 'المندوب لم يُنه المرحلة بعد');
+    }
+
+    private function stageNotifyMessage($containers, int $typeId): string
+    {
+        $first = $containers->first();
+        $count = $containers->count();
+        if ($typeId === 0) {
+            return $count > 1
+                ? 'تحديث تخصيص '.$count.' حاوية'
+                : 'تم تخصيص حاوية الطلب '.($first->booking_id ?? '');
+        }
+        if ($typeId === 1) {
+            return $count > 1
+                ? 'تحديث تحميل '.$count.' حاوية'
+                : 'تم تحميل حاوية رقم '.($first->container_no ?? $first->id);
+        }
+
+        return $count > 1
+            ? 'تحديث تعتيق '.$count.' حاوية'
+            : 'تم تعتيق حاوية رقم '.($first->container_no ?? $first->id);
+    }
+
+    private function stageWhatsappPhone(BookingContainer $container, int $typeId): ?string
+    {
+        $candidates = [
+            $container->booking?->company?->phone,
+            $container->booking?->employee?->phone,
+        ];
+        $agentIds = BookingContainerAgent::where('booking_container_id', $container->id)
+            ->where('stage_type', $typeId)
+            ->pluck('agent_id');
+        foreach (Agent::whereIn('id', $agentIds)->pluck('phone') as $raw) {
+            $candidates[] = $raw;
+        }
+        foreach ($candidates as $raw) {
+            $digits = preg_replace('/\D+/', '', (string) $raw);
+            if ($digits !== '') {
+                return $digits;
+            }
+        }
+
+        return null;
+    }
+
+    private function stageWhatsappText(BookingContainer $container, string $message): string
+    {
+        $booking = $container->booking;
+
+        return implode("\n", array_filter([
+            $message,
+            'رقم الحجز: '.($booking->booking_number ?? '-'),
+            'رقم الحاوية: '.($container->container_no ?? '-'),
+            'الشركة: '.($booking?->company?->name ?? '-'),
+            $booking?->booking_number
+                ? 'التتبع: https://leaderfortrans.com/book/?track='.urlencode($booking->booking_number)
+                : null,
+        ]));
+    }
 
     public function expenses(Request $request)
     {

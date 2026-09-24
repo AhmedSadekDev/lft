@@ -38,9 +38,11 @@ class LoginController extends Controller
 
                 $superagent = auth()->guard('superagent')->user();
 
-
-                $superagent->update(['session_id' => $token,
-                    'device_token' => $request->device_token ?? ""]);
+                $updates = ['session_id' => $token];
+                if ($request->filled('device_token')) {
+                    $updates['device_token'] = $request->device_token;
+                }
+                $superagent->update($updates);
 
 
                 return $this->returnAllData(new SuperagentResource($superagent), __('alerts.success'));

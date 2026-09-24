@@ -4,14 +4,12 @@ namespace App\Http\Controllers\Api\Agent;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\Agent\BookingResource;
-use App\Http\Resources\Api\Agent\CarResource;
 use App\Http\Resources\Api\Agent\LoadingYardResource;
 use App\Http\Resources\Api\Agent\SimpleBookingContainer2Resource;
-use App\Http\Resources\Api\Agent\SpecificationShippingAgentResource;
 use App\Http\Resources\Api\Agent\UnloadingShippingAgentResource;
 use App\Models\Agent;
 use App\Models\Booking;
-use App\Models\Car;
+use App\Models\BookingContainer;
 use App\Models\Invoice;
 use App\Models\shippingAgent;
 use App\Models\Yard;
@@ -40,29 +38,74 @@ class BookingContainerAssignmentController extends Controller
     public function fetch_specification_assignments()
     {
         try {
-
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $agent_booking_containers = $agent->agent_booking_containers()
+
+            // نفس أسلوب التحميل: حاويات المندوب مباشرة بدون اعتماد على Resource يعيد الاستعلام
+            $containers = BookingContainer::query()
+                ->where(function ($q) {
+                    $q->where('superagent_specification_approved', 0)
+                        ->orWhereNull('superagent_specification_approved');
+                })
                 ->whereDoesntHave('booking.invoice')
-                ->wherePivot('stage_type', 0)
-                ->where('booking_container_agents.superagent_specification_approved', 0)
+                ->whereHas('agents', function ($q) use ($agent) {
+                    $q->where('agents.id', $agent->id)
+                        ->where(function ($stage) {
+                            $stage->where('booking_container_agents.stage_type', 0)
+                                ->orWhereNull('booking_container_agents.stage_type');
+                        });
+                })
+                ->with([
+                    'booking.company',
+                    'booking.factory',
+                    'booking.yard',
+                    'booking.shippingAgent',
+                    'branch.factory',
+                    'container',
+                    'stages',
+                ])
+                ->orderByDesc('id')
                 ->get();
 
-            // fetch shipping_agents that contain assignments
-            $shipping_agent_ids = Booking::whereHas("bookingContainers", function ($qc) use ($agent_booking_containers) {
-                $qc->where('booking_containers.superagent_specification_approved', 0)
-                    ->whereIn("id", $agent_booking_containers->pluck("id")->toArray());
-            })
-                ->orderBy("id", "desc")->get()->pluck("shipping_agent_id")->toArray();
+            if ($containers->isEmpty()) {
+                return $this->returnAllData([], __('alerts.success'));
+            }
 
+            $data = $containers
+                ->groupBy(function (BookingContainer $container) {
+                    $shippingId = $container->booking?->shipping_agent_id;
+                    if ($shippingId) {
+                        return 'sa_'.$shippingId;
+                    }
 
+                    return 'yard_'.($container->booking?->yard_id ?: 0);
+                })
+                ->map(function ($group) {
+                    /** @var BookingContainer $first */
+                    $first = $group->first();
+                    $shippingId = $first->booking?->shipping_agent_id;
+                    $title = $shippingId
+                        ? ($first->booking?->shippingAgent?->title ?? '')
+                        : ($first->booking?->yard?->title ?? 'غير محدد');
 
-            $shipping_agents = shippingAgent::whereIn("id", $shipping_agent_ids)->get();
+                    return [
+                        'id' => $shippingId ?: ($first->booking?->yard_id ?: 0),
+                        'title' => $title,
+                        'bookings' => $group->groupBy('booking_id')->map(function ($bookingContainers) {
+                            $booking = $bookingContainers->first()->booking;
 
-            //return data
-            $data = SpecificationShippingAgentResource::collection($shipping_agents);
-
+                            return [
+                                'id' => $booking?->id,
+                                'booking_number' => $booking?->booking_number ?? '',
+                                'booking_containers' => $bookingContainers->map(
+                                    fn (BookingContainer $container) => (new \App\Http\Resources\Api\Agent\BookingContainerResource($container))->forStage(0)
+                                )->values(),
+                            ];
+                        })->values(),
+                    ];
+                })
+                ->values()
+                ->all();
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $Exception) {
@@ -166,6 +209,9 @@ class BookingContainerAssignmentController extends Controller
             $data = [];
             foreach (\App\Services\ContainerStageService::NAMES as $type => $name) {
                 $query = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, $type);
+                if ($type === 0) {
+                    $query->where('superagent_specification_approved', 0);
+                }
                 $data[$name.'_assignments'] = [
                     'daily_'.$name.'_assignments_count' => (clone $query)->count(),
                     'finished_'.$name.'_assignments_count' => (clone $query)->where('status', '>=', $type + 1)->count(),

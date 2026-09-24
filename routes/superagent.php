@@ -45,6 +45,8 @@ Route::group(['middleware' => 'localization'], function () {
 
         //agent expensess-approve
         Route::post('container-step-approve', [AgentController::class, 'approve']);
+        Route::post('booking/send_stage_email', [AgentController::class, 'send_stage_email']);
+        Route::post('booking/send_stage_whatsapp', [AgentController::class, 'send_stage_whatsapp']);
         Route::get('containers-expenses', [AgentController::class, 'expenses']);
 
         //wallet

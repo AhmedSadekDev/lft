@@ -244,7 +244,8 @@ class ParallelContainerStagesTest extends TestCase
         $service->approve(1, 1);
         $service->assign(1, [2], 2);
         $this->travel(3)->days();
-        $this->assertSame([1], $service->visibleContainers(1, 1)->pluck('id')->all());
+        // بعد اعتماد التحميل تختفي الحاوية من قائمة مندوب التحميل فورًا.
+        $this->assertSame([], $service->visibleContainers(1, 1)->pluck('id')->all());
         $this->assertSame([1], $service->visibleContainers(2, 2)->pluck('id')->all());
         $this->assertCount(0, $service->visibleContainers(2, 1)->get());
         $service->complete(1, 2, 2);
@@ -262,7 +263,7 @@ class ParallelContainerStagesTest extends TestCase
         $service->approve(1, 1);
         $service->assign(1, [1, 1], 2);
         $service->assign(1, [1], 2);
-        $this->assertSame(1, $service->visibleContainers(1, 1)->count());
+        $this->assertSame(0, $service->visibleContainers(1, 1)->count());
         $this->assertSame(1, $service->visibleContainers(1, 2)->count());
         $this->receipt('loading');
         $this->receipt('unloading', 1, 2);
@@ -344,18 +345,14 @@ class ParallelContainerStagesTest extends TestCase
         $service->assign(1, [1], 2);
         $this->travel(3)->days();
         $this->actingAs(Agent::find(1), 'agent');
-        $response = $this->getJson('/api/agent/booking/fetch_loading_assignments');
-        $this->assertSame(200, $response->status(), $response->getContent());
-        $response->assertOk()
-            ->assertJsonPath('data.0.booking_containers.0.stage_type', 'loading')
-            ->assertJsonPath('data.0.booking_containers.0.operational_stage', 'unloading')
-            ->assertJsonPath('data.0.booking_containers.0.can_upload_receipts', true)
-            ->assertJsonPath('data.0.booking_containers.0.can_complete_stage', false);
+        // اعتماد التحميل يخفي قائمة التحميل؛ التعتيق يبقى ظاهرًا.
+        $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()
+            ->assertJsonPath('data', []);
         $this->getJson('/api/agent/booking/fetch_unloading_assignments')->assertOk()
             ->assertJsonPath('data.0.booking_containers.0.stage_type', 'unloading')
             ->assertJsonPath('data.0.booking_containers.0.can_complete_stage', true);
         $this->getJson('/api/agent/booking/fetch_home_statistics')->assertOk()
-            ->assertJsonPath('data.loading_assignments.daily_loading_assignments_count', 1)
+            ->assertJsonPath('data.loading_assignments.daily_loading_assignments_count', 0)
             ->assertJsonPath('data.unloading_assignments.daily_unloading_assignments_count', 1);
     }
 
@@ -476,14 +473,10 @@ class ParallelContainerStagesTest extends TestCase
                 ->assertJsonPath('data.data.0.type', 'unloading');
         }
 
-        // Loading receipts and the new unloading assignment retain separate visibility.
+        // بعد اعتماد التحميل تختفي قائمة التحميل لدى المندوب؛ تكليف التعتيق منفصل.
         $this->actingAs(Agent::find(1), 'agent');
-        $loading = $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk();
-        if ($closeReceipts) {
-            $loading->assertJsonPath('data', []);
-        } else {
-            $loading->assertJsonPath('data.0.booking_containers.0.id', 1);
-        }
+        $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()
+            ->assertJsonPath('data', []);
         $service->assign(1, [2], 2);
         $this->actingAs(Agent::find(2), 'agent');
         $this->getJson('/api/agent/booking/fetch_unloading_assignments')
