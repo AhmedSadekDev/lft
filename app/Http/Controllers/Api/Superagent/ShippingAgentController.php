@@ -35,6 +35,7 @@ class ShippingAgentController extends Controller
          * 1) SPECIFICATION
          * ======================= */
         $spec_shipping_agent_ids = Booking::has('shippingAgent')
+            ->withoutInvoice()
             ->whereHas('bookingContainers', function ($query) use ($superagent_booking_containers) {
                 $query->where(function ($q) {
                         // الحاويات التي تحتاج موافقة على التخصيص:
@@ -57,6 +58,7 @@ class ShippingAgentController extends Controller
         $specification = $spec_shipping_agents->map(function ($agent) use ($superagent_booking_containers) {
             // نفس فلترة Resource القديمة
             $bookings = $agent->bookings()
+                ->withoutInvoice()
                 ->whereHas('bookingContainers', function ($q) use ($superagent_booking_containers) {
                     $q->where(function ($qq) {
                             // الحاويات التي تحتاج موافقة على التخصيص:
@@ -86,7 +88,8 @@ class ShippingAgentController extends Controller
          * 2) WAITING
          * ======================= */
         $waiting_yards = Yard::whereHas('bookingContainers', function ($qc) use ($superagent_booking_containers) {
-                $qc->where('booking_containers.superagent_loading_approved', 0)
+                $qc->withoutInvoicedBooking()
+                   ->where('booking_containers.superagent_loading_approved', 0)
                    ->where('booking_containers.superagent_specification_approved', 1)
                    ->where('booking_containers.is_in_loading', 0)
                    ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());
@@ -96,6 +99,7 @@ class ShippingAgentController extends Controller
 
         $waiting = $waiting_yards->map(function ($yard) {
             $containers = $yard->bookingContainers()
+                ->withoutInvoicedBooking()
                 ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])
                 ->where('superagent_loading_approved', 0)
                 ->where('superagent_specification_approved', 1)
@@ -116,7 +120,8 @@ class ShippingAgentController extends Controller
          * 3) LOADING
          * ======================= */
         $yards = Yard::whereHas('bookingContainers', function ($qc) use ($superagent_booking_containers) {
-                $qc->where('booking_containers.superagent_loading_approved', 0)
+                $qc->withoutInvoicedBooking()
+                   ->where('booking_containers.superagent_loading_approved', 0)
                    ->where('booking_containers.superagent_specification_approved', 1)
                    ->where('booking_containers.is_in_loading', 1)
                    ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());
@@ -126,6 +131,7 @@ class ShippingAgentController extends Controller
 
         $loading = $yards->map(function ($yard) {
             $containers = $yard->bookingContainers()
+                ->withoutInvoicedBooking()
                 ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])
                 ->where('superagent_loading_approved', 0)
                 ->where('superagent_specification_approved', 1)
@@ -146,6 +152,7 @@ class ShippingAgentController extends Controller
          * 3) UNLOADING
          * ======================= */
         $unload_shipping_agent_ids = Booking::has('shippingAgent')
+            ->withoutInvoice()
             ->whereHas('bookingContainers', function ($qc) {
                 $qc->where('booking_containers.superagent_loading_approved', 1)
                    ->where('booking_containers.superagent_specification_approved', 1)
@@ -159,6 +166,7 @@ class ShippingAgentController extends Controller
 
         $unloading = $unload_shipping_agents->map(function ($agent) {
             $containers = $agent->bookingContainers()
+                ->withoutInvoicedBooking()
                 ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])
                 ->where('superagent_loading_approved', 1)
                 ->where('superagent_specification_approved', 1)
@@ -202,6 +210,7 @@ class ShippingAgentController extends Controller
 
             // Retrieve shipping agent IDs where booking containers have status 0 and match superagent booking container IDs
             $shipping_agent_ids = Booking::has('shippingAgent')
+                ->withoutInvoice()
                 ->whereHas('bookingContainers', function ($query) use ($superagent_booking_containers) {
                     $query->where(function($q) {
                         // الحاويات التي تحتاج موافقة على التخصيص:
@@ -248,6 +257,7 @@ class ShippingAgentController extends Controller
 
 
             $shipping_agent_ids = Booking::has("shippingAgent")
+                ->withoutInvoice()
                 ->whereHas("bookingContainers", function ($qc) use ($superagent_booking_containers) {
                     $qc->where('superagent_loading_approved', 1)->where('superagent_specification_approved', 1)->where('superagent_unloading_approved', 0);
                 })
@@ -281,7 +291,8 @@ class ShippingAgentController extends Controller
 
 
         $yards = Yard::whereHas("bookingContainers", function ($qc) use ($superagent_booking_containers) {
-            $qc->where('superagent_loading_approved', 0)
+            $qc->withoutInvoicedBooking()
+               ->where('superagent_loading_approved', 0)
                ->where('superagent_specification_approved', 1)
                ->where('booking_containers.is_in_loading', 1)
                ->whereIn("booking_containers.id", $superagent_booking_containers->pluck("id")->toArray());

@@ -47,7 +47,12 @@ class Yard extends Model
                     ->from('booking_containers')
                     ->join('bookings', 'booking_containers.booking_id', '=', 'bookings.id')
                     ->whereColumn('bookings.yard_id', 'yards.id')
-                    ->whereIn('booking_containers.status', [0, 1]);
+                    ->whereIn('booking_containers.status', [0, 1])
+                    ->whereNotExists(function ($q) {
+                        $q->selectRaw('1')
+                            ->from('invoices')
+                            ->whereColumn('invoices.booking_id', 'bookings.id');
+                    });
             }, 'active_containers_count');
     }
 

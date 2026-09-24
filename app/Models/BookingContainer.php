@@ -27,6 +27,14 @@ class BookingContainer extends Model
         return $this->belongsTo(Booking::class);
     }
 
+    /**
+     * Exclude containers whose booking already has an invoice (hidden from agent/superagent ops lists).
+     */
+    public function scopeWithoutInvoicedBooking($query)
+    {
+        return $query->whereDoesntHave('booking.invoice');
+    }
+
 
     public function extraExpenses()
     {

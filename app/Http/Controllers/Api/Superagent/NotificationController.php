@@ -18,6 +18,7 @@ class NotificationController extends Controller
             $superagent = auth('superagent')->user();
 
             $notifications = AppNotification::with('bookingContainer:id,booking_id')
+                ->whereDoesntHave('bookingContainer.booking.invoice')
                 ->where(function ($query) use ($superagent) {
                 $query->where('type', AppNotification::all)
                     ->orWhere(function ($q) use ($superagent) {
@@ -47,6 +48,7 @@ class NotificationController extends Controller
             $superagent = auth('superagent')->user();
 
             $notifications = AppNotification::with('bookingContainer:id,booking_id')
+                ->whereDoesntHave('bookingContainer.booking.invoice')
                 ->where("notificationable_type", Agent::class)
             ->when($request->date, function ($query) use ($request) {
                     $formattedDate = \Carbon\Carbon::parse($request->date)->format('Y-m-d');

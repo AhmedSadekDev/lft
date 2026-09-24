@@ -14,7 +14,12 @@ class UnloadingShippingAgentResource extends JsonResource
             ->wherePivot("created_at", "<=", now()->endOfDay())
             //->wherePivot("booking_container_status", 2)
             ->get();
-        $bookingContainers = $this->bookingContainers()->where('superagent_loading_approved', 1)->where('superagent_unloading_approved', 0)->where('superagent_specification_approved', 1)->get();
+        $bookingContainers = $this->bookingContainers()
+            ->withoutInvoicedBooking()
+            ->where('superagent_loading_approved', 1)
+            ->where('superagent_unloading_approved', 0)
+            ->where('superagent_specification_approved', 1)
+            ->get();
 
         return [
             "id" => $this->id,

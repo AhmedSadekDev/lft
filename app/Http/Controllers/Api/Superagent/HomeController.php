@@ -86,7 +86,7 @@ class HomeController extends Controller
                     $unloading_finished_booking_containers += 1;
                 }
             }
-            $shipping_agent_ids = Booking::whereHas("shippingAgent", function ($q) {
+            $shipping_agent_ids = Booking::withoutInvoice()->whereHas("shippingAgent", function ($q) {
                 $q->whereHas("bookingContainers", function ($qc) {
                     $qc->where("status", 0)->orWhere("status", 1);
                 });

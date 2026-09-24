@@ -15,6 +15,7 @@ class LoadingYardResource extends JsonResource
             ->get();
             
         $bookingContainers = $this->bookingContainers()
+            ->withoutInvoicedBooking()
             ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])
             ->where('superagent_loading_approved', 0)
             ->where('superagent_specification_approved', 1)

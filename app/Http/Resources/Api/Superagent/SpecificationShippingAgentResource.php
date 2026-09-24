@@ -21,7 +21,7 @@ class SpecificationShippingAgentResource extends JsonResource
             "id" => $this->id,
             "title" => $this->title ?? "",
             "bookings" =>  BookingResource::collection(
-                $this->bookings()->
+                $this->bookings()->withoutInvoice()->
                     whereHas("bookingContainers",function($q) use($superagent_booking_containers){
                         $q->where(function($query) {
                             // الحاويات التي تحتاج موافقة على التخصيص:

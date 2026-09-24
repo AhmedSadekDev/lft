@@ -38,6 +38,7 @@ class BookingContainerController extends Controller
             $specItems = collect();
             if (!$stageType || $stageType === 'specification') {
                 $specItems = BookingContainer::with($with)
+                    ->withoutInvoicedBooking()
                     ->select('*')
                     ->selectRaw("'specification' as stage_type")
                     ->where(function ($q) {
@@ -54,6 +55,7 @@ class BookingContainerController extends Controller
             $waitingItems = collect();
             if (!$stageType || $stageType === 'waiting') {
                 $waitingItems = BookingContainer::with($with)
+                    ->withoutInvoicedBooking()
                     ->select('*')
                     ->selectRaw("'waiting' as stage_type")
                     ->where('superagent_specification_approved', 1)
@@ -67,6 +69,7 @@ class BookingContainerController extends Controller
             $loadingItems = collect();
             if (!$stageType || $stageType === 'loading') {
                 $loadingItems = BookingContainer::with($with)
+                    ->withoutInvoicedBooking()
                     ->select('*')
                     ->selectRaw("'loading' as stage_type")
                     ->where('superagent_specification_approved', 1)
@@ -80,6 +83,7 @@ class BookingContainerController extends Controller
             $unloadingItems = collect();
             if (!$stageType || $stageType === 'unloading') {
                 $unloadingItems = BookingContainer::with($with)
+                    ->withoutInvoicedBooking()
                     ->select('*')
                     ->selectRaw("'unloading' as stage_type")
                     ->where('superagent_specification_approved', 1)
@@ -162,11 +166,12 @@ class BookingContainerController extends Controller
         $constrain = $this->stageContainerConstraints($stage);
 
         return Booking::query()
+            ->withoutInvoice()
             ->whereHas('bookingContainers', $constrain)
             ->with([
                 'bookingContainers' => function ($q) use ($constrain) {
                     $constrain($q);
-                    $q->with([
+                    $q->withoutInvoicedBooking()->with([
                         'booking.company',
                         'booking.factory',
                         'booking.yard',
@@ -236,6 +241,7 @@ class BookingContainerController extends Controller
             }
 
             $query = BookingContainer::query()
+                ->withoutInvoicedBooking()
                 ->where('superagent_specification_approved', 1)
                 ->where('superagent_loading_approved', 0)
                 ->where('superagent_unloading_approved', 0);

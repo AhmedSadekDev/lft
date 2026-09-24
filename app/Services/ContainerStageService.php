@@ -124,6 +124,7 @@ class ContainerStageService
     {
         return DB::transaction(function () use ($containerId, $type, $superagentId) {
             $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
+            abort_if($container->booking()->whereHas('invoice')->exists(), 409, 'تم إصدار فاتورة لهذا الطلب، ولم يعد متاحاً.');
             $this->assertAvailable($container, $type);
             $name = self::NAMES[$type];
             $flag = 'superagent_'.$name.'_approved';

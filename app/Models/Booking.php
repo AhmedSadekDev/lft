@@ -72,6 +72,14 @@ class Booking extends Model
         return $this->hasOne(Invoice::class);
     }
 
+    /**
+     * Exclude bookings that already have an invoice (hidden from agent/superagent ops lists).
+     */
+    public function scopeWithoutInvoice($query)
+    {
+        return $query->whereDoesntHave('invoice');
+    }
+
     public function last_movements()
     {
         return $this->hasMany(BookingMovement::class);

@@ -31,7 +31,7 @@ class BookingResource extends JsonResource
             "id" => $this->id,
             "booking_number" => $this->booking_number ?? "",
             "is_today" => $superagent_booking_containers->count() ? 1 : 0,
-            "booking_containers" => BookingContainerResource::collection($this->bookingContainers()->where(function($query) {
+            "booking_containers" => BookingContainerResource::collection($this->bookingContainers()->withoutInvoicedBooking()->where(function($query) {
                 // الحاويات التي تحتاج موافقة على التخصيص:
                 // 1. status = 0 (لم يتم التخصيص بعد)
                 // 2. status = 1 و superagent_specification_approved = 0 (تم التخصيص لكن لم يتم الموافقة)

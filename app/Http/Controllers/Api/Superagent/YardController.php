@@ -58,14 +58,17 @@ class YardController extends Controller
             // Get all bookings that belong to the specified yard
             // YardBookingResource will show all containers in the booking
             $bookings = Booking::where('yard_id', $request->yard_id)
+                ->withoutInvoice()
                 ->whereHas('bookingContainers', static function ($q) {
                     $q->whereIn('booking_containers.status', [0, 1]);
                 })
                 ->with([
-                    'bookingContainers.branch.factory',
-                    'bookingContainers.container',
-                    'bookingContainers.booking.company',
-                    'bookingContainers.booking.yard',
+                    'bookingContainers' => fn ($q) => $q->withoutInvoicedBooking()->with([
+                        'branch.factory',
+                        'container',
+                        'booking.company',
+                        'booking.yard',
+                    ]),
                     'company',
                     'yard',
                     'factory'
