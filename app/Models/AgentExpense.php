@@ -93,6 +93,15 @@ class AgentExpense extends Model
         });
     }
 
+    /**
+     * مصروفات التطبيق فقط — استبعاد ما أُنشئ من الداشبورد مربوطًا بـ BookingService
+     * حتى لا يظهر نفس الإيصال مرتين في الطلب/الفاتورة.
+     */
+    public function scopeStandaloneFromBookingService($query)
+    {
+        return $query->whereNull('booking_service_id');
+    }
+
     public function scopeVisibleToAgent($query)
     {
         return $query->whereDoesntHave('booking.invoice')

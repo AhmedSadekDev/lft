@@ -63,19 +63,23 @@ class BookingInvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
-            // dd($request->all());
+            if ($booking->invoice()->lockForUpdate()->exists()) {
+                DB::rollBack();
+
+                return redirect()
+                    ->route('bookings.show', $booking)
+                    ->with('error', 'هذا الحجز لديه فاتورة بالفعل');
+            }
+
             $company = $booking->company;
-            $company = $booking->company;
-            // $invoice_number = date("Y") . '-'
-            //     . invoiceNumberTrim($company->id) . '-'
-            //     . invoiceNumberTrim(
-            //         Invoice::getMaxCompanyInvoiceNumber($company->id)
-            //             + 1
-            //     );
+            $invoice_number = Invoice::allocateUniqueInvoiceNumber(
+                (int) $company->id,
+                $request->invoice_number
+            );
 
             $invoice_data = array_merge(
                 [
-                    'invoice_number' => $request->invoice_number,
+                    'invoice_number' => $invoice_number,
                     'booking_id' => $booking->id,
 
                     'transportation_json' => $booking->bookingContainers,
@@ -91,18 +95,17 @@ class BookingInvoiceController extends Controller
                     'discount'
                 ])
             );
-            $invoice = Invoice::create($invoice_data);
+            Invoice::create($invoice_data);
             DB::commit();
+
             return redirect()->route('bookings.show', $booking)->with('success', __('alerts.added_successfully'));
         } catch (\Throwable $th) {
             DB::rollBack();
-            throw $th;
             \Illuminate\Support\Facades\Log::error($th);
-            if (!$th->getMessage()) {
-                redirect()->route('bookings.index')->with('error', $th->getResponse()?->getData());
-            } elseif ($th->getMessage()) {
-                redirect()->route('bookings.index')->with('error', $th->getMessage());
-            }
+
+            return redirect()
+                ->route('bookings.show', $booking)
+                ->with('error', $th->getMessage() ?: __('alerts.error_occurred'));
         }
     }
 
@@ -191,6 +194,17 @@ class BookingInvoiceController extends Controller
         DB::beginTransaction();
         try {
             $booking = $booking_invoice->booking;
+            $invoice_number = trim((string) $request->invoice_number);
+            if (
+                $invoice_number !== ''
+                && $invoice_number !== $booking_invoice->invoice_number
+                && Invoice::where('invoice_number', $invoice_number)->exists()
+            ) {
+                DB::rollBack();
+
+                return redirect()->back()->with('error', 'رقم الفاتورة مستخدم بالفعل');
+            }
+
             $invoice_data = array_merge(
                 [
                     'booking_id' => $booking->id,
@@ -202,14 +216,14 @@ class BookingInvoiceController extends Controller
                     'transportation_total_before_vat' => $booking->transportation_total_price,
                     'taxed_services_total_before_vat' => $booking->taxed_services_total_price,
                     'untaxed_services_total_before_vat' => $booking->untaxed_services_total_price,
-                    'invoice_number' => $request->invoice_number
+                    'invoice_number' => $invoice_number !== '' ? $invoice_number : $booking_invoice->invoice_number,
                 ],
                 $request->only([
                     'value_added_tax',
                     'discount'
                 ])
             );
-            $booking_invoice = $booking_invoice->update($invoice_data);
+            $booking_invoice->update($invoice_data);
             DB::commit();
             return back()
                 ->with('success', __('alerts.added_successfully'));

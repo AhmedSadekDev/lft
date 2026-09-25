@@ -37,6 +37,7 @@ class Booking extends Model
         $this->setRelation(
             'expenses',
             AgentExpense::forBooking($this->id)
+                ->standaloneFromBookingService()
                 ->with(['service.serviceCategory'])
                 ->orderBy('id')
                 ->get()
@@ -257,12 +258,14 @@ class Booking extends Model
     {
         $x = $this->calculateTotalPrice($this->untaxed_services(), 1);
 
-        $y = $this->expenses()->whereHas('service', function($query) {
-            $query->whereHas('serviceCategory', function ($query) {
-                $query->where('service_status', 1);
-            });
-        })->sum('value');
-
+        // مصروفات التطبيق فقط — المربوطة بـ booking_service_id محسوبة أصلًا ضمن خدمات الطلب
+        $y = $this->expenses()
+            ->standaloneFromBookingService()
+            ->whereHas('service', function ($query) {
+                $query->whereHas('serviceCategory', function ($query) {
+                    $query->where('service_status', 1);
+                });
+            })->sum('value');
 
         return $x + $y;
     }

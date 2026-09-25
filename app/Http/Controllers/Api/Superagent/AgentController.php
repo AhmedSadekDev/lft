@@ -458,8 +458,7 @@ class AgentController extends Controller
         $name = \App\Services\ContainerStageService::NAMES[$typeId];
         abort_if((int) $container->{'superagent_'.$name.'_approved'} === 1, 409, 'المرحلة معتمدة بالفعل؛ استخدم زر التأكيد فقط للنقل');
         app(\App\Services\ContainerStageService::class)->assertAvailable($container, $typeId);
-        $completed = $container->{$name.'_completed_at'} || (int) $container->status >= $typeId + 1;
-        abort_unless($completed, 409, 'المندوب لم يُنه المرحلة بعد');
+        // الإيميل/الواتساب للاشعار فقط — يُسمح في أي وقت قبل الاعتماد حتى لو المندوب لم يُنه المرحلة.
     }
 
     private function stageNotifyMessage($containers, int $typeId): string
@@ -495,13 +494,37 @@ class AgentController extends Controller
             $candidates[] = $raw;
         }
         foreach ($candidates as $raw) {
-            $digits = preg_replace('/\D+/', '', (string) $raw);
-            if ($digits !== '') {
-                return $digits;
+            $phone = $this->normalizeEgyptWhatsappPhone($raw);
+            if ($phone !== null) {
+                return $phone;
             }
         }
 
         return null;
+    }
+
+    /**
+     * يحوّل الرقم لصيغة واتساب دولية بكود مصر 20.
+     * أمثلة: 01012345678 → 201012345678 ، +20 10... → 2010...
+     */
+    private function normalizeEgyptWhatsappPhone(?string $raw): ?string
+    {
+        $digits = preg_replace('/\D+/', '', (string) $raw);
+        if ($digits === '') {
+            return null;
+        }
+
+        if (str_starts_with($digits, '00')) {
+            $digits = substr($digits, 2);
+        }
+
+        if (str_starts_with($digits, '0')) {
+            $digits = '20'.substr($digits, 1);
+        } elseif (! str_starts_with($digits, '20')) {
+            $digits = '20'.$digits;
+        }
+
+        return $digits !== '' ? $digits : null;
     }
 
     private function stageWhatsappText(BookingContainer $container, string $message): string

@@ -119,6 +119,36 @@ class Invoice extends Model
         return $year . '-' . $companyTrim . '-' . str_pad((string) $nextSequence, 3, '0', STR_PAD_LEFT);
     }
 
+    /**
+     * يخصص رقم فاتورة فريد داخل المعاملة الحالية.
+     * يستخدم الرقم المفضّل إن كان متاحًا، وإلا يأخذ التالي تلقائيًا (يتجنب رقم فورم قديم).
+     */
+    public static function allocateUniqueInvoiceNumber(int $company_id, ?string $preferred = null): string
+    {
+        $year = date('Y');
+        $companyTrim = self::companyInvoiceSerialSegment($company_id);
+
+        // قفل صفوف نفس المقطع لتفادي تزامن طلبين بنفس الرقم
+        self::where('invoice_number', 'like', $year . '-' . $companyTrim . '-%')
+            ->lockForUpdate()
+            ->get(['id', 'invoice_number']);
+
+        $preferred = is_string($preferred) ? trim($preferred) : '';
+        if ($preferred !== '' && ! self::where('invoice_number', $preferred)->exists()) {
+            return $preferred;
+        }
+
+        $sequence = self::maxInvoiceSequenceForSegment($companyTrim, $year) + 1;
+        for ($i = 0; $i < 1000; $i++, $sequence++) {
+            $candidate = $year . '-' . $companyTrim . '-' . str_pad((string) $sequence, 3, '0', STR_PAD_LEFT);
+            if (! self::where('invoice_number', $candidate)->exists()) {
+                return $candidate;
+            }
+        }
+
+        throw new \RuntimeException('تعذر توليد رقم فاتورة جديد');
+    }
+
     public function getInvoiceTotalBeforeTaxAttribute()
     {
         // حساب مجموع الخدمات الخاضعة للضريبة غير الإيصالات

@@ -59,8 +59,9 @@ class InvoicePrintBuilder
         $receiptItems = $this->sortPrintServices($receiptItems);
         $additionalItems = $this->sortPrintServices($additionalItems);
 
-        // Agent expenses from app: receipt-named ones → receipts, rest → bayatah/additional
+        // مصروفات التطبيق فقط — لو المندوب دفع من الداشبورد عبر BookingService لا نكرر السطر
         $agentExpenseRows = AgentExpense::forBooking($booking->id)
+            ->standaloneFromBookingService()
             ->with(['service.serviceCategory'])
             ->whereHas('service.serviceCategory', function ($q) {
                 $q->whereIn('invoice_print_section', [
