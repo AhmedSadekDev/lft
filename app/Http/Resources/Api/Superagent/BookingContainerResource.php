@@ -17,7 +17,9 @@ class BookingContainerResource extends JsonResource
         return [
             'id'                => $this->id,
             'is_specification_done' => (int) $this->resource->isStageCompleted(0),
-            'is_waiting_done' => (int) $this->resource->isWaiting(),
+            'is_waiting_done' => (int) ((int) $this->superagent_specification_approved === 1
+                || $this->resource->isStageCompleted(1)
+                || $this->resource->isStageCompleted(2)),
             'is_loading_done' => (int) $this->resource->isStageCompleted(1),
             'is_unloading_done' => (int) $this->resource->isStageCompleted(2),
             'company_name' => $this->booking->company->name ?? "",

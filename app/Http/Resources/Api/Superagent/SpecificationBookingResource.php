@@ -76,9 +76,12 @@ class SpecificationBookingResource extends JsonResource
             $completionFlags["is_{$name}_done"] = (int) ($allForFlags->isNotEmpty()
                 && $allForFlags->every(fn ($container) => $container->isStageCompleted($type)));
         }
-        // Waiting is a current queue, not an operational completion milestone.
-        $completionFlags['is_waiting_done'] = $stage ? (int) ($stage === 'waiting') : (int) ($allForFlags->isNotEmpty()
-            && $allForFlags->every(fn ($container) => $container->isWaiting()));
+        // Keep waiting done when containers advance to loading or unloading.
+        $completionFlags['is_waiting_done'] = $stage ? (int) in_array($stage, ['waiting', 'loading', 'unloading'], true) : (int) ($allForFlags->isNotEmpty()
+            && $allForFlags->every(fn ($container) =>
+                (int) $container->superagent_specification_approved === 1
+                || $container->isStageCompleted(1)
+                || $container->isStageCompleted(2)));
 
         return [
             "id" => $this->id,

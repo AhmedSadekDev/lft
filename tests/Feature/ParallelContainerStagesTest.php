@@ -197,7 +197,7 @@ class ParallelContainerStagesTest extends TestCase
         $this->getJson($url)->assertOk()->assertJsonPath($flag, 0);
     }
 
-    public function test_superagent_waiting_done_is_one_only_while_waiting(): void
+    public function test_superagent_waiting_done_stays_one_after_waiting(): void
     {
         Schema::table('booking_containers', fn (Blueprint $t) => $t->date('arrival_date')->nullable());
         Schema::table('delivery_policy_containers', fn (Blueprint $t) => $t->timestamps());
@@ -214,11 +214,16 @@ class ParallelContainerStagesTest extends TestCase
             ->assertJsonPath('data.data.0.is_unloading_done', 0);
         $service->moveToLoading([1], true);
         $this->getJson('/api/superagent/booking/loading')->assertOk()
-            ->assertJsonPath('data.data.0.is_waiting_done', 0)
-            ->assertJsonPath('data.data.0.booking_containers.0.is_waiting_done', 0);
+            ->assertJsonPath('data.data.0.is_waiting_done', 1)
+            ->assertJsonPath('data.data.0.booking_containers.0.is_waiting_done', 1);
         $service->moveToLoading([1], false);
         $this->getJson('/api/superagent/booking/waiting')->assertOk()
             ->assertJsonPath('data.data.0.is_waiting_done', 1);
+        $service->moveToLoading([1], true);
+        $service->approve(1, 1, 7);
+        $this->getJson('/api/superagent/booking/unloading')->assertOk()
+            ->assertJsonPath('data.data.0.is_waiting_done', 1)
+            ->assertJsonPath('data.data.0.booking_containers.0.is_waiting_done', 1);
     }
 
     public function test_details_show_container_700_loaded_while_booking_425_is_incomplete(): void
@@ -246,12 +251,12 @@ class ParallelContainerStagesTest extends TestCase
                 ->assertOk()
                 ->assertJsonPath('data.id', 425)
                 ->assertJsonPath('data.is_loading_done', 0)
-                ->assertJsonPath('data.is_waiting_done', 0)
+                ->assertJsonPath('data.is_waiting_done', 1)
                 ->assertJsonCount(6, 'data.booking_containers');
             $containers = collect($response->json('data.booking_containers'))->keyBy('id');
             foreach (range(696, 701) as $id) {
                 $this->assertSame($id === 700 ? 1 : 0, $containers[$id]['is_loading_done']);
-                $this->assertSame(0, $containers[$id]['is_waiting_done']);
+                $this->assertSame(1, $containers[$id]['is_waiting_done']);
             }
         }
 
@@ -261,7 +266,7 @@ class ParallelContainerStagesTest extends TestCase
                     ->assertOk()
                     ->assertJsonPath('data.id', 425)
                     ->assertJsonPath('data.is_loading_done', $done)
-                    ->assertJsonPath('data.is_waiting_done', 0)
+                    ->assertJsonPath('data.is_waiting_done', 1)
                     ->assertJsonCount(1, 'data.booking_containers')
                     ->assertJsonPath('data.booking_containers.0.id', $containerId)
                     ->assertJsonPath('data.booking_containers.0.is_loading_done', $done)
