@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Superagent;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\Superagent\allBookingContainerResource;
+use App\Http\Resources\Api\Superagent\MissionBookingResource;
 use App\Http\Resources\Api\Superagent\SpecificationBookingResource;
 use App\Models\Booking;
 use App\Models\BookingContainer;
@@ -99,6 +99,15 @@ class BookingContainerController extends Controller
                 ->merge($waitingItems)
                 ->merge($specItems)
                 ->unique('id')
+                ->filter(fn ($container) => $container->booking !== null)
+                ->sortByDesc('id')
+                ->groupBy('booking_id')
+                ->map(function ($containers) {
+                    $booking = $containers->first()->booking;
+                    $booking->setRelation('bookingContainers', $containers->values());
+
+                    return $booking;
+                })
                 ->sortByDesc('id')
                 ->values();
 
@@ -113,7 +122,7 @@ class BookingContainerController extends Controller
                 ['path' => $request->url(), 'query' => $request->query()]
             );
 
-            $data = allBookingContainerResource::collection($paginator)
+            $data = MissionBookingResource::collection($paginator)
                 ->response()
                 ->getData(true);
 
@@ -158,42 +167,33 @@ class BookingContainerController extends Controller
     }
 
     /**
-     * One independently paginated row per container, retaining the booking response structure.
+     * Paginate bookings with all their containers matching the requested stage.
      */
     private function paginateBookingsForStage(Request $request, string $stage)
     {
         $request->merge(['stage' => $stage]);
         $constrain = $this->stageContainerConstraints($stage);
 
-        $query = BookingContainer::query()
-            ->withoutInvoicedBooking()
-            ->whereHas('booking')
+        return Booking::query()
+            ->withoutInvoice()
+            ->whereHas('bookingContainers', $constrain)
             ->with([
-                'booking.company',
-                'booking.factory',
-                'booking.yard',
-                'branch.factory',
-                'container',
-                'notes',
-                'agents',
-                'delivery_policies.money_transfer',
-                'bookingPapers.image',
-            ]);
-        $constrain($query);
-
-        $containers = $query->orderByDesc('booking_id')->orderByDesc('id')
+                'bookingContainers' => function ($query) use ($constrain) {
+                    $constrain($query);
+                    $query->orderByDesc('id');
+                },
+                'bookingContainers.booking.company',
+                'bookingContainers.booking.factory',
+                'bookingContainers.booking.yard',
+                'bookingContainers.branch.factory',
+                'bookingContainers.container',
+                'bookingContainers.notes',
+                'bookingContainers.agents',
+                'bookingContainers.delivery_policies.money_transfer',
+                'bookingContainers.bookingPapers.image',
+            ])
+            ->orderByDesc('id')
             ->paginate((int) $request->get('per_page', 100));
-
-        $containers->setCollection($containers->getCollection()->map(function ($container) {
-            // Sibling containers share an eager-loaded booking instance; clone before scoping it.
-            $booking = clone $container->booking;
-            $booking->setRelation('bookingContainers', new \Illuminate\Database\Eloquent\Collection([$container]));
-            $booking->setAttribute('booking_container_id', $container->id);
-
-            return $booking;
-        }));
-
-        return $containers;
     }
 
     public function specification(Request $request)

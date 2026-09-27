@@ -185,27 +185,67 @@ class ParallelContainerStagesTest extends TestCase
         BookingContainer::find(1)->update([$name.'_completed_at' => null]);
         $this->getJson($url)->assertOk()->assertJsonPath($flag, 1);
 
-        // Siblings are separate rows: completing one must not change the other's flags.
+        // Siblings stay in one booking; completion requires every matching container.
         $pending = BookingContainer::create($values);
         $response = $this->getJson($url)->assertOk()->assertJsonPath($flag, 0);
-        $response->assertJsonCount(2, 'data.data')->assertJsonPath('data.meta.total', 2);
-        $rows = collect($response->json('data.data'))->keyBy('booking_container_id');
+        $response->assertJsonCount(1, 'data.data')->assertJsonPath('data.meta.total', 1)
+            ->assertJsonPath('data.data.0.booking_id', 1)
+            ->assertJsonCount(2, 'data.data.0.booking_containers');
+        $rows = collect($response->json('data.data.0.booking_containers'))->keyBy('id');
         $this->assertSame(1, $rows[1]['is_'.$name.'_done']);
         $this->assertSame(0, $rows[$pending->id]['is_'.$name.'_done']);
-        foreach ($rows as $id => $row) {
-            $this->assertCount(1, $row['booking_containers']);
-            $this->assertSame($id, $row['booking_containers'][0]['id']);
-            $this->assertSame($row['is_'.$name.'_done'], $row['booking_containers'][0]['is_'.$name.'_done']);
-        }
+        $this->getJson($url.'?per_page=1')->assertOk()
+            ->assertJsonCount(2, 'data.data.0.booking_containers')
+            ->assertJsonPath('data.meta.total', 1);
         $this->getJson($url.'?per_page=1&page=2')->assertOk()
-            ->assertJsonCount(1, 'data.data')
-            ->assertJsonPath('data.meta.total', 2)
-            ->assertJsonPath('data.data.0.booking_container_id', 1)
-            ->assertJsonPath($flag, 1);
+            ->assertJsonCount(0, 'data.data')
+            ->assertJsonPath('data.meta.total', 1);
         app(ContainerStageService::class)->complete($pending->id, $type);
         $this->getJson($url)->assertOk()->assertJsonPath($flag, 1);
         app(ContainerStageService::class)->rewind($pending->id, $type);
         $this->getJson($url)->assertOk()->assertJsonPath($flag, 0);
+    }
+
+    public function test_superagent_missions_group_containers_before_paginating_bookings(): void
+    {
+        Schema::table('booking_containers', fn (Blueprint $t) => $t->date('arrival_date')->nullable());
+        Schema::table('delivery_policy_containers', fn (Blueprint $t) => $t->timestamps());
+        $waiting = BookingContainer::create(['is_in_loading' => false]);
+        $otherWaiting = BookingContainer::create(['is_in_loading' => false]);
+        DB::table('bookings')->insert(['id' => 2, 'booking_number' => 'B-2']);
+        $otherBookingContainer = BookingContainer::create(['booking_id' => 2]);
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+
+        $this->getJson('/api/superagent/booking/missions/all?per_page=1')->assertOk()
+            ->assertJsonPath('data.meta.total', 2)
+            ->assertJsonCount(1, 'data.data')
+            ->assertJsonPath('data.data.0.id', 2)
+            ->assertJsonPath('data.data.0.booking_id', 2)
+            ->assertJsonPath('data.data.0.booking_containers.0.id', $otherBookingContainer->id);
+        $response = $this->getJson('/api/superagent/booking/missions/all?per_page=1&page=2')->assertOk()
+            ->assertJsonPath('data.data.0.id', 1)
+            ->assertJsonPath('data.data.0.booking_id', 1)
+            ->assertJsonCount(3, 'data.data.0.booking_containers');
+        $containers = collect($response->json('data.data.0.booking_containers'))->keyBy('id');
+        $this->assertSame('loading', $containers[1]['type']);
+        $this->assertSame('waiting', $containers[$waiting->id]['type']);
+        $this->assertSame('waiting', $containers[$otherWaiting->id]['type']);
+
+        $this->getJson('/api/superagent/booking/missions/all?stage_type=waiting&per_page=1')->assertOk()
+            ->assertJsonPath('data.meta.total', 1)
+            ->assertJsonCount(2, 'data.data.0.booking_containers');
+        $this->getJson('/api/superagent/booking/waiting?per_page=1')->assertOk()
+            ->assertJsonPath('data.meta.total', 1)
+            ->assertJsonCount(2, 'data.data.0.booking_containers');
+
+        DB::table('invoices')->insert(['booking_id' => 1]);
+        $this->getJson('/api/superagent/booking/missions/all')->assertOk()
+            ->assertJsonPath('data.meta.total', 1)
+            ->assertJsonPath('data.data.0.id', 2);
+        $this->getJson('/api/superagent/booking/waiting')->assertOk()
+            ->assertJsonCount(0, 'data.data');
     }
 
     public function test_superagent_waiting_done_stays_one_after_waiting(): void
@@ -705,7 +745,7 @@ class ParallelContainerStagesTest extends TestCase
         foreach (['', '?stage_type=unloading'] as $query) {
             $this->getJson('/api/superagent/booking/missions/all'.$query)
                 ->assertOk()->assertJsonPath('data.data.0.id', 1)
-                ->assertJsonPath('data.data.0.type', 'unloading');
+                ->assertJsonPath('data.data.0.booking_containers.0.type', 'unloading');
         }
 
         // بعد اعتماد التحميل تختفي قائمة التحميل لدى المندوب؛ تكليف التعتيق منفصل.
