@@ -213,7 +213,7 @@ class ContainerStageService
 
             $target = $expectedStatus - 1;
             // Dashboard rollback cancels later assignments, including automatic ones.
-            // The transaction restores them if receipt/expense checks reject the rewind.
+            // Later assignments are deleted; expenses are retained and closed receipts are reopened.
             foreach (array_keys(self::NAMES) as $type) {
                 if ($type > $target) {
                     $this->assignments($containerId, $type)->delete();
@@ -233,8 +233,12 @@ class ContainerStageService
             foreach (array_keys(self::NAMES) as $type) {
                 abort_if($type > $target && $this->assignments($containerId, $type)->exists(), 409, __('container_stages.next_assigned'));
             }
-            abort_if(\App\Models\AgentExpense::where('booking_container_id', $containerId)->where('type_id', '>', $target)->exists(), 409, __('container_stages.next_expenses'));
-            abort_if($container->stages()->where('type_id', '>=', $target)->whereNotNull('receipts_closed_at')->exists(), 409, __('container_stages.receipts_closed'));
+
+            $container->stages()->where('type_id', '>=', $target)->whereNotNull('receipts_closed_at')->update([
+                'receipts_closed_at' => null,
+                'receipts_closed_by' => null,
+                'version' => DB::raw('version + 1'),
+            ]);
             $values = ['status' => $target];
             if ($target === 0) {
                 $values['is_in_loading'] = 0;

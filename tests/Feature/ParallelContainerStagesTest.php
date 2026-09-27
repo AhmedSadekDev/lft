@@ -239,20 +239,25 @@ class ParallelContainerStagesTest extends TestCase
         $this->postJson($url, ['expected_status' => 1])->assertStatus(409);
     }
 
-    public function test_dashboard_rewind_restores_assignments_when_financial_checks_fail(): void
+    public function test_dashboard_rewind_allows_return_with_expenses_and_reopens_closed_receipts(): void
     {
         $service = app(ContainerStageService::class);
         $this->receipt();
-        $this->assertConflict(fn () => $service->returnToPreviousStage(1, 1));
-        $this->assertTrue($service->assignments(1, 1)->exists());
-        $this->assertSame(1, (int) BookingContainer::find(1)->status);
+        $service->returnToPreviousStage(1, 1);
+        $this->assertSame(0, (int) BookingContainer::find(1)->status);
+        $this->assertDatabaseHas('agent_expenses', ['booking_container_id' => 1]);
+
+        $service->approve(1, 0);
         $service->approve(1, 1);
         $service->assign(1, [2], 2);
         $stage = BookingContainerStage::where('booking_container_id', 1)->where('type_id', 1)->first();
         $service->closeReceipts(1, 1, 7, $stage->version);
-        $this->assertConflict(fn () => $service->returnToPreviousStage(1, 2));
-        $this->assertTrue($service->assignments(1, 2)->exists());
-        $this->assertSame(2, (int) BookingContainer::find(1)->status);
+        $this->assertNotNull($stage->fresh()->receipts_closed_at);
+
+        $service->returnToPreviousStage(1, 2);
+        $this->assertSame(1, (int) BookingContainer::find(1)->status);
+        $this->assertNull($stage->fresh()->receipts_closed_at);
+        $this->assertDatabaseHas('agent_expenses', ['booking_container_id' => 1]);
     }
 
     public static function assignmentStages(): array
