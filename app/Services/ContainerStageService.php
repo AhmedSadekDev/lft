@@ -203,18 +203,43 @@ class ContainerStageService
         });
     }
 
+    public function returnToPreviousStage(int $containerId, int $expectedStatus): void
+    {
+        DB::transaction(function () use ($containerId, $expectedStatus) {
+            $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
+            abort_unless((int) $container->status === $expectedStatus, 409, __('container_stages.status_changed'));
+            abort_unless($expectedStatus >= 1 && $expectedStatus <= 3, 422, __('container_stages.already_specification'));
+            abort_if($container->booking()->whereHas('invoice')->exists(), 409, __('container_stages.invoiced'));
+
+            $target = $expectedStatus - 1;
+            // Dashboard rollback cancels later assignments, including automatic ones.
+            // The transaction restores them if receipt/expense checks reject the rewind.
+            foreach (array_keys(self::NAMES) as $type) {
+                if ($type > $target) {
+                    $this->assignments($containerId, $type)->delete();
+                }
+            }
+            $this->rewind($containerId, $target);
+        });
+    }
+
     public function rewind(int $containerId, int $target): void
     {
         DB::transaction(function () use ($containerId, $target) {
             $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
-            abort_unless(in_array($target, [0, 1, 2], true) && $target < (int) $container->status, 422, 'حالة الرجوع غير صحيحة');
-            abort_if((int) $container->status > $target + 1, 409, 'لا يمكن تجاوز مراحل منفذة عند الرجوع');
+            abort_if($container->booking()->whereHas('invoice')->exists(), 409, __('container_stages.invoiced'));
+            abort_unless(in_array($target, [0, 1, 2], true) && $target < (int) $container->status, 422, __('container_stages.invalid_return'));
+            abort_if((int) $container->status > $target + 1, 409, __('container_stages.cannot_skip'));
             foreach (array_keys(self::NAMES) as $type) {
-                abort_if($type > $target && $this->assignments($containerId, $type)->exists(), 409, 'بدأ تكليف المرحلة التالية؛ لا يمكن الرجوع');
+                abort_if($type > $target && $this->assignments($containerId, $type)->exists(), 409, __('container_stages.next_assigned'));
             }
-            abort_if(\App\Models\AgentExpense::where('booking_container_id', $containerId)->where('type_id', '>', $target)->exists(), 409, 'توجد مصروفات للمرحلة التالية');
-            abort_if($container->stages()->where('type_id', '>=', $target)->whereNotNull('receipts_closed_at')->exists(), 409, 'إيصالات المرحلة مقفولة');
+            abort_if(\App\Models\AgentExpense::where('booking_container_id', $containerId)->where('type_id', '>', $target)->exists(), 409, __('container_stages.next_expenses'));
+            abort_if($container->stages()->where('type_id', '>=', $target)->whereNotNull('receipts_closed_at')->exists(), 409, __('container_stages.receipts_closed'));
             $values = ['status' => $target];
+            if ($target === 0) {
+                $values['is_in_loading'] = 0;
+                $values['moved_to_loading_at'] = null;
+            }
             if ($target === 1) {
                 $values['is_in_loading'] = 1;
                 $values['moved_to_loading_at'] = $container->moved_to_loading_at ?: now();
@@ -230,8 +255,13 @@ class ContainerStageService
             unset($values['status']);
             $this->assignments($containerId, $target)->update($values + ['booking_container_status' => $target, 'stage_type' => $target]);
             $dailyValues = ['booking_container_status' => $target];
-            if ($target === 1) {
-                $dailyValues += ['is_in_loading' => 1, 'moved_to_loading_at' => $container->moved_to_loading_at];
+            foreach (self::NAMES as $type => $name) {
+                if ($type >= $target) {
+                    $dailyValues['superagent_'.$name.'_approved'] = 0;
+                }
+            }
+            if ($target <= 1) {
+                $dailyValues += ['is_in_loading' => $target, 'moved_to_loading_at' => $container->moved_to_loading_at];
             }
             DailyBookingContainer::where('booking_container_id', $containerId)->update($dailyValues);
         });

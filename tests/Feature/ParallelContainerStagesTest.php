@@ -151,6 +151,110 @@ class ParallelContainerStagesTest extends TestCase
         return app(StageExpenseService::class)->create($agent, ['booking_container_id' => 1, 'type_id' => $type, 'value' => $amount], $key, hash('sha256', "$type:$amount"), fn () => null);
     }
 
+    public function test_dashboard_can_return_one_container_step_by_step_to_specification(): void
+    {
+        $service = app(ContainerStageService::class);
+        $sibling = BookingContainer::create(['status' => 2, 'superagent_loading_approved' => 1]);
+        $service->approve(1, 1);
+        $service->assign(1, [2], 2);
+        $service->approve(1, 2);
+        DB::table('daily_booking_containers')->insert([
+            'booking_container_id' => 1, 'booking_container_status' => 3,
+            'superagent_specification_approved' => 1, 'superagent_loading_approved' => 1,
+            'superagent_unloading_approved' => 1, 'is_in_loading' => 1,
+        ]);
+
+        $service->returnToPreviousStage(1, 3);
+        $this->assertSame(2, (int) BookingContainer::find(1)->status);
+        $this->assertFalse(BookingContainer::find(1)->isStageCompleted(2));
+        $service->returnToPreviousStage(1, 2);
+        $container = BookingContainer::find(1);
+        $this->assertSame(1, (int) $container->status);
+        $this->assertSame(1, (int) $container->is_in_loading);
+        $this->assertSame(0, (int) $container->superagent_loading_approved);
+        $this->assertFalse($service->assignments(1, 2)->exists());
+        $this->assertTrue($service->visibleContainers(1, 1)->whereKey(1)->exists());
+
+        $service->returnToPreviousStage(1, 1);
+        $container->refresh();
+        $this->assertSame(0, (int) $container->status);
+        $this->assertSame(0, (int) $container->is_in_loading);
+        $this->assertNull($container->moved_to_loading_at);
+        $this->assertSame(0, (int) $container->superagent_specification_approved);
+        $this->assertFalse($service->assignments(1, 1)->exists());
+        $daily = DB::table('daily_booking_containers')->where('booking_container_id', 1)->first();
+        $this->assertSame(0, (int) $daily->booking_container_status);
+        $this->assertSame(0, (int) $daily->superagent_specification_approved);
+        $this->assertSame(0, (int) $daily->superagent_loading_approved);
+        $this->assertSame(0, (int) $daily->superagent_unloading_approved);
+        $this->assertSame(2, (int) $sibling->fresh()->status);
+        try {
+            $service->returnToPreviousStage(1, 0);
+            $this->fail('Specification cannot move backwards.');
+        } catch (HttpException $exception) {
+            $this->assertSame(422, $exception->getStatusCode());
+        }
+    }
+
+    public function test_direct_rewind_cannot_bypass_invoice_protection(): void
+    {
+        $service = app(ContainerStageService::class);
+        $service->approve(1, 1);
+        DB::table('invoices')->insert(['booking_id' => 1]);
+        $before = BookingContainer::find(1)->getAttributes();
+
+        try {
+            $service->rewind(1, 1);
+            $this->fail('An invoiced booking cannot be rewound.');
+        } catch (HttpException $exception) {
+            $this->assertSame(409, $exception->getStatusCode());
+            $this->assertSame(__('container_stages.invoiced'), $exception->getMessage());
+        }
+
+        $this->assertSame($before, BookingContainer::find(1)->getAttributes());
+        $this->assertTrue($service->assignments(1, 1)->exists());
+    }
+
+    public function test_dashboard_rewind_rejects_stale_requests_and_invoiced_bookings(): void
+    {
+        $service = app(ContainerStageService::class);
+        $this->assertConflict(fn () => $service->returnToPreviousStage(1, 2));
+        DB::table('invoices')->insert(['booking_id' => 1]);
+        $this->assertConflict(fn () => $service->returnToPreviousStage(1, 1));
+        $this->assertTrue($service->assignments(1, 1)->exists());
+        $this->assertSame(1, (int) BookingContainer::find(1)->status);
+    }
+
+    public function test_dashboard_previous_stage_endpoint_validates_and_returns_only_the_selected_container(): void
+    {
+        $this->withoutMiddleware(\Spatie\Permission\Middlewares\PermissionMiddleware::class);
+        $user = new \App\Models\User;
+        $user->forceFill(['id' => 1]);
+        $this->actingAs($user, 'web');
+        $url = route('booking-containers.previous-stage', 1);
+        $this->postJson($url)->assertUnprocessable();
+        $this->postJson($url, ['expected_status' => 3])->assertStatus(409);
+        $this->postJson($url, ['expected_status' => 1])->assertOk();
+        $this->assertSame(0, (int) BookingContainer::find(1)->status);
+        $this->postJson($url, ['expected_status' => 1])->assertStatus(409);
+    }
+
+    public function test_dashboard_rewind_restores_assignments_when_financial_checks_fail(): void
+    {
+        $service = app(ContainerStageService::class);
+        $this->receipt();
+        $this->assertConflict(fn () => $service->returnToPreviousStage(1, 1));
+        $this->assertTrue($service->assignments(1, 1)->exists());
+        $this->assertSame(1, (int) BookingContainer::find(1)->status);
+        $service->approve(1, 1);
+        $service->assign(1, [2], 2);
+        $stage = BookingContainerStage::where('booking_container_id', 1)->where('type_id', 1)->first();
+        $service->closeReceipts(1, 1, 7, $stage->version);
+        $this->assertConflict(fn () => $service->returnToPreviousStage(1, 2));
+        $this->assertTrue($service->assignments(1, 2)->exists());
+        $this->assertSame(2, (int) BookingContainer::find(1)->status);
+    }
+
     public static function assignmentStages(): array
     {
         return ['specification' => [0], 'loading' => [1], 'unloading' => [2]];

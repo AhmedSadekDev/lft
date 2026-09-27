@@ -97,6 +97,16 @@
 
 
                                 <!-- Button trigger modal -->
+                                @can('bookings.update')
+                                    @if ((int) $container->status > 0 && ! $booking->invoice)
+                                        <button type="button" class="btn btn-sm btn-warning mx-2"
+                                            data-url="{{ route('booking-containers.previous-stage', $container->id) }}"
+                                            data-status="{{ (int) $container->status }}"
+                                            onclick="containerPreviousStage(this)">
+                                            {{ __('container_stages.return_to', ['stage' => \App\Mappers\BookingContainerStatusMapper::getAll(app()->getLocale())[(int) $container->status - 1]]) }}
+                                        </button>
+                                    @endif
+                                @endcan
                                 <a
                                     href="{{ route('booking-containers.edit', ['booking_container' => $container->id]) }}">
                                     <button class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" type="button">
@@ -122,6 +132,35 @@
 
 @push('js')
     <script>
+        function containerPreviousStage(button) {
+            Swal.fire({
+                title: button.textContent.trim(),
+                text: @json(__('container_stages.confirm_return')),
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: "{{ __('alerts.confirm') }}",
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                button.disabled = true;
+                $.ajax({
+                    url: button.dataset.url,
+                    type: 'POST',
+                    headers: {'Accept': 'application/json'},
+                    data: {_token: '{{ csrf_token() }}', expected_status: button.dataset.status},
+                    success: function() { window.location.reload(); },
+                    error: function(xhr) {
+                        button.disabled = false;
+                        Swal.fire({
+                            title: @json(__('container_stages.return_failed')),
+                            text: xhr.responseJSON?.message || @json(__('container_stages.try_again')),
+                            icon: 'error'
+                        });
+                    }
+                });
+            });
+        }
+
         function containerDelete(e, id) {
             e.preventDefault();
             Swal.fire({

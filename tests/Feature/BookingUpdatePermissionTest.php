@@ -42,6 +42,8 @@ class BookingUpdatePermissionTest extends TestCase
             'save allowed' => ['bookings.update', true],
             'edit denied' => ['bookings.edit', false],
             'save denied' => ['bookings.update', false],
+            'previous stage allowed' => ['booking-containers.previous-stage', true],
+            'previous stage denied' => ['booking-containers.previous-stage', false],
         ];
     }
 }

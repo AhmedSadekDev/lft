@@ -200,6 +200,17 @@ class BookingContainerController extends Controller
 
     }
 
+    public function returnToPreviousStage(\Illuminate\Http\Request $request, BookingContainer $booking_container)
+    {
+        $data = $request->validate(['expected_status' => ['required', 'integer', 'between:1,3']]);
+        app(\App\Services\ContainerStageService::class)->returnToPreviousStage(
+            $booking_container->id,
+            (int) $data['expected_status']
+        );
+
+        return response()->json(['message' => __('container_stages.returned')]);
+    }
+
     public function destroy(BookingContainer $booking_container)
     {
         $booking_container->delete();

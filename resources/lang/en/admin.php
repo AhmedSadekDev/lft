@@ -1,5 +1,6 @@
 <?php
 return [
+    'cost' => 'Cost',
     // ------------------ Main ------------------
     'add'                       => 'Add',
     'save'                      => 'Save',
