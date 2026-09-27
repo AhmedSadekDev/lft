@@ -221,6 +221,56 @@ class ParallelContainerStagesTest extends TestCase
             ->assertJsonPath('data.data.0.is_waiting_done', 1);
     }
 
+    public function test_details_show_container_700_loaded_while_booking_425_is_incomplete(): void
+    {
+        Schema::table('booking_containers', fn (Blueprint $t) => $t->date('arrival_date')->nullable());
+        Schema::table('delivery_policy_containers', fn (Blueprint $t) => $t->timestamps());
+        DB::table('bookings')->insert(['id' => 425, 'booking_number' => 'CFA0962788']);
+        foreach (range(696, 701) as $id) {
+            DB::table('booking_containers')->insert([
+                'id' => $id,
+                'booking_id' => 425,
+                'status' => $id === 700 ? 2 : 1,
+                'loading_completed_at' => $id === 700 ? '2026-09-27 22:01:56' : null,
+                'superagent_specification_approved' => 1,
+                'superagent_loading_approved' => 0,
+                'is_in_loading' => 1,
+            ]);
+        }
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+
+        foreach (['booking_id=425', 'id=425'] as $query) {
+            $response = $this->getJson('/api/superagent/booking/details?type_id=1&'.$query)
+                ->assertOk()
+                ->assertJsonPath('data.id', 425)
+                ->assertJsonPath('data.is_loading_done', 0)
+                ->assertJsonPath('data.is_waiting_done', 0)
+                ->assertJsonCount(6, 'data.booking_containers');
+            $containers = collect($response->json('data.booking_containers'))->keyBy('id');
+            foreach (range(696, 701) as $id) {
+                $this->assertSame($id === 700 ? 1 : 0, $containers[$id]['is_loading_done']);
+                $this->assertSame(0, $containers[$id]['is_waiting_done']);
+            }
+        }
+
+        foreach (['stage=loading', 'type_id=1'] as $stageQuery) {
+            foreach ([696 => 0, 700 => 1] as $containerId => $done) {
+                $this->getJson('/api/superagent/booking/details?booking_container_id='.$containerId.'&'.$stageQuery)
+                    ->assertOk()
+                    ->assertJsonPath('data.id', 425)
+                    ->assertJsonPath('data.is_loading_done', $done)
+                    ->assertJsonPath('data.is_waiting_done', 0)
+                    ->assertJsonCount(1, 'data.booking_containers')
+                    ->assertJsonPath('data.booking_containers.0.id', $containerId)
+                    ->assertJsonPath('data.booking_containers.0.is_loading_done', $done)
+                    ->assertJsonCount(1, 'data.loading_containers')
+                    ->assertJsonPath('data.loading_containers.0.id', $containerId);
+            }
+        }
+    }
+
     private function prepareAssignmentStage(int $type): ContainerStageService
     {
         BookingContainer::find(1)->update([

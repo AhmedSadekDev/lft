@@ -346,6 +346,11 @@ class BookingContainerController extends Controller
             // Eager load booking containers and relations to prevent N+1 queries
             $booking->load([
                 'factory',
+                'bookingContainers' => function ($query) use ($bookingContainerId) {
+                    if ($bookingContainerId) {
+                        $query->whereKey($bookingContainerId);
+                    }
+                },
                 'bookingContainers.booking.company',
                 'bookingContainers.booking.factory',
                 'bookingContainers.booking.yard',
