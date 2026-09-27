@@ -16,6 +16,10 @@ class BookingContainerResource extends JsonResource
         $is_today = DailyBookingContainer::where([["booking_container_status","=",$this->status],["booking_container_id","=",$this->id]])->whereDate("created_at",now())->first();
         return [
             'id'                => $this->id,
+            'is_specification_done' => (int) $this->resource->isStageCompleted(0),
+            'is_waiting_done' => (int) $this->resource->isWaiting(),
+            'is_loading_done' => (int) $this->resource->isStageCompleted(1),
+            'is_unloading_done' => (int) $this->resource->isStageCompleted(2),
             'company_name' => $this->booking->company->name ?? "",
             'factory_name' => $this->factory_name,
             'container_type'    => $this->container?->type ?? "",

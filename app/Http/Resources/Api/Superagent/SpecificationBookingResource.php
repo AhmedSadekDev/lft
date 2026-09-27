@@ -74,19 +74,11 @@ class SpecificationBookingResource extends JsonResource
         foreach (\App\Services\ContainerStageService::NAMES as $type => $name) {
             // Operational completion precedes superagent approval. Status supports legacy rows.
             $completionFlags["is_{$name}_done"] = (int) ($allForFlags->isNotEmpty()
-                && $allForFlags->every(fn ($container) =>
-                    (bool) $container->{$name.'_completed_at'}
-                    || (int) $container->status >= $type + 1
-                    || (int) $container->{'superagent_'.$name.'_approved'} === 1));
+                && $allForFlags->every(fn ($container) => $container->isStageCompleted($type)));
         }
-        // Waiting ends on transfer to loading; returning to waiting clears this flag.
-        $completionFlags['is_waiting_done'] = (int) ($allForFlags->isNotEmpty()
-            && $allForFlags->every(fn ($container) =>
-                (int) $container->is_in_loading === 1
-                || (bool) $container->loading_completed_at
-                || (int) $container->status >= 2
-                || (int) $container->superagent_loading_approved === 1
-                || (int) $container->superagent_unloading_approved === 1));
+        // Waiting is a current queue, not an operational completion milestone.
+        $completionFlags['is_waiting_done'] = $stage ? (int) ($stage === 'waiting') : (int) ($allForFlags->isNotEmpty()
+            && $allForFlags->every(fn ($container) => $container->isWaiting()));
 
         return [
             "id" => $this->id,

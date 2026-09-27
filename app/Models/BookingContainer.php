@@ -17,6 +17,23 @@ class BookingContainer extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    public function isStageCompleted(int $type): bool
+    {
+        $name = \App\Services\ContainerStageService::NAMES[$type];
+
+        return (bool) $this->{$name.'_completed_at'}
+            || (int) $this->status >= $type + 1
+            || (int) $this->{'superagent_'.$name.'_approved'} === 1;
+    }
+
+    public function isWaiting(): bool
+    {
+        return (int) $this->superagent_specification_approved === 1
+            && (int) $this->is_in_loading === 0
+            && (int) $this->superagent_loading_approved === 0
+            && (int) $this->superagent_unloading_approved === 0;
+    }
+
     public function stages()
     {
         return $this->hasMany(BookingContainerStage::class);

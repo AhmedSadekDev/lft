@@ -173,11 +173,13 @@ class ParallelContainerStagesTest extends TestCase
         $name = ContainerStageService::NAMES[$type];
         $url = '/api/superagent/booking/'.$name;
         $flag = 'data.data.0.is_'.$name.'_done';
-        $this->getJson($url)->assertOk()->assertJsonPath($flag, 0);
+        $this->getJson($url)->assertOk()->assertJsonPath($flag, 0)
+            ->assertJsonPath('data.data.0.booking_containers.0.is_'.$name.'_done', 0);
 
         app(ContainerStageService::class)->complete(1, $type);
         $this->assertSame(0, (int) BookingContainer::find(1)->{'superagent_'.$name.'_approved'});
-        $this->getJson($url)->assertOk()->assertJsonPath($flag, 1);
+        $this->getJson($url)->assertOk()->assertJsonPath($flag, 1)
+            ->assertJsonPath('data.data.0.booking_containers.0.is_'.$name.'_done', 1);
 
         // Legacy completion without timestamps must produce the same result.
         BookingContainer::find(1)->update([$name.'_completed_at' => null]);
@@ -185,14 +187,17 @@ class ParallelContainerStagesTest extends TestCase
 
         // A booking is only done when every container in the displayed stage is done.
         $pending = BookingContainer::create($values);
-        $this->getJson($url)->assertOk()->assertJsonPath($flag, 0);
+        $response = $this->getJson($url)->assertOk()->assertJsonPath($flag, 0);
+        $containers = collect($response->json('data.data.0.booking_containers'))->keyBy('id');
+        $this->assertSame(1, $containers[1]['is_'.$name.'_done']);
+        $this->assertSame(0, $containers[$pending->id]['is_'.$name.'_done']);
         app(ContainerStageService::class)->complete($pending->id, $type);
         $this->getJson($url)->assertOk()->assertJsonPath($flag, 1);
         app(ContainerStageService::class)->rewind($pending->id, $type);
         $this->getJson($url)->assertOk()->assertJsonPath($flag, 0);
     }
 
-    public function test_superagent_waiting_done_tracks_transfer_and_return(): void
+    public function test_superagent_waiting_done_is_one_only_while_waiting(): void
     {
         Schema::table('booking_containers', fn (Blueprint $t) => $t->date('arrival_date')->nullable());
         Schema::table('delivery_policy_containers', fn (Blueprint $t) => $t->timestamps());
@@ -203,15 +208,17 @@ class ParallelContainerStagesTest extends TestCase
         $service->moveToLoading([1], false);
         $this->getJson('/api/superagent/booking/waiting')->assertOk()
             ->assertJsonPath('data.data.0.is_specification_done', 1)
-            ->assertJsonPath('data.data.0.is_waiting_done', 0)
+            ->assertJsonPath('data.data.0.is_waiting_done', 1)
+            ->assertJsonPath('data.data.0.booking_containers.0.is_waiting_done', 1)
             ->assertJsonPath('data.data.0.is_loading_done', 0)
             ->assertJsonPath('data.data.0.is_unloading_done', 0);
         $service->moveToLoading([1], true);
         $this->getJson('/api/superagent/booking/loading')->assertOk()
-            ->assertJsonPath('data.data.0.is_waiting_done', 1);
+            ->assertJsonPath('data.data.0.is_waiting_done', 0)
+            ->assertJsonPath('data.data.0.booking_containers.0.is_waiting_done', 0);
         $service->moveToLoading([1], false);
         $this->getJson('/api/superagent/booking/waiting')->assertOk()
-            ->assertJsonPath('data.data.0.is_waiting_done', 0);
+            ->assertJsonPath('data.data.0.is_waiting_done', 1);
     }
 
     private function prepareAssignmentStage(int $type): ContainerStageService
