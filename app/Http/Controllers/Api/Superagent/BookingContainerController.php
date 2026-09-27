@@ -158,40 +158,42 @@ class BookingContainerController extends Controller
     }
 
     /**
-     * قائمة الحجوزات مع حاويات المرحلة الحالية فقط (مش كل حاويات البوكينج).
+     * One independently paginated row per container, retaining the booking response structure.
      */
     private function paginateBookingsForStage(Request $request, string $stage)
     {
         $request->merge(['stage' => $stage]);
         $constrain = $this->stageContainerConstraints($stage);
 
-        return Booking::query()
-            ->withoutInvoice()
-            ->whereHas('bookingContainers', $constrain)
+        $query = BookingContainer::query()
+            ->withoutInvoicedBooking()
+            ->whereHas('booking')
             ->with([
-                'bookingContainers' => function ($q) use ($constrain) {
-                    $constrain($q);
-                    $q->withoutInvoicedBooking()->with([
-                        'booking.company',
-                        'booking.factory',
-                        'booking.yard',
-                        'branch.factory',
-                        'container',
-                        'notes',
-                        'agents',
-                        'delivery_policies.money_transfer',
-                        'bookingPapers.image',
-                    ]);
-                },
-            ])
-            ->whereExists(function ($query) use ($constrain) {
-                $query->selectRaw('1')
-                    ->from('booking_containers')
-                    ->whereColumn('booking_containers.booking_id', 'bookings.id');
-                $constrain($query);
-            })
-            ->orderByDesc('bookings.id')
+                'booking.company',
+                'booking.factory',
+                'booking.yard',
+                'branch.factory',
+                'container',
+                'notes',
+                'agents',
+                'delivery_policies.money_transfer',
+                'bookingPapers.image',
+            ]);
+        $constrain($query);
+
+        $containers = $query->orderByDesc('booking_id')->orderByDesc('id')
             ->paginate((int) $request->get('per_page', 100));
+
+        $containers->setCollection($containers->getCollection()->map(function ($container) {
+            // Sibling containers share an eager-loaded booking instance; clone before scoping it.
+            $booking = clone $container->booking;
+            $booking->setRelation('bookingContainers', new \Illuminate\Database\Eloquent\Collection([$container]));
+            $booking->setAttribute('booking_container_id', $container->id);
+
+            return $booking;
+        }));
+
+        return $containers;
     }
 
     public function specification(Request $request)

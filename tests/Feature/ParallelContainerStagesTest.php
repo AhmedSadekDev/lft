@@ -185,12 +185,23 @@ class ParallelContainerStagesTest extends TestCase
         BookingContainer::find(1)->update([$name.'_completed_at' => null]);
         $this->getJson($url)->assertOk()->assertJsonPath($flag, 1);
 
-        // A booking is only done when every container in the displayed stage is done.
+        // Siblings are separate rows: completing one must not change the other's flags.
         $pending = BookingContainer::create($values);
         $response = $this->getJson($url)->assertOk()->assertJsonPath($flag, 0);
-        $containers = collect($response->json('data.data.0.booking_containers'))->keyBy('id');
-        $this->assertSame(1, $containers[1]['is_'.$name.'_done']);
-        $this->assertSame(0, $containers[$pending->id]['is_'.$name.'_done']);
+        $response->assertJsonCount(2, 'data.data')->assertJsonPath('data.meta.total', 2);
+        $rows = collect($response->json('data.data'))->keyBy('booking_container_id');
+        $this->assertSame(1, $rows[1]['is_'.$name.'_done']);
+        $this->assertSame(0, $rows[$pending->id]['is_'.$name.'_done']);
+        foreach ($rows as $id => $row) {
+            $this->assertCount(1, $row['booking_containers']);
+            $this->assertSame($id, $row['booking_containers'][0]['id']);
+            $this->assertSame($row['is_'.$name.'_done'], $row['booking_containers'][0]['is_'.$name.'_done']);
+        }
+        $this->getJson($url.'?per_page=1&page=2')->assertOk()
+            ->assertJsonCount(1, 'data.data')
+            ->assertJsonPath('data.meta.total', 2)
+            ->assertJsonPath('data.data.0.booking_container_id', 1)
+            ->assertJsonPath($flag, 1);
         app(ContainerStageService::class)->complete($pending->id, $type);
         $this->getJson($url)->assertOk()->assertJsonPath($flag, 1);
         app(ContainerStageService::class)->rewind($pending->id, $type);

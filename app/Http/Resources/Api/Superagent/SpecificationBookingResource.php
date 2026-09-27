@@ -85,6 +85,7 @@ class SpecificationBookingResource extends JsonResource
 
         return [
             "id" => $this->id,
+            "booking_container_id" => $this->when($bookingContainers->count() === 1, fn () => $bookingContainers->first()->id),
             "booking_number" => $this->booking_number ?? "",
             "is_today" => $superagent_booking_containers->count() ? 1 : 0,
             "is_specification_done" => $completionFlags['is_specification_done'],
