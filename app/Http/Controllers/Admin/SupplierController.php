@@ -136,11 +136,23 @@ class SupplierController extends Controller
             ->groupedByInvoice()
             ->get();
 
+        // A supplier invoice may contain receipts handled by different people.
+        $invoiceResponsibleNames = Receipt::query()
+            ->forSupplier($supplier->id)
+            ->fromSupplier()
+            ->with(['bookingService.agent', 'bookingService.creator'])
+            ->whereIn('supplier_invoice_number', $groupedInvoices->pluck('supplier_invoice_number'))
+            ->when($fromDate, fn ($q) => $q->whereDate('created_at', '>=', $fromDate))
+            ->when($toDate, fn ($q) => $q->whereDate('created_at', '<=', $toDate))
+            ->get()
+            ->groupBy('supplier_invoice_number')
+            ->map(fn ($receipts) => $receipts->pluck('responsible_name')->filter()->unique()->implode('، '));
+
         // Receipts without an invoice number — listed individually
         $ungroupedReceipts = Receipt::query()
             ->forSupplier($supplier->id)
             ->fromSupplier()
-            ->with('booking')
+            ->with(['booking', 'bookingService.agent', 'bookingService.creator'])
             ->where(function ($q) {
                 $q->whereNull('supplier_invoice_number')
                     ->orWhere('supplier_invoice_number', '');
@@ -165,6 +177,7 @@ class SupplierController extends Controller
         return view('admin.suppliers.statement', compact(
             'supplier',
             'groupedInvoices',
+            'invoiceResponsibleNames',
             'ungroupedReceipts',
             'payments',
             'totalInvoices',

@@ -116,6 +116,8 @@ class ReportController extends Controller
     {
         $query = AgentExpense::with([
             'agent',
+            'bookingService.agent',
+            'bookingService.creator',
             'service.serviceCategory',
             'bookingContainer.booking',
             'delivery_policy'
@@ -271,7 +273,7 @@ class ReportController extends Controller
                 $data['bookingNumber'] = $firstContainer->booking?->booking_number ?? '';
             }
         } elseif ($item instanceof AgentExpense) {
-            $data['agentName'] = $item->agent?->name ?? '';
+            $data['agentName'] = $item->responsible_name ?? '';
             $data['bookingNumber'] = $item->bookingContainer?->booking?->booking_number ?? '';
             if ($item->service) {
                 $data['service'] = trim(($item->service->serviceCategory?->title ?? '') . ' ' . ($item->service->name ?? ''));

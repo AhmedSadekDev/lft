@@ -31,6 +31,8 @@ class InvoicePrintBuilder
             'bookingContainers.branch.factory',
             'bookingContainers.delivery_policies.money_transfer',
             'bookingServices.service.serviceCategory',
+            'bookingServices.agent',
+            'bookingServices.creator',
             'expenses.service.serviceCategory',
         ]);
 
@@ -62,7 +64,7 @@ class InvoicePrintBuilder
         // مصروفات التطبيق فقط — لو المندوب دفع من الداشبورد عبر BookingService لا نكرر السطر
         $agentExpenseRows = AgentExpense::forBooking($booking->id)
             ->standaloneFromBookingService()
-            ->with(['service.serviceCategory'])
+            ->with(['service.serviceCategory', 'agent', 'bookingService.agent', 'bookingService.creator'])
             ->whereHas('service.serviceCategory', function ($q) {
                 $q->whereIn('invoice_print_section', [
                     InvoicePrintSectionMapper::ADDITIONAL,

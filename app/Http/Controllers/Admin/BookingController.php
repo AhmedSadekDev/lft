@@ -250,7 +250,11 @@ class BookingController extends Controller
         $booking->load([
             'bookingServices.service.serviceCategory',
             'bookingServices.supplier',
+            'bookingServices.agent',
+            'bookingServices.creator',
             'receipts.supplier',
+            'receipts.bookingService.agent',
+            'receipts.bookingService.creator',
         ]);
 
         $booking->loadExpensesForDisplay();

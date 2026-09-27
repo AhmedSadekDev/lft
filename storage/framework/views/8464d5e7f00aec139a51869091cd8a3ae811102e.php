@@ -1,0 +1,1 @@
+# Test Email Markdown Successful<?php /**PATH D:\laragon\www\leader\leader\resources\views\email\test_email.blade.php ENDPATH**/ ?>

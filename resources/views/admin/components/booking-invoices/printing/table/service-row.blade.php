@@ -73,6 +73,7 @@
                 @endif
                 <span style="color: #212529; font-size: 11px; font-weight: 600;">{{ $displayValue }}</span>
             </div>
+            <div style="font-size: 10px;">المندوب / المشرف: {{ $booking_service->responsible_name ?: '—' }}</div>
             @if($booking_service->note)
             <div style="display: flex; align-items: start; gap: 3px; background: #fff3cd; padding: 2px 4px; border-radius: 3px; border-right: 2px solid #ffc107;">
                 <span style="font-weight: 700; color: #856404; font-size: 9px; min-width: 70px;">ملاحظات:</span>

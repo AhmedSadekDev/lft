@@ -64,6 +64,11 @@ class AgentExpense extends Model
     {
         return $this->belongsTo(Agent::class);
     }
+
+    public function getResponsibleNameAttribute(): ?string
+    {
+        return $this->agent?->name ?: $this->bookingService?->responsible_name;
+    }
     
     public function service(): BelongsTo
     {

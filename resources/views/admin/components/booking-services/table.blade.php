@@ -21,6 +21,7 @@
             <th>
                 {{ __('admin.note') }}
             </th>
+            <th>المندوب / المشرف</th>
             <th>
                 {{ __('admin.cost') }}
             </th>
@@ -45,6 +46,7 @@
                 <td>
                     {{ $service->note }}
                 </td>
+                <td>{{ $service->responsible_name ?: '—' }}</td>
                 <td class="services_total_price" data-price="{{ $service->price }}">
                     {{ $service->price }}
                 </td>
@@ -92,6 +94,7 @@
                     <td>
                         {{ filled($expense->notes) ? $expense->notes : '—' }}
                     </td>
+                    <td>{{ $expense->responsible_name ?: '—' }}</td>
                     <td class="services_total_price" data-price="{{ $expense->value }}">
                         {{ $expense->value }}
                     </td>
@@ -148,6 +151,7 @@
                     <td>
                         {{ $receipt->notes }}
                     </td>
+                    <td>{{ $receipt->responsible_name ?: '—' }}</td>
                     <td class="services_total_price" data-price="{{ $receipt->cost }}">
                         {{ $receipt->cost }}
                     </td>

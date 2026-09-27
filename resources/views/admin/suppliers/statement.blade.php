@@ -83,6 +83,7 @@
                     <tr>
                         <th>رقم فاتورة المورد</th>
                         <th>عدد الإيصالات</th>
+                        <th>المندوب / المشرف</th>
                         <th>أول إيصال</th>
                         <th>آخر إيصال</th>
                         <th>الإجمالي</th>
@@ -93,13 +94,14 @@
                         <tr>
                             <td class="font-weight-bold">{{ $row->supplier_invoice_number }}</td>
                             <td>{{ $row->receipts_count }}</td>
+                            <td>{{ $invoiceResponsibleNames->get($row->supplier_invoice_number) ?: '—' }}</td>
                             <td>{{ optional(\Carbon\Carbon::parse($row->first_receipt_at))->format('Y-m-d') }}</td>
                             <td>{{ optional(\Carbon\Carbon::parse($row->last_receipt_at))->format('Y-m-d') }}</td>
                             <td class="text-danger font-weight-bold">{{ number_format((float) $row->total_cost, 2) }} ج.م</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-muted py-3">لا توجد فواتير مجمّعة</td>
+                            <td colspan="6" class="text-muted py-3">لا توجد فواتير مجمّعة</td>
                         </tr>
                     @endforelse
                     </tbody>
@@ -115,6 +117,7 @@
                             <th>#</th>
                             <th>التاريخ</th>
                             <th>رقم الطلب</th>
+                            <th>المندوب / المشرف</th>
                             <th>التكلفة</th>
                             <th>ملاحظات</th>
                         </tr>
@@ -125,6 +128,7 @@
                                 <td>{{ $receipt->id }}</td>
                                 <td>{{ optional($receipt->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $receipt->booking->booking_number ?? $receipt->booking_id ?? '-' }}</td>
+                                <td>{{ $receipt->responsible_name ?: '—' }}</td>
                                 <td class="text-danger font-weight-bold">{{ number_format((float) $receipt->cost, 2) }} ج.م</td>
                                 <td>{{ $receipt->notes ?: '-' }}</td>
                             </tr>

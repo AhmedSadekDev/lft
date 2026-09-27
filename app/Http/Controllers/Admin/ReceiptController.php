@@ -45,7 +45,7 @@ class ReceiptController extends Controller
     public function index(Request $request)
     {
         $receipts = Receipt::query()
-            ->with(['supplier', 'booking', 'bookingService.service'])
+            ->with(['supplier', 'booking', 'bookingService.service.serviceCategory', 'bookingService.agent', 'bookingService.creator'])
             ->when($request->filled('payment_source'), fn ($q) => $q->where('payment_source', $request->payment_source))
             ->when($request->filled('supplier_id'), fn ($q) => $q->where('supplier_id', $request->supplier_id))
             ->orderByDesc('id')

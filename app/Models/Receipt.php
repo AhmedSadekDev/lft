@@ -36,6 +36,11 @@ class Receipt extends Model
         return $this->belongsTo(BookingService::class);
     }
 
+    public function getResponsibleNameAttribute(): ?string
+    {
+        return $this->bookingService?->responsible_name;
+    }
+
     public function scopeForSupplier($query, int $supplierId)
     {
         return $query->where('supplier_id', $supplierId);

@@ -9,6 +9,7 @@
 ]) !!}
 
 <input type="hidden" name="version" value="{{ $agentExpense->version }}">
+<p class="px-5 pt-3">المندوب / المشرف: {{ $agentExpense->responsible_name ?: '—' }}</p>
 <div class="card-body">
     <div class="row">
         <div class="col-md-6 col-sm-12">

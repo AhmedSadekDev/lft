@@ -24,10 +24,12 @@ class ExpenseController extends Controller
         $expenses = collect();
 
         $financial_custodies = $agent->sended_financial_custodies()
+            ->with('transferer')
             ->orderBy("id", "desc")
             ->get();
         // dd($financial_custodies);
         $expenses = $agent->expenses()
+            ->with(['agent', 'bookingService.agent', 'bookingService.creator'])
             ->orderBy("id", "desc")
             ->get();
         // dd($expenses);
@@ -42,7 +44,8 @@ class ExpenseController extends Controller
 
     public function booking_container_expenses($id)
     {
-        $allExpenses = AgentExpense::where('booking_container_id', $id)->get();
+        $allExpenses = AgentExpense::with(['agent', 'bookingService.agent', 'bookingService.creator'])
+            ->where('booking_container_id', $id)->get();
         return view('admin.bookings.booking-containers.expenses', compact("allExpenses"));
     }
 

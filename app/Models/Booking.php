@@ -38,7 +38,7 @@ class Booking extends Model
             'expenses',
             AgentExpense::forBooking($this->id)
                 ->standaloneFromBookingService()
-                ->with(['service.serviceCategory'])
+                ->with(['service.serviceCategory', 'agent', 'bookingService.agent', 'bookingService.creator'])
                 ->orderBy('id')
                 ->get()
         );
@@ -163,6 +163,7 @@ class Booking extends Model
     ) {
         return $this
             ->bookingServices()
+            ->with(['agent', 'creator'])
             ->whereHas('service.serviceCategory', function (Builder $query) use ($service_status) {
                 return $query
                     ->where(

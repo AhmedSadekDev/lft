@@ -145,7 +145,7 @@
                             <th scope="col" class="text-success">القيمة وارد</th>
                             <th scope="col">رقم الشحنة</th>
                             <th scope="col">التاريخ</th>
-                            <th scope="col">المندوب</th>
+                            <th scope="col">المندوب / المشرف</th>
                             <th scope="col">الملاحظات</th>
                         </tr>
                     </thead>
@@ -354,7 +354,7 @@
                                     $service = '-';
                                 }
 
-                                $agentName = $item->agent?->name ?? '-';
+                                $agentName = $item->responsible_name ?: '-';
                                 $bookingNumber = $item->bookingContainer?->booking?->booking_number ?? '';
                                 $bookingId = $item->bookingContainer?->booking_id;
 

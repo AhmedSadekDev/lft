@@ -85,6 +85,11 @@ class BookingService extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function getResponsibleNameAttribute(): ?string
+    {
+        return $this->agent?->name ?: $this->creator?->name;
+    }
+
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');

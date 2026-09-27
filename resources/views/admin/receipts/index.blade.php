@@ -58,6 +58,7 @@
                             <th>المورد</th>
                             <th>رقم فاتورة المورد</th>
                             <th>الخدمة</th>
+                            <th>المندوب / المشرف</th>
                             <th>رقم الطلب</th>
                             <th></th>
                         </tr>
@@ -78,6 +79,7 @@
                                 <td>{{ $receipt->supplier->name ?? '-' }}</td>
                                 <td>{{ $receipt->supplier_invoice_number ?: '-' }}</td>
                                 <td>{{ $receipt->bookingService?->full_name ?? '-' }}</td>
+                                <td>{{ $receipt->responsible_name ?: '—' }}</td>
                                 <td>
                                     @if($receipt->booking)
                                         <a href="{{ route('bookings.show', $receipt->booking_id) }}">
@@ -103,7 +105,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-muted py-4">لا توجد إيصالات</td>
+                                <td colspan="10" class="text-muted py-4">لا توجد إيصالات</td>
                             </tr>
                         @endforelse
                         </tbody>

@@ -79,6 +79,7 @@
                                 {{ $displayValue }}
                             </span>
                         </div>
+                        <div style="font-size: 12px;">المندوب / المشرف: {{ $expenses->responsible_name ?: '—' }}</div>
                         @if($expenses->service->notes)
                         <div style="display: flex; align-items: start; gap: 8px; background: #fff3cd; padding: 8px; border-radius: 4px; border-right: 3px solid #ffc107;">
                             <span style="font-weight: 700; color: #856404; font-size: 12px; min-width: 70px;">📝 ملاحظات:</span>

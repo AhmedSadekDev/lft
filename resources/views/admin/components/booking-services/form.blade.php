@@ -1,3 +1,6 @@
+@if(isset($booking_service))
+    <p class="px-5 pt-3">المندوب / المشرف: {{ $booking_service->responsible_name ?: '—' }}</p>
+@endif
 @if ($method == 'POST')
     {!! Form::open([
         'url' => $action,

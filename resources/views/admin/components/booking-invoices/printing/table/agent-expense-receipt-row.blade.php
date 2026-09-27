@@ -39,6 +39,7 @@
             <div style="display: flex; align-items: center; gap: 3px;">
                 <span style="color: #212529; font-size: 11px; font-weight: 600;">{{ $fullName }}</span>
             </div>
+            <div style="font-size: 10px;">المندوب / المشرف: {{ $expense->responsible_name ?: '—' }}</div>
             @if(!empty($expense->notes))
             <div style="display: flex; align-items: start; gap: 3px; background: #fff3cd; padding: 2px 4px; border-radius: 3px; border-right: 2px solid #ffc107;">
                 <span style="font-weight: 700; color: #856404; font-size: 9px; min-width: 70px;">ملاحظات:</span>

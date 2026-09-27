@@ -1,3 +1,6 @@
+@if(isset($receipt))
+    <p class="px-5 pt-3">المندوب / المشرف: {{ $receipt->responsible_name ?: '—' }}</p>
+@endif
 @php
     $currentPaymentSource = old(
         'payment_source',
