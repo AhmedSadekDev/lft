@@ -4,15 +4,11 @@ namespace App\Http\Controllers\Api\Agent;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\Agent\BookingResource;
-use App\Http\Resources\Api\Agent\LoadingYardResource;
 use App\Http\Resources\Api\Agent\SimpleBookingContainer2Resource;
-use App\Http\Resources\Api\Agent\UnloadingShippingAgentResource;
 use App\Models\Agent;
 use App\Models\Booking;
 use App\Models\BookingContainer;
 use App\Models\Invoice;
-use App\Models\shippingAgent;
-use App\Models\Yard;
 use Illuminate\Http\Request;
 
 class BookingContainerAssignmentController extends Controller
@@ -23,10 +19,30 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $ids = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, 1)->pluck('id');
-            $yards = Yard::whereHas('bookingContainers', fn ($q) => $q->whereIn('booking_containers.id', $ids))->orderByDesc('id')->get();
+            // Grouped by container rather than Yard::whereHas so bookings without a yard are not dropped.
+            $containers = app(\App\Services\ContainerStageService::class)
+                ->visibleContainers($agent->id, 1)
+                ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'stages'])
+                ->orderByDesc('id')
+                ->get();
 
-            $data = LoadingYardResource::collection($yards);
+            $data = $containers
+                ->groupBy(fn (BookingContainer $container) => (int) ($container->booking?->yard_id ?: 0))
+                ->sortKeysDesc()
+                ->map(function ($group, $yardId) {
+                    /** @var BookingContainer $first */
+                    $first = $group->first();
+
+                    return [
+                        'id' => (int) $yardId,
+                        'title' => $first->booking?->yard?->title ?? 'غير محدد',
+                        'booking_containers' => $group->map(
+                            fn (BookingContainer $container) => (new \App\Http\Resources\Api\Agent\BookingContainerResource($container))->forStage(1)
+                        )->values(),
+                    ];
+                })
+                ->values()
+                ->all();
 
 
             return $this->returnAllData($data, __('alerts.success'));
@@ -42,19 +58,8 @@ class BookingContainerAssignmentController extends Controller
             /** @var Agent $agent */
 
             // نفس أسلوب التحميل: حاويات المندوب مباشرة بدون اعتماد على Resource يعيد الاستعلام
-            $containers = BookingContainer::query()
-                ->where(function ($q) {
-                    $q->where('superagent_specification_approved', 0)
-                        ->orWhereNull('superagent_specification_approved');
-                })
-                ->whereDoesntHave('booking.invoice')
-                ->whereHas('agents', function ($q) use ($agent) {
-                    $q->where('agents.id', $agent->id)
-                        ->where(function ($stage) {
-                            $stage->where('booking_container_agents.stage_type', 0)
-                                ->orWhereNull('booking_container_agents.stage_type');
-                        });
-                })
+            $containers = app(\App\Services\ContainerStageService::class)
+                ->visibleContainers($agent->id, 0)
                 ->with([
                     'booking.company',
                     'booking.factory',
@@ -85,7 +90,7 @@ class BookingContainerAssignmentController extends Controller
                     $first = $group->first();
                     $shippingId = $first->booking?->shipping_agent_id;
                     $title = $shippingId
-                        ? ($first->booking?->shippingAgent?->title ?? '')
+                        ? ($first->booking?->shippingAgent?->title ?? 'غير محدد')
                         : ($first->booking?->yard?->title ?? 'غير محدد');
 
                     return [
@@ -119,10 +124,26 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $ids = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, 2)->pluck('id');
-            $shipping_agents = shippingAgent::whereHas('bookingContainers', fn ($q) => $q->whereIn('booking_containers.id', $ids))->orderByDesc('id')->get();
+            $containers = app(\App\Services\ContainerStageService::class)
+                ->visibleContainers($agent->id, 2)
+                ->with(['booking.company', 'booking.factory', 'booking.yard', 'booking.shippingAgent', 'branch.factory', 'container', 'stages'])
+                ->orderByDesc('id')
+                ->get();
 
-            $data = UnloadingShippingAgentResource::collection($shipping_agents);
+            $data = $containers
+                ->groupBy(fn (BookingContainer $container) => (int) ($container->booking?->shipping_agent_id ?: 0))
+                ->sortKeysDesc()
+                ->map(function ($group, $shippingId) {
+                    return [
+                        'id' => (int) $shippingId,
+                        'title' => $group->first()->booking?->shippingAgent?->title ?? 'غير محدد',
+                        'booking_containers' => $group->map(
+                            fn (BookingContainer $container) => (new \App\Http\Resources\Api\Agent\BookingContainerResource($container))->forStage(2)
+                        )->values(),
+                    ];
+                })
+                ->values()
+                ->all();
 
 
             return $this->returnAllData($data, __('alerts.success'));
@@ -209,9 +230,6 @@ class BookingContainerAssignmentController extends Controller
             $data = [];
             foreach (\App\Services\ContainerStageService::NAMES as $type => $name) {
                 $query = app(\App\Services\ContainerStageService::class)->visibleContainers($agent->id, $type);
-                if ($type === 0) {
-                    $query->where('superagent_specification_approved', 0);
-                }
                 $data[$name.'_assignments'] = [
                     'daily_'.$name.'_assignments_count' => (clone $query)->count(),
                     'finished_'.$name.'_assignments_count' => (clone $query)->where('status', '>=', $type + 1)->count(),

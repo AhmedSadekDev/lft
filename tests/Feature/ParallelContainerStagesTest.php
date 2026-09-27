@@ -101,6 +101,7 @@ class ParallelContainerStagesTest extends TestCase
             $t->unsignedBigInteger('agent_id');
             $t->integer('booking_container_status')->nullable();
             $t->boolean('is_in_loading')->default(false);
+            $t->timestamp('moved_to_loading_at')->nullable();
             foreach (ContainerStageService::NAMES as $name) {
                 $t->boolean('superagent_'.$name.'_approved')->default(false);
                 $t->timestamp($name.'_completed_at')->nullable();
@@ -112,6 +113,8 @@ class ParallelContainerStagesTest extends TestCase
             $t->id();
             $t->unsignedBigInteger('booking_container_id');
             $t->integer('booking_container_status');
+            $t->boolean('is_in_loading')->default(false);
+            $t->timestamp('moved_to_loading_at')->nullable();
             foreach (ContainerStageService::NAMES as $name) {
                 $t->boolean('superagent_'.$name.'_approved')->default(false);
             }
@@ -148,10 +151,111 @@ class ParallelContainerStagesTest extends TestCase
         return app(StageExpenseService::class)->create($agent, ['booking_container_id' => 1, 'type_id' => $type, 'value' => $amount], $key, hash('sha256', "$type:$amount"), fn () => null);
     }
 
+    public static function assignmentStages(): array
+    {
+        return ['specification' => [0], 'loading' => [1], 'unloading' => [2]];
+    }
+
+    private function prepareAssignmentStage(int $type): ContainerStageService
+    {
+        BookingContainer::find(1)->update([
+            'status' => $type,
+            'superagent_specification_approved' => $type > 0,
+            'superagent_loading_approved' => $type > 1,
+        ]);
+        $service = app(ContainerStageService::class);
+        $this->assertSame($type, $service->assign(1, [1]));
+        $this->actingAs(Agent::find(1), 'agent');
+
+        return $service;
+    }
+
+    /** @dataProvider assignmentStages */
+    public function test_assignments_without_grouping_relations_remain_visible_in_every_stage(int $type): void
+    {
+        $service = $this->prepareAssignmentStage($type);
+        DB::table('bookings')->where('id', 1)->update(['yard_id' => null, 'shipping_agent_id' => null]);
+        $name = ContainerStageService::NAMES[$type];
+        $path = $type === 0 ? 'data.0.bookings.0.booking_containers.0' : 'data.0.booking_containers.0';
+        $this->getJson('/api/agent/booking/fetch_'.$name.'_assignments')->assertOk()
+            ->assertJsonPath('data.0.id', 0)->assertJsonPath('data.0.title', 'غير محدد')
+            ->assertJsonPath($path.'.id', 1)->assertJsonPath($path.'.type_id', $type)
+            ->assertJsonPath($path.'.can_complete_stage', true);
+        $service->assign(1, [2], $type);
+        $this->getJson('/api/agent/booking/fetch_'.$name.'_assignments')->assertOk()->assertJsonPath('data', []);
+        $this->assertSame(1, $service->visibleContainers(2, $type)->count());
+    }
+
+    /** @dataProvider assignmentStages */
+    public function test_legacy_assignments_have_consistent_visibility_and_permissions(int $type): void
+    {
+        $service = $this->prepareAssignmentStage($type);
+        $service->assignments(1, $type)->update(['stage_type' => null]);
+        $this->assertSame(1, $service->visibleContainers(1, $type)->count());
+        $service->assertAssigned(BookingContainer::find(1), $type, 1);
+        $service->assign(1, [1], $type);
+        $this->assertSame(1, $service->assignments(1, $type)->count());
+        $this->assertSame(0, DB::table('booking_container_agents')->whereNull('stage_type')->count());
+    }
+
+    /** @dataProvider assignmentStages */
+    public function test_closed_or_approved_stages_cannot_accept_invisible_assignments(int $type): void
+    {
+        $service = $this->prepareAssignmentStage($type);
+        $service->closeReceipts(1, $type, 7, 1);
+        $this->assertConflict(fn () => $service->assign(1, [2], $type));
+        $this->getJson('/api/agent/booking/fetch_'.ContainerStageService::NAMES[$type].'_assignments')
+            ->assertOk()->assertJsonPath('data', []);
+        BookingContainerStage::query()->delete();
+        BookingContainer::find(1)->update(['superagent_'.ContainerStageService::NAMES[$type].'_approved' => true]);
+        $this->assertConflict(fn () => $service->assign(1, [2], $type));
+        $this->assertSame(1, $service->assignments(1, $type)->where('agent_id', 1)->count());
+    }
+
+    /** @dataProvider assignmentStages */
+    public function test_rewound_stages_reappear_with_completion_enabled(int $type): void
+    {
+        $service = $this->prepareAssignmentStage($type);
+        // Specification cannot rewind after the following phase has been assigned.
+        if ($type === 0) {
+            $service->assignments(1, 1)->delete();
+        }
+        $service->complete(1, $type, 1);
+        $service->rewind(1, $type);
+        $path = $type === 0 ? 'data.0.bookings.0.booking_containers.0' : 'data.0.booking_containers.0';
+        $this->getJson('/api/agent/booking/fetch_'.ContainerStageService::NAMES[$type].'_assignments')->assertOk()
+            ->assertJsonPath($path.'.can_complete_stage', true)->assertJsonPath($path.'.stage_status', 'pending');
+        $this->assertSame($type, (int) $service->assignments(1, $type)->first()->booking_container_status);
+    }
+
+    public function test_approved_loading_rewind_restores_loading_visibility_even_if_loading_flag_was_cleared(): void
+    {
+        $service = $this->prepareAssignmentStage(1);
+        $service->approve(1, 1);
+        BookingContainer::find(1)->update(['is_in_loading' => false]);
+        $service->rewind(1, 1);
+        $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()
+            ->assertJsonPath('data.0.booking_containers.0.can_complete_stage', true)
+            ->assertJsonPath('data.0.booking_containers.0.is_in_loading', 1);
+    }
+
+    public function test_waiting_assignment_appears_only_after_move_to_loading(): void
+    {
+        $service = $this->prepareAssignmentStage(1);
+        BookingContainer::find(1)->update(['is_in_loading' => false]);
+        $service->assign(1, [1]);
+        $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()->assertJsonPath('data', []);
+        $service->moveToLoading([1], true);
+        $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()
+            ->assertJsonPath('data.0.booking_containers.0.id', 1);
+    }
+
     public function test_invoice_hides_all_phases_from_every_assigned_agent(): void
     {
         $service = app(ContainerStageService::class);
+        BookingContainer::find(1)->update(['superagent_specification_approved' => false]);
         $service->assign(1, [1, 2], 0);
+        BookingContainer::find(1)->update(['superagent_specification_approved' => true]);
         $service->assign(1, [1, 2], 1);
         $service->approve(1, 1);
         $service->assign(1, [1, 2], 2);

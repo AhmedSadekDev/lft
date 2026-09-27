@@ -19,7 +19,21 @@ class ContainerStageService
 
     public function assignments(int $containerId, int $type)
     {
-        return BookingContainerAgent::where('booking_container_id', $containerId)->where('stage_type', $type);
+        return $this->forAssignmentStage(BookingContainerAgent::where('booking_container_id', $containerId), $type);
+    }
+
+    private function forAssignmentStage($query, int $type)
+    {
+        // Legacy rows use the assignment's own approval snapshot, just like the migration.
+        return $query->where(function ($q) use ($type) {
+            $q->where('booking_container_agents.stage_type', $type)
+                ->orWhere(function ($legacy) use ($type) {
+                    $legacy->whereNull('booking_container_agents.stage_type')->whereRaw(
+                        'CASE WHEN COALESCE(booking_container_agents.superagent_specification_approved, 0) = 0 THEN 0 WHEN COALESCE(booking_container_agents.superagent_loading_approved, 0) = 0 THEN 1 ELSE 2 END = ?',
+                        [$type]
+                    );
+                });
+        });
     }
 
     public function assertAssigned(BookingContainer $container, int $type, int $agentId): void
@@ -65,6 +79,9 @@ class ContainerStageService
             $type = $type ?? $this->currentType($container);
             abort_unless(isset(self::NAMES[$type]), 422, 'مرحلة غير صحيحة');
             abort_unless(\App\Models\Agent::whereIn('id', $agentIds)->count() === count(array_unique($agentIds)), 422, 'مندوب غير موجود');
+            abort_if($container->booking()->whereHas('invoice')->exists(), 409, 'تم إصدار فاتورة لهذا الطلب، ولم يعد متاحاً للإسناد.');
+            abort_if($container->{'superagent_'.self::NAMES[$type].'_approved'}, 409, 'المرحلة معتمدة بالفعل؛ اختر المرحلة الحالية للإسناد أو أرسل الطلب بدون type_id.');
+            abort_if($container->stages()->where('type_id', $type)->whereNotNull('receipts_closed_at')->exists(), 409, 'إيصالات المرحلة مقفولة؛ لا يمكن إسنادها مجدداً.');
             if ($type === 1) {
                 abort_unless($container->superagent_specification_approved, 409, 'يجب اعتماد التخصيص أولاً');
             }
@@ -84,15 +101,9 @@ class ContainerStageService
                     'superagent_unloading_approved' => (int) $container->superagent_unloading_approved,
                     'is_in_loading' => (int) $container->is_in_loading,
                 ];
-                // updateOrCreate يضمن stage_type حتى لو كان الصف القديم بـ null
-                BookingContainerAgent::updateOrCreate(
-                    [
-                        'booking_container_id' => $containerId,
-                        'agent_id' => $agentId,
-                        'stage_type' => $type,
-                    ],
-                    $row
-                );
+                $assignment = $this->assignments($containerId, $type)->where('agent_id', $agentId)->first()
+                    ?? new BookingContainerAgent;
+                $assignment->fill($row)->save();
             }
 
             return $type;
@@ -139,7 +150,7 @@ class ContainerStageService
                 $values['moved_to_loading_at'] = $container->moved_to_loading_at ?: $now;
             }
             $container->update($values + ['status' => max((int) $container->status, $type + 1)]);
-            $this->assignments($containerId, $type)->update($values);
+            $this->assignments($containerId, $type)->update($values + ['stage_type' => $type]);
             $dailyUpdate = [$flag => 1, 'booking_container_status' => $container->status];
             if ($type === 0) {
                 $dailyUpdate['is_in_loading'] = 1;
@@ -198,10 +209,16 @@ class ContainerStageService
             $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
             abort_unless(in_array($target, [0, 1, 2], true) && $target < (int) $container->status, 422, 'حالة الرجوع غير صحيحة');
             abort_if((int) $container->status > $target + 1, 409, 'لا يمكن تجاوز مراحل منفذة عند الرجوع');
-            abort_if(BookingContainerAgent::where('booking_container_id', $containerId)->where('stage_type', '>', $target)->exists(), 409, 'بدأ تكليف المرحلة التالية؛ لا يمكن الرجوع');
+            foreach (array_keys(self::NAMES) as $type) {
+                abort_if($type > $target && $this->assignments($containerId, $type)->exists(), 409, 'بدأ تكليف المرحلة التالية؛ لا يمكن الرجوع');
+            }
             abort_if(\App\Models\AgentExpense::where('booking_container_id', $containerId)->where('type_id', '>', $target)->exists(), 409, 'توجد مصروفات للمرحلة التالية');
             abort_if($container->stages()->where('type_id', '>=', $target)->whereNotNull('receipts_closed_at')->exists(), 409, 'إيصالات المرحلة مقفولة');
             $values = ['status' => $target];
+            if ($target === 1) {
+                $values['is_in_loading'] = 1;
+                $values['moved_to_loading_at'] = $container->moved_to_loading_at ?: now();
+            }
             foreach (self::NAMES as $type => $name) {
                 if ($type >= $target) {
                     $values['superagent_'.$name.'_approved'] = 0;
@@ -211,8 +228,12 @@ class ContainerStageService
             }
             $container->update($values);
             unset($values['status']);
-            BookingContainerAgent::where('booking_container_id', $containerId)->where('stage_type', '>=', $target)->update($values);
-            DailyBookingContainer::where('booking_container_id', $containerId)->update(['booking_container_status' => $target]);
+            $this->assignments($containerId, $target)->update($values + ['booking_container_status' => $target, 'stage_type' => $target]);
+            $dailyValues = ['booking_container_status' => $target];
+            if ($target === 1) {
+                $dailyValues += ['is_in_loading' => 1, 'moved_to_loading_at' => $container->moved_to_loading_at];
+            }
+            DailyBookingContainer::where('booking_container_id', $containerId)->update($dailyValues);
         });
     }
 
@@ -222,8 +243,8 @@ class ContainerStageService
         $flag = 'superagent_'.self::NAMES[$type].'_approved';
         // بعد اعتماد التشغيل تختفي الحاوية فورًا من قائمة المندوب للمرحلة الحالية.
         $query = BookingContainer::whereDoesntHave('booking.invoice')->whereHas('agents', function ($q) use ($agentId, $type) {
-            $q->where('agents.id', $agentId)->where('booking_container_agents.stage_type', $type);
-        })->where($flag, 0)->whereDoesntHave('stages', function ($q) use ($type) {
+            $this->forAssignmentStage($q->where('agents.id', $agentId), $type);
+        })->where(fn ($q) => $q->where($flag, 0)->orWhereNull($flag))->whereDoesntHave('stages', function ($q) use ($type) {
             $q->where('type_id', $type)->whereNotNull('receipts_closed_at');
         });
         if ($type === 1) {

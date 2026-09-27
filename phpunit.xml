@@ -18,6 +18,8 @@
         </include>
     </coverage>
     <php>
+        <!-- Keep the local application's cached config out of the test process. -->
+        <env name="APP_CONFIG_CACHE" value="bootstrap/cache/config.testing.php" force="true"/>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
