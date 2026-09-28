@@ -1,0 +1,36 @@
+{
+    "expected_indexes_count": 5,
+    "physical_indexes_count": 0,
+    "expected_samples": [
+        {
+            "migration": "2026_04_16_000001_add_payment_group_uuid_to_payingcars_table.php",
+            "table": "payingcars",
+            "type": "INDEX",
+            "columns": "payment_group_uuid"
+        },
+        {
+            "migration": "2026_07_23_000002_create_receipts_table.php",
+            "table": "receipts",
+            "type": "INDEX",
+            "columns": "payment_source"
+        },
+        {
+            "migration": "2026_07_24_000001_link_booking_services_and_supplier_receipts.php",
+            "table": "receipts",
+            "type": "UNIQUE",
+            "columns": "booking_service_id"
+        },
+        {
+            "migration": "2026_09_13_000001_add_parallel_container_stages.php",
+            "table": "booking_container_stages",
+            "type": "UNIQUE",
+            "columns": "booking_container_id,type_id"
+        },
+        {
+            "migration": "2026_09_13_000001_add_parallel_container_stages.php",
+            "table": "agent_expenses",
+            "type": "UNIQUE",
+            "columns": "agent_id,request_key"
+        }
+    ]
+}

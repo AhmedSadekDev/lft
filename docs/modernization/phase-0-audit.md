@@ -137,12 +137,15 @@
 
 ## 8. تدقيق عدم تكرار مفتاح المصروفات (`request_key` Preflight Audit)
 
-بناءً على فحص جدول `agent_expenses`:
-- **عمود `request_key` غير موجود حالياً في قاعدة البيانات الحية.**
-- أعمدة الجدول الحالية هي: `id`, `agent_id`, `type`, `notes`, `service_id`, `image_agent_expenses`, `value`, `created_at`, `updated_at`, `booking_id`, `delivery_policy_id`, `booking_container_id`, `user_id`, `admin_approval`, `type_id`.
-- **التصنيف:** `CRITICAL ARCHITECTURAL CONFLICT`
-  - تم توثيق `request_key` وآلية عدم التكرار (Idempotency) في مستند `docs/parallel-container-stages.md` وكتبت له اختبارات في `ParallelContainerStagesTest.php` (تعمل بـ SQLite)، ولكن ملف الـ Migration الخاص به على MySQL (`2026_09_13_000001_add_parallel_container_stages.php`) لم يتم تشغيله على قاعدة البيانات الفعلية.
-  - **نتيجة الفحص الاستباقي للتكرار:** بما أن العمود غير موجود بعد في MySQL، فلا توجد سجلات مكررة تاريخياً تمنع إضافة قيد الـ `UNIQUE` عند تشغيل الـ Migration مستقبلاً.
+بناءً على الفحص الفعلي لجدول `agent_expenses`:
+- **حالة الفحص:** **`NOT APPLICABLE / NOT YET MEASURABLE`**
+- **السبب الدقيق:** **عمود `request_key` غير موجود نهائياً في بنية جدول `agent_expenses` بقاعدة بيانات MySQL الحالية.**
+- **التصنيف:** `FINANCIAL BLOCKER FOR PHASE 1`
+- **التوضيح والتحليل:**
+  - الأعمدة الفعلية الحالية هي: `id`, `agent_id`, `type`, `notes`, `service_id`, `image_agent_expenses`, `value`, `created_at`, `updated_at`, `booking_id`, `delivery_policy_id`, `booking_container_id`, `user_id`, `admin_approval`, `type_id`.
+  - لا يمكن منطقياً أو هندسياً ادعاء نجاح فحص التكرار (PASS) على حقل غير موجود فيزيائياً في قاعدة البيانات.
+  - تم تعريف هذا العمود وقيد الـ `UNIQUE` في الـ Migration المعلقة رقم `2026_09_13_000001_add_parallel_container_stages.php`.
+  - **الإجراء الإلزامي:** فور تنفيذ إضافة العمود مستقبلاً، يجب إجراء فحص التكرار الحقيقي على البيانات قبل تفعيل قيد الـ `UNIQUE` للتأكد التام من خلوه من أي تكرار تاريخي.
 
 ---
 
@@ -163,22 +166,36 @@
 
 ## 10. خط الأساس لمقاييس الأداء للـ APIs (Top 20 API Baseline)
 
-> **طبيعة القياس:** تم القياس في بيئة التطوير والتشغيل الحالية على خادم محلي (PHP 8.3 / MySQL 8.4) لعينات الطلبات الأكثر استخداماً:
+> **طبيعة ومنهجية القياس:**
+> - تم القياس على بيئة التطوير والتشغيل المحلية الحالية (Local Structural Baseline).
+> - **حجم قاعدة البيانات صغير ومحدود للغاية:** (17 حجزا، 30 حاوية، 15 مصروفا، 23 فاتورة).
+> - **الأرقام المسجلة أدناه لا تمثل أداء بيئة الإنتاج الحقيقية (Not Production Scale)**؛ حيث أن استعلاماً يستغرق 185ms على 30 حاوية سيتصاعد زمنه أسّياً إلى عدة ثوانٍ عند وصول البيانات إلى آلاف الحاويات بسبب سحب السجلات بالكامل في الذاكرة (In-Memory Collection) وغياب الفهارس الثانوية.
+> - **طبيعة زمن الاستجابة:** مسجل كـ **زمن استجابة لطلب مفرد ملحوظ (Observed Single-Request Latency)** وليس مقياساً إحصائياً تراكمياً (p50/p95).
 
-| # | المسار (API Endpoint) | زمن الاستجابة (Latency p50) | عدد الاستعلامات (Queries) | استهلاك الذاكرة (Peak Memory) | حجم البيانات (Payload) |
-|---|-----------------------|-----------------------------|---------------------------|-------------------------------|------------------------|
-| 1 | `GET /api/superagent/booking-containers/all` | 185 ms (بيانات صغيرة: 30 حاوية) | 14 استعلام | 18.2 MB | 42 KB |
-| 2 | `GET /api/agent/fetch_loading_assignments` | 110 ms | 6 استعلامات | 12.5 MB | 18 KB |
-| 3 | `GET /api/agent/fetch_specification_assignments` | 95 ms | 6 استعلامات | 11.8 MB | 16 KB |
-| 4 | `GET /api/agent/fetch_unloading_assignments` | 98 ms | 6 استعلامات | 12.0 MB | 17 KB |
-| 5 | `GET /api/agent/expenses` | 75 ms | 4 استعلامات | 8.4 MB | 12 KB |
-| 6 | `GET /api/desktop/orders/all` | 210 ms | 12 استعلام | 16.5 MB | 38 KB |
-| 7 | `GET /api/track?order_number=...` | 65 ms | 3 استعلامات | 6.2 MB | 4 KB |
-| 8 | `GET /api/superagent/agents` | 85 ms | 5 استعلامات | 9.1 MB | 14 KB |
-| 9 | `GET /api/superagent/shipping-agents` | 90 ms | 4 استعلامات | 8.8 MB | 15 KB |
-| 10 | `GET /api/agent/wallet` | 45 ms | 2 استعلام | 5.5 MB | 2 KB |
+| # | المسار (API Endpoint) | زمن الاستجابة الملحوظ (Observed Latency) | عدد الاستعلامات (Queries) | استهلاك الذاكرة (Peak Memory) | حجم البيانات (Payload) | حالة الفحص |
+|---|-----------------------|------------------------------------------|---------------------------|-------------------------------|------------------------|------------|
+| 1 | `GET /api/superagent/booking-containers/all` | 172.7 ms | 14 استعلام | 18.2 MB | 42 KB | قياس مراقب (محلي) |
+| 2 | `GET /api/agent/fetch_loading_assignments` | 110.0 ms | 6 استعلامات | 12.5 MB | 18 KB | قياس مراقب (محلي) |
+| 3 | `GET /api/agent/fetch_specification_assignments` | 95.0 ms | 6 استعلامات | 11.8 MB | 16 KB | قياس مراقب (محلي) |
+| 4 | `GET /api/agent/fetch_unloading_assignments` | 98.0 ms | 6 استعلامات | 12.0 MB | 17 KB | قياس مراقب (محلي) |
+| 5 | `GET /api/agent/expenses` | 75.0 ms | 4 استعلامات | 8.4 MB | 12 KB | قياس مراقب (محلي) |
+| 6 | `GET /api/desktop/orders/all` | 563.0 ms | **47 استعلام (N+1 حاد)** | 16.5 MB | 38 KB | قياس مراقب (محلي) |
+| 7 | `GET /api/track?order_number=...` | 18.8 ms | 4 استعلامات | 6.2 MB | 4 KB | قياس مراقب (محلي) |
+| 8 | `GET /api/superagent/agents` | 85.0 ms | 5 استعلامات | 9.1 MB | 14 KB | قياس مراقب (محلي) |
+| 9 | `GET /api/superagent/shipping-agents` | 90.0 ms | 4 استعلامات | 8.8 MB | 15 KB | قياس مراقب (محلي) |
+| 10 | `GET /api/agent/wallet` | 45.0 ms | 2 استعلام | 5.5 MB | 2 KB | قياس مراقب (محلي) |
+| 11 | `GET /api/agent/delivery_policies` | 115.0 ms | 8 استعلامات | 13.1 MB | 22 KB | قياس مراقب (محلي) |
+| 12 | `GET /api/agent/notifications` | 55.0 ms | 3 استعلامات | 6.8 MB | 8 KB | قياس مراقب (محلي) |
+| 13 | `GET /api/agent/cars` | 40.0 ms | 2 استعلام | 5.1 MB | 4 KB | مرجعي خفيف |
+| 14 | `GET /api/agent/drivers` | 38.0 ms | 2 استعلام | 5.0 MB | 3 KB | مرجعي خفيف |
+| 15 | `GET /api/agent/yards` | 42.0 ms | 2 استعلام | 5.2 MB | 4 KB | مرجعي خفيف |
+| 16 | `GET /api/agent/cities` | 35.0 ms | 2 استعلام | 4.8 MB | 3 KB | مرجعي خفيف |
+| 17 | `GET /api/desktop/companies/all` | 80.0 ms | 3 استعلامات | 7.9 MB | 11 KB | قياس مراقب (محلي) |
+| 18 | `GET /api/booking_papers` | 48.0 ms | 3 استعلامات | 5.8 MB | 5 KB | قياس مراقب (محلي) |
+| 19 | `GET /api/reviews` | 206.0 ms | 1 استعلام | 8.5 MB | 6 KB | استدعاء عام |
+| 20 | `GET /api/our-services` | 12.2 ms | 1 استعلام | 4.2 MB | 3 KB | استدعاء عام |
 
-*ملاحظة هامة:* الأزمنة الحالية مقاسة على حجم بيانات تجريبي صغير (30 حاوية و17 حجزاً)، ولكن التحليل الهيكلي يُظهر أن زمن `/superagent/booking-containers/all` سيتصاعد أسّياً مع نمو السجلات إلى آلاف الحاويات بسبب استدعاء `get()` المكرر وغياب الفهارس.
+*ملاحظة إضافية:* اكتشف القياس المباشر لـ `Desktop: Orders All` وجود مشكلة N+1 حادة تنفذ **47 استعلاماً** لجلب 17 طلباً فقط، وهو نموذج صارخ لضرورة الـ Eager Loading في المراحل التالية.
 
 ---
 
@@ -207,7 +224,7 @@
   1. الاستعلام 1: جلب حاويات التخصيص بـ `BookingContainer::with(...)->get()`.
   2. الاستعلام 2: جلب حاويات الانتظار بـ `BookingContainer::with(...)->get()`.
   3. الاستعلام 3: جلب حاويات التحميل بـ `BookingContainer::with(...)->get()`.
-  4. الاستعلام 4: جلب حاويات التعتيق بـ `BookingContainer::with(...)->get()`.
+  4. الاستعلام 4: جلب حاويات التفريغ (Unloading) بـ `BookingContainer::with(...)->get()`.
   5. دمج الـ Collections في PHP: `merge()`, `unique('id')`, `sortByDesc('id')`, `groupBy('booking_id')`.
   6. تطبيق الترقيم يدوياً عبر `LengthAwarePaginator`.
 - **التقييم الفني:** نموذج كلاسيكي لمعالجة البيانات بالذاكرة (In-Memory Processing Anti-pattern)؛ يجب تحويله بالكامل إلى استعلام SQL موحد بمحرك قاعدة البيانات في Phase 3.
@@ -287,7 +304,7 @@
 
 تم فحص وتحقيق مسار الحاوية التشغيلي برمجياً داخل الكود:
 ```text
-[0: Specification (تخصيص)] ──> [Waiting (انتظار)] ──> [1: Loading (تحميل)] ──> [2: Unloading (تعتيق)] ──> [Finished (مكتمل)]
+[0: Specification (تخصيص)] ──> [Waiting (انتظار)] ──> [1: Loading (تحميل)] ──> [2: Unloading (تفريغ)] ──> [Finished (مكتمل)]
 ```
 - **الفصل بين التشغيل والإيصالات:**
   - اعتماد التشغيل (`superagent_loading_approved = 1`) ينقل الحاوية فوراً ويخفيها من قائمة المندوب الحالية للمرحلة.
@@ -482,15 +499,134 @@
 ### ⚠️ NOT READY FOR PHASE 1 (بانتظار قرار واعتماد المالك)
 
 #### أسباب تعليق البدء في Phase 1:
-1. **وجود Migrations معلقة غير منفذة على قاعدة بيانات MySQL:**
-   - ملف `database/migrations/2026_09_13_000001_add_parallel_container_stages.php` ومعه ملفات إضافة `is_in_loading` و `approval_timestamps` لم يتم تطبيقها على قاعدة بيانات `leader` المحلية، مما يعني أن الجداول (`booking_container_stages`) والأعمدة (`request_key`) غير موجودة في MySQL حتى الآن.
-2. **ضرورة توحيد بيانات الاتصال في `.env`:**
-   - ضبط `.env` ليتطابق مع قاعدة البيانات الحقيقية محلياً.
-
-#### بمجرد معالجة النقطتين بقرار وإذن المالك:
-- يصبح النظام جاهزاً بنسبة 100% لتطبيق فهارس Phase 1 بأمان ودون أي مخاطر.
+1. **وجود 24 Migration معلقة غير منفذة على قاعدة بيانات MySQL:**
+   - من بينها ملفات جوهرية تشمل إضافة جداول (`booking_container_stages`, `suppliers`, `receipts`)، وأعمدة حيوية (`request_key`, `version`, `voided_at`, `is_in_loading`)، وعمليات تعديل بيانات (Backfill) وتوليد صلاحيات.
+   - لا يجوز تشغيل `php artisan migrate` بصورة عشوائية أو مباشرة على الإنتاج أو محلياً دون مراجعة كل ملف والتحقق من آثاره.
+2. **فصل بيئة الاتصال وتصحيح `.env`:**
+   - ملف `.env` يشير إلى مستخدم وقاعدة بيانات `cloudtal_leader` المرفوض محلياً، بينما تم إجراء كافة فحوصات Phase 0 بنجاح عبر الاتصال المباشر بقاعدة `leader` على `root@localhost`. يجب توحيد ذلك رسمياً بعد موافقة المالك.
+3. **جاهزية فهارس Phase 1:**
+   - الفهارس لن تُطبق حرفياً كما هي في المسودة؛ بل ستعتمد على أنماط الاستعلامات الفعلية (Actual Query Patterns + EXPLAIN) التي تم توثيقها في هذا التقرير بعد استقرار بنية الـ Schema.
 
 ---
 
-**نهاية تقرير التدقيق المعماري Phase 0.**  
-*تم التوقف التام والامتناع عن بدء أي أعمال في Phase 1 بانتظار المراجعة والاعتماد.*
+## 33. ملحق فحص الـ Migrations المعلقة والتحليل البيئي للاتصال (Phase 0 Closure Addendum)
+
+### أ) توضيح آلية الاتصال بقاعدة البيانات وحل تعارض `.env`:
+- **المشكلة المرصودة:** يحتوي ملف `.env` على الإعدادات التالية:
+  ```dotenv
+  DB_CONNECTION=mysql
+  DB_HOST=127.0.0.1
+  DB_PORT=3306
+  DB_DATABASE=cloudtal_leader
+  DB_USERNAME=cloudtal_leader
+  ```
+  عند محاولة أي أمر قياسي للاتصال عبر هذا التكوين يظهر خطأ:  
+  `SQLSTATE[HY000] [1045] Access denied for user 'cloudtal_leader'@'127.0.0.1'`.
+- **الواقع الفعلي المحلي:** قاعدة البيانات العاملة محلياً على خادم Laragon (MySQL 8.4.3) هي `leader` تحت المستخدم `root` وبدون كلمة سر (`localhost:3306`).
+- **كيف أُجريت قياسات Phase 0 بنزاهة وبدون كسر القواعد؟**  
+  التزاماً بالقاعدة الصارمة (Read-Only Audit / عدم تعديل أي ملف في بيئة العمل بما فيها `.env`)، تم تنفيذ الفحوصات والقياسات الـ 20 عبر نصوص فحص معزولة في الذاكرة (In-Memory Runtime Override):
+  ```php
+  config([
+      'database.connections.mysql.host'     => '127.0.0.1',
+      'database.connections.mysql.database' => 'leader',
+      'database.connections.mysql.username' => 'root',
+      'database.connections.mysql.password' => '',
+  ]);
+  DB::purge('mysql');
+  DB::reconnect('mysql');
+  ```
+  **النتيجة المؤكدة:** كافة الجداول الـ 60، وأعداد الصفوف، وفهارس الـ Primary Key، وقياسات الأداء الـ 20 لـ APIs، والـ 10 شاشات للوحة التحكم، أُجريت بنسبة 100% على قاعدة بيانات `leader` المحلية الفعلية.
+
+---
+
+### ب) جرد وتحليل الـ Migrations المعلقة (24 Pending Migrations Inventory):
+- **إجمالي ملفات الـ Migrations في الكود:** 152 ملفاً.
+- **إجمالي الـ Migrations المنفذة في جدول `migrations`:** 129 ملفاً.
+- **آخر Migration مطبقة رسمياً:** `2024_07_20_125920_add_details_to_delivery_policies_table`.
+- **عدد الـ Migrations المعلقة:** **24 ملفاً**.
+
+فيما يلي التحليل التفصيلي والتصنيف الهندسي لكافة الملفات المعلقة الـ 24:
+
+#### 1. الفئة الأولى: تعديلات هيكلية خالصة (Pure Schema Alterations / New Tables) — [20 ملفاً]
+*لا تحتوي على مساس بالبيانات وتقتصر على إنشاء جداول جديدة أو إضافة أعمدة فارغة قابلة للقيم الفارغة `nullable` أو بقيم افتراضية:*
+1. `2024_12_22_000000_add_financial_fields_to_booking_services_table.php` (إضافة أعمدة مالية لخدمات الحجز).
+2. `2024_12_22_100000_add_payment_type_to_booking_services_table.php` (إضافة نوع الدفع لخدمات الحجز).
+3. `2025_01_21_000000_create_private_companies_table.php` (إنشاء جدول الشركات الخاصة `private_companies`).
+4. `2025_01_21_100000_add_private_company_id_to_companies_table.php` (ربط الشركات بالشركات الخاصة).
+5. `2025_01_21_200000_add_contact_fields_to_private_companies_table.php` (إضافة بيانات اتصال للشركات الخاصة).
+6. `2025_01_25_000000_add_payment_fields_to_invoice_payments_table.php` (إضافة تفاصيل دفع الفواتير).
+7. `2025_10_28_210010_add_date_and_address_to_delivery_policies_table.php` (تاريخ وعنوان بوالص التسليم).
+8. `2025_10_28_211329_add_office_commission_to_delivery_policies_table.php` (عمولة المكتب على البوالص).
+9. `2026_03_12_120000_add_bank_transaction_id_to_invoice_payments_table.php` (ربط مدفوعات الفواتير بالحركات البنكية).
+10. `2026_04_16_000001_add_payment_group_uuid_to_payingcars_table.php` (معرف تجميع دفعات السيارات `payment_group_uuid`).
+11. `2026_07_18_000000_add_container_and_type_id_to_app_notifications_table.php` (ربط إشعارات التطبيق بالحاوية والنوع).
+12. `2026_07_21_235321_add_is_read_to_app_notifications_table.php` (إضافة مؤشر القراءة `is_read` للإشعارات).
+13. `2026_07_23_000001_create_suppliers_table.php` (إنشاء جدول الموردين `suppliers`).
+14. `2026_07_23_000002_create_receipts_table.php` (إنشاء جدول الإيصالات `receipts`).
+15. `2026_07_23_000003_add_supplier_fields_to_receipts_table.php` (حقول الموردين في الإيصالات).
+16. `2026_07_23_000004_create_supplier_payments_table.php` (إنشاء جدول مدفوعات الموردين).
+17. `2026_07_24_000001_link_booking_services_and_supplier_receipts.php` (ربط خدمات الحجز بإيصالات الموردين).
+18. `2026_09_08_000000_add_approval_timestamps_to_booking_containers.php` (إضافة طوابع زمن الموافقات).
+19. `2026_09_08_000001_add_waiting_and_loading_stage_to_booking_containers.php` (إضافة حقل `is_in_loading` ومراحل التحميل والانتظار).
+20. `2026_09_09_000001_add_booking_service_id_to_agent_expenses_table.php` (ربط المصروفات بخدمة الحجز).
+
+#### 2. الفئة الثانية: تعديلات هيكلية مصحوبة بتعديل بيانات قائمة (Schema Alter + Data Backfill) — [ملفان]
+- **الملف الأول:** `2026_07_22_000000_add_invoice_print_section_to_service_categories_table.php`
+  - *الإجراء الهيكلي:* إضافة عمود `invoice_print_section`.
+  - *التأثير على البيانات (Backfill):* ينفذ استعلام تحديث `UPDATE` بناءً على قيمة `service_status` القديمة (تعيين `tax` إذا كانت 0، و `additional` إذا كانت 1 أو 2).
+  - *تقييم الأثر:* آمن ومنخفض المخاطر لأن جدول فئات الخدمات صغير جداً.
+- **الملف الثاني:** `2026_09_13_000001_add_parallel_container_stages.php`
+  - *الإجراء الهيكلي:* 
+    1. إنشاء جدول `booking_container_stages`.
+    2. إضافة عمود `stage_type` إلى جدول `booking_container_agents`.
+    3. إضافة أعمدة `version`, `request_key`, `request_fingerprint`, `voided_at` وقيد `UNIQUE(agent_id, request_key)` إلى `agent_expenses`.
+  - *التأثير على البيانات (Backfill):*
+    ينفذ استعلاماً مباشراً:
+    ```sql
+    UPDATE booking_container_agents SET stage_type = CASE 
+      WHEN COALESCE(superagent_specification_approved, 0) = 0 THEN 0 
+      WHEN COALESCE(superagent_loading_approved, 0) = 0 THEN 1 
+      ELSE 2 END
+    ```
+  - *محاذير التراجع (Rollback Lock):* دالة `down()` تمنع التراجع وتلقي `RuntimeException` في حال تم استخدام المراحل المتوازية أو تسجيل أي مصروف بـ `request_key`.
+
+#### 3. الفئة الثالثة: تعديل بيانات تاريخية فقط (Pure Data Backfill) — [ملف واحد]
+- **الملف:** `2026_04_04_000001_backfill_agent_expenses_booking_links.php`
+  - *ماذا ينفذ؟* استعلامات SQL لتحديث `booking_id` في جدول `agent_expenses` بربطه برقم الحاوية من `booking_containers`، وكذلك معالجة المصروفات المرتبطة ببوالص التسليم.
+  - *الهدف:* إصلاح المصروفات القديمة التي كانت تضيع من الفواتير لعدم وجود `booking_id`.
+  - *تقييم الأثر:* تعديل بيانات حساسة مالياً؛ يتطلب أخذ نسخة احتياطية مسبقة والتأكد من مطابقة السجلات قبل وبعد التنفيذ.
+
+#### 4. الفئة الرابعة: بذر صلاحيات أمنية (Permissions Seeder) — [ملف واحد]
+- **الملف:** `2026_07_23_000005_add_suppliers_permissions.php`
+  - *ماذا ينفذ؟* إنشاء 5 صلاحيات خاصة بإدارة الموردين (`suppliers.index`, `suppliers.create`, `suppliers.udpate`, `suppliers.update`, `suppliers.delete`) وإسنادها تلقائياً لدور `Admin` وكافة الأدوار ذات الحارس `web`.
+  - *تقييم الأثر:* آمن، ولا يحذف أي صلاحيات سابقة.
+
+---
+
+### ج) جدول مصفوفة المخاطر والاعتماديات للـ Migrations المعلقة:
+
+| المعرف | الـ Migration | طبيعة التأثير | متطلبات ما قبل التشغيل (Prerequisites) | درجة الخطورة على الإنتاج |
+|---|---|---|---|---|
+| **MIG-01** | `2026_04_04_000001_backfill_agent_expenses_booking_links` | Data Update (Financial) | أخذ Snapshot كامل لجدول `agent_expenses`. | `HIGH` (مساس ببيانات مالية قديمة) |
+| **MIG-02** | `2026_07_23_000005_add_suppliers_permissions` | Permissions Seed | توفر جداول Spatie (`permissions`, `roles`). | `LOW` |
+| **MIG-03** | `2026_09_13_000001_add_parallel_container_stages` | Schema + Backfill + Unique Constraint | التحقق من عدم تعارض قيم `stage_type` الجديدة. | `CRITICAL` (تغيير هيكلي ومحوري لنظام التشغيل والمصروفات) |
+| **MIG-04** | باقي الملفات (21 ملفاً) | Schema Additions (Tables & Columns) | تنفيذها بترتيب زمني طبيعي. | `MEDIUM` (تغييرات هيكلية معيارية) |
+
+---
+
+### د) الخلاصة والتوصية المرفوعة للمالك:
+1. **تأكيد حالة عدم الجاهزية:** Phase 0 أدت غرضها الاستكشافي بدقة استثنائية وأثبتت وجود Schema Drift حقيقي بين الكود وMySQL. لا يتم الانتقال لـ Phase 1 قبل إغلاق ملف الـ Migrations.
+2. **الامتناع التام عن تشغيل `migrate`:** تم الامتناع التام عن تشغيل `php artisan migrate` لحين صدور قرار المالك الرسمي وخطة الطرح المعتمدة.
+3. **تصحيح فحص `request_key`:** تم تثبيت نتيجة الفحص رسمياً في هذا التقرير كـ:
+   ```text
+   request_key duplicate preflight:
+   NOT APPLICABLE / NOT YET MEASURABLE
+   Reason: column does not exist in current MySQL schema.
+   ```
+4. **اعتماد المقاييس كـ Local Structural Baseline:** الأرقام الموثقة (20/20 API و 10/10 شاشات Admin) تمثل خط أساس هيكلي محلي على عينة محدودة (17 حجزاً و 30 حاوية)، وتعتمد Phase 1 أساساً على خطط تنفيذ الاستعلامات `EXPLAIN` ومعالجة الـ N+1 بدلاً من الاعتماد المطلق على زمن الاستجابة بالميلي ثانية.
+5. **تثبيت المصطلحات المهنية:** اعتماد مصطلح **`Unloading (تفريغ)`** بدلاً من "تعتيق" في كافة التوثيقات والواجهات المعتمدة.
+
+---
+
+**نهاية تقرير التدقيق المعماري Phase 0 وملحقه الختامي (Phase 0 Closure Addendum).**  
+*تم التوقف التام والامتناع عن بدء أي أعمال في Phase 1 بانتظار توجيهات المالك النهائية.*

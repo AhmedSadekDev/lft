@@ -1,0 +1,112 @@
+{
+    "expected_count": 130,
+    "physical_count": 0,
+    "expected_samples": [
+        {
+            "migration": "2023_01_09_200829_create_employees_table.php",
+            "table": "employees",
+            "column": "company_id",
+            "references_table": "companies",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_10_191147_create_branches_table.php",
+            "table": "branches",
+            "column": "factory_id",
+            "references_table": "factories",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_17_095242_create_bookings_table.php",
+            "table": "bookings",
+            "column": "company_id",
+            "references_table": "companies",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_17_095242_create_bookings_table.php",
+            "table": "bookings",
+            "column": "employee_id",
+            "references_table": "employees",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_17_193757_create_second_bookings_table.php",
+            "table": "second_bookings",
+            "column": "booking_id",
+            "references_table": "bookings",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_17_202749_create_third_bookings_table.php",
+            "table": "third_bookings",
+            "column": "booking_id",
+            "references_table": "bookings",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_17_202749_create_third_bookings_table.php",
+            "table": "third_bookings",
+            "column": "factory_id",
+            "references_table": "factories",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_17_202749_create_third_bookings_table.php",
+            "table": "third_bookings",
+            "column": "branch_id",
+            "references_table": "branches",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_21_114617_create_booking_containers_table.php",
+            "table": "booking_containers",
+            "column": "booking_id",
+            "references_table": "bookings",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_21_114617_create_booking_containers_table.php",
+            "table": "booking_containers",
+            "column": "container_id",
+            "references_table": "containers",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_21_154616_create_booking_movements_table.php",
+            "table": "booking_movements",
+            "column": "booking_id",
+            "references_table": "bookings",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_01_21_154616_create_booking_movements_table.php",
+            "table": "booking_movements",
+            "column": "container_id",
+            "references_table": "containers",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_03_10_145616_create_otps_table.php",
+            "table": "otps",
+            "column": "user_id",
+            "references_table": "users",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_03_28_221748_alter_company_id_in_otp_table.php",
+            "table": "otps",
+            "column": "company_id",
+            "references_table": "companies",
+            "references_column": "id"
+        },
+        {
+            "migration": "2023_03_28_221748_alter_company_id_in_otp_table.php",
+            "table": "otps",
+            "column": "user_id",
+            "references_table": "users",
+            "references_column": "id"
+        }
+    ],
+    "missing_fks_count": 130
+}
