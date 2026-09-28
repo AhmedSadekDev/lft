@@ -289,6 +289,53 @@ class Booking extends Model
     {
         return $this->belongsTo(Yard::class);
     }
+    public function scopeFilterListing(Builder $query, \Illuminate\Http\Request $request)
+    {
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('booking_number', 'like', '%' . $search . '%')
+                    ->orWhere('employee_name', 'like', '%' . $search . '%')
+                    ->orWhereHas('bookingContainers', function($container) use($search){
+                        $container->where('container_no', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('factory', function($factory) use($search){
+                        $factory->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('invoice', function($invoice) use($search){
+                        $invoice->where('invoice_number', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        // Date range filter
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $query->filterDateRange($request->input('date_from'), $request->input('date_to'));
+        }
+
+        // Company filter
+        if ($request->filled("company")) {
+            $query->filterCompany($request->input('company'));
+        }
+
+        // Tax status filter
+        if ($request->filled("tax_status")) {
+            $query->filterTaxStatus($request->input('tax_status'));
+        }
+
+        // Invoice status filter
+        if ($request->filled("invoice_status")) {
+            if ($request->invoice_status == '1') {
+                $query->whereHas('invoice');
+            } else {
+                $query->whereDoesntHave('invoice');
+            }
+        }
+
+        return $query;
+    }
+
     public function scopeFilterDate(Builder $query, ?string $date)
     {
         $query->when($date, function (Builder $query) use ($date) {

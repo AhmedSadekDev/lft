@@ -67,7 +67,7 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
 
                 return [
                     'id' => $item->booking_id,
-                    'date' => $item->created_at ?? $item->updated_at,
+                    'date' => $item->booking?->created_at,
                     'invoice_no' => $item->booking ? ($item->booking->invoice ? $item->booking->invoice->invoice_number : null) : null,
                     'company_name' => $item->booking ? ($item->booking->company ? $item->booking->company->name : null) : null,
                     'employee' => $item->booking?->employee?->name ?? '',

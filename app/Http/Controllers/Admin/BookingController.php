@@ -46,47 +46,7 @@ class BookingController extends Controller
         $query = Booking::query()
             ->with(['company', 'factory', 'invoice', 'bookingContainers']);
 
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('booking_number', 'like', '%' . $search . '%')
-                    ->orWhere('employee_name', 'like', '%' . $search . '%')
-                    ->orWhereHas('bookingContainers', function($container) use($search){
-                        $container->where('container_no', 'like', '%' . $search . '%');
-                    })
-                    ->orWhereHas('factory', function($factory) use($search){
-                        $factory->where('name', 'like', '%' . $search . '%');
-                    })
-                    ->orWhereHas('invoice', function($invoice) use($search){
-                        $invoice->where('invoice_number', 'like', '%' . $search . '%');
-                    });
-            });
-        }
-
-        // Date range filter
-        if ($request->filled('date_from') || $request->filled('date_to')) {
-            $query->filterDateRange(request('date_from'), request('date_to'));
-        }
-
-        // Company filter
-        if ($request->filled("company")) {
-            $query->filterCompany(request('company'));
-        }
-
-        // Tax status filter
-        if ($request->filled("tax_status")) {
-            $query->filterTaxStatus(request('tax_status'));
-        }
-
-        // Invoice status filter
-        if ($request->filled("invoice_status")) {
-            if ($request->invoice_status == '1') {
-                $query->whereHas('invoice');
-            } else {
-                $query->whereDoesntHave('invoice');
-            }
-        }
+        $query->filterListing($request);
 
         // Calculate counts for each stage tab based on the current filtered query
         $stageCounts = [

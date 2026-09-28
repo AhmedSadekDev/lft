@@ -480,7 +480,7 @@
                     @endif
                     @if($bookings->count() > 0)
                         <a class="btn btn-success ml-2"
-                            href="{{ route('booking_container.export', request()->only(['search', 'date_from', 'date_to', 'company', 'tax_status', 'invoice_status', 'stage'])) }}"
+                            href="{{ route('booking_container.export', request()->only(['search', 'date_from', 'date_to', 'company', 'tax_status', 'invoice_status', 'stage', 'status'])) }}"
                             title="{{ __('admin.export') }}">
                             <i class="fas fa-download"></i> {{ __('admin.export') }}
                         </a>
