@@ -13,29 +13,17 @@ use App\Models\Booking;
 use App\Models\BookingContainer;
 use App\Models\DailyBookingContainer;
 use App\Models\Note;
+use App\Services\ContainerStageService;
 use Illuminate\Http\Request;
 
 class BookingContainerActionController extends Controller
 {
-    public function done_specification(BookingRequest $request)
+    public function done_specification(BookingContainerRequest $request)
     {
         try {
-            $booking_container = BookingContainer::whereId($request->booking_container_id)->first();
+            app(ContainerStageService::class)->approve((int) $request->booking_container_id, 0, auth()->guard('superagent')->id());
 
-      
-            $daily_container = DailyBookingContainer::whereDate('created_at', now())
-                ->where('booking_container_id', $booking_container->id)
-                ->first();
-
-            if (!$daily_container) {
-                DailyBookingContainer::create([
-                    'superagent_id'           => auth()->guard('superagent')->id(),
-                    'booking_container_id'    => $booking_container->id,
-                    'booking_container_status' => $booking_container->status,
-                ]);
-            } else {
-                $daily_container->delete();
-            }
+            $booking_container = BookingContainer::findOrFail($request->booking_container_id);
 
             return $this->returnAllData(
                 new BookingContainerResource($booking_container),
@@ -51,7 +39,7 @@ class BookingContainerActionController extends Controller
     {
         try {
 
-            app(\App\Services\ContainerStageService::class)->complete((int) $request->booking_container_id, 1);
+            app(ContainerStageService::class)->approve((int) $request->booking_container_id, 1, auth()->guard('superagent')->id());
 
             $data = BookingContainerResource::collection(
                 BookingContainer::whereId($request->booking_container_id)->get()
@@ -68,7 +56,7 @@ class BookingContainerActionController extends Controller
     {
         try {
 
-            app(\App\Services\ContainerStageService::class)->complete((int) $request->booking_container_id, 2);
+            app(ContainerStageService::class)->approve((int) $request->booking_container_id, 2, auth()->guard('superagent')->id());
 
             $data = BookingContainerResource::collection(
                 BookingContainer::whereId($request->booking_container_id)->get()

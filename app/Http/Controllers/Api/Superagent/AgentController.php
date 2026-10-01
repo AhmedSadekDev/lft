@@ -561,7 +561,7 @@ class AgentController extends Controller
                 'id' => $ex->id,
                 'agent_id' => $ex->agent_id ?? 0,
                 'agent_name' => $ex->agent ? $ex->agent->name : '',
-                'image' => $ex->image,
+                'image' => $ex->image_agent_expenses ? asset('Admin/images/expenses/' . $ex->image_agent_expenses) : '',
                 'value' => $ex->value
             ];
         });

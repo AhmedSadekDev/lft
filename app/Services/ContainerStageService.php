@@ -144,16 +144,17 @@ class ContainerStageService
             }
             $now = now();
             $values = [$flag => 1, $name.'_approved_at' => $now, $name.'_completed_at' => $container->{$name.'_completed_at'} ?: $now];
-            // بعد اعتماد التخصيص انقل الحاوية مباشرة للتحميل بدون انتظار 24 ساعة / قائمة الانتظار.
+            // Specification approval puts the container in waiting until it is moved to loading.
             if ($type === 0) {
-                $values['is_in_loading'] = 1;
-                $values['moved_to_loading_at'] = $container->moved_to_loading_at ?: $now;
+                $values['is_in_loading'] = 0;
+                $values['moved_to_loading_at'] = null;
             }
             $container->update($values + ['status' => max((int) $container->status, $type + 1)]);
             $this->assignments($containerId, $type)->update($values + ['stage_type' => $type]);
             $dailyUpdate = [$flag => 1, 'booking_container_status' => $container->status];
             if ($type === 0) {
-                $dailyUpdate['is_in_loading'] = 1;
+                $dailyUpdate['is_in_loading'] = 0;
+                $dailyUpdate['moved_to_loading_at'] = null;
             }
             DailyBookingContainer::where('booking_container_id', $containerId)->update($dailyUpdate);
 

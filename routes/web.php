@@ -357,6 +357,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     // ----------------- agents -----------------
     Route::resource('agents', AgentController::class);
+    Route::get('agent-photos', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'index'])
+        ->middleware('permission:agents.index')->name('agent-photos.index');
+    Route::get('agent-photos/{photo}/image', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'image'])
+        ->middleware('permission:agents.index')->name('agent-photos.image');
     // ----------------- \agents -----------------
 
     // ----------------- \agent car tranfer -----------------

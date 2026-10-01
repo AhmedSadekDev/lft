@@ -30,6 +30,12 @@ return [
 
     'disks' => [
 
+        'agent_photos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/agent_photos'),
+            'throw' => true,
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
