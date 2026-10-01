@@ -146,9 +146,120 @@ class ParallelContainerStagesTest extends TestCase
         app(ContainerStageService::class)->assign(1, [1], 1);
     }
 
+    public function test_superagent_done_actions_advance_all_stages_without_an_agent(): void
+    {
+        Schema::table('delivery_policy_containers', fn (Blueprint $t) => $t->timestamps());
+        DB::table('booking_container_agents')->delete();
+        BookingContainer::find(1)->update([
+            'status' => 0, 'superagent_specification_approved' => false, 'is_in_loading' => false,
+        ]);
+        DB::table('daily_booking_containers')->insert([
+            'booking_container_id' => 1, 'booking_container_status' => 0,
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+
+        foreach (ContainerStageService::NAMES as $type => $name) {
+            $url = '/api/superagent/booking/done_'.$name;
+            $response = $this->postJson($url, ['booking_container_id' => 1]);
+            $this->assertSame(200, $response->status(), $response->getContent());
+            $container = BookingContainer::find(1);
+            $this->assertSame($type + 1, (int) $container->status);
+            $this->assertSame(1, (int) $container->{'superagent_'.$name.'_approved'});
+            $this->assertNotNull($container->{$name.'_completed_at'});
+            $this->assertNotNull($container->{$name.'_approved_at'});
+            $this->assertSame($type === 0 ? 0 : 1, (int) $container->is_in_loading);
+            $this->assertDatabaseHas('daily_booking_containers', [
+                'booking_container_id' => 1, 'booking_container_status' => $type + 1,
+                'superagent_'.$name.'_approved' => 1,
+            ]);
+
+            $before = $container->getAttributes();
+            $this->postJson($url, ['booking_container_id' => 1])->assertOk();
+            $this->assertSame($before, BookingContainer::find(1)->getAttributes());
+            $this->assertDatabaseCount('daily_booking_containers', 1);
+            if ($type === 0) {
+                $this->assertNull($container->moved_to_loading_at);
+                $this->assertDatabaseHas('daily_booking_containers', [
+                    'booking_container_id' => 1, 'is_in_loading' => 0, 'moved_to_loading_at' => null,
+                ]);
+                $this->getJson('/api/superagent/booking/waiting')->assertOk()
+                    ->assertJsonPath('data.data.0.id', 1);
+                $this->getJson('/api/superagent/booking/loading')->assertOk()
+                    ->assertJsonPath('data.data', []);
+                $this->postJson('/api/superagent/booking/done_loading', ['booking_container_id' => 1])
+                    ->assertStatus(409);
+                app(ContainerStageService::class)->moveToLoading([1], true);
+            }
+        }
+        $this->assertDatabaseCount('booking_container_agents', 0);
+    }
+
+    public function test_superagent_done_actions_cannot_skip_specification(): void
+    {
+        BookingContainer::find(1)->update([
+            'status' => 0, 'superagent_specification_approved' => false, 'is_in_loading' => false,
+        ]);
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+
+        foreach (['loading', 'unloading'] as $name) {
+            $this->postJson('/api/superagent/booking/done_'.$name, ['booking_container_id' => 1])
+                ->assertStatus(409);
+        }
+        $this->assertSame(0, (int) BookingContainer::find(1)->status);
+    }
+
     private function receipt(string $key = 'receipt-1', int $agent = 1, int $type = 1, int $amount = 100): AgentExpense
     {
         return app(StageExpenseService::class)->create($agent, ['booking_container_id' => 1, 'type_id' => $type, 'value' => $amount], $key, hash('sha256', "$type:$amount"), fn () => null);
+    }
+
+    public function test_general_expense_cannot_drop_booking_or_stage_context_and_debit_wallet(): void
+    {
+        $this->actingAs(Agent::find(1), 'agent');
+        foreach ([['type_id' => 2], ['booking_id' => 1], ['booking_id' => 1, 'type_id' => 2]] as $context) {
+            $response = $this->postJson('/api/agent/make_general_expenses', $context + [
+                'value' => 100, 'service_id' => 1, 'request_key' => 'missing-container',
+            ]);
+            $this->assertFalse($response->json('status'));
+            $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+            $this->assertDatabaseCount('agent_expenses', 0);
+        }
+        $this->postJson('/api/agent/make_general_expenses', [
+            'value' => 100, 'service_id' => 1, 'request_key' => 'general-only',
+        ])->assertOk()->assertJsonPath('status', true);
+        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+    }
+
+    public function test_multiple_unloading_receipts_remain_visible_with_their_images_after_approval(): void
+    {
+        $service = app(ContainerStageService::class);
+        $service->approve(1, 1);
+        $service->assign(1, [1], 2);
+        $expenses = collect();
+        foreach ([1, 2, 3] as $number) {
+            $expenses->push(app(StageExpenseService::class)->create(1, [
+                'booking_container_id' => 1, 'type_id' => 2, 'value' => 100, 'service_id' => 1,
+            ], 'unloading-'.$number, hash('sha256', (string) $number), fn () => 'receipt-'.$number.'.jpg'));
+        }
+        $service->approve(1, 2);
+        $this->assertSame(700.0, (float) Agent::find(1)->wallet);
+        $this->assertSame($expenses->pluck('id')->all(), AgentExpense::forBooking(1)->orderBy('id')->pluck('id')->all());
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+        foreach (['/api/superagent/containers-expenses', '/api/superagent/booking/stage_receipts'] as $url) {
+            $response = $this->getJson($url.'?booking_container_id=1&type_id=2')->assertOk();
+            $response->assertJsonCount(3, 'data.expenses');
+            foreach ($expenses as $index => $expense) {
+                $response->assertJsonPath('data.expenses.'.$index.'.id', $expense->id)
+                    ->assertJsonPath('data.expenses.'.$index.'.image', asset('Admin/images/expenses/'.$expense->image_agent_expenses));
+            }
+        }
     }
 
     public function test_dashboard_can_return_one_container_step_by_step_to_specification(): void
@@ -248,6 +359,7 @@ class ParallelContainerStagesTest extends TestCase
         $this->assertDatabaseHas('agent_expenses', ['booking_container_id' => 1]);
 
         $service->approve(1, 0);
+        $service->moveToLoading([1], true);
         $service->approve(1, 1);
         $service->assign(1, [2], 2);
         $stage = BookingContainerStage::where('booking_container_id', 1)->where('type_id', 1)->first();

@@ -29,7 +29,8 @@ class GeneralExpenseRequest extends FormRequest
             // 'service_category_id'  => 'required|exists:service_categories,id',
             'service_id'  => 'required|exists:services,id',
             'notes'     => 'sometimes',
-            'booking_container_id' => 'nullable|exists:booking_containers,id',
+            'booking_id' => 'nullable|integer|exists:bookings,id',
+            'booking_container_id' => 'required_with:booking_id,type_id|nullable|exists:booking_containers,id',
             'type_id' => 'required_with:booking_container_id|nullable|integer|in:0,1,2'
         ];
     }

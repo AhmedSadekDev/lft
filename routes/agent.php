@@ -45,6 +45,10 @@ Route::group(['middleware' => ['localization', \App\Http\Middleware\BlockInvoice
 
     Route::group(['middleware' => 'auth:agent'], function () {
 
+        Route::get('photos', [\App\Http\Controllers\Api\Agent\AgentPhotoController::class, 'index']);
+        Route::post('photos', [\App\Http\Controllers\Api\Agent\AgentPhotoController::class, 'store'])->middleware('throttle:30,1');
+        Route::get('photos/{photo}/image', [\App\Http\Controllers\Api\Agent\AgentPhotoController::class, 'image'])->name('api.agent.photos.image');
+
 
 
         //wallet
