@@ -35,4 +35,15 @@ class AgentPhotoController extends Controller
             'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff',
         ]);
     }
+
+    public function destroy(AgentPhoto $photo)
+    {
+        if (! Storage::disk('agent_photos')->delete($photo->path)) {
+            throw new \RuntimeException('Unable to delete agent photo file.');
+        }
+
+        $photo->delete();
+
+        return back()->with('success', 'تم حذف الصورة بنجاح.');
+    }
 }
