@@ -103,7 +103,7 @@ class AgentPhotosTest extends TestCase
 
     public function test_dashboard_routes_require_existing_agent_view_permission(): void
     {
-        foreach (['agent-photos.index', 'agent-photos.image'] as $name) {
+        foreach (['agent-photos.index', 'agent-photos.image', 'agent-photos.destroy'] as $name) {
             $middleware = Route::getRoutes()->getByName($name)->gatherMiddleware();
             $this->assertContains('auth', $middleware);
             $this->assertContains('permission:agents.index', $middleware);
@@ -124,6 +124,20 @@ class AgentPhotosTest extends TestCase
         $this->actingAs($allowed, 'web');
         $response = $this->get(route('agent-photos.image', $photo))->assertOk();
         $this->assertSame('saved-photo-content', $response->streamedContent());
+    }
+
+    public function test_dashboard_can_delete_a_photo_and_its_saved_file(): void
+    {
+        $photo = AgentPhoto::create(['agent_id' => 1, 'path' => 'to-delete.jpg', 'original_name' => 'to-delete.jpg']);
+        Storage::disk('agent_photos')->put($photo->path, 'saved-photo-content');
+        $user = \Mockery::mock(\App\Models\User::class)->makePartial();
+        $user->shouldReceive('can')->with('agents.index')->andReturn(true);
+        $this->actingAs($user, 'web');
+
+        $this->delete(route('agent-photos.destroy', $photo))->assertRedirect();
+
+        $this->assertDatabaseMissing('agent_photos', ['id' => $photo->id]);
+        Storage::disk('agent_photos')->assertMissing('to-delete.jpg');
     }
 
     public function test_dashboard_accepts_an_end_date_without_a_start_date(): void

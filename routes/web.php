@@ -361,6 +361,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
         ->middleware('permission:agents.index')->name('agent-photos.index');
     Route::get('agent-photos/{photo}/image', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'image'])
         ->middleware('permission:agents.index')->name('agent-photos.image');
+    Route::delete('agent-photos/{photo}', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'destroy'])
+        ->middleware('permission:agents.index')->name('agent-photos.destroy');
     // ----------------- \agents -----------------
 
     // ----------------- \agent car tranfer -----------------
