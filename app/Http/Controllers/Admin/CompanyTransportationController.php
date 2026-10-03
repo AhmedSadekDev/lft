@@ -29,13 +29,13 @@ class CompanyTransportationController extends Controller
 
         if(isset($request->company_id) && !is_null($request->company_id)){
             $input = [
-                'transportations'   => CompanyTransportation::where('company_id', $request->company_id)->get(),
+                'transportations'   => CompanyTransportation::with(['company', 'container', 'Departure', 'Loading', 'Aging'])->where('company_id', $request->company_id)->get(),
                 'route_create'      => route('companyTransportations.create', ['company_id' => $request->company_id ]),
                 'import_route'      => route('companyTransportations.import', ['company_id' => $request->company_id ]),
             ];
         }else{
             $input = [
-                'transportations'   => CompanyTransportation::all(),
+                'transportations'   => CompanyTransportation::with(['company', 'container', 'Departure', 'Loading', 'Aging'])->get(),
                 'route_create'      => route('companyTransportations.create'),
                 'import_route'      => route('companyTransportations.import'),
             ];

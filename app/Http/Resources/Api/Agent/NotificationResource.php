@@ -9,18 +9,26 @@ class NotificationResource extends JsonResource
   
     public function toArray($request)
     {
+        // `??` on a model property evaluates the accessor twice (__isset + __get); read each value once
+        $notification = $this->resource;
+        $title = $notification->getAttribute('title');
+        $text = $notification->getAttribute('text');
+        $date = $notification->getAttribute('date');
+        $time = $notification->getAttribute('time');
+        $typeId = $notification->getAttribute('type_id');
+
         return [
-            "id" => $this->id,
-            "title" => $this->title ?? "",
-            "text" => $this->text ?? "",
-            "type" => $this->type,
-            "type_id" => $this->type_id,
-            "booking_id" => $this->bookingContainer?->booking_id,
-            "booking_container_id" => $this->booking_container_id,
-            "is_read" => $this->is_read,
-            "date" => $this->date ?? "",
-            "time" => $this->time ?? "",
-            'action_type' => match ($this->type_id) {
+            "id" => $notification->getAttribute('id'),
+            "title" => $title ?? "",
+            "text" => $text ?? "",
+            "type" => $notification->getAttribute('type'),
+            "type_id" => $typeId,
+            "booking_id" => $notification->bookingContainer?->booking_id,
+            "booking_container_id" => $notification->getAttribute('booking_container_id'),
+            "is_read" => $notification->getAttribute('is_read'),
+            "date" => $date ?? "",
+            "time" => $time ?? "",
+            'action_type' => match ($typeId) {
                 0 => 'specification',
                 1 => 'loading',
                 2 => 'unloading',

@@ -1,0 +1,70 @@
+{
+    "generated_at": "2026-10-03 21:46:26 UTC",
+    "excluded_from_measurement_and_modification": {
+        "/api/agent/booking/fetch_loading_assignments": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/superagent/booking/all": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/superagent/booking/specification": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/superagent/booking/loading": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/superagent/booking/unloading": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/superagent/booking/missions/all": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/superagent/booking/loading_assignments": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/superagent/booking/unloading_assignments": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/agent/booking/fetch_booking_containers": "pre-existing functional defect: table `yards` missing (frozen, not modified) (BookingContainer resource lazy-loads yard)",
+        "/api/agent/booking/fetch_bookings": "pre-existing functional defect: table `yards` missing (frozen, not modified) (BookingContainer resource lazy-loads yard)",
+        "/api/superagent/booking/details": "pre-existing functional defect: table `yards` missing (frozen, not modified) (eager-loads yard)",
+        "/api/agent/delivery_policy_details": "pre-existing functional defect: table `yards` missing (frozen, not modified) (resource lazy-loads yard)",
+        "/api/agent/fetch_yards, /api/agent/fetch_yard_bookings, /api/superagent/fetch_yards, fetch_active_yards, fetch_yard_bookings, /dashboard/yards": "pre-existing functional defect: table `yards` missing (frozen, not modified)",
+        "/api/agent/photos, /dashboard/agent-photos": "pre-existing: migration 2026_10_01_000001_create_agent_photos_table pending (table missing)",
+        "/api/desktop/*, /dashboard/users": "pre-existing: table `users` absent from local database (provider users)"
+    },
+    "measured_but_not_optimizable_locally": [
+        {
+            "contract": "web_dashboard",
+            "uri": "/dashboard",
+            "status": 500,
+            "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.vaults' doesn't exist (SQL: select * from `vaults` limit 1)"
+        },
+        {
+            "contract": "web_accounts_financial_position",
+            "uri": "/dashboard/accounts/financial-position",
+            "status": 500,
+            "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.users' doesn't exist (SQL: select * from `users` where `users`.`id` in (1))"
+        },
+        {
+            "contract": "web_accounts_profit_loss",
+            "uri": "/dashboard/accounts/profit-loss",
+            "status": 500,
+            "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.users' doesn't exist (SQL: select * from `users` where `users`.`id` in (20))"
+        },
+        {
+            "contract": "web_companies",
+            "uri": "/dashboard/companies",
+            "status": 500,
+            "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.users' doesn't exist (SQL: select * from `users` where `users`.`id` in (20)) (View: D:\\laragon\\www\\leader\\leader\\resources\\views\\admin\\companies\\index.blade.php)"
+        },
+        {
+            "contract": "web_financial_custody_agents",
+            "uri": "/dashboard/financial_custody_agents",
+            "status": 500,
+            "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.users' doesn't exist (SQL: select * from `users` where `users`.`id` = 18 limit 1) (View: D:\\laragon\\www\\leader\\leader\\resources\\views\\admin\\financial_custody_agents\\index.blade.php)"
+        },
+        {
+            "contract": "web_general_expenses",
+            "uri": "/dashboard/general_expenses",
+            "status": 500,
+            "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.users' doesn't exist (SQL: select * from `users` where `users`.`id` in (1, 20))"
+        },
+        {
+            "contract": "web_vaultransactions",
+            "uri": "/dashboard/vaultransactions",
+            "status": 500,
+            "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.vault_transactions' doesn't exist (SQL: select * from `vault_transactions` where `type` = 0 order by `created_at` desc)"
+        },
+        {
+            "contract": "web_vaults",
+            "uri": "/dashboard/vaults",
+            "status": 500,
+            "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.vaults' doesn't exist (SQL: select * from `vaults` limit 1)"
+        }
+    ]
+}

@@ -1,0 +1,265 @@
+{
+    "generated_at": "2026-10-03 20:41:09 UTC",
+    "mode": "postflight",
+    "reference": "canonical clone leader_dryrun + pre-incident evidence (leader 21:37 local) + row-level backup 184935",
+    "tables": {
+        "agent_expenses": {
+            "leader": {
+                "row_count": "447",
+                "main_sum": "307947",
+                "exact_sum_egp": "307947.00",
+                "voided_count": "7",
+                "non_null_request_keys": "258",
+                "distinct_request_keys": "258",
+                "request_keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+            },
+            "canonical_clone": {
+                "row_count": "447",
+                "main_sum": "307947",
+                "exact_sum_egp": "307947.00",
+                "voided_count": "7",
+                "non_null_request_keys": "258",
+                "distinct_request_keys": "258",
+                "request_keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+            },
+            "pre_incident_evidence": {
+                "row_count": 447,
+                "main_sum": 307947,
+                "voided_count": 7,
+                "non_null_request_keys": 258,
+                "distinct_request_keys": 258
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "voided_count": true,
+                "non_null_request_keys": true,
+                "distinct_request_keys": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        },
+        "invoices": {
+            "leader": {
+                "row_count": "225",
+                "main_sum": "3777421.00",
+                "untaxed_sum": "2089416.96",
+                "exact_sum_egp": "5877524.96",
+                "taxed_sum": "10687.00",
+                "discount_sum": "0.00",
+                "vat_sum": "602.00",
+                "sales_tax_sum": "0.00"
+            },
+            "canonical_clone": {
+                "row_count": "225",
+                "main_sum": "3777421.00",
+                "untaxed_sum": "2089416.96",
+                "exact_sum_egp": "5877524.96",
+                "taxed_sum": "10687.00",
+                "discount_sum": "0.00",
+                "vat_sum": "602.00",
+                "sales_tax_sum": "0.00"
+            },
+            "pre_incident_evidence": {
+                "row_count": 225,
+                "main_sum": 3777421,
+                "taxed_sum": 10687,
+                "discount_sum": 0
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "taxed_sum": true,
+                "discount_sum": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        },
+        "invoice_payments": {
+            "leader": {
+                "row_count": "0",
+                "main_sum": "0",
+                "exact_sum_egp": "0.00",
+                "paid_invoices_count": "0"
+            },
+            "canonical_clone": {
+                "row_count": "0",
+                "main_sum": "0",
+                "exact_sum_egp": "0.00",
+                "paid_invoices_count": "0"
+            },
+            "pre_incident_evidence": {
+                "row_count": 0,
+                "main_sum": 0,
+                "paid_invoices_count": 0
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "paid_invoices_count": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        },
+        "money_transfers": {
+            "leader": {
+                "row_count": "677",
+                "main_sum": "9540182",
+                "exact_sum_egp": "9540182.00",
+                "transferees_count": "86"
+            },
+            "canonical_clone": {
+                "row_count": "677",
+                "main_sum": "9540182",
+                "exact_sum_egp": "9540182.00",
+                "transferees_count": "86"
+            },
+            "pre_incident_evidence": {
+                "row_count": 677,
+                "main_sum": 9540182,
+                "transferees_count": 86
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "transferees_count": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        },
+        "bank_trnsactions": {
+            "leader": {
+                "row_count": "16",
+                "main_sum": "3206624",
+                "exact_sum_egp": "3206624.00",
+                "banks_involved": "6"
+            },
+            "canonical_clone": {
+                "row_count": "16",
+                "main_sum": "3206624",
+                "exact_sum_egp": "3206624.00",
+                "banks_involved": "6"
+            },
+            "pre_incident_evidence": {
+                "row_count": 16,
+                "main_sum": 3206624,
+                "banks_involved": 6
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "banks_involved": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        },
+        "payingcars": {
+            "leader": {
+                "row_count": "0",
+                "main_sum": "0",
+                "exact_sum_egp": "0.00",
+                "cars_paid": "0"
+            },
+            "canonical_clone": {
+                "row_count": "0",
+                "main_sum": "0",
+                "exact_sum_egp": "0.00",
+                "cars_paid": "0"
+            },
+            "pre_incident_evidence": {
+                "row_count": 0,
+                "main_sum": 0,
+                "cars_paid": 0
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "cars_paid": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        },
+        "receipts": {
+            "leader": {
+                "row_count": "0",
+                "main_sum": "0.00",
+                "exact_sum_egp": "0.00",
+                "suppliers_billed": "0"
+            },
+            "canonical_clone": {
+                "row_count": "0",
+                "main_sum": "0.00",
+                "exact_sum_egp": "0.00",
+                "suppliers_billed": "0"
+            },
+            "pre_incident_evidence": {
+                "row_count": 0,
+                "main_sum": "0.00",
+                "suppliers_billed": 0
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "suppliers_billed": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        },
+        "supplier_payments": {
+            "leader": {
+                "row_count": "0",
+                "main_sum": "0.00",
+                "exact_sum_egp": "0.00",
+                "suppliers_paid": "0"
+            },
+            "canonical_clone": {
+                "row_count": "0",
+                "main_sum": "0.00",
+                "exact_sum_egp": "0.00",
+                "suppliers_paid": "0"
+            },
+            "pre_incident_evidence": {
+                "row_count": 0,
+                "main_sum": "0.00",
+                "suppliers_paid": 0
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "suppliers_paid": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        },
+        "booking_services": {
+            "leader": {
+                "row_count": "259",
+                "main_sum": "2237149.3099999996",
+                "exact_sum_egp": "2237149.31",
+                "bookings_with_services": "198"
+            },
+            "canonical_clone": {
+                "row_count": "259",
+                "main_sum": "2237149.3099999996",
+                "exact_sum_egp": "2237149.31",
+                "bookings_with_services": "198"
+            },
+            "pre_incident_evidence": {
+                "row_count": 259,
+                "main_sum": 2237149.3099999996,
+                "bookings_with_services": 198
+            },
+            "pre_incident_metric_match": {
+                "row_count": true,
+                "main_sum": true,
+                "bookings_with_services": true
+            },
+            "match": true,
+            "row_level_identical_to_backup_184935": true
+        }
+    },
+    "row_count_variance_total": 0,
+    "monetary_variance_egp_total": "0.00",
+    "financial_tables": 9,
+    "overall_financial_match": true
+}

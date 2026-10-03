@@ -29,7 +29,7 @@ class EmployeeController extends Controller
     public function index()
     {
         $input = [
-            'employees' => Employee::all(),
+            'employees' => Employee::with('company')->get(),
         ];
 
         return view('admin.employees.index', $input);

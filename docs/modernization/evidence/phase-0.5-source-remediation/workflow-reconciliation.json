@@ -1,0 +1,386 @@
+{
+    "generated_at": "2026-10-03 20:41:09 UTC",
+    "mode": "postflight",
+    "metrics": {
+        "bookings_count": {
+            "leader": 474,
+            "canonical_clone": 474,
+            "pre_incident_evidence": 474,
+            "pre_incident_match": true,
+            "match": true
+        },
+        "booking_containers_count": {
+            "leader": 691,
+            "canonical_clone": 691,
+            "pre_incident_evidence": 691,
+            "pre_incident_match": true,
+            "match": true
+        },
+        "booking_container_agents_count": {
+            "leader": 1578,
+            "canonical_clone": 1578,
+            "pre_incident_evidence": 1578,
+            "pre_incident_match": true,
+            "match": true
+        },
+        "booking_container_stages_count": {
+            "leader": 446,
+            "canonical_clone": 446,
+            "pre_incident_evidence": 446,
+            "pre_incident_match": true,
+            "match": true
+        },
+        "is_in_loading_distribution": {
+            "leader": [
+                {
+                    "is_in_loading": "0",
+                    "c": "96"
+                },
+                {
+                    "is_in_loading": "1",
+                    "c": "595"
+                }
+            ],
+            "canonical_clone": [
+                {
+                    "is_in_loading": "0",
+                    "c": "96"
+                },
+                {
+                    "is_in_loading": "1",
+                    "c": "595"
+                }
+            ],
+            "pre_incident_evidence": [
+                {
+                    "is_in_loading": 0,
+                    "c": 96
+                },
+                {
+                    "is_in_loading": 1,
+                    "c": 595
+                }
+            ],
+            "pre_incident_match": true,
+            "match": true
+        },
+        "stage_type_distribution": {
+            "leader": [
+                {
+                    "stage_type": "0",
+                    "c": "494"
+                },
+                {
+                    "stage_type": "1",
+                    "c": "598"
+                },
+                {
+                    "stage_type": "2",
+                    "c": "486"
+                }
+            ],
+            "canonical_clone": [
+                {
+                    "stage_type": "0",
+                    "c": "494"
+                },
+                {
+                    "stage_type": "1",
+                    "c": "598"
+                },
+                {
+                    "stage_type": "2",
+                    "c": "486"
+                }
+            ],
+            "pre_incident_evidence": [
+                {
+                    "stage_type": 0,
+                    "c": 494
+                },
+                {
+                    "stage_type": 1,
+                    "c": 598
+                },
+                {
+                    "stage_type": 2,
+                    "c": 486
+                }
+            ],
+            "pre_incident_match": true,
+            "match": true
+        },
+        "container_stages_by_type": {
+            "leader": [
+                {
+                    "type_id": "0",
+                    "c": "142"
+                },
+                {
+                    "type_id": "1",
+                    "c": "169"
+                },
+                {
+                    "type_id": "2",
+                    "c": "135"
+                }
+            ],
+            "canonical_clone": [
+                {
+                    "type_id": "0",
+                    "c": "142"
+                },
+                {
+                    "type_id": "1",
+                    "c": "169"
+                },
+                {
+                    "type_id": "2",
+                    "c": "135"
+                }
+            ],
+            "pre_incident_evidence": [
+                {
+                    "type_id": 0,
+                    "c": 142
+                },
+                {
+                    "type_id": 1,
+                    "c": 169
+                },
+                {
+                    "type_id": 2,
+                    "c": 135
+                }
+            ],
+            "pre_incident_match": true,
+            "match": true
+        },
+        "booking_containers_status_distribution": {
+            "leader": [
+                {
+                    "status": "0",
+                    "c": "3"
+                },
+                {
+                    "status": "1",
+                    "c": "56"
+                },
+                {
+                    "status": "2",
+                    "c": "35"
+                },
+                {
+                    "status": "3",
+                    "c": "597"
+                }
+            ],
+            "canonical_clone": [
+                {
+                    "status": "0",
+                    "c": "3"
+                },
+                {
+                    "status": "1",
+                    "c": "56"
+                },
+                {
+                    "status": "2",
+                    "c": "35"
+                },
+                {
+                    "status": "3",
+                    "c": "597"
+                }
+            ],
+            "pre_incident_evidence": null,
+            "pre_incident_match": "NOT_CAPTURED_PRE_INCIDENT",
+            "match": true
+        },
+        "assignment_status_distribution": {
+            "leader": [
+                {
+                    "booking_container_status": "0",
+                    "c": "93"
+                },
+                {
+                    "booking_container_status": "1",
+                    "c": "151"
+                },
+                {
+                    "booking_container_status": "2",
+                    "c": "313"
+                },
+                {
+                    "booking_container_status": "3",
+                    "c": "1021"
+                }
+            ],
+            "canonical_clone": [
+                {
+                    "booking_container_status": "0",
+                    "c": "93"
+                },
+                {
+                    "booking_container_status": "1",
+                    "c": "151"
+                },
+                {
+                    "booking_container_status": "2",
+                    "c": "313"
+                },
+                {
+                    "booking_container_status": "3",
+                    "c": "1021"
+                }
+            ],
+            "pre_incident_evidence": null,
+            "pre_incident_match": "NOT_CAPTURED_PRE_INCIDENT",
+            "match": true
+        },
+        "assignments_per_agent": {
+            "leader": [
+                {
+                    "agent_id": "3",
+                    "c": "49"
+                },
+                {
+                    "agent_id": "4",
+                    "c": "61"
+                },
+                {
+                    "agent_id": "6",
+                    "c": "38"
+                },
+                {
+                    "agent_id": "7",
+                    "c": "55"
+                },
+                {
+                    "agent_id": "10",
+                    "c": "104"
+                },
+                {
+                    "agent_id": "12",
+                    "c": "42"
+                },
+                {
+                    "agent_id": "13",
+                    "c": "293"
+                },
+                {
+                    "agent_id": "22",
+                    "c": "5"
+                },
+                {
+                    "agent_id": "23",
+                    "c": "56"
+                },
+                {
+                    "agent_id": "24",
+                    "c": "16"
+                },
+                {
+                    "agent_id": "25",
+                    "c": "801"
+                },
+                {
+                    "agent_id": "28",
+                    "c": "30"
+                },
+                {
+                    "agent_id": "29",
+                    "c": "28"
+                }
+            ],
+            "canonical_clone": [
+                {
+                    "agent_id": "3",
+                    "c": "49"
+                },
+                {
+                    "agent_id": "4",
+                    "c": "61"
+                },
+                {
+                    "agent_id": "6",
+                    "c": "38"
+                },
+                {
+                    "agent_id": "7",
+                    "c": "55"
+                },
+                {
+                    "agent_id": "10",
+                    "c": "104"
+                },
+                {
+                    "agent_id": "12",
+                    "c": "42"
+                },
+                {
+                    "agent_id": "13",
+                    "c": "293"
+                },
+                {
+                    "agent_id": "22",
+                    "c": "5"
+                },
+                {
+                    "agent_id": "23",
+                    "c": "56"
+                },
+                {
+                    "agent_id": "24",
+                    "c": "16"
+                },
+                {
+                    "agent_id": "25",
+                    "c": "801"
+                },
+                {
+                    "agent_id": "28",
+                    "c": "30"
+                },
+                {
+                    "agent_id": "29",
+                    "c": "28"
+                }
+            ],
+            "pre_incident_evidence": null,
+            "pre_incident_match": "NOT_CAPTURED_PRE_INCIDENT",
+            "match": true
+        },
+        "approval_flags": {
+            "leader": [
+                {
+                    "spec": "681",
+                    "loading": "631",
+                    "unloading": "585"
+                }
+            ],
+            "canonical_clone": [
+                {
+                    "spec": "681",
+                    "loading": "631",
+                    "unloading": "585"
+                }
+            ],
+            "pre_incident_evidence": null,
+            "pre_incident_match": "NOT_CAPTURED_PRE_INCIDENT",
+            "match": true
+        }
+    },
+    "workflow_variance": 0,
+    "row_level_identical_to_backup_184935": {
+        "bookings": true,
+        "booking_containers": true,
+        "booking_container_agents": true,
+        "booking_container_stages": true,
+        "booking_papers": true,
+        "booking_services": true,
+        "delivery_policies": true,
+        "delivery_policy_containers": true
+    },
+    "overall_workflow_match": true
+}

@@ -1,0 +1,81 @@
+{
+    "generated_at": "2026-10-03 21:44:57 UTC",
+    "binlog_file": "binlog.000079",
+    "start": 159011886,
+    "stop": 162777095,
+    "leader_statements": [
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_transferer` (`transferer_type`, `transferer_id`), ALGORITHM=INPLACE, LOCK=NONE"
+        },
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_transfered` (`transfered_type`, `transfered_id`), ALGORITHM=INPLACE, LOCK=NONE"
+        },
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_delivery_policy` (`delivery_policy_id`, `type`), ALGORITHM=INPLACE, LOCK=NONE"
+        },
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `images` ADD INDEX `idx_images_imageable` (`imageable_type`, `imageable_id`), ALGORITHM=INPLACE, LOCK=NONE"
+        },
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `delivery_policy_containers` ADD INDEX `idx_dpc_policy_container` (`delivery_policy_id`, `booking_container_id`), ALGORITHM=INPLACE, LOCK=NONE"
+        },
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `bookings` ADD INDEX `idx_bookings_booking_number` (`booking_number`), ALGORITHM=INPLACE, LOCK=NONE"
+        },
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `booking_services` ADD INDEX `idx_booking_services_booking_id` (`booking_id`), ALGORITHM=INPLACE, LOCK=NONE"
+        },
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `booking_papers` ADD INDEX `idx_booking_papers_container_type` (`booking_container_id`, `type`), ALGORITHM=INPLACE, LOCK=NONE"
+        },
+        {
+            "database": "leader",
+            "statement": "ALTER TABLE `agent_expenses` ADD INDEX `idx_agent_expenses_delivery_policy_id` (`delivery_policy_id`), ALGORITHM=INPLACE, LOCK=NONE"
+        }
+    ],
+    "leader_row_events": [],
+    "other_databases": {
+        "statements": {
+            "lft_perf_scratch": 68
+        },
+        "row_event_tables": {
+            "lft_perf_scratch": {
+                "money_transfers": 3,
+                "images": 2,
+                "delivery_policy_containers": 2,
+                "delivery_policies": 2,
+                "booking_containers": 2,
+                "bookings": 2,
+                "invoices": 2,
+                "booking_services": 2,
+                "services": 2,
+                "service_categories": 2,
+                "booking_papers": 2,
+                "agent_expenses": 2,
+                "app_notifications": 2,
+                "agents": 2,
+                "booking_container_agents": 2,
+                "shipping_agents": 2,
+                "cars": 2,
+                "drivers": 2,
+                "booking_container_stages": 1
+            },
+            "by3li": {
+                "roles": 1,
+                "users": 1
+            }
+        }
+    },
+    "verdict": {
+        "leader_only_add_index": true,
+        "leader_row_events": 0
+    }
+}

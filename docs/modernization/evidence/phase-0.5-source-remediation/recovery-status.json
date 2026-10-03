@@ -1,0 +1,60 @@
+{
+    "generated_at": "2026-10-03 19:58:05 UTC",
+    "classification": "C",
+    "classification_text": "CURRENT SOURCE STATE HAS SCHEMA DIVERGENCE",
+    "business_data_status": "INTACT - 65/65 tables row-level identical to the only pre-incident backup (82,960 rows)",
+    "schema_status": "PARTIAL MATCH - counts match approved clone (64 PK / 60 AI / 8 UNIQUE / 12 historical non-unique / 61 FK) but 7 definitions differ",
+    "schema_divergences": [
+        "5 FKs ON DELETE CASCADE in leader vs NO ACTION in approved clone: receipts.fk_receipts_booking_id, receipts.fk_receipts_supplier_id, supplier_payments.fk_supplier_payments_supplier_id, agent_expenses.fk_agent_expenses_booking_service_id, booking_container_stages.fk_booking_container_stages_booking_container_id",
+        "2 UNIQUE index names differ (same columns): agent_expenses_agent_id_request_key_unique vs agent_expense_request_unique; booking_container_stages_booking_container_id_type_id_unique vs container_stage_unique"
+    ],
+    "why_not_B": "Classification B requires the source to be merely MISSING approved operations. Here the source contains DIFFERENT definitions; reaching the clone target would require DROP FOREIGN KEY / re-ADD and RENAME INDEX, which are not in the approved 208-operation manifest. No such operation may be invented.",
+    "affected_tables": [
+        "receipts",
+        "supplier_payments",
+        "agent_expenses",
+        "booking_container_stages"
+    ],
+    "further_ddl_executed_by_this_closure": 0,
+    "restore_performed": false,
+    "last_known_safe_backup": "storage/app/backups/leader_pre_remediation_20261003_184935.sql",
+    "backups": {
+        "leader_pre_remediation_20261003_184935.sql": {
+            "size_bytes": 56602456,
+            "sha256": "3cc46fb345cae17aa2bc1bdd2fcaa8754c43ebc42de0f985b18be8dd2de895d2",
+            "contains_CREATE_DATABASE_and_USE_leader": true,
+            "dump_completed": "Dump completed on 2026-10-03 21:49:40",
+            "role": "ONLY PRE-INCIDENT BACKUP - last known safe backup; row-level identical to current leader (65/65 tables)"
+        },
+        "leader_pre_remediation_20261003_185109.sql": {
+            "size_bytes": 56602202,
+            "sha256": "78f89ab1474524465888a219bc3e9ef00bf9ed3dd52dc7252bdb6297253180a3",
+            "contains_CREATE_DATABASE_and_USE_leader": true,
+            "dump_completed": "Dump completed on 2026-10-03 21:51:12",
+            "role": "taken after accidental restore #1; model_has_roles empty - DO NOT USE for recovery"
+        },
+        "leader_pre_remediation_20261003_185948.sql": {
+            "size_bytes": 56602240,
+            "sha256": "f3082d54f685426b6575b2b2bfd8210bdf29e7b4672f5ef02e2bec404cfd42c0",
+            "contains_CREATE_DATABASE_and_USE_leader": false,
+            "dump_completed": "Dump completed on 2026-10-03 21:59:51",
+            "role": "taken after incident + manual recovery + sync; dump without CREATE DATABASE/USE"
+        },
+        "leader_pre_remediation_20261003_190116.sql": {
+            "size_bytes": 56602240,
+            "sha256": "81d5723ee49dca880c4d7f466ed84bd890c944de3cba42386e68bd3ac199eb14",
+            "contains_CREATE_DATABASE_and_USE_leader": false,
+            "dump_completed": "Dump completed on 2026-10-03 22:01:19",
+            "role": "taken after incident + manual recovery + sync; used by previous run as \"pre-remediation backup\"; row-level identical to 184935 and to current leader"
+        },
+        "WARNING": "184935 and 185109 contain CREATE DATABASE IF NOT EXISTS `leader`; USE `leader`; - restoring them into ANY target database will overwrite `leader`. Any future restore test must strip those lines or use a dump made without --databases."
+    },
+    "incident_summary": "Between 21:49:42 and 21:55:21 five restore-verification runs of a mysqldump that contained CREATE DATABASE IF NOT EXISTS `leader`; USE `leader`; executed DROP TABLE/CREATE TABLE/INSERT against `leader` itself (threads 219, 222, 225, 226, 228), each stopped mid-run. companies and company_invoices were left dropped; containers and model_has_roles were left empty. Manual recovery (threads 230, 234) and the leader<-leader_dryrun sync (thread 237) restored them. Net data effect: zero (proven row-level).",
+    "recommended_recovery_action": [
+        "OPTION 1 (recommended): Owner approves a targeted schema correction of the 7 divergent definitions so leader matches the approved clone exactly (DROP + re-ADD of 5 FKs without ON DELETE clause; RENAME INDEX for 2 UNIQUE keys), executed with the same guards (identity, write-free, backup), then the full postflight. Data restore is NOT needed.",
+        "OPTION 2: Owner instead approves the CURRENT leader definitions as the target (CASCADE on 3 FKs matches historical migrations; CASCADE on 2 receipts FKs matches neither migrations (SET NULL) nor clone (NO ACTION)) and re-baselines the clone; this changes delete semantics on financial tables and needs explicit business sign-off.",
+        "OPTION 3: Owner orders full rollback of leader to backup 184935 (data identical to current, so this only removes all constraints) followed by a clean single-pass re-execution of the unmodified approved runner. Highest effort, no data benefit.",
+        "In all options: before any further restore test, strip CREATE DATABASE/USE from dumps or dump without --databases."
+    ],
+    "awaiting": "OWNER APPROVAL"
+}

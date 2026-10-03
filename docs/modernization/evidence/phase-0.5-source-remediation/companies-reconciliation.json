@@ -1,0 +1,512 @@
+{
+    "generated_at": "2026-10-03 19:53:18 UTC",
+    "table": "companies",
+    "authority": "storage/app/backups/leader_pre_remediation_20261003_184935.sql (dump completed 2026-10-03 21:49:40 local; first accidental DROP on leader at 21:49:42 per binlog.000079) - the only backup taken before the incident",
+    "aggregates": {
+        "leader_now": {
+            "row_count": 43,
+            "min_id": 5,
+            "max_id": 49,
+            "distinct_ids": 43,
+            "id_set_sha256": "63c341d0c6176e772d3c48022eefcf269df5085f1d5903fe779b4236c3ddd444",
+            "opening_balance_sum": "50077838.16",
+            "wallet_sum": "0.00",
+            "taxed_count": "25",
+            "with_private_company": "20",
+            "critical_fields_sha256": "e36b80aa7a4b0941fa5efffc7fd11e00b2bc3ec6886ce48396b4428da36f2fbf"
+        },
+        "leader_dryrun_now": {
+            "row_count": 43,
+            "min_id": 5,
+            "max_id": 49,
+            "distinct_ids": 43,
+            "id_set_sha256": "63c341d0c6176e772d3c48022eefcf269df5085f1d5903fe779b4236c3ddd444",
+            "opening_balance_sum": "50077838.16",
+            "wallet_sum": "0.00",
+            "taxed_count": "25",
+            "with_private_company": "20",
+            "critical_fields_sha256": "e36b80aa7a4b0941fa5efffc7fd11e00b2bc3ec6886ce48396b4428da36f2fbf"
+        },
+        "match": true
+    },
+    "row_level_vs_backup_184935": {
+        "backup_184935": {
+            "rows": 43,
+            "min_first_col": 5,
+            "max_first_col": 49,
+            "content_sha256": "01a63ffd5242143f56d9e1ebd7ac1a91c2da7ce55089e0f3817f0017fe9744fa"
+        },
+        "leader_now": {
+            "rows": 43,
+            "min_first_col": 5,
+            "max_first_col": 49,
+            "content_sha256": "01a63ffd5242143f56d9e1ebd7ac1a91c2da7ce55089e0f3817f0017fe9744fa"
+        },
+        "identical": true
+    },
+    "pre_incident_evidence_row_count": 43,
+    "relationships": {
+        "bookings.company_id": {
+            "leader_now": {
+                "refs": 474,
+                "orphans": "0"
+            },
+            "leader_dryrun_now": {
+                "refs": 474,
+                "orphans": "0"
+            },
+            "match": true
+        },
+        "employees.company_id": {
+            "leader_now": {
+                "refs": 58,
+                "orphans": "0"
+            },
+            "leader_dryrun_now": {
+                "refs": 58,
+                "orphans": "0"
+            },
+            "match": true
+        },
+        "otps.company_id": {
+            "leader_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "leader_dryrun_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "match": true
+        },
+        "bank_trnsactions.company_id": {
+            "leader_now": {
+                "refs": 1,
+                "orphans": "0"
+            },
+            "leader_dryrun_now": {
+                "refs": 1,
+                "orphans": "0"
+            },
+            "match": true
+        },
+        "company_services.company_id": {
+            "leader_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "leader_dryrun_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "match": true
+        },
+        "company_transportations.company_id": {
+            "leader_now": {
+                "refs": 3,
+                "orphans": "0"
+            },
+            "leader_dryrun_now": {
+                "refs": 3,
+                "orphans": "0"
+            },
+            "match": true
+        },
+        "invoice_payments.company_id": {
+            "leader_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "leader_dryrun_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "match": true
+        },
+        "company_invoices.company_id": {
+            "leader_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "leader_dryrun_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "match": true
+        },
+        "companies.private_company_id": {
+            "leader_now": {
+                "refs": 20,
+                "orphans": "0"
+            },
+            "leader_dryrun_now": {
+                "refs": 20,
+                "orphans": "0"
+            },
+            "match": true
+        }
+    },
+    "schema": {
+        "columns_identical_to_approved_clone": true,
+        "indexes_identical_to_approved_clone": true,
+        "outgoing_fks_identical_to_approved_clone": true,
+        "columns": {
+            "id": {
+                "pos": 1,
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": null,
+                "extra": "auto_increment",
+                "charset": null,
+                "collation": null
+            },
+            "name": {
+                "pos": 2,
+                "type": "varchar(255)",
+                "nullable": "NO",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "email": {
+                "pos": 3,
+                "type": "varchar(255)",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "address": {
+                "pos": 4,
+                "type": "varchar(255)",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "phone": {
+                "pos": 5,
+                "type": "varchar(255)",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "tax_no": {
+                "pos": 6,
+                "type": "bigint",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "bill_type": {
+                "pos": 7,
+                "type": "tinyint",
+                "nullable": "NO",
+                "default": "1",
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "taxed": {
+                "pos": 8,
+                "type": "tinyint",
+                "nullable": "NO",
+                "default": "0",
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "private_company_id": {
+                "pos": 9,
+                "type": "bigint unsigned",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "attachments": {
+                "pos": 10,
+                "type": "longtext",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "password": {
+                "pos": 11,
+                "type": "varchar(255)",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "session_id": {
+                "pos": 12,
+                "type": "longtext",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "created_at": {
+                "pos": 13,
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "updated_at": {
+                "pos": 14,
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "invoice_number_auto_increment": {
+                "pos": 15,
+                "type": "varchar(255)",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "wallet": {
+                "pos": 16,
+                "type": "varchar(255)",
+                "nullable": "NO",
+                "default": "0",
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "opening_balance": {
+                "pos": 17,
+                "type": "double(15,2)",
+                "nullable": "NO",
+                "default": "0.00",
+                "extra": "",
+                "charset": null,
+                "collation": null
+            }
+        },
+        "indexes": {
+            "fk_companies_private_company_id": {
+                "unique": false,
+                "type": "BTREE",
+                "columns": [
+                    "private_company_id"
+                ]
+            },
+            "PRIMARY": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "id"
+                ]
+            }
+        },
+        "outgoing_fks": {
+            "fk_companies_private_company_id": {
+                "columns": [
+                    "private_company_id"
+                ],
+                "ref_table": "private_companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION"
+            }
+        },
+        "incoming_fks": [
+            {
+                "table": "bank_trnsactions",
+                "name": "fk_bank_trnsactions_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            {
+                "table": "bookings",
+                "name": "fk_bookings_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            {
+                "table": "company_services",
+                "name": "fk_company_services_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "CASCADE"
+            },
+            {
+                "table": "company_transportations",
+                "name": "fk_company_transportations_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION"
+            },
+            {
+                "table": "employees",
+                "name": "fk_employees_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            {
+                "table": "otps",
+                "name": "fk_otps_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            }
+        ],
+        "incoming_fks_dryrun": [
+            {
+                "table": "bank_trnsactions",
+                "name": "fk_bank_trnsactions_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            {
+                "table": "bookings",
+                "name": "fk_bookings_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            {
+                "table": "company_services",
+                "name": "fk_company_services_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "CASCADE"
+            },
+            {
+                "table": "company_transportations",
+                "name": "fk_company_transportations_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION"
+            },
+            {
+                "table": "employees",
+                "name": "fk_employees_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            {
+                "table": "otps",
+                "name": "fk_otps_company_id",
+                "columns": [
+                    "company_id"
+                ],
+                "ref_table": "companies",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            }
+        ],
+        "incoming_fks_identical_to_approved_clone": true
+    },
+    "create_statement_pre_incident_backup": "CREATE TABLE `companies` ( `id` bigint unsigned NOT NULL, `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `tax_no` bigint DEFAULT NULL, `bill_type` tinyint NOT NULL DEFAULT '1', `taxed` tinyint NOT NULL DEFAULT '0' COMMENT '0 => No Taxed, 1 => Taxed', `private_company_id` bigint unsigned DEFAULT NULL, `attachments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `session_id` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, `created_at` timestamp NULL DEFAULT NULL, `updated_at` timestamp NULL DEFAULT NULL, `invoice_number_auto_increment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `wallet` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0', `opening_balance` double(15,2) NOT NULL DEFAULT '0.00' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    "create_statement_manual_recovery_binlog": "CREATE TABLE IF NOT EXISTS `companies` ( `id` bigint unsigned NOT NULL, `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `tax_no` bigint DEFAULT NULL, `bill_type` tinyint NOT NULL DEFAULT '1', `taxed` tinyint NOT NULL DEFAULT '0' COMMENT '0 => No Taxed, 1 => Taxed', `private_company_id` bigint unsigned DEFAULT NULL, `attachments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `session_id` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, `created_at` timestamp NULL DEFAULT NULL, `updated_at` timestamp NULL DEFAULT NULL, `invoice_number_auto_increment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL, `wallet` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0', `opening_balance` double(15,2) NOT NULL DEFAULT '0.00' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    "manual_recovery_ddl_equals_pre_incident_ddl": true,
+    "binlog_history": [
+        "21:50:10-21:50:11 thread 219: DROP + CREATE + INSERT (accidental restore #1 from backup 184935)",
+        "21:51:41 thread 222: DROP + CREATE + INSERT (accidental restore #2 from backup 185109)",
+        "21:53:13 thread 225: DROP + CREATE + INSERT (accidental restore #3)",
+        "21:54:24-25 thread 226: DROP + CREATE + INSERT (accidental restore #4)",
+        "21:55:21 thread 228: DROP TABLE companies - process stopped before CREATE (accidental restore #5)",
+        "21:58:46-47 thread 234: CREATE TABLE IF NOT EXISTS leader.companies + INSERT (manual recovery)"
+    ],
+    "identical_to_pre_incident_state": true,
+    "incoming_fk_note": "Incoming FKs identical to approved clone."
+}

@@ -1,0 +1,1303 @@
+{
+    "generated_at": "2026-10-03 21:03:07 UTC",
+    "mode": "final",
+    "schema_identical_to_canonical": true,
+    "constraints_ok": true,
+    "data_ok": true,
+    "financial_ok": true,
+    "workflow_ok": true,
+    "permission_ok": true,
+    "idempotency_ok": true,
+    "financial_row_variance": 0,
+    "financial_monetary_variance_egp": "0.00",
+    "workflow_variance": 0,
+    "permission_variance": 0,
+    "counts": {
+        "tables": 65,
+        "columns": 599,
+        "primary_keys": 64,
+        "auto_increment": 60,
+        "unique_non_pk": 8,
+        "non_unique_indexes": 71,
+        "foreign_keys": 61,
+        "fk_backing_indexes": 59,
+        "historical_non_unique_indexes": 12,
+        "fk_on_delete": {
+            "CASCADE": 32,
+            "SET NULL": 29
+        }
+    },
+    "binlog_position": {
+        "file": "binlog.000079",
+        "position": 159011714
+    },
+    "pass": true,
+    "schema_vs_canonical": {
+        "identical": true,
+        "differences": []
+    },
+    "constraint_checks": {
+        "tables": {
+            "expected": 65,
+            "actual": 65,
+            "pass": true
+        },
+        "primary_keys": {
+            "expected": 64,
+            "actual": 64,
+            "pass": true
+        },
+        "auto_increment": {
+            "expected": 60,
+            "actual": 60,
+            "pass": true
+        },
+        "unique_non_pk": {
+            "expected": 8,
+            "actual": 8,
+            "pass": true
+        },
+        "historical_non_unique_indexes": {
+            "expected": 12,
+            "actual": 12,
+            "pass": true
+        },
+        "foreign_keys": {
+            "expected": 61,
+            "actual": 61,
+            "pass": true
+        },
+        "fk_on_delete": {
+            "expected": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            },
+            "actual": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            },
+            "pass": true
+        },
+        "booking_papers.agent_id -> agents.id": {
+            "actual": [
+                {
+                    "name": "fk_booking_papers_agent_id",
+                    "child": "booking_papers(agent_id)",
+                    "parent": "agents(id)",
+                    "on_delete": "CASCADE",
+                    "on_update": "NO ACTION",
+                    "equals_canonical_full_definition": true
+                }
+            ],
+            "pass": true
+        },
+        "no FK to banks from booking_papers.agent_id": {
+            "pass": true
+        },
+        "migrations_rows": {
+            "expected": [
+                {
+                    "migration": "2026_10_01_000000_canonical_baseline_schema",
+                    "batch": "1"
+                }
+            ],
+            "actual": [
+                {
+                    "id": "1",
+                    "migration": "2026_10_01_000000_canonical_baseline_schema",
+                    "batch": "1"
+                }
+            ],
+            "pass": true
+        },
+        "yards": {
+            "table_exists": false,
+            "status": "PRE-EXISTING FUNCTIONAL DEFECT (not repaired in Phase 0.5)",
+            "pass": true
+        },
+        "reviewed_fk fk_receipts_booking_id": {
+            "expected": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "actual": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "reviewed_fk fk_receipts_supplier_id": {
+            "expected": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "actual": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "reviewed_fk fk_supplier_payments_supplier_id": {
+            "expected": "supplier_payments(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "actual": "supplier_payments(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "reviewed_fk fk_agent_expenses_booking_service_id": {
+            "expected": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "actual": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "reviewed_fk fk_booking_container_stages_booking_container_id": {
+            "expected": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "actual": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "unique agent_expense_request_unique": {
+            "expected_columns": [
+                "agent_id",
+                "request_key"
+            ],
+            "actual": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ]
+            },
+            "pass": true
+        },
+        "unique container_stage_unique": {
+            "expected_columns": [
+                "booking_container_id",
+                "type_id"
+            ],
+            "actual": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ]
+            },
+            "pass": true
+        }
+    },
+    "data": {
+        "generated_at": "2026-10-03 21:03:07 UTC",
+        "mode": "final",
+        "authority": "storage/app/backups/leader_pre_remediation_20261003_184935.sql (only backup taken before the 21:49:42 incident)",
+        "vs_pre_incident_backup_184935": {
+            "tables_compared": 65,
+            "tables_identical": 63,
+            "tables_different": [
+                "migrations",
+                "telescope_entries"
+            ],
+            "business_tables_different": [
+                "migrations"
+            ],
+            "telescope_entries": {
+                "backup_184935": {
+                    "rows": 66068,
+                    "min_first_col": 1,
+                    "max_first_col": 66068,
+                    "content_sha256": "da2d578348221f17610e783018fb3ff4e9befabd75a8865535f814d33615611a"
+                },
+                "leader_now": {
+                    "rows": 66069,
+                    "min_first_col": 1,
+                    "max_first_col": 66069,
+                    "content_sha256": "af9ac8b894a7bd6c02928be3bc0e677b3b429690b41cf95a90d1544c736ccc3e"
+                },
+                "identical": false,
+                "rows_only_in_backup_184935": 0,
+                "rows_only_in_leader_now": 1,
+                "sample_first_col_only_in_backup_184935": [],
+                "sample_first_col_only_in_leader_now": [
+                    "66069"
+                ]
+            },
+            "rows_total_leader_now": 82962,
+            "pass_business": false,
+            "business_tables_different_excluding_strategy_b_metadata": []
+        },
+        "per_table": {
+            "agent_car_tranfers": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "agent_expenses": {
+                "rows_backup": 447,
+                "rows_now": 447,
+                "identical": true
+            },
+            "agents": {
+                "rows_backup": 19,
+                "rows_now": 19,
+                "identical": true
+            },
+            "app_notifications": {
+                "rows_backup": 5510,
+                "rows_now": 5510,
+                "identical": true
+            },
+            "bank_trnsactions": {
+                "rows_backup": 16,
+                "rows_now": 16,
+                "identical": true
+            },
+            "banks": {
+                "rows_backup": 11,
+                "rows_now": 11,
+                "identical": true
+            },
+            "booking_container_agents": {
+                "rows_backup": 1578,
+                "rows_now": 1578,
+                "identical": true
+            },
+            "booking_container_stages": {
+                "rows_backup": 446,
+                "rows_now": 446,
+                "identical": true
+            },
+            "booking_containers": {
+                "rows_backup": 691,
+                "rows_now": 691,
+                "identical": true
+            },
+            "booking_contrainer_extra_costs": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "booking_movements": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "booking_papers": {
+                "rows_backup": 788,
+                "rows_now": 788,
+                "identical": true
+            },
+            "booking_services": {
+                "rows_backup": 259,
+                "rows_now": 259,
+                "identical": true
+            },
+            "bookings": {
+                "rows_backup": 474,
+                "rows_now": 474,
+                "identical": true
+            },
+            "branches": {
+                "rows_backup": 155,
+                "rows_now": 155,
+                "identical": true
+            },
+            "cars": {
+                "rows_backup": 167,
+                "rows_now": 167,
+                "identical": true
+            },
+            "choose_us": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "cities_and_regions": {
+                "rows_backup": 40,
+                "rows_now": 40,
+                "identical": true
+            },
+            "companies": {
+                "rows_backup": 43,
+                "rows_now": 43,
+                "identical": true
+            },
+            "company_fatoorahs": {
+                "rows_backup": 2,
+                "rows_now": 2,
+                "identical": true
+            },
+            "company_invoices": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "company_services": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "company_transportations": {
+                "rows_backup": 3,
+                "rows_now": 3,
+                "identical": true
+            },
+            "contact_us": {
+                "rows_backup": 5,
+                "rows_now": 5,
+                "identical": true
+            },
+            "containers": {
+                "rows_backup": 7,
+                "rows_now": 7,
+                "identical": true
+            },
+            "daily_booking_containers": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "delivery_policies": {
+                "rows_backup": 256,
+                "rows_now": 256,
+                "identical": true
+            },
+            "delivery_policy_containers": {
+                "rows_backup": 256,
+                "rows_now": 256,
+                "identical": true
+            },
+            "drivers": {
+                "rows_backup": 305,
+                "rows_now": 305,
+                "identical": true
+            },
+            "employees": {
+                "rows_backup": 58,
+                "rows_now": 58,
+                "identical": true
+            },
+            "factories": {
+                "rows_backup": 150,
+                "rows_now": 150,
+                "identical": true
+            },
+            "failed_jobs": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "images": {
+                "rows_backup": 867,
+                "rows_now": 867,
+                "identical": true
+            },
+            "invoice_payments": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "invoices": {
+                "rows_backup": 225,
+                "rows_now": 225,
+                "identical": true
+            },
+            "log_activities": {
+                "rows_backup": 1933,
+                "rows_now": 1933,
+                "identical": true
+            },
+            "migrations": {
+                "rows_backup": 0,
+                "rows_now": 1,
+                "identical": false
+            },
+            "model_has_permissions": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "model_has_roles": {
+                "rows_backup": 8,
+                "rows_now": 8,
+                "identical": true
+            },
+            "money_transfers": {
+                "rows_backup": 677,
+                "rows_now": 677,
+                "identical": true
+            },
+            "notes": {
+                "rows_backup": 5,
+                "rows_now": 5,
+                "identical": true
+            },
+            "notifications": {
+                "rows_backup": 1071,
+                "rows_now": 1071,
+                "identical": true
+            },
+            "otps": {
+                "rows_backup": 9,
+                "rows_now": 9,
+                "identical": true
+            },
+            "our_services": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "password_resets": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "payingcars": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "permissions": {
+                "rows_backup": 129,
+                "rows_now": 129,
+                "identical": true
+            },
+            "personal_access_tokens": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "private_companies": {
+                "rows_backup": 4,
+                "rows_now": 4,
+                "identical": true
+            },
+            "receipts": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "reviews": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "role_has_permissions": {
+                "rows_backup": 201,
+                "rows_now": 201,
+                "identical": true
+            },
+            "roles": {
+                "rows_backup": 2,
+                "rows_now": 2,
+                "identical": true
+            },
+            "service_categories": {
+                "rows_backup": 4,
+                "rows_now": 4,
+                "identical": true
+            },
+            "services": {
+                "rows_backup": 34,
+                "rows_now": 34,
+                "identical": true
+            },
+            "settings": {
+                "rows_backup": 1,
+                "rows_now": 1,
+                "identical": true
+            },
+            "shipments": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "shipping_agents": {
+                "rows_backup": 18,
+                "rows_now": 18,
+                "identical": true
+            },
+            "sponsers": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "static_pages": {
+                "rows_backup": 4,
+                "rows_now": 4,
+                "identical": true
+            },
+            "superagent_transactions": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "superagents": {
+                "rows_backup": 11,
+                "rows_now": 11,
+                "identical": true
+            },
+            "supplier_payments": {
+                "rows_backup": 0,
+                "rows_now": 0,
+                "identical": true
+            },
+            "suppliers": {
+                "rows_backup": 3,
+                "rows_now": 3,
+                "identical": true
+            },
+            "telescope_entries": {
+                "rows_backup": 66068,
+                "rows_now": 66069,
+                "identical": false
+            }
+        },
+        "telescope_entries_deviation_D1": {
+            "reference_rows": 66068,
+            "current_rows": 66069,
+            "reference_max_sequence": 66068,
+            "reference_rows_missing_or_changed": 0,
+            "appended_sequences": [
+                "66069"
+            ],
+            "append_only": true,
+            "explanation": "Single telemetry row (type=command, \"php artisan --version\") written by Laravel Telescope at 2026-10-03 23:26:18 local during this run, before TELESCOPE_ENABLED=false was enforced; binlog.000079 position 108750228-108750736. Not business data. Not deleted (no DML authorised)."
+        },
+        "vs_fresh_backup_state": {
+            "tables_different": [
+                "migrations"
+            ],
+            "allowed": [
+                "migrations"
+            ]
+        },
+        "pass": true
+    },
+    "financial": {
+        "generated_at": "2026-10-03 21:03:07 UTC",
+        "mode": "final",
+        "reference": "canonical clone leader_dryrun + pre-incident evidence (leader 21:37 local) + row-level backup 184935",
+        "tables": {
+            "agent_expenses": {
+                "leader": {
+                    "row_count": "447",
+                    "main_sum": "307947",
+                    "exact_sum_egp": "307947.00",
+                    "voided_count": "7",
+                    "non_null_request_keys": "258",
+                    "distinct_request_keys": "258",
+                    "request_keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+                },
+                "canonical_clone": {
+                    "row_count": "447",
+                    "main_sum": "307947",
+                    "exact_sum_egp": "307947.00",
+                    "voided_count": "7",
+                    "non_null_request_keys": "258",
+                    "distinct_request_keys": "258",
+                    "request_keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 447,
+                    "main_sum": 307947,
+                    "voided_count": 7,
+                    "non_null_request_keys": 258,
+                    "distinct_request_keys": 258
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "voided_count": true,
+                    "non_null_request_keys": true,
+                    "distinct_request_keys": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            },
+            "invoices": {
+                "leader": {
+                    "row_count": "225",
+                    "main_sum": "3777421.00",
+                    "untaxed_sum": "2089416.96",
+                    "exact_sum_egp": "5877524.96",
+                    "taxed_sum": "10687.00",
+                    "discount_sum": "0.00",
+                    "vat_sum": "602.00",
+                    "sales_tax_sum": "0.00"
+                },
+                "canonical_clone": {
+                    "row_count": "225",
+                    "main_sum": "3777421.00",
+                    "untaxed_sum": "2089416.96",
+                    "exact_sum_egp": "5877524.96",
+                    "taxed_sum": "10687.00",
+                    "discount_sum": "0.00",
+                    "vat_sum": "602.00",
+                    "sales_tax_sum": "0.00"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 225,
+                    "main_sum": 3777421,
+                    "taxed_sum": 10687,
+                    "discount_sum": 0
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "taxed_sum": true,
+                    "discount_sum": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            },
+            "invoice_payments": {
+                "leader": {
+                    "row_count": "0",
+                    "main_sum": "0",
+                    "exact_sum_egp": "0.00",
+                    "paid_invoices_count": "0"
+                },
+                "canonical_clone": {
+                    "row_count": "0",
+                    "main_sum": "0",
+                    "exact_sum_egp": "0.00",
+                    "paid_invoices_count": "0"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 0,
+                    "main_sum": 0,
+                    "paid_invoices_count": 0
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "paid_invoices_count": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            },
+            "money_transfers": {
+                "leader": {
+                    "row_count": "677",
+                    "main_sum": "9540182",
+                    "exact_sum_egp": "9540182.00",
+                    "transferees_count": "86"
+                },
+                "canonical_clone": {
+                    "row_count": "677",
+                    "main_sum": "9540182",
+                    "exact_sum_egp": "9540182.00",
+                    "transferees_count": "86"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 677,
+                    "main_sum": 9540182,
+                    "transferees_count": 86
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "transferees_count": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            },
+            "bank_trnsactions": {
+                "leader": {
+                    "row_count": "16",
+                    "main_sum": "3206624",
+                    "exact_sum_egp": "3206624.00",
+                    "banks_involved": "6"
+                },
+                "canonical_clone": {
+                    "row_count": "16",
+                    "main_sum": "3206624",
+                    "exact_sum_egp": "3206624.00",
+                    "banks_involved": "6"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 16,
+                    "main_sum": 3206624,
+                    "banks_involved": 6
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "banks_involved": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            },
+            "payingcars": {
+                "leader": {
+                    "row_count": "0",
+                    "main_sum": "0",
+                    "exact_sum_egp": "0.00",
+                    "cars_paid": "0"
+                },
+                "canonical_clone": {
+                    "row_count": "0",
+                    "main_sum": "0",
+                    "exact_sum_egp": "0.00",
+                    "cars_paid": "0"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 0,
+                    "main_sum": 0,
+                    "cars_paid": 0
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "cars_paid": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            },
+            "receipts": {
+                "leader": {
+                    "row_count": "0",
+                    "main_sum": "0.00",
+                    "exact_sum_egp": "0.00",
+                    "suppliers_billed": "0"
+                },
+                "canonical_clone": {
+                    "row_count": "0",
+                    "main_sum": "0.00",
+                    "exact_sum_egp": "0.00",
+                    "suppliers_billed": "0"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 0,
+                    "main_sum": "0.00",
+                    "suppliers_billed": 0
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "suppliers_billed": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            },
+            "supplier_payments": {
+                "leader": {
+                    "row_count": "0",
+                    "main_sum": "0.00",
+                    "exact_sum_egp": "0.00",
+                    "suppliers_paid": "0"
+                },
+                "canonical_clone": {
+                    "row_count": "0",
+                    "main_sum": "0.00",
+                    "exact_sum_egp": "0.00",
+                    "suppliers_paid": "0"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 0,
+                    "main_sum": "0.00",
+                    "suppliers_paid": 0
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "suppliers_paid": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            },
+            "booking_services": {
+                "leader": {
+                    "row_count": "259",
+                    "main_sum": "2237149.3099999996",
+                    "exact_sum_egp": "2237149.31",
+                    "bookings_with_services": "198"
+                },
+                "canonical_clone": {
+                    "row_count": "259",
+                    "main_sum": "2237149.3099999996",
+                    "exact_sum_egp": "2237149.31",
+                    "bookings_with_services": "198"
+                },
+                "pre_incident_evidence": {
+                    "row_count": 259,
+                    "main_sum": 2237149.3099999996,
+                    "bookings_with_services": 198
+                },
+                "pre_incident_metric_match": {
+                    "row_count": true,
+                    "main_sum": true,
+                    "bookings_with_services": true
+                },
+                "match": true,
+                "row_level_identical_to_backup_184935": true
+            }
+        },
+        "row_count_variance_total": 0,
+        "monetary_variance_egp_total": "0.00",
+        "financial_tables": 9,
+        "overall_financial_match": true
+    },
+    "workflow": {
+        "generated_at": "2026-10-03 21:03:07 UTC",
+        "mode": "final",
+        "metrics": {
+            "bookings_count": {
+                "leader": 474,
+                "canonical_clone": 474,
+                "pre_incident_evidence": 474,
+                "pre_incident_match": true,
+                "match": true
+            },
+            "booking_containers_count": {
+                "leader": 691,
+                "canonical_clone": 691,
+                "pre_incident_evidence": 691,
+                "pre_incident_match": true,
+                "match": true
+            },
+            "booking_container_agents_count": {
+                "leader": 1578,
+                "canonical_clone": 1578,
+                "pre_incident_evidence": 1578,
+                "pre_incident_match": true,
+                "match": true
+            },
+            "booking_container_stages_count": {
+                "leader": 446,
+                "canonical_clone": 446,
+                "pre_incident_evidence": 446,
+                "pre_incident_match": true,
+                "match": true
+            },
+            "is_in_loading_distribution": {
+                "leader": [
+                    {
+                        "is_in_loading": "0",
+                        "c": "96"
+                    },
+                    {
+                        "is_in_loading": "1",
+                        "c": "595"
+                    }
+                ],
+                "canonical_clone": [
+                    {
+                        "is_in_loading": "0",
+                        "c": "96"
+                    },
+                    {
+                        "is_in_loading": "1",
+                        "c": "595"
+                    }
+                ],
+                "pre_incident_evidence": [
+                    {
+                        "is_in_loading": 0,
+                        "c": 96
+                    },
+                    {
+                        "is_in_loading": 1,
+                        "c": 595
+                    }
+                ],
+                "pre_incident_match": true,
+                "match": true
+            },
+            "stage_type_distribution": {
+                "leader": [
+                    {
+                        "stage_type": "0",
+                        "c": "494"
+                    },
+                    {
+                        "stage_type": "1",
+                        "c": "598"
+                    },
+                    {
+                        "stage_type": "2",
+                        "c": "486"
+                    }
+                ],
+                "canonical_clone": [
+                    {
+                        "stage_type": "0",
+                        "c": "494"
+                    },
+                    {
+                        "stage_type": "1",
+                        "c": "598"
+                    },
+                    {
+                        "stage_type": "2",
+                        "c": "486"
+                    }
+                ],
+                "pre_incident_evidence": [
+                    {
+                        "stage_type": 0,
+                        "c": 494
+                    },
+                    {
+                        "stage_type": 1,
+                        "c": 598
+                    },
+                    {
+                        "stage_type": 2,
+                        "c": 486
+                    }
+                ],
+                "pre_incident_match": true,
+                "match": true
+            },
+            "container_stages_by_type": {
+                "leader": [
+                    {
+                        "type_id": "0",
+                        "c": "142"
+                    },
+                    {
+                        "type_id": "1",
+                        "c": "169"
+                    },
+                    {
+                        "type_id": "2",
+                        "c": "135"
+                    }
+                ],
+                "canonical_clone": [
+                    {
+                        "type_id": "0",
+                        "c": "142"
+                    },
+                    {
+                        "type_id": "1",
+                        "c": "169"
+                    },
+                    {
+                        "type_id": "2",
+                        "c": "135"
+                    }
+                ],
+                "pre_incident_evidence": [
+                    {
+                        "type_id": 0,
+                        "c": 142
+                    },
+                    {
+                        "type_id": 1,
+                        "c": 169
+                    },
+                    {
+                        "type_id": 2,
+                        "c": 135
+                    }
+                ],
+                "pre_incident_match": true,
+                "match": true
+            },
+            "booking_containers_status_distribution": {
+                "leader": [
+                    {
+                        "status": "0",
+                        "c": "3"
+                    },
+                    {
+                        "status": "1",
+                        "c": "56"
+                    },
+                    {
+                        "status": "2",
+                        "c": "35"
+                    },
+                    {
+                        "status": "3",
+                        "c": "597"
+                    }
+                ],
+                "canonical_clone": [
+                    {
+                        "status": "0",
+                        "c": "3"
+                    },
+                    {
+                        "status": "1",
+                        "c": "56"
+                    },
+                    {
+                        "status": "2",
+                        "c": "35"
+                    },
+                    {
+                        "status": "3",
+                        "c": "597"
+                    }
+                ],
+                "pre_incident_evidence": null,
+                "pre_incident_match": "NOT_CAPTURED_PRE_INCIDENT",
+                "match": true
+            },
+            "assignment_status_distribution": {
+                "leader": [
+                    {
+                        "booking_container_status": "0",
+                        "c": "93"
+                    },
+                    {
+                        "booking_container_status": "1",
+                        "c": "151"
+                    },
+                    {
+                        "booking_container_status": "2",
+                        "c": "313"
+                    },
+                    {
+                        "booking_container_status": "3",
+                        "c": "1021"
+                    }
+                ],
+                "canonical_clone": [
+                    {
+                        "booking_container_status": "0",
+                        "c": "93"
+                    },
+                    {
+                        "booking_container_status": "1",
+                        "c": "151"
+                    },
+                    {
+                        "booking_container_status": "2",
+                        "c": "313"
+                    },
+                    {
+                        "booking_container_status": "3",
+                        "c": "1021"
+                    }
+                ],
+                "pre_incident_evidence": null,
+                "pre_incident_match": "NOT_CAPTURED_PRE_INCIDENT",
+                "match": true
+            },
+            "assignments_per_agent": {
+                "leader": [
+                    {
+                        "agent_id": "3",
+                        "c": "49"
+                    },
+                    {
+                        "agent_id": "4",
+                        "c": "61"
+                    },
+                    {
+                        "agent_id": "6",
+                        "c": "38"
+                    },
+                    {
+                        "agent_id": "7",
+                        "c": "55"
+                    },
+                    {
+                        "agent_id": "10",
+                        "c": "104"
+                    },
+                    {
+                        "agent_id": "12",
+                        "c": "42"
+                    },
+                    {
+                        "agent_id": "13",
+                        "c": "293"
+                    },
+                    {
+                        "agent_id": "22",
+                        "c": "5"
+                    },
+                    {
+                        "agent_id": "23",
+                        "c": "56"
+                    },
+                    {
+                        "agent_id": "24",
+                        "c": "16"
+                    },
+                    {
+                        "agent_id": "25",
+                        "c": "801"
+                    },
+                    {
+                        "agent_id": "28",
+                        "c": "30"
+                    },
+                    {
+                        "agent_id": "29",
+                        "c": "28"
+                    }
+                ],
+                "canonical_clone": [
+                    {
+                        "agent_id": "3",
+                        "c": "49"
+                    },
+                    {
+                        "agent_id": "4",
+                        "c": "61"
+                    },
+                    {
+                        "agent_id": "6",
+                        "c": "38"
+                    },
+                    {
+                        "agent_id": "7",
+                        "c": "55"
+                    },
+                    {
+                        "agent_id": "10",
+                        "c": "104"
+                    },
+                    {
+                        "agent_id": "12",
+                        "c": "42"
+                    },
+                    {
+                        "agent_id": "13",
+                        "c": "293"
+                    },
+                    {
+                        "agent_id": "22",
+                        "c": "5"
+                    },
+                    {
+                        "agent_id": "23",
+                        "c": "56"
+                    },
+                    {
+                        "agent_id": "24",
+                        "c": "16"
+                    },
+                    {
+                        "agent_id": "25",
+                        "c": "801"
+                    },
+                    {
+                        "agent_id": "28",
+                        "c": "30"
+                    },
+                    {
+                        "agent_id": "29",
+                        "c": "28"
+                    }
+                ],
+                "pre_incident_evidence": null,
+                "pre_incident_match": "NOT_CAPTURED_PRE_INCIDENT",
+                "match": true
+            },
+            "approval_flags": {
+                "leader": [
+                    {
+                        "spec": "681",
+                        "loading": "631",
+                        "unloading": "585"
+                    }
+                ],
+                "canonical_clone": [
+                    {
+                        "spec": "681",
+                        "loading": "631",
+                        "unloading": "585"
+                    }
+                ],
+                "pre_incident_evidence": null,
+                "pre_incident_match": "NOT_CAPTURED_PRE_INCIDENT",
+                "match": true
+            }
+        },
+        "workflow_variance": 0,
+        "row_level_identical_to_backup_184935": {
+            "bookings": true,
+            "booking_containers": true,
+            "booking_container_agents": true,
+            "booking_container_stages": true,
+            "booking_papers": true,
+            "booking_services": true,
+            "delivery_policies": true,
+            "delivery_policy_containers": true
+        },
+        "overall_workflow_match": true
+    },
+    "permissions": {
+        "generated_at": "2026-10-03 21:03:07 UTC",
+        "mode": "final",
+        "metrics": {
+            "roles_count": {
+                "leader": "2",
+                "canonical_clone": "2",
+                "pre_incident_evidence": 2,
+                "match": true
+            },
+            "permissions_count": {
+                "leader": "129",
+                "canonical_clone": "129",
+                "pre_incident_evidence": 129,
+                "match": true
+            },
+            "role_has_permissions_count": {
+                "leader": "201",
+                "canonical_clone": "201",
+                "pre_incident_evidence": 201,
+                "match": true
+            },
+            "model_has_roles_count": {
+                "leader": "8",
+                "canonical_clone": "8",
+                "pre_incident_evidence": 8,
+                "match": true
+            },
+            "model_has_permissions_count": {
+                "leader": "0",
+                "canonical_clone": "0",
+                "pre_incident_evidence": 0,
+                "match": true
+            },
+            "role_has_permissions_sha256": {
+                "leader": "b7b7178abe57b3c762b7bd564a3879c7cd835cdacae74a65f063fc91a073d630",
+                "canonical_clone": "b7b7178abe57b3c762b7bd564a3879c7cd835cdacae74a65f063fc91a073d630",
+                "pre_incident_evidence": null,
+                "match": true
+            },
+            "model_has_roles_sha256": {
+                "leader": "9f40254fe4d69abae11632fee0df2908d7e9f120694c36278509caba4040bc8a",
+                "canonical_clone": "9f40254fe4d69abae11632fee0df2908d7e9f120694c36278509caba4040bc8a",
+                "pre_incident_evidence": null,
+                "match": true
+            },
+            "permissions_sha256": {
+                "leader": "b53663fb7cebe7099e31b9819f506b81efc6c1549b5844eb4517146acdfe1dae",
+                "canonical_clone": "b53663fb7cebe7099e31b9819f506b81efc6c1549b5844eb4517146acdfe1dae",
+                "pre_incident_evidence": null,
+                "match": true
+            },
+            "suppliers_udpate_typo_rows": {
+                "leader": "1",
+                "canonical_clone": "1",
+                "pre_incident_evidence": null,
+                "match": true
+            }
+        },
+        "permission_variance": 0,
+        "row_level_identical_to_backup_184935": {
+            "roles": true,
+            "permissions": true,
+            "role_has_permissions": true,
+            "model_has_roles": true,
+            "model_has_permissions": true
+        },
+        "overall_permission_match": true
+    },
+    "idempotency": {
+        "request_key_stats": {
+            "leader": {
+                "total_rows": "447",
+                "null_keys": "189",
+                "non_null_keys": "258",
+                "distinct_keys": "258",
+                "duplicate_groups": "0",
+                "keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+            },
+            "canonical_clone": {
+                "total_rows": "447",
+                "null_keys": "189",
+                "non_null_keys": "258",
+                "distinct_keys": "258",
+                "duplicate_groups": "0",
+                "keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+            },
+            "match": true
+        },
+        "pass": true
+    }
+}

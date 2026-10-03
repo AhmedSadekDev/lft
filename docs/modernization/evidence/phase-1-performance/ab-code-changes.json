@@ -1,0 +1,253 @@
+{
+    "generated_at": "2026-10-03 21:46:26 UTC",
+    "method": "interleaved A/B on the same database state (all 9 indexes present): code changes stashed (off) vs applied (on), 2 rounds x 9 iterations; isolates the code-level effect from the index effect",
+    "contracts": {
+        "agent_profile": {
+            "code_off": {
+                "latency_ms_median_r1": 7.41,
+                "latency_ms_median_r2": 8.76,
+                "queries": 3,
+                "peak_memory_kb": 70.5,
+                "payload_bytes": 644,
+                "body_sha256": "798a604a6f04459539eefe701ab020d711a6cd25903354a3e2a53d1d5df7d912"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 6.58,
+                "latency_ms_median_r2": 4.24,
+                "queries": 3,
+                "peak_memory_kb": 70.5,
+                "payload_bytes": 644,
+                "body_sha256": "798a604a6f04459539eefe701ab020d711a6cd25903354a3e2a53d1d5df7d912"
+            },
+            "body_identical": true
+        },
+        "agent_notifications": {
+            "code_off": {
+                "latency_ms_median_r1": 318.04,
+                "latency_ms_median_r2": 476.24,
+                "queries": 5,
+                "peak_memory_kb": 6749.1,
+                "payload_bytes": 641547,
+                "body_sha256": "5f188dd88e5d6814d919ed21679df2354bc31f6bf1257ef7ab5999dac6458a25"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 213.16,
+                "latency_ms_median_r2": 175.28,
+                "queries": 5,
+                "peak_memory_kb": 6199.9,
+                "payload_bytes": 641547,
+                "body_sha256": "5f188dd88e5d6814d919ed21679df2354bc31f6bf1257ef7ab5999dac6458a25"
+            },
+            "body_identical": true
+        },
+        "superagent_fetch_agents": {
+            "code_off": {
+                "latency_ms_median_r1": 40.67,
+                "latency_ms_median_r2": 73.17,
+                "queries": 42,
+                "peak_memory_kb": 152.3,
+                "payload_bytes": 2737,
+                "body_sha256": "c178ff9a9ea547db1151bc7052d60b136ec88518d4bf5d9a4e293dcc330a7542"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 28.88,
+                "latency_ms_median_r2": 14.72,
+                "queries": 5,
+                "peak_memory_kb": 119.1,
+                "payload_bytes": 2737,
+                "body_sha256": "c178ff9a9ea547db1151bc7052d60b136ec88518d4bf5d9a4e293dcc330a7542"
+            },
+            "body_identical": true
+        },
+        "superagent_notifications": {
+            "code_off": {
+                "latency_ms_median_r1": 142.03,
+                "latency_ms_median_r2": 248.32,
+                "queries": 5,
+                "peak_memory_kb": 2976.7,
+                "payload_bytes": 260975,
+                "body_sha256": "6dd8ca84956f6fd4f9054c8f2f6bc2280ee398d6175bdb2d0873bb09e79e7f73"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 131.26,
+                "latency_ms_median_r2": 117.46,
+                "queries": 5,
+                "peak_memory_kb": 2753.1,
+                "payload_bytes": 260975,
+                "body_sha256": "6dd8ca84956f6fd4f9054c8f2f6bc2280ee398d6175bdb2d0873bb09e79e7f73"
+            },
+            "body_identical": true
+        },
+        "superagent_agents_notifications": {
+            "code_off": {
+                "latency_ms_median_r1": 702.07,
+                "latency_ms_median_r2": 446.87,
+                "queries": 5,
+                "peak_memory_kb": 9798,
+                "payload_bytes": 928242,
+                "body_sha256": "714ea4e1f06c1e7b1d230380f748e07bdcfca9386ad9af47651ee42e36650934"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 497.74,
+                "latency_ms_median_r2": 412.36,
+                "queries": 5,
+                "peak_memory_kb": 8995.4,
+                "payload_bytes": 928242,
+                "body_sha256": "714ea4e1f06c1e7b1d230380f748e07bdcfca9386ad9af47651ee42e36650934"
+            },
+            "body_identical": true
+        },
+        "company_bookings": {
+            "code_off": {
+                "latency_ms_median_r1": 1570.42,
+                "latency_ms_median_r2": 1236.57,
+                "queries": 1102,
+                "peak_memory_kb": 3539.8,
+                "payload_bytes": 90844,
+                "body_sha256": "f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 187.03,
+                "latency_ms_median_r2": 113.88,
+                "queries": 10,
+                "peak_memory_kb": 1781.2,
+                "payload_bytes": 90844,
+                "body_sha256": "f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab"
+            },
+            "body_identical": true
+        },
+        "employee_bookings": {
+            "code_off": {
+                "latency_ms_median_r1": 878.05,
+                "latency_ms_median_r2": 749.85,
+                "queries": 676,
+                "peak_memory_kb": 2143.7,
+                "payload_bytes": 54940,
+                "body_sha256": "56c38762075651986c915f5adafbe29d7ae30d4e7ed54dcbf1d1546144580015"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 91.9,
+                "latency_ms_median_r2": 67.99,
+                "queries": 10,
+                "peak_memory_kb": 989.8,
+                "payload_bytes": 54940,
+                "body_sha256": "56c38762075651986c915f5adafbe29d7ae30d4e7ed54dcbf1d1546144580015"
+            },
+            "body_identical": true
+        },
+        "web_booking_containers_assignments": {
+            "code_off": {
+                "latency_ms_median_r1": 1820.64,
+                "latency_ms_median_r2": 1469.68,
+                "queries": 695,
+                "peak_memory_kb": 16007.6,
+                "payload_bytes": 874156,
+                "body_sha256": "960e64e7250714c794ff8f4ac583ba2d39ffb98768e9bbbf8b4ce38667346c18"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 138.79,
+                "latency_ms_median_r2": 115.73,
+                "queries": 4,
+                "peak_memory_kb": 4231.5,
+                "payload_bytes": 874156,
+                "body_sha256": "960e64e7250714c794ff8f4ac583ba2d39ffb98768e9bbbf8b4ce38667346c18"
+            },
+            "body_identical": true
+        },
+        "web_branches": {
+            "code_off": {
+                "latency_ms_median_r1": 501.13,
+                "latency_ms_median_r2": 378.21,
+                "queries": 159,
+                "peak_memory_kb": 1326.8,
+                "payload_bytes": 336735,
+                "body_sha256": "d9960161188ab7645ece21d7a0e31878d97ff38f85d32a8f45c22357ad318cf9"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 206.38,
+                "latency_ms_median_r2": 190.91,
+                "queries": 5,
+                "peak_memory_kb": 1497.6,
+                "payload_bytes": 336735,
+                "body_sha256": "d9960161188ab7645ece21d7a0e31878d97ff38f85d32a8f45c22357ad318cf9"
+            },
+            "body_identical": true
+        },
+        "web_companyTransportations": {
+            "code_off": {
+                "latency_ms_median_r1": 72.73,
+                "latency_ms_median_r2": 71.48,
+                "queries": 19,
+                "peak_memory_kb": 554,
+                "payload_bytes": 80512,
+                "body_sha256": "93ec9d3a3acfad497643b1c2efd581e8cd415f7eed9696ee772e46e9560a3451"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 76.16,
+                "latency_ms_median_r2": 56.59,
+                "queries": 9,
+                "peak_memory_kb": 542.7,
+                "payload_bytes": 80512,
+                "body_sha256": "93ec9d3a3acfad497643b1c2efd581e8cd415f7eed9696ee772e46e9560a3451"
+            },
+            "body_identical": true
+        },
+        "web_employees": {
+            "code_off": {
+                "latency_ms_median_r1": 178.12,
+                "latency_ms_median_r2": 186.34,
+                "queries": 62,
+                "peak_memory_kb": 742.6,
+                "payload_bytes": 184514,
+                "body_sha256": "5f0eb66c1e63adec3f29dc4a27b5988b55bc2c5da7c0bdf5dbee13166ce418d0"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 101.83,
+                "latency_ms_median_r2": 88.25,
+                "queries": 5,
+                "peak_memory_kb": 840.3,
+                "payload_bytes": 184514,
+                "body_sha256": "5f0eb66c1e63adec3f29dc4a27b5988b55bc2c5da7c0bdf5dbee13166ce418d0"
+            },
+            "body_identical": true
+        },
+        "web_permissions": {
+            "code_off": {
+                "latency_ms_median_r1": 56.51,
+                "latency_ms_median_r2": 47.15,
+                "queries": 4,
+                "peak_memory_kb": 487.6,
+                "payload_bytes": 66864,
+                "body_sha256": "d398e1e8f2d08ac08ac12b21bdf63af623972341bc36dd387597b2ffb0b99738"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 52,
+                "latency_ms_median_r2": 40.62,
+                "queries": 4,
+                "peak_memory_kb": 488.1,
+                "payload_bytes": 66864,
+                "body_sha256": "d398e1e8f2d08ac08ac12b21bdf63af623972341bc36dd387597b2ffb0b99738"
+            },
+            "body_identical": true
+        },
+        "web_services": {
+            "code_off": {
+                "latency_ms_median_r1": 171.15,
+                "latency_ms_median_r2": 129.42,
+                "queries": 38,
+                "peak_memory_kb": 653.4,
+                "payload_bytes": 103467,
+                "body_sha256": "ce3ba300e477cadbfcba9acbbd3da78e917a06b511e749070ee0edd6f0f134fe"
+            },
+            "code_on": {
+                "latency_ms_median_r1": 126.13,
+                "latency_ms_median_r2": 60.17,
+                "queries": 5,
+                "peak_memory_kb": 579.9,
+                "payload_bytes": 103467,
+                "body_sha256": "ce3ba300e477cadbfcba9acbbd3da78e917a06b511e749070ee0edd6f0f134fe"
+            },
+            "body_identical": true
+        }
+    }
+}

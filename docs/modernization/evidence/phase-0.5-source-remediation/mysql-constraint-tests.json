@@ -1,0 +1,161 @@
+{
+    "generated_at": "2026-10-03 20:51:51 UTC",
+    "database": "lft_constraint_tests (disposable; created from database/schema/canonical/2026_10_01_000000_canonical_baseline_schema.sql; dropped after the run)",
+    "built_from_baseline_sql_sha256": "4dbfb04a8294db61a3b91fe01b9d077267a6846fada398286a2ef0a12a25df27",
+    "structure": {
+        "tables": 64,
+        "identical_to_leader_excluding_migrations": true,
+        "counts": {
+            "tables": 64,
+            "columns": 596,
+            "primary_keys": 63,
+            "auto_increment": 59,
+            "unique_non_pk": 8,
+            "non_unique_indexes": 71,
+            "foreign_keys": 61,
+            "fk_backing_indexes": 59,
+            "historical_non_unique_indexes": 12,
+            "fk_on_delete": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            }
+        }
+    },
+    "session": "FOREIGN_KEY_CHECKS=1; sql_mode=\"\" only to let helper inserts omit irrelevant NOT NULL columns (constraint enforcement is independent of sql_mode)",
+    "tests": {
+        "PK-01 agents.id duplicate rejected": {
+            "rejected": true,
+            "mysql_errno": 1062,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1' for key 'agents.PRIMARY'",
+            "pass": true
+        },
+        "PK-02 booking_services.id duplicate rejected": {
+            "rejected": true,
+            "mysql_errno": 1062,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1' for key 'booking_services.PRIMARY'",
+            "pass": true
+        },
+        "AI-01 agents.id auto-increments": {
+            "first": 2,
+            "second": 3,
+            "pass": true
+        },
+        "AI-02 AUTO_INCREMENT continues after explicit id": {
+            "explicit": 1000,
+            "next": 1001,
+            "pass": true
+        },
+        "AI-03 agent_expenses.id auto-increments": {
+            "first": 1,
+            "second": 2,
+            "pass": true
+        },
+        "AI-04 AUTO_INCREMENT columns present (59 baseline + migrations.id created by Laravel = 60)": {
+            "count_without_migrations_table": 59,
+            "pass": true
+        },
+        "UQ-01 agent_expenses(agent_id, request_key) duplicate rejected": {
+            "rejected": true,
+            "mysql_errno": 1062,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-REQ-UNIQUE-1' for key 'agent_expenses.agent_expense_request_unique'",
+            "pass": true,
+            "names_key_agent_expense_request_unique": true
+        },
+        "UQ-02 same request_key allowed for a different agent": {
+            "pass": true
+        },
+        "UQ-03 booking_container_stages(booking_container_id, type_id) duplicate rejected": {
+            "rejected": true,
+            "mysql_errno": 1062,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'booking_container_stages.container_stage_unique'",
+            "pass": true,
+            "names_key_container_stage_unique": true
+        },
+        "NULL-01 multiple NULL request_key rows allowed for one agent": {
+            "ids": [
+                6,
+                7
+            ],
+            "pass": true
+        },
+        "FK-01 agent_expenses.agent_id -> agents rejects orphan": {
+            "rejected": true,
+            "mysql_errno": 1452,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`lft_constraint_tests`.`agent_expenses`, CONSTRAINT `fk_agent_expenses_agent_id` FOREIGN KEY (`agent_id`) REFERENCES `agents` (`id`) ON DELETE CASCADE)",
+            "pass": true
+        },
+        "FK-02 receipts.booking_id -> bookings rejects orphan": {
+            "rejected": true,
+            "mysql_errno": 1452,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`lft_constraint_tests`.`receipts`, CONSTRAINT `fk_receipts_booking_id` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL)",
+            "pass": true
+        },
+        "FK-03 receipts.supplier_id -> suppliers rejects orphan": {
+            "rejected": true,
+            "mysql_errno": 1452,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`lft_constraint_tests`.`receipts`, CONSTRAINT `fk_receipts_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL)",
+            "pass": true
+        },
+        "FK-04 supplier_payments.supplier_id -> suppliers rejects orphan": {
+            "rejected": true,
+            "mysql_errno": 1452,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`lft_constraint_tests`.`supplier_payments`, CONSTRAINT `fk_supplier_payments_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE CASCADE)",
+            "pass": true
+        },
+        "FK-05 agent_expenses.booking_service_id -> booking_services rejects orphan": {
+            "rejected": true,
+            "mysql_errno": 1452,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`lft_constraint_tests`.`agent_expenses`, CONSTRAINT `fk_agent_expenses_booking_service_id` FOREIGN KEY (`booking_service_id`) REFERENCES `booking_services` (`id`) ON DELETE CASCADE)",
+            "pass": true
+        },
+        "FK-06 booking_container_stages.booking_container_id rejects orphan": {
+            "rejected": true,
+            "mysql_errno": 1452,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`lft_constraint_tests`.`booking_container_stages`, CONSTRAINT `fk_booking_container_stages_booking_container_id` FOREIGN KEY (`booking_container_id`) REFERENCES `booking_containers` (`id`) O",
+            "pass": true
+        },
+        "FK-07 booking_papers.agent_id -> agents rejects orphan": {
+            "rejected": true,
+            "mysql_errno": 1452,
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`lft_constraint_tests`.`booking_papers`, CONSTRAINT `fk_booking_papers_agent_id` FOREIGN KEY (`agent_id`) REFERENCES `agents` (`id`) ON DELETE CASCADE)",
+            "pass": true
+        },
+        "FK-08 booking_papers.agent_id accepts a valid agent (not banks)": {
+            "id": 2,
+            "parent": "agents",
+            "pass": true
+        },
+        "CASCADE-01 delete booking_service deletes its agent_expenses": {
+            "children_before": 2,
+            "children_after": 0,
+            "pass": true
+        },
+        "CASCADE-02 delete booking_container deletes its booking_container_stages": {
+            "stages_after": 0,
+            "pass": true
+        },
+        "CONTROL-01 same delete does NOT cascade to agent_expenses (SET NULL)": {
+            "expense_exists": 1,
+            "booking_container_id": null,
+            "pass": true
+        },
+        "CASCADE-03 delete supplier deletes its supplier_payments": {
+            "payments_after": 0,
+            "pass": true
+        },
+        "SETNULL-01 delete supplier keeps receipt and nulls receipts.supplier_id": {
+            "receipt_exists": 1,
+            "supplier_id_after": null,
+            "pass": true
+        },
+        "SETNULL-02 delete booking keeps receipt and nulls receipts.booking_id": {
+            "receipt_exists": 1,
+            "booking_id_after": null,
+            "pass": true
+        }
+    },
+    "tests_total": 24,
+    "tests_passed": 24,
+    "test_database_dropped": true,
+    "pass": true
+}

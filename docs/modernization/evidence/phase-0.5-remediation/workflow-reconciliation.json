@@ -1,0 +1,104 @@
+{
+    "created_at": "2026-10-03 18:37:32",
+    "overall_workflow_match": true,
+    "workflow_metrics": {
+        "bookings_count": {
+            "source": 474,
+            "clone": 474
+        },
+        "booking_containers_count": {
+            "source": 691,
+            "clone": 691
+        },
+        "booking_container_agents_count": {
+            "source": 1578,
+            "clone": 1578
+        },
+        "booking_container_stages_count": {
+            "source": 446,
+            "clone": 446
+        },
+        "is_in_loading_distribution": {
+            "source": [
+                {
+                    "is_in_loading": 0,
+                    "c": 96
+                },
+                {
+                    "is_in_loading": 1,
+                    "c": 595
+                }
+            ],
+            "clone": [
+                {
+                    "is_in_loading": 0,
+                    "c": 96
+                },
+                {
+                    "is_in_loading": 1,
+                    "c": 595
+                }
+            ]
+        },
+        "stage_type_distribution": {
+            "source": [
+                {
+                    "stage_type": 0,
+                    "c": 494
+                },
+                {
+                    "stage_type": 1,
+                    "c": 598
+                },
+                {
+                    "stage_type": 2,
+                    "c": 486
+                }
+            ],
+            "clone": [
+                {
+                    "stage_type": 0,
+                    "c": 494
+                },
+                {
+                    "stage_type": 1,
+                    "c": 598
+                },
+                {
+                    "stage_type": 2,
+                    "c": 486
+                }
+            ]
+        },
+        "container_stages_by_type": {
+            "source": [
+                {
+                    "type_id": 0,
+                    "c": 142
+                },
+                {
+                    "type_id": 1,
+                    "c": 169
+                },
+                {
+                    "type_id": 2,
+                    "c": 135
+                }
+            ],
+            "clone": [
+                {
+                    "type_id": 0,
+                    "c": 142
+                },
+                {
+                    "type_id": 1,
+                    "c": 169
+                },
+                {
+                    "type_id": 2,
+                    "c": 135
+                }
+            ]
+        }
+    }
+}

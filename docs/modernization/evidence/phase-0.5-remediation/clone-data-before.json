@@ -1,0 +1,592 @@
+{
+    "created_at": "2026-10-03 18:19:12",
+    "database": "leader_dryrun",
+    "total_tables": 65,
+    "tables": {
+        "agent_car_tranfers": {
+            "table": "agent_car_tranfers",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "agent_expenses": {
+            "table": "agent_expenses",
+            "row_count": 447,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 452,
+            "distinct_id": 447,
+            "fingerprint": "ed1bd7704d86706a9fdcaeb1bd1298b9"
+        },
+        "agents": {
+            "table": "agents",
+            "row_count": 19,
+            "has_id": true,
+            "min_id": 2,
+            "max_id": 29,
+            "distinct_id": 19,
+            "fingerprint": "ae742af21a0f49b6d590fad54be7a1e6"
+        },
+        "app_notifications": {
+            "table": "app_notifications",
+            "row_count": 5510,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 5510,
+            "distinct_id": 5510,
+            "fingerprint": null
+        },
+        "bank_trnsactions": {
+            "table": "bank_trnsactions",
+            "row_count": 16,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 16,
+            "distinct_id": 16,
+            "fingerprint": "8da743aef4cd5624b4dcef72b40fedca"
+        },
+        "banks": {
+            "table": "banks",
+            "row_count": 11,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 11,
+            "distinct_id": 11,
+            "fingerprint": null
+        },
+        "booking_container_agents": {
+            "table": "booking_container_agents",
+            "row_count": 1578,
+            "has_id": true,
+            "min_id": 294,
+            "max_id": 2788,
+            "distinct_id": 1578,
+            "fingerprint": "749384b0d1ad1d570f4a952970c4b1bb"
+        },
+        "booking_container_stages": {
+            "table": "booking_container_stages",
+            "row_count": 446,
+            "has_id": true,
+            "min_id": 2,
+            "max_id": 451,
+            "distinct_id": 446,
+            "fingerprint": "0fad0a0b1d38750fd327a96515be9a50"
+        },
+        "booking_containers": {
+            "table": "booking_containers",
+            "row_count": 691,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 823,
+            "distinct_id": 691,
+            "fingerprint": "15d896a0d9cf84997afa11e1f5df7dd6"
+        },
+        "booking_contrainer_extra_costs": {
+            "table": "booking_contrainer_extra_costs",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "booking_movements": {
+            "table": "booking_movements",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "booking_papers": {
+            "table": "booking_papers",
+            "row_count": 788,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 891,
+            "distinct_id": 788,
+            "fingerprint": null
+        },
+        "booking_services": {
+            "table": "booking_services",
+            "row_count": 259,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 265,
+            "distinct_id": 259,
+            "fingerprint": "539cf3ce134f40012a45f85c99a7b36a"
+        },
+        "bookings": {
+            "table": "bookings",
+            "row_count": 474,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 509,
+            "distinct_id": 474,
+            "fingerprint": "7338bfd8a49f2fb72ac2b110318e5fab"
+        },
+        "branches": {
+            "table": "branches",
+            "row_count": 155,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 157,
+            "distinct_id": 155,
+            "fingerprint": null
+        },
+        "cars": {
+            "table": "cars",
+            "row_count": 167,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 179,
+            "distinct_id": 167,
+            "fingerprint": null
+        },
+        "choose_us": {
+            "table": "choose_us",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "cities_and_regions": {
+            "table": "cities_and_regions",
+            "row_count": 40,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 41,
+            "distinct_id": 40,
+            "fingerprint": null
+        },
+        "companies": {
+            "table": "companies",
+            "row_count": 43,
+            "has_id": true,
+            "min_id": 5,
+            "max_id": 49,
+            "distinct_id": 43,
+            "fingerprint": "7c6e5a231bcf9369740fd42ae4178e75"
+        },
+        "company_fatoorahs": {
+            "table": "company_fatoorahs",
+            "row_count": 2,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 2,
+            "distinct_id": 2,
+            "fingerprint": null
+        },
+        "company_invoices": {
+            "table": "company_invoices",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "company_services": {
+            "table": "company_services",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "company_transportations": {
+            "table": "company_transportations",
+            "row_count": 3,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 3,
+            "distinct_id": 3,
+            "fingerprint": null
+        },
+        "contact_us": {
+            "table": "contact_us",
+            "row_count": 5,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 5,
+            "distinct_id": 5,
+            "fingerprint": null
+        },
+        "containers": {
+            "table": "containers",
+            "row_count": 7,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 7,
+            "distinct_id": 7,
+            "fingerprint": null
+        },
+        "daily_booking_containers": {
+            "table": "daily_booking_containers",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "delivery_policies": {
+            "table": "delivery_policies",
+            "row_count": 256,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 256,
+            "distinct_id": 256,
+            "fingerprint": "3da119353a30f910cf2f28758e780920"
+        },
+        "delivery_policy_containers": {
+            "table": "delivery_policy_containers",
+            "row_count": 256,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 256,
+            "distinct_id": 256,
+            "fingerprint": null
+        },
+        "drivers": {
+            "table": "drivers",
+            "row_count": 305,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 306,
+            "distinct_id": 305,
+            "fingerprint": null
+        },
+        "employees": {
+            "table": "employees",
+            "row_count": 58,
+            "has_id": true,
+            "min_id": 5,
+            "max_id": 62,
+            "distinct_id": 58,
+            "fingerprint": null
+        },
+        "factories": {
+            "table": "factories",
+            "row_count": 150,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 153,
+            "distinct_id": 150,
+            "fingerprint": null
+        },
+        "failed_jobs": {
+            "table": "failed_jobs",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "images": {
+            "table": "images",
+            "row_count": 867,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 876,
+            "distinct_id": 867,
+            "fingerprint": null
+        },
+        "invoice_payments": {
+            "table": "invoice_payments",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "invoices": {
+            "table": "invoices",
+            "row_count": 225,
+            "has_id": true,
+            "min_id": 2,
+            "max_id": 306,
+            "distinct_id": 225,
+            "fingerprint": "d5352c36364d327fc0c0294cbf5764c1"
+        },
+        "log_activities": {
+            "table": "log_activities",
+            "row_count": 1933,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 1933,
+            "distinct_id": 1933,
+            "fingerprint": null
+        },
+        "migrations": {
+            "table": "migrations",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "model_has_permissions": {
+            "table": "model_has_permissions",
+            "row_count": 0,
+            "has_id": false,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "model_has_roles": {
+            "table": "model_has_roles",
+            "row_count": 8,
+            "has_id": false,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "money_transfers": {
+            "table": "money_transfers",
+            "row_count": 677,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 678,
+            "distinct_id": 677,
+            "fingerprint": "808e6ecb68f5abff7f8ce255cefe1807"
+        },
+        "notes": {
+            "table": "notes",
+            "row_count": 5,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 5,
+            "distinct_id": 5,
+            "fingerprint": null
+        },
+        "notifications": {
+            "table": "notifications",
+            "row_count": 1071,
+            "has_id": true,
+            "min_id": "007e94c0-c5de-4dbb-b59c-96abbadb98d4",
+            "max_id": "ff437668-bff0-4993-b41a-f011e3fe4acf",
+            "distinct_id": 1071,
+            "fingerprint": null
+        },
+        "otps": {
+            "table": "otps",
+            "row_count": 9,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 9,
+            "distinct_id": 9,
+            "fingerprint": null
+        },
+        "our_services": {
+            "table": "our_services",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "password_resets": {
+            "table": "password_resets",
+            "row_count": 0,
+            "has_id": false,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "payingcars": {
+            "table": "payingcars",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "permissions": {
+            "table": "permissions",
+            "row_count": 129,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 129,
+            "distinct_id": 129,
+            "fingerprint": null
+        },
+        "personal_access_tokens": {
+            "table": "personal_access_tokens",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "private_companies": {
+            "table": "private_companies",
+            "row_count": 4,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 4,
+            "distinct_id": 4,
+            "fingerprint": null
+        },
+        "receipts": {
+            "table": "receipts",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "reviews": {
+            "table": "reviews",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "role_has_permissions": {
+            "table": "role_has_permissions",
+            "row_count": 201,
+            "has_id": false,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "roles": {
+            "table": "roles",
+            "row_count": 2,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 2,
+            "distinct_id": 2,
+            "fingerprint": null
+        },
+        "service_categories": {
+            "table": "service_categories",
+            "row_count": 4,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 4,
+            "distinct_id": 4,
+            "fingerprint": null
+        },
+        "services": {
+            "table": "services",
+            "row_count": 34,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 35,
+            "distinct_id": 34,
+            "fingerprint": null
+        },
+        "settings": {
+            "table": "settings",
+            "row_count": 1,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 1,
+            "distinct_id": 1,
+            "fingerprint": null
+        },
+        "shipments": {
+            "table": "shipments",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "shipping_agents": {
+            "table": "shipping_agents",
+            "row_count": 18,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 19,
+            "distinct_id": 18,
+            "fingerprint": null
+        },
+        "sponsers": {
+            "table": "sponsers",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "static_pages": {
+            "table": "static_pages",
+            "row_count": 4,
+            "has_id": true,
+            "min_id": 1,
+            "max_id": 4,
+            "distinct_id": 4,
+            "fingerprint": null
+        },
+        "superagent_transactions": {
+            "table": "superagent_transactions",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "superagents": {
+            "table": "superagents",
+            "row_count": 11,
+            "has_id": true,
+            "min_id": 3,
+            "max_id": 17,
+            "distinct_id": 11,
+            "fingerprint": null
+        },
+        "supplier_payments": {
+            "table": "supplier_payments",
+            "row_count": 0,
+            "has_id": true,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        },
+        "suppliers": {
+            "table": "suppliers",
+            "row_count": 3,
+            "has_id": true,
+            "min_id": 2,
+            "max_id": 4,
+            "distinct_id": 3,
+            "fingerprint": null
+        },
+        "telescope_entries": {
+            "table": "telescope_entries",
+            "row_count": 66068,
+            "has_id": false,
+            "min_id": null,
+            "max_id": null,
+            "distinct_id": null,
+            "fingerprint": null
+        }
+    }
+}

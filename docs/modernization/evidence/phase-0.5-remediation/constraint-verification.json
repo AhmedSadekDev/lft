@@ -1,0 +1,18 @@
+{
+    "repaired_clone": {
+        "database": "leader_dryrun",
+        "primary_keys_applied": 64,
+        "auto_increment_applied": 60,
+        "unique_constraints_applied": 8,
+        "foreign_keys_applied": 61,
+        "secondary_indexes_applied": 71
+    },
+    "original_source": {
+        "database": "leader",
+        "primary_keys": 0,
+        "auto_increment": 0,
+        "foreign_keys": 0,
+        "secondary_indexes": 0,
+        "remains_100_percent_untouched": true
+    }
+}

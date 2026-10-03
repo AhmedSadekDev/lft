@@ -1,0 +1,28 @@
+{
+    "generated_at": "2026-10-03 21:38:48 UTC",
+    "a": "baseline_employee",
+    "b": "after_code",
+    "normalization": "CSRF session token replaced; 5xx bodies reduced to exception message",
+    "summary": {
+        "identical": 1,
+        "different": 0,
+        "missing": 0
+    },
+    "contracts": {
+        "employee_bookings": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                54940,
+                54940
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        }
+    }
+}

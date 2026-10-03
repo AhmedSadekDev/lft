@@ -1,0 +1,162 @@
+{
+    "generated_at": "2026-10-03 20:35:05 UTC",
+    "server_identity": {
+        "hostname": "DESKTOP-VCL5N83",
+        "port": "3306",
+        "datadir": "D:\\laragon\\data\\mysql-8.4\\",
+        "server_uuid": "367b5a66-a4d7-11f0-9b63-98e7435a9689",
+        "version": "8.4.3",
+        "log_bin": "1",
+        "binlog_format": "ROW"
+    },
+    "os_processes": [
+        {
+            "Name": "httpd.exe",
+            "ProcessId": 12148,
+            "CommandLine": "D:\\laragon\\bin\\apache\\httpd-2.4.62-240904-win64-VS17\\bin\\httpd "
+        },
+        {
+            "Name": "mysqld.exe",
+            "ProcessId": 3020,
+            "CommandLine": "D:\\laragon\\bin\\mysql\\mysql-8.4.3-winx64\\bin\\mysqld  --log-error=D:\\laragon\\data\\mysql-8.4\\mysqld.log"
+        },
+        {
+            "Name": "mysqld.exe",
+            "ProcessId": 8072,
+            "CommandLine": "D:\\laragon\\bin\\mysql\\mysql-8.4.3-winx64\\bin\\mysqld --log-error=D:\\laragon\\data\\mysql-8.4\\mysqld.log"
+        },
+        {
+            "Name": "httpd.exe",
+            "ProcessId": 17772,
+            "CommandLine": "D:\\laragon\\bin\\apache\\httpd-2.4.62-240904-win64-VS17\\bin\\httpd.exe -d D:/laragon/bin/apache/httpd-2.4.62-240904-win64-VS17"
+        },
+        {
+            "Name": "cmd.exe",
+            "ProcessId": 22760,
+            "CommandLine": "cmd /k \"\"D:\\laragon\\bin\\cmder\\vendor\\conemu-maximus5\\..\\init.bat\" \""
+        },
+        {
+            "Name": "cmd.exe",
+            "ProcessId": 16184,
+            "CommandLine": "cmd /k \"\"D:\\laragon\\bin\\cmder\\vendor\\conemu-maximus5\\..\\init.bat\" \""
+        },
+        {
+            "Name": "intelliphp.ls.exe",
+            "ProcessId": 16888,
+            "CommandLine": "\"c:\\Users\\Egy Sky\\.cursor\\extensions\\devsense.intelli-php-vscode-0.12.17700-win32-x64\\out\\server\\intelliphp.ls\""
+        },
+        {
+            "Name": "devsense.php.ls.exe",
+            "ProcessId": 16460,
+            "CommandLine": "\"c:\\Users\\Egy Sky\\.cursor\\extensions\\devsense.phptools-vscode-1.74.19252-win32-x64\\out\\server\\devsense.php.ls\" --vscode --mcp"
+        },
+        {
+            "Name": "php.exe",
+            "ProcessId": 17000,
+            "CommandLine": "\"D:\\laragon\\bin\\php\\php-8.3.26-Win32-vs16-x64\\php.exe\" -d memory_limit=4G storage\\app\\phase05_completion\\20_write_free_and_backup.php"
+        },
+        {
+            "Name": "cmd.exe",
+            "ProcessId": 13728,
+            "CommandLine": "cmd.exe /s /c \"powershell -NoProfile -Command \"Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'php|mysql|httpd|nginx|node|cmd' } | Select-Object Name,ProcessId,CommandLine | ConvertTo-Json -Compress\"\""
+        }
+    ],
+    "scheduled_tasks_referencing_php_or_artisan": [],
+    "queue_connection": "sync",
+    "write_free_before_backup": {
+        "observed_at": "2026-10-03 20:35:29 UTC",
+        "watch_seconds": 20,
+        "binlog_start": {
+            "file": "binlog.000079",
+            "position": 108756454
+        },
+        "binlog_end": {
+            "file": "binlog.000079",
+            "position": 108756454
+        },
+        "binlog_unchanged": true,
+        "global_write_counter_delta": {
+            "Com_alter_table": 0,
+            "Com_create_table": 0,
+            "Com_delete": 0,
+            "Com_drop_table": 0,
+            "Com_insert": 0,
+            "Com_replace": 0,
+            "Com_truncate": 0,
+            "Com_update": 0,
+            "Innodb_rows_deleted": 0,
+            "Innodb_rows_inserted": 0,
+            "Innodb_rows_updated": 0
+        },
+        "processlist_excluding_self": [
+            {
+                "ID": "5",
+                "USER": "event_scheduler",
+                "HOST": "localhost",
+                "DB": null,
+                "COMMAND": "Daemon",
+                "TIME": "19727",
+                "STATE": "Waiting on empty queue",
+                "INFO": null
+            }
+        ],
+        "innodb_trx": [],
+        "metadata_locks_leader": [],
+        "pass": true
+    },
+    "backup": {
+        "path": "storage/app/backups/leader_pre_targeted_correction_20261003_203529.sql",
+        "size_bytes": 56615956,
+        "md5": "c4601e5e4d83bced03e9f772401137ae",
+        "sha256": "d7b00ace64d158d034c60ba5994acc7051b50397e7e41d51c098fa7d3b775ffd",
+        "mysqldump_exit": 0,
+        "mysqldump_stderr": "",
+        "mysqldump_seconds": 5.74,
+        "command": "mysqldump --single-transaction --routines --triggers --events --hex-blob --default-character-set=utf8mb4 --set-gtid-purged=OFF --no-tablespaces --result-file=<path> leader  (database passed positionally, NOT --databases => no CREATE DATABASE / USE emitted)",
+        "content_scan": {
+            "use_statements": [],
+            "create_database": [],
+            "qualified_leader_refs": 0,
+            "create_table_count": 65,
+            "insert_lines": 95,
+            "lines": 2233,
+            "can_select_database": false
+        },
+        "dump_completed_ok": true
+    },
+    "restore": {
+        "target": "leader_restore_verify",
+        "effective_target_probe": "leader_restore_verify",
+        "dump_can_select_database": false,
+        "exit": 0,
+        "stderr": "",
+        "seconds": 124.76,
+        "binlog_range": [
+            {
+                "file": "binlog.000079",
+                "position": 108756987
+            },
+            {
+                "file": "binlog.000079",
+                "position": 158387445
+            }
+        ],
+        "binlog_proof": {
+            "decoded_events_file": "storage/app/phase05_completion/restore_window_binlog.txt",
+            "same_binlog_file": true,
+            "table_map_events_leader": 0,
+            "table_map_events_leader_restore_verify": 95,
+            "use_leader_statements": 0
+        },
+        "leader_schema_unchanged": true,
+        "schema_identical_to_leader": true,
+        "data_identical_to_leader": {
+            "tables_identical": 65,
+            "different": []
+        },
+        "pass": true
+    },
+    "pass": true,
+    "authoritative_backup_modified": false,
+    "note": "The authoritative dump was never edited. No transformation was needed because the dump contains no database selection; the restore was executed with --database=leader_restore_verify."
+}

@@ -9,7 +9,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_car_tranfers",
@@ -21,7 +21,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_car_tranfers",
@@ -33,7 +33,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_car_tranfers",
@@ -45,7 +45,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_car_tranfers",
@@ -57,7 +57,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agent_car_tranfers",
@@ -69,7 +69,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agent_car_tranfers",
@@ -81,7 +81,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_car_tranfers",
@@ -93,7 +93,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_car_tranfers",
@@ -105,7 +105,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -117,7 +117,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -129,7 +129,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -141,7 +141,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "1 => general; 2 => reservation"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -153,7 +153,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -165,7 +165,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -177,7 +177,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -189,7 +189,7 @@
         "COLUMN_TYPE": "double",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -201,7 +201,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -213,7 +213,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -225,7 +225,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -237,7 +237,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -249,7 +249,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -261,7 +261,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -273,7 +273,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -285,7 +285,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -297,7 +297,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -309,7 +309,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -321,7 +321,7 @@
         "COLUMN_TYPE": "int unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -333,7 +333,7 @@
         "COLUMN_TYPE": "varchar(80)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agent_expenses",
@@ -345,7 +345,7 @@
         "COLUMN_TYPE": "varchar(64)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -357,7 +357,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agents",
@@ -369,7 +369,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -381,7 +381,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -393,7 +393,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -405,7 +405,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -417,7 +417,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -429,7 +429,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agents",
@@ -441,7 +441,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "agents",
@@ -453,7 +453,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -465,7 +465,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -477,7 +477,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "agents",
@@ -489,7 +489,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -501,7 +501,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -513,7 +513,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -525,7 +525,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -537,7 +537,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -549,7 +549,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -561,7 +561,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -573,7 +573,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -585,7 +585,7 @@
         "COLUMN_TYPE": "tinyint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "0: specification, 1: loading, 2: unloading"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -597,7 +597,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -609,7 +609,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "app_notifications",
@@ -621,7 +621,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -633,7 +633,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -645,7 +645,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -657,7 +657,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -669,7 +669,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -681,7 +681,7 @@
         "COLUMN_TYPE": "int",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "0 => Debit, 1 => Credit"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -693,7 +693,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -705,7 +705,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -717,7 +717,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -729,7 +729,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -741,7 +741,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -753,7 +753,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bank_trnsactions",
@@ -765,7 +765,7 @@
         "COLUMN_TYPE": "date",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "banks",
@@ -777,7 +777,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "banks",
@@ -789,7 +789,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "banks",
@@ -801,7 +801,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "banks",
@@ -813,7 +813,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "banks",
@@ -825,7 +825,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -837,7 +837,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -849,7 +849,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -861,7 +861,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -873,7 +873,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "0 => specification,1 => loading, 2 => unloading ,3 => finished"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -885,7 +885,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -897,7 +897,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -909,7 +909,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -921,7 +921,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -933,7 +933,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -945,7 +945,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -957,7 +957,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -969,7 +969,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -981,7 +981,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -993,7 +993,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -1005,7 +1005,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -1017,7 +1017,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -1029,7 +1029,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_agents",
@@ -1041,7 +1041,7 @@
         "COLUMN_TYPE": "tinyint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_stages",
@@ -1053,7 +1053,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_stages",
@@ -1065,7 +1065,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_stages",
@@ -1077,7 +1077,7 @@
         "COLUMN_TYPE": "tinyint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_stages",
@@ -1089,7 +1089,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_stages",
@@ -1101,7 +1101,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_stages",
@@ -1113,7 +1113,7 @@
         "COLUMN_TYPE": "int unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_stages",
@@ -1125,7 +1125,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_container_stages",
@@ -1137,7 +1137,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1149,7 +1149,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1161,7 +1161,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1173,7 +1173,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1185,7 +1185,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1197,7 +1197,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1209,7 +1209,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1221,7 +1221,7 @@
         "COLUMN_TYPE": "date",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1233,7 +1233,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "DEFAULT_GENERATED",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1245,7 +1245,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1257,7 +1257,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "0 => specification,1 => loading, 2 => unloading ,3 => finished"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1269,7 +1269,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1281,7 +1281,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1293,7 +1293,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1305,7 +1305,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1317,7 +1317,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1329,7 +1329,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1341,7 +1341,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1353,7 +1353,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1365,7 +1365,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1377,7 +1377,7 @@
         "COLUMN_TYPE": "int unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1389,7 +1389,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1401,7 +1401,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1413,7 +1413,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1425,7 +1425,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1437,7 +1437,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1449,7 +1449,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1461,7 +1461,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1473,7 +1473,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1485,7 +1485,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1497,7 +1497,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_containers",
@@ -1509,7 +1509,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1521,7 +1521,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1533,7 +1533,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1545,7 +1545,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1557,7 +1557,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1569,7 +1569,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1581,7 +1581,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1593,7 +1593,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1605,7 +1605,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_contrainer_extra_costs",
@@ -1617,7 +1617,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1629,7 +1629,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1641,7 +1641,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1653,7 +1653,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1665,7 +1665,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1677,7 +1677,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1689,7 +1689,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1701,7 +1701,7 @@
         "COLUMN_TYPE": "date",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1713,7 +1713,7 @@
         "COLUMN_TYPE": "time",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1725,7 +1725,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_movements",
@@ -1737,7 +1737,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_papers",
@@ -1749,7 +1749,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_papers",
@@ -1761,7 +1761,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_papers",
@@ -1773,7 +1773,7 @@
         "COLUMN_TYPE": "tinyint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "0 => specification,1 => loading, 2 => unloading"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_papers",
@@ -1785,7 +1785,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_papers",
@@ -1797,7 +1797,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_papers",
@@ -1809,7 +1809,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_papers",
@@ -1821,7 +1821,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1833,7 +1833,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1845,7 +1845,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1857,7 +1857,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1869,7 +1869,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1881,7 +1881,7 @@
         "COLUMN_TYPE": "double unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1893,7 +1893,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1905,7 +1905,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1917,7 +1917,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "vault, bank, agent"
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1929,7 +1929,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1941,7 +1941,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1953,7 +1953,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1965,7 +1965,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1977,7 +1977,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -1989,7 +1989,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -2001,7 +2001,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -2013,7 +2013,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "booking_services",
@@ -2025,7 +2025,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2037,7 +2037,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2049,7 +2049,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2061,7 +2061,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2073,7 +2073,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2085,7 +2085,7 @@
         "COLUMN_TYPE": "bigint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2097,7 +2097,7 @@
         "COLUMN_TYPE": "bigint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2109,7 +2109,7 @@
         "COLUMN_TYPE": "bigint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2121,7 +2121,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2133,7 +2133,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2145,7 +2145,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2157,7 +2157,7 @@
         "COLUMN_TYPE": "date",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2169,7 +2169,7 @@
         "COLUMN_TYPE": "date",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2181,7 +2181,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2193,7 +2193,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2205,7 +2205,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2217,7 +2217,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2229,7 +2229,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2241,7 +2241,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2253,7 +2253,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2265,7 +2265,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2277,7 +2277,7 @@
         "COLUMN_TYPE": "int",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2289,7 +2289,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2301,7 +2301,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2313,7 +2313,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2325,7 +2325,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "bookings",
@@ -2337,7 +2337,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "bookings",
@@ -2349,7 +2349,7 @@
         "COLUMN_TYPE": "int",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "branches",
@@ -2361,7 +2361,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "branches",
@@ -2373,7 +2373,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "branches",
@@ -2385,7 +2385,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "branches",
@@ -2397,7 +2397,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "branches",
@@ -2409,7 +2409,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "branches",
@@ -2421,7 +2421,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "branches",
@@ -2433,7 +2433,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "branches",
@@ -2445,7 +2445,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "branches",
@@ -2457,7 +2457,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "branches",
@@ -2469,7 +2469,7 @@
         "COLUMN_TYPE": "bigint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "branches",
@@ -2481,7 +2481,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "branches",
@@ -2493,7 +2493,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "cars",
@@ -2505,7 +2505,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "cars",
@@ -2517,7 +2517,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "cars",
@@ -2529,7 +2529,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "cars",
@@ -2541,7 +2541,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "cars",
@@ -2553,7 +2553,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "choose_us",
@@ -2565,7 +2565,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "choose_us",
@@ -2577,7 +2577,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "choose_us",
@@ -2589,7 +2589,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "choose_us",
@@ -2601,7 +2601,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "choose_us",
@@ -2613,7 +2613,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "choose_us",
@@ -2625,7 +2625,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "cities_and_regions",
@@ -2637,7 +2637,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "cities_and_regions",
@@ -2649,7 +2649,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "cities_and_regions",
@@ -2661,7 +2661,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "cities_and_regions",
@@ -2673,7 +2673,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "companies",
@@ -2685,7 +2685,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "companies",
@@ -2697,7 +2697,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2709,7 +2709,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2721,7 +2721,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2733,7 +2733,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2745,7 +2745,7 @@
         "COLUMN_TYPE": "bigint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "companies",
@@ -2757,7 +2757,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "companies",
@@ -2769,7 +2769,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "0 => No Taxed, 1 => Taxed"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "companies",
@@ -2781,7 +2781,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "companies",
@@ -2793,7 +2793,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2805,7 +2805,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2817,7 +2817,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2829,7 +2829,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "companies",
@@ -2841,7 +2841,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "companies",
@@ -2853,7 +2853,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2865,7 +2865,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "companies",
@@ -2877,7 +2877,7 @@
         "COLUMN_TYPE": "double(15,2)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2889,7 +2889,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2901,7 +2901,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2913,7 +2913,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2925,7 +2925,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2937,7 +2937,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2949,7 +2949,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2961,7 +2961,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2973,7 +2973,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2985,7 +2985,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -2997,7 +2997,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -3009,7 +3009,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -3021,7 +3021,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_fatoorahs",
@@ -3033,7 +3033,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_invoices",
@@ -3045,7 +3045,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_invoices",
@@ -3057,7 +3057,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_invoices",
@@ -3069,7 +3069,7 @@
         "COLUMN_TYPE": "double(8,2)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_invoices",
@@ -3081,7 +3081,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_invoices",
@@ -3093,7 +3093,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_invoices",
@@ -3105,7 +3105,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_invoices",
@@ -3117,7 +3117,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_invoices",
@@ -3129,7 +3129,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_services",
@@ -3141,7 +3141,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_services",
@@ -3153,7 +3153,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_services",
@@ -3165,7 +3165,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_services",
@@ -3177,7 +3177,7 @@
         "COLUMN_TYPE": "double unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_services",
@@ -3189,7 +3189,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_services",
@@ -3201,7 +3201,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3213,7 +3213,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3225,7 +3225,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3237,7 +3237,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3249,7 +3249,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3261,7 +3261,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3273,7 +3273,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3285,7 +3285,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3297,7 +3297,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3309,7 +3309,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3321,7 +3321,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3333,7 +3333,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3345,7 +3345,7 @@
         "COLUMN_TYPE": "int unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3357,7 +3357,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "company_transportations",
@@ -3369,7 +3369,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "contact_us",
@@ -3381,7 +3381,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "contact_us",
@@ -3393,7 +3393,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "contact_us",
@@ -3405,7 +3405,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "contact_us",
@@ -3417,7 +3417,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "contact_us",
@@ -3429,7 +3429,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "containers",
@@ -3441,7 +3441,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "containers",
@@ -3453,7 +3453,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "containers",
@@ -3465,7 +3465,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "containers",
@@ -3477,7 +3477,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "containers",
@@ -3489,7 +3489,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3501,7 +3501,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3513,7 +3513,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3525,7 +3525,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3537,7 +3537,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "0 => specification,1 => loading, 2 => unloading ,3 => finished"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3549,7 +3549,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3561,7 +3561,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3573,7 +3573,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3585,7 +3585,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3597,7 +3597,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3609,7 +3609,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "daily_booking_containers",
@@ -3621,7 +3621,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3633,7 +3633,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3645,7 +3645,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3657,7 +3657,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3669,7 +3669,7 @@
         "COLUMN_TYPE": "tinyint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3681,7 +3681,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3693,7 +3693,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3705,7 +3705,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3717,7 +3717,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3729,7 +3729,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "delivery_policies",
@@ -3741,7 +3741,7 @@
         "COLUMN_TYPE": "int",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policy_containers",
@@ -3753,7 +3753,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policy_containers",
@@ -3765,7 +3765,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policy_containers",
@@ -3777,7 +3777,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policy_containers",
@@ -3789,7 +3789,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "delivery_policy_containers",
@@ -3801,7 +3801,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "drivers",
@@ -3813,7 +3813,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "drivers",
@@ -3825,7 +3825,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "drivers",
@@ -3837,7 +3837,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "drivers",
@@ -3849,7 +3849,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "drivers",
@@ -3861,7 +3861,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "employees",
@@ -3873,7 +3873,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "employees",
@@ -3885,7 +3885,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "employees",
@@ -3897,7 +3897,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "employees",
@@ -3909,7 +3909,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "employees",
@@ -3921,7 +3921,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "employees",
@@ -3933,7 +3933,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "employees",
@@ -3945,7 +3945,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "employees",
@@ -3957,7 +3957,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "employees",
@@ -3969,7 +3969,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "employees",
@@ -3981,7 +3981,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "employees",
@@ -3993,7 +3993,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "factories",
@@ -4005,7 +4005,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "factories",
@@ -4017,7 +4017,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "factories",
@@ -4029,7 +4029,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "factories",
@@ -4041,7 +4041,7 @@
         "COLUMN_TYPE": "bigint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "factories",
@@ -4053,7 +4053,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "factories",
@@ -4065,7 +4065,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "factories",
@@ -4077,7 +4077,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "failed_jobs",
@@ -4089,7 +4089,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "failed_jobs",
@@ -4101,7 +4101,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "failed_jobs",
@@ -4113,7 +4113,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "failed_jobs",
@@ -4125,7 +4125,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "failed_jobs",
@@ -4137,7 +4137,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "failed_jobs",
@@ -4149,7 +4149,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "failed_jobs",
@@ -4161,7 +4161,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "DEFAULT_GENERATED",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "images",
@@ -4173,7 +4173,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "images",
@@ -4185,7 +4185,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "images",
@@ -4197,7 +4197,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "images",
@@ -4209,7 +4209,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "images",
@@ -4221,7 +4221,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "images",
@@ -4233,7 +4233,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4245,7 +4245,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4257,7 +4257,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4269,7 +4269,7 @@
         "COLUMN_TYPE": "enum('bank_transfer','check')",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4281,7 +4281,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4293,7 +4293,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4305,7 +4305,7 @@
         "COLUMN_TYPE": "date",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4317,7 +4317,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4329,7 +4329,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4341,7 +4341,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4353,7 +4353,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4365,7 +4365,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4377,7 +4377,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4389,7 +4389,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4401,7 +4401,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4413,7 +4413,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoice_payments",
@@ -4425,7 +4425,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4437,7 +4437,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4449,7 +4449,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "invoices",
@@ -4461,7 +4461,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4473,7 +4473,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4485,7 +4485,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4497,7 +4497,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4509,7 +4509,7 @@
         "COLUMN_TYPE": "double(8,2)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4521,7 +4521,7 @@
         "COLUMN_TYPE": "double(8,2) unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4533,7 +4533,7 @@
         "COLUMN_TYPE": "double(8,2) unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4545,7 +4545,7 @@
         "COLUMN_TYPE": "double(8,2) unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4557,7 +4557,7 @@
         "COLUMN_TYPE": "double(8,2) unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4569,7 +4569,7 @@
         "COLUMN_TYPE": "double(8,2) unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4581,7 +4581,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4593,7 +4593,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "invoices",
@@ -4605,7 +4605,7 @@
         "COLUMN_TYPE": "json",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "log_activities",
@@ -4617,7 +4617,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "log_activities",
@@ -4629,7 +4629,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "log_activities",
@@ -4641,7 +4641,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "log_activities",
@@ -4653,7 +4653,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "log_activities",
@@ -4665,7 +4665,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "log_activities",
@@ -4677,7 +4677,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "log_activities",
@@ -4689,7 +4689,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "log_activities",
@@ -4701,7 +4701,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "migrations",
@@ -4713,7 +4713,7 @@
         "COLUMN_TYPE": "int unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "migrations",
@@ -4725,7 +4725,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "migrations",
@@ -4737,7 +4737,7 @@
         "COLUMN_TYPE": "int",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "model_has_permissions",
@@ -4749,7 +4749,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "model_has_permissions",
@@ -4761,7 +4761,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "model_has_permissions",
@@ -4773,7 +4773,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "model_has_roles",
@@ -4785,7 +4785,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "model_has_roles",
@@ -4797,7 +4797,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "model_has_roles",
@@ -4809,7 +4809,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4821,7 +4821,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4833,7 +4833,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4845,7 +4845,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4857,7 +4857,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4869,7 +4869,7 @@
         "COLUMN_TYPE": "tinyint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "1 => from dashboard; 2 => Transfer to a agent"
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4881,7 +4881,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4893,7 +4893,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4905,7 +4905,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4917,7 +4917,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4929,7 +4929,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4941,7 +4941,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4953,7 +4953,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4965,7 +4965,7 @@
         "COLUMN_TYPE": "varchar(256)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "money_transfers",
@@ -4977,7 +4977,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "notes",
@@ -4989,7 +4989,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "notes",
@@ -5001,7 +5001,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "notes",
@@ -5013,7 +5013,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "notes",
@@ -5025,7 +5025,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "notes",
@@ -5037,7 +5037,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "notes",
@@ -5049,7 +5049,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "notes",
@@ -5061,7 +5061,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "notes",
@@ -5073,7 +5073,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "notifications",
@@ -5085,7 +5085,7 @@
         "COLUMN_TYPE": "char(36)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "notifications",
@@ -5097,7 +5097,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "notifications",
@@ -5109,7 +5109,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "notifications",
@@ -5121,7 +5121,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "notifications",
@@ -5133,7 +5133,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "notifications",
@@ -5145,7 +5145,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "notifications",
@@ -5157,7 +5157,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "notifications",
@@ -5169,7 +5169,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5181,7 +5181,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5193,7 +5193,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5205,7 +5205,7 @@
         "COLUMN_TYPE": "bigint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5217,7 +5217,7 @@
         "COLUMN_TYPE": "bigint",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5229,7 +5229,7 @@
         "COLUMN_TYPE": "datetime",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5241,7 +5241,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5253,7 +5253,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5265,7 +5265,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "otps",
@@ -5277,7 +5277,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "our_services",
@@ -5289,7 +5289,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "our_services",
@@ -5301,7 +5301,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "our_services",
@@ -5313,7 +5313,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "our_services",
@@ -5325,7 +5325,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "our_services",
@@ -5337,7 +5337,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "our_services",
@@ -5349,7 +5349,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "password_resets",
@@ -5361,7 +5361,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "password_resets",
@@ -5373,7 +5373,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "password_resets",
@@ -5385,7 +5385,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5397,7 +5397,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5409,7 +5409,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5421,7 +5421,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5433,7 +5433,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5445,7 +5445,7 @@
         "COLUMN_TYPE": "char(36)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5457,7 +5457,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5469,7 +5469,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5481,7 +5481,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "payingcars",
@@ -5493,7 +5493,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "permissions",
@@ -5505,7 +5505,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "permissions",
@@ -5517,7 +5517,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "permissions",
@@ -5529,7 +5529,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "permissions",
@@ -5541,7 +5541,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "permissions",
@@ -5553,7 +5553,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5565,7 +5565,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5577,7 +5577,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5589,7 +5589,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5601,7 +5601,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5613,7 +5613,7 @@
         "COLUMN_TYPE": "varchar(64)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5625,7 +5625,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5637,7 +5637,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5649,7 +5649,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5661,7 +5661,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "personal_access_tokens",
@@ -5673,7 +5673,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5685,7 +5685,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5697,7 +5697,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5709,7 +5709,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5721,7 +5721,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5733,7 +5733,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5745,7 +5745,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5757,7 +5757,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5769,7 +5769,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5781,7 +5781,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5793,7 +5793,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5805,7 +5805,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "private_companies",
@@ -5817,7 +5817,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "receipts",
@@ -5829,7 +5829,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "receipts",
@@ -5841,7 +5841,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "receipts",
@@ -5853,7 +5853,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "receipts",
@@ -5865,7 +5865,7 @@
         "COLUMN_TYPE": "decimal(15,2)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "receipts",
@@ -5877,7 +5877,7 @@
         "COLUMN_TYPE": "enum('safe','representative','supplier')",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "receipts",
@@ -5889,7 +5889,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "receipts",
@@ -5901,7 +5901,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "receipts",
@@ -5913,7 +5913,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "receipts",
@@ -5925,7 +5925,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "receipts",
@@ -5937,7 +5937,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "reviews",
@@ -5949,7 +5949,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "reviews",
@@ -5961,7 +5961,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "reviews",
@@ -5973,7 +5973,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "reviews",
@@ -5985,7 +5985,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "reviews",
@@ -5997,7 +5997,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "reviews",
@@ -6009,7 +6009,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "role_has_permissions",
@@ -6021,7 +6021,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "role_has_permissions",
@@ -6033,7 +6033,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "roles",
@@ -6045,7 +6045,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "roles",
@@ -6057,7 +6057,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "roles",
@@ -6069,7 +6069,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "roles",
@@ -6081,7 +6081,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "roles",
@@ -6093,7 +6093,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "service_categories",
@@ -6105,7 +6105,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "service_categories",
@@ -6117,7 +6117,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "service_categories",
@@ -6129,7 +6129,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "service_categories",
@@ -6141,7 +6141,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "service_categories",
@@ -6153,7 +6153,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "service_categories",
@@ -6165,7 +6165,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": "0 => taxed, 1 => untaxed, 2 => not_added_to_invoice"
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "service_categories",
@@ -6177,7 +6177,7 @@
         "COLUMN_TYPE": "varchar(20)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "services",
@@ -6189,7 +6189,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "services",
@@ -6201,7 +6201,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "services",
@@ -6213,7 +6213,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "services",
@@ -6225,7 +6225,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "services",
@@ -6237,7 +6237,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "settings",
@@ -6249,7 +6249,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "settings",
@@ -6261,7 +6261,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "settings",
@@ -6273,7 +6273,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "settings",
@@ -6285,7 +6285,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "settings",
@@ -6297,7 +6297,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "settings",
@@ -6309,7 +6309,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "settings",
@@ -6321,7 +6321,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "settings",
@@ -6333,7 +6333,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "settings",
@@ -6345,7 +6345,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "settings",
@@ -6357,7 +6357,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "settings",
@@ -6369,7 +6369,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipments",
@@ -6381,7 +6381,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipments",
@@ -6393,7 +6393,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "shipments",
@@ -6405,7 +6405,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "shipments",
@@ -6417,7 +6417,7 @@
         "COLUMN_TYPE": "date",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipments",
@@ -6429,7 +6429,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "shipments",
@@ -6441,7 +6441,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipments",
@@ -6453,7 +6453,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipments",
@@ -6465,7 +6465,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipments",
@@ -6477,7 +6477,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipments",
@@ -6489,7 +6489,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "shipments",
@@ -6501,7 +6501,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipping_agents",
@@ -6513,7 +6513,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipping_agents",
@@ -6525,7 +6525,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "shipping_agents",
@@ -6537,7 +6537,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "shipping_agents",
@@ -6549,7 +6549,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "shipping_agents",
@@ -6561,7 +6561,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "shipping_agents",
@@ -6573,7 +6573,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "sponsers",
@@ -6585,7 +6585,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "sponsers",
@@ -6597,7 +6597,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "sponsers",
@@ -6609,7 +6609,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "sponsers",
@@ -6621,7 +6621,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "sponsers",
@@ -6633,7 +6633,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "sponsers",
@@ -6645,7 +6645,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "static_pages",
@@ -6657,7 +6657,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "static_pages",
@@ -6669,7 +6669,7 @@
         "COLUMN_TYPE": "varchar(100)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "static_pages",
@@ -6681,7 +6681,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "static_pages",
@@ -6693,7 +6693,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "static_pages",
@@ -6705,7 +6705,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "static_pages",
@@ -6717,7 +6717,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "static_pages",
@@ -6729,7 +6729,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "superagent_transactions",
@@ -6741,7 +6741,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "superagent_transactions",
@@ -6753,7 +6753,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagent_transactions",
@@ -6765,7 +6765,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagent_transactions",
@@ -6777,7 +6777,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagent_transactions",
@@ -6789,7 +6789,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "superagent_transactions",
@@ -6801,7 +6801,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "superagent_transactions",
@@ -6813,7 +6813,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "superagents",
@@ -6825,7 +6825,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "superagents",
@@ -6837,7 +6837,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagents",
@@ -6849,7 +6849,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagents",
@@ -6861,7 +6861,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagents",
@@ -6873,7 +6873,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagents",
@@ -6885,7 +6885,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagents",
@@ -6897,7 +6897,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "superagents",
@@ -6909,7 +6909,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "superagents",
@@ -6921,7 +6921,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "superagents",
@@ -6933,7 +6933,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "supplier_payments",
@@ -6945,7 +6945,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "supplier_payments",
@@ -6957,7 +6957,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "supplier_payments",
@@ -6969,7 +6969,7 @@
         "COLUMN_TYPE": "decimal(15,2)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "supplier_payments",
@@ -6981,7 +6981,7 @@
         "COLUMN_TYPE": "enum('safe','representative')",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "supplier_payments",
@@ -6993,7 +6993,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "supplier_payments",
@@ -7005,7 +7005,7 @@
         "COLUMN_TYPE": "text",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "supplier_payments",
@@ -7017,7 +7017,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "supplier_payments",
@@ -7029,7 +7029,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "suppliers",
@@ -7041,7 +7041,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "suppliers",
@@ -7053,7 +7053,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "suppliers",
@@ -7065,7 +7065,7 @@
         "COLUMN_TYPE": "decimal(15,2)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "suppliers",
@@ -7077,7 +7077,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "suppliers",
@@ -7089,7 +7089,7 @@
         "COLUMN_TYPE": "timestamp",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "telescope_entries",
@@ -7101,7 +7101,7 @@
         "COLUMN_TYPE": "bigint unsigned",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "telescope_entries",
@@ -7113,7 +7113,7 @@
         "COLUMN_TYPE": "char(36)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "telescope_entries",
@@ -7125,7 +7125,7 @@
         "COLUMN_TYPE": "char(36)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "telescope_entries",
@@ -7137,7 +7137,7 @@
         "COLUMN_TYPE": "varchar(255)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "telescope_entries",
@@ -7149,7 +7149,7 @@
         "COLUMN_TYPE": "tinyint(1)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     },
     {
         "TABLE_NAME": "telescope_entries",
@@ -7161,7 +7161,7 @@
         "COLUMN_TYPE": "varchar(20)",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "telescope_entries",
@@ -7173,7 +7173,7 @@
         "COLUMN_TYPE": "longtext",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": "utf8mb4_unicode_ci"
     },
     {
         "TABLE_NAME": "telescope_entries",
@@ -7185,6 +7185,6 @@
         "COLUMN_TYPE": "datetime",
         "COLUMN_KEY": "",
         "EXTRA": "",
-        "COLUMN_COMMENT": ""
+        "COLLATION_NAME": null
     }
 ]

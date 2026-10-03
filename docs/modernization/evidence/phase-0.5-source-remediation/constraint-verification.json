@@ -1,0 +1,129 @@
+{
+    "generated_at": "2026-10-03 20:41:09 UTC",
+    "checks": {
+        "tables": {
+            "expected": 65,
+            "actual": 65,
+            "pass": true
+        },
+        "primary_keys": {
+            "expected": 64,
+            "actual": 64,
+            "pass": true
+        },
+        "auto_increment": {
+            "expected": 60,
+            "actual": 60,
+            "pass": true
+        },
+        "unique_non_pk": {
+            "expected": 8,
+            "actual": 8,
+            "pass": true
+        },
+        "historical_non_unique_indexes": {
+            "expected": 12,
+            "actual": 12,
+            "pass": true
+        },
+        "foreign_keys": {
+            "expected": 61,
+            "actual": 61,
+            "pass": true
+        },
+        "fk_on_delete": {
+            "expected": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            },
+            "actual": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            },
+            "pass": true
+        },
+        "booking_papers.agent_id -> agents.id": {
+            "actual": [
+                {
+                    "name": "fk_booking_papers_agent_id",
+                    "child": "booking_papers(agent_id)",
+                    "parent": "agents(id)",
+                    "on_delete": "CASCADE",
+                    "on_update": "NO ACTION",
+                    "equals_canonical_full_definition": true
+                }
+            ],
+            "pass": true
+        },
+        "no FK to banks from booking_papers.agent_id": {
+            "pass": true
+        },
+        "migrations_rows": {
+            "expected": [],
+            "actual": [],
+            "pass": true
+        },
+        "yards": {
+            "table_exists": false,
+            "status": "PRE-EXISTING FUNCTIONAL DEFECT (not repaired in Phase 0.5)",
+            "pass": true
+        },
+        "reviewed_fk fk_receipts_booking_id": {
+            "expected": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "actual": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "reviewed_fk fk_receipts_supplier_id": {
+            "expected": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "actual": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "reviewed_fk fk_supplier_payments_supplier_id": {
+            "expected": "supplier_payments(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "actual": "supplier_payments(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "reviewed_fk fk_agent_expenses_booking_service_id": {
+            "expected": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "actual": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "reviewed_fk fk_booking_container_stages_booking_container_id": {
+            "expected": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "actual": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "unique agent_expense_request_unique": {
+            "expected_columns": [
+                "agent_id",
+                "request_key"
+            ],
+            "actual": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ]
+            },
+            "pass": true
+        },
+        "unique container_stage_unique": {
+            "expected_columns": [
+                "booking_container_id",
+                "type_id"
+            ],
+            "actual": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ]
+            },
+            "pass": true
+        }
+    },
+    "all_pass": true,
+    "classification_note": "historical_non_unique_indexes = non-unique indexes minus InnoDB FK-backing indexes (index name equals FK constraint name)"
+}

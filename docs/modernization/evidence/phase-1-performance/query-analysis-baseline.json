@@ -1,0 +1,4172 @@
+{
+    "agent_specification_assignments": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.43,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `agents`.`id` = 25 and (`booking_container_agents`.`stage_type` = 0 or (`booking_container_agents`.`stage_type` is null and CASE WHEN COALESCE(booking_containe",
+                "query_cost": "202.48",
+                "scans": [],
+                "filesort": true,
+                "temporary": true,
+                "error": null
+            }
+        ]
+    },
+    "agent_unloading_assignments": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.54,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `agents`.`id` = 25 and (`booking_container_agents`.`stage_type` = 2 or (`booking_container_agents`.`stage_type` is null and CASE WHEN COALESCE(booking_containe",
+                "query_cost": "84.27",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`booking_containers`.`superagent_loading_approved` = 1) and (`leader`.`booking_containers`.`superagent_unloading_approved` = 0))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "agent_home_statistics": {
+        "total_queries": 9,
+        "distinct_shapes": 8,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.64,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `agents`.`id` = 25 and (`booking_container_agents`.`stage_type` = 0 or (`booking_container_agents`.`stage_type` is null and CASE WHEN COALE",
+                "query_cost": "177.35",
+                "scans": [],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `agents`.`id` = 25 and (`booking_container_agents`.`stage_type` = 0 or (`booking_container_agents`.`stage_type` is null and CASE WHEN COALE",
+                "query_cost": "115.00",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "3.33",
+                        "condition": "((`leader`.`booking_containers`.`superagent_specification_approved` = 0) and (`leader`.`booking_containers`.`status` >= 1))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `agents`.`id` = 25 and (`booking_container_agents`.`stage_type` = 1 or (`booking_container_agents`.`stage_type` is null and CASE WHEN COALE",
+                "query_cost": "73.01",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "0.14",
+                        "condition": "((`leader`.`booking_containers`.`is_in_loading` = 1) and (`leader`.`booking_containers`.`superagent_specification_approved` = 1) and (`leader`.`booking_containers`.`superagent_loading_approved` = 0))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `agents`.`id` = 25 and (`booking_container_agents`.`stage_type` = 1 or (`booking_container_agents`.`stage_type` is null and CASE WHEN COALE",
+                "query_cost": "73.01",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "0.14",
+                        "condition": "((`leader`.`booking_containers`.`is_in_loading` = 1) and (`leader`.`booking_containers`.`superagent_specification_approved` = 1) and (`leader`.`booking_containers`.`superagent_loading_approved` = 0) and (`leader`.`booking_containers`.`status` >= 2))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `agents`.`id` = 25 and (`booking_container_agents`.`stage_type` = 2 or (`booking_container_agents`.`stage_type` is null and CASE WHEN COALE",
+                "query_cost": "84.27",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`booking_containers`.`superagent_loading_approved` = 1) and (`leader`.`booking_containers`.`superagent_unloading_approved` = 0))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `agents`.`id` = 25 and (`booking_container_agents`.`stage_type` = 2 or (`booking_container_agents`.`stage_type` is null and CASE WHEN COALE",
+                "query_cost": "75.49",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "0.33",
+                        "condition": "((`leader`.`booking_containers`.`superagent_loading_approved` = 1) and (`leader`.`booking_containers`.`superagent_unloading_approved` = 0) and (`leader`.`booking_containers`.`status` >= 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "agent_expenses": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.4,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `money_transfers` where `money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent' and `money_transfers`.`transferer_id` = 25 and `money_transfers`.`transferer_id` is not null and not exists (select * from `delivery_policies` where `money_transfers`.`delivery_policy_id` = `delivery_policies`.`id` and exists (select * from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policies`.`id` = `delivery_policy_containers`.`delivery_policy_id` and exists (select * from `bookings",
+                "query_cost": "480.98",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`transferer_id` = 25) and (`leader`.`money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent') and (cast(`leader`.`money_transfers`.`created_at` as date) = '2026-10-04'))"
+                    },
+                    {
+                        "table": "delivery_policy_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 256,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `agent_expenses` where `agent_expenses`.`agent_id` = 25 and `agent_expenses`.`agent_id` is not null and not exists (select * from `bookings` where `agent_expenses`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and not exists (select * from `booking_containers` where `agent_expenses`.`booking_container_id` = `booking_containers`.`id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`",
+                "query_cost": "120.10",
+                "scans": [
+                    {
+                        "table": "delivery_policy_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 256,
+                        "filtered": "100.00",
+                        "condition": "<if>(is_not_null_compl(delivery_policies..bookings), (`leader`.`delivery_policy_containers`.`delivery_policy_id` = `leader`.`agent_expenses`.`delivery_policy_id`), true)"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "agent_latest_expenses": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.29,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `money_transfers` where `money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent' and `money_transfers`.`transferer_id` = 25 and `money_transfers`.`transferer_id` is not null and not exists (select * from `delivery_policies` where `money_transfers`.`delivery_policy_id` = `delivery_policies`.`id` and exists (select * from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policies`.`id` = `delivery_policy_containers`.`delivery_policy_id` and exists (select * from `bookings",
+                "query_cost": "480.98",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`transferer_id` = 25) and (`leader`.`money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent') and (cast(`leader`.`money_transfers`.`created_at` as date) = '2026-10-04'))"
+                    },
+                    {
+                        "table": "delivery_policy_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 256,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `agent_expenses` where `agent_expenses`.`agent_id` = 25 and `agent_expenses`.`agent_id` is not null and not exists (select * from `bookings` where `agent_expenses`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and not exists (select * from `booking_containers` where `agent_expenses`.`booking_container_id` = `booking_containers`.`id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`",
+                "query_cost": "120.10",
+                "scans": [
+                    {
+                        "table": "delivery_policy_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 256,
+                        "filtered": "100.00",
+                        "condition": "<if>(is_not_null_compl(delivery_policies..bookings), (`leader`.`delivery_policy_containers`.`delivery_policy_id` = `leader`.`agent_expenses`.`delivery_policy_id`), true)"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "agent_wallet": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.49,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "agent_profile": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.4,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "agent_financial_custody": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.23,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select sum(`value`) as aggregate from `money_transfers` where `money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent' and `money_transfers`.`transferer_id` = 25 and `money_transfers`.`transferer_id` is not null and date(`created_at`) = '2026-10-04'",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`transferer_id` = 25) and (`leader`.`money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent') and (cast(`leader`.`money_transfers`.`created_at` as date) = '2026-10-04'))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "agent_delivery_policies": {
+        "total_queries": 11,
+        "distinct_shapes": 10,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.98,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `delivery_policies` where not exists (select * from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policies`.`id` = `delivery_policy_containers`.`delivery_policy_id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`))) and exists (select * from `money_transfers` where `delivery_policies`.`id` = `money_transfers`.`delivery_policy_id` and `tra",
+                "query_cost": "368.82",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`transferer_id` = 25))"
+                    },
+                    {
+                        "table": "delivery_policy_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 256,
+                        "filtered": "100.00",
+                        "condition": "(<if>(is_not_null_compl(delivery_policy_containers..bookings), <if>(found_match(delivery_policy_containers..bookings), false, true), true) and <if>(is_not_null_compl(delivery_policy_containers..bookings), (`leader`.`delivery_policy_containers`.`delivery_policy_id` = `leader`.`delivery_policies`.`id`"
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (154, 155, 156, 157, 158, 162, 165, 167, 174, 175, 176, 177)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (154,155,156,157,158,162,165,167,174,175,176,177)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `images` where `images`.`imageable_id` in (154, 155, 156, 157, 158, 162, 165, 167, 174, 175, 176, 177) and `images`.`imageable_type` = 'App\\\\Models\\\\DeliveryPolicy'",
+                "query_cost": "89.20",
+                "scans": [
+                    {
+                        "table": "images",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 867,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`images`.`imageable_id` in (154,155,156,157,158,162,165,167,174,175,176,177)) and (`leader`.`images`.`imageable_type` = 'App\\\\Models\\\\DeliveryPolicy'))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select `booking_containers`.*, `delivery_policy_containers`.`delivery_policy_id` as `pivot_delivery_policy_id`, `delivery_policy_containers`.`booking_container_id` as `pivot_booking_container_id`, `delivery_policy_containers`.`created_at` as `pivot_created_at`, `delivery_policy_containers`.`updated_at` as `pivot_updated_at` from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policy_containers`.`delivery_policy_id` in (154, 155, 156, 157, 158, 162, 165, 167, 174, 175, 176, 177)",
+                "query_cost": "70.65",
+                "scans": [
+                    {
+                        "table": "delivery_policy_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 256,
+                        "filtered": "50.00",
+                        "condition": "((`leader`.`delivery_policy_containers`.`delivery_policy_id` in (154,155,156,157,158,162,165,167,174,175,176,177)) and (`leader`.`delivery_policy_containers`.`booking_container_id` is not null))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "agent_service_categories": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.19,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "agent_containers_with_no_policies": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.36,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "agent_cities": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.32,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "agent_fetch_agents": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.41,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "agent_notifications": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.48,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `app_notifications` where not exists (select * from `booking_containers` where `app_notifications`.`booking_container_id` = `booking_containers`.`id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`))) and (`type` = 2 or (`notificationable_id` = 25 and `notificationable_type` = 'App\\\\Models\\\\Agent')) order by `id` desc",
+                "query_cost": "834.46",
+                "scans": [
+                    {
+                        "table": "app_notifications",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": null,
+                        "rows": 5474,
+                        "filtered": "10.90",
+                        "condition": "((`leader`.`app_notifications`.`type` = 2) or ((`leader`.`app_notifications`.`notificationable_id` = 25) and (`leader`.`app_notifications`.`notificationable_type` = 'App\\\\Models\\\\Agent')))"
+                    },
+                    {
+                        "table": "invoices",
+                        "type": "index",
+                        "key": "fk_invoices_booking_id",
+                        "possible_keys": [
+                            "fk_invoices_booking_id"
+                        ],
+                        "rows": 196,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select `id`, `booking_id` from `booking_containers` where `booking_containers`.`id` in (1, 2, 3, 4, 5, 6, 80, 81, 119, 188, 370, 383, 387, 391, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 412, 416, 425, 426, 433, 434, 439, 446, 447, 452, 453, 454, 455, 456, 457, 458, 460, 461, 462, 463, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 482, 483, 484, 487, 488, 489, 490, 491, 492, 493, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 510, 511, 512, 513, 514, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 536, 5",
+                "query_cost": "71.10",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "index",
+                        "key": "fk_booking_containers_booking_id",
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "48.34",
+                        "condition": "(`leader`.`booking_containers`.`id` in (1,2,3,4,5,6,80,81,119,188,370,383,387,391,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,412,416,425,426,433,434,439,446,447,452,453,454,455,456,457,458,460,461,462,463,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,482,483,48"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "agent_fetch_drivers": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.27,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `drivers`",
+                "query_cost": "31.25",
+                "scans": [
+                    {
+                        "table": "drivers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 305,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "agent_fetch_cars": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.53,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `cars`",
+                "query_cost": "16.95",
+                "scans": [
+                    {
+                        "table": "cars",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 167,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "superagent_waiting": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.9,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `bookings` where not exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`) and exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_specification_approved` = 1 and `is_in_loading` = 0 and `superagent_loading_approved` = 0 and `superagent_unloading_approved` = 0)",
+                "query_cost": "73.00",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_booking_containers_booking_id"
+                        ],
+                        "rows": 691,
+                        "filtered": "0.14",
+                        "condition": "((`leader`.`booking_containers`.`superagent_unloading_approved` = 0) and (`leader`.`booking_containers`.`superagent_loading_approved` = 0) and (`leader`.`booking_containers`.`is_in_loading` = 0) and (`leader`.`booking_containers`.`superagent_specification_approved` = 1))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            }
+        ]
+    },
+    "superagent_home": {
+        "total_queries": 8,
+        "distinct_shapes": 5,
+        "repeated_shapes": [
+            {
+                "count": 3,
+                "ms": 2.58,
+                "sql": "select * from `daily_booking_containers` where `superagent_id` = ? and `booking_container_status` = ?"
+            },
+            {
+                "count": 2,
+                "ms": 2.19,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `bookings` where not exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`) and exists (select * from `shipping_agents` where `bookings`.`shipping_agent_id` = `shipping_agents`.`id` and exists (select * from `booking_containers` inner join `bookings` on `bookings`.`id` = `booking_containers`.`booking_id` where `shipping_agents`.`id` = `bookings`.`shipping_agent_id` and (`status` = 0 or `status` = 1))) order by `id` desc",
+                "query_cost": "9515.16",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_booking_containers_booking_id"
+                        ],
+                        "rows": 691,
+                        "filtered": "19.00",
+                        "condition": "(((`leader`.`booking_containers`.`status` = 0) or (`leader`.`booking_containers`.`status` = 1)) and (`leader`.`booking_containers`.`booking_id` is not null))"
+                    },
+                    {
+                        "table": "invoices",
+                        "type": "index",
+                        "key": "fk_invoices_booking_id",
+                        "possible_keys": [
+                            "fk_invoices_booking_id"
+                        ],
+                        "rows": 196,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": true,
+                "temporary": true,
+                "error": null
+            }
+        ]
+    },
+    "superagent_profile": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.82,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "superagent_containers_expenses": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.67,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `booking_papers` where `booking_container_id` = 100 and `type` in (1)",
+                "query_cost": "80.05",
+                "scans": [
+                    {
+                        "table": "booking_papers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 788,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`booking_papers`.`type` = 1) and (`leader`.`booking_papers`.`booking_container_id` = 100))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "superagent_wallets": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.77,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "superagent_stage_receipts": {
+        "total_queries": 7,
+        "distinct_shapes": 6,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.93,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "superagent_pending_stage_receipts": {
+        "total_queries": 7,
+        "distinct_shapes": 6,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.26,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and `superagent_specification_approved` = 1 and (`is_in_loading` = 1 or `superagent_loading_approved` = 1) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `booking_container_agents`.`stag",
+                "query_cost": "99.91",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "1.90",
+                        "condition": "((`leader`.`booking_containers`.`superagent_specification_approved` = 1) and ((`leader`.`booking_containers`.`is_in_loading` = 1) or (`leader`.`booking_containers`.`superagent_loading_approved` = 1)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `booking_containers` where not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and `superagent_specification_approved` = 1 and (`is_in_loading` = 1 or `superagent_loading_approved` = 1) and exists (select * from `agents` inner join `booking_container_agents` on `agents`.`id` = `booking_container_agents`.`agent_id` where `booking_containers`.`id` = `booking_container_agents`.`booking_container_id` and `booking_container_agents`.`stage_type` = 1) and not",
+                "query_cost": "99.91",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 53,
+                        "filtered": "1.90",
+                        "condition": "((`leader`.`booking_containers`.`superagent_specification_approved` = 1) and ((`leader`.`booking_containers`.`is_in_loading` = 1) or (`leader`.`booking_containers`.`superagent_loading_approved` = 1)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "superagent_specification_assignments": {
+        "total_queries": 6,
+        "distinct_shapes": 5,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 3.01,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "superagent_fetch_agents": {
+        "total_queries": 42,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 38,
+                "ms": 37.78,
+                "sql": "select count(distinct `booking_container_id`) as aggregate from `booking_container_agents` where `booking_container_agents`.`agent_id` = ? and `booking_container_agents`.`agent_id` is not null and date(`created_at`) = ?"
+            },
+            {
+                "count": 2,
+                "ms": 1.9,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "superagent_notifications": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.22,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `app_notifications` where not exists (select * from `booking_containers` where `app_notifications`.`booking_container_id` = `booking_containers`.`id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`))) and (`type` = 2 or (`notificationable_id` = 25 and `notificationable_type` = 'App\\\\Models\\\\Agent')) order by `id` desc",
+                "query_cost": "834.46",
+                "scans": [
+                    {
+                        "table": "app_notifications",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": null,
+                        "rows": 5474,
+                        "filtered": "10.90",
+                        "condition": "((`leader`.`app_notifications`.`type` = 2) or ((`leader`.`app_notifications`.`notificationable_id` = 25) and (`leader`.`app_notifications`.`notificationable_type` = 'App\\\\Models\\\\Agent')))"
+                    },
+                    {
+                        "table": "invoices",
+                        "type": "index",
+                        "key": "fk_invoices_booking_id",
+                        "possible_keys": [
+                            "fk_invoices_booking_id"
+                        ],
+                        "rows": 196,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select `id`, `booking_id` from `booking_containers` where `booking_containers`.`id` in (6, 80, 81, 119, 188, 370, 383, 387, 391, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 412, 416, 425, 426, 433, 434, 439, 446, 447, 452, 453, 454, 455, 456, 457, 458, 460, 461, 462, 463, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 482, 483, 484, 487, 489, 490, 491, 492, 493, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 510, 511, 512, 513, 514, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 536, 539, 540, 541, 542, 5",
+                "query_cost": "71.10",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "index",
+                        "key": "fk_booking_containers_booking_id",
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "44.72",
+                        "condition": "(`leader`.`booking_containers`.`id` in (6,80,81,119,188,370,383,387,391,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,412,416,425,426,433,434,439,446,447,452,453,454,455,456,457,458,460,461,462,463,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,482,483,484,487,489,"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "superagent_agents_notifications": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.92,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `app_notifications` where not exists (select * from `booking_containers` where `app_notifications`.`booking_container_id` = `booking_containers`.`id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`))) and `notificationable_type` = 'App\\\\Models\\\\Agent' order by `id` desc",
+                "query_cost": "829.53",
+                "scans": [
+                    {
+                        "table": "app_notifications",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": null,
+                        "rows": 5474,
+                        "filtered": "10.00",
+                        "condition": "(`leader`.`app_notifications`.`notificationable_type` = 'App\\\\Models\\\\Agent')"
+                    },
+                    {
+                        "table": "invoices",
+                        "type": "index",
+                        "key": "fk_invoices_booking_id",
+                        "possible_keys": [
+                            "fk_invoices_booking_id"
+                        ],
+                        "rows": 196,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select `id`, `booking_id` from `booking_containers` where `booking_containers`.`id` in (1, 2, 3, 4, 5, 6, 80, 81, 119, 188, 370, 383, 387, 391, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 412, 416, 425, 426, 433, 434, 439, 446, 447, 452, 453, 454, 455, 456, 457, 458, 460, 461, 462, 463, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 482, 483, 484, 487, 488, 489, 490, 491, 492, 493, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 510, 511, 512, 513, 514, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 536, 5",
+                "query_cost": "71.10",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "index",
+                        "key": "fk_booking_containers_booking_id",
+                        "possible_keys": [
+                            "PRIMARY"
+                        ],
+                        "rows": 691,
+                        "filtered": "51.81",
+                        "condition": "(`leader`.`booking_containers`.`id` in (1,2,3,4,5,6,80,81,119,188,370,383,387,391,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,412,416,425,426,433,434,439,446,447,452,453,454,455,456,457,458,460,461,462,463,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,482,483,48"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "public_booking_tracking": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 3.23,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `bookings` where `booking_number` = '6469996650' limit 1",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 474,
+                        "filtered": "10.00",
+                        "condition": "(`leader`.`bookings`.`booking_number` = '6469996650')"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "public_container_details": {
+        "total_queries": 13,
+        "distinct_shapes": 11,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.41,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            },
+            {
+                "count": 2,
+                "ms": 1.39,
+                "sql": "select * from `branches` where `branches`.`id` = ? limit 1"
+            }
+        ],
+        "explain": []
+    },
+    "public_booking_papers": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.46,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `bookings` where `booking_number` = '6469996650' limit 1",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 474,
+                        "filtered": "10.00",
+                        "condition": "(`leader`.`bookings`.`booking_number` = '6469996650')"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `images` where `images`.`imageable_type` = 'App\\\\Models\\\\BookingPaper' and `images`.`imageable_id` = 890 and `images`.`imageable_id` is not null limit 1",
+                "query_cost": "89.20",
+                "scans": [
+                    {
+                        "table": "images",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 867,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`images`.`imageable_id` = 890) and (`leader`.`images`.`imageable_type` = 'App\\\\Models\\\\BookingPaper'))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "company_bookings": {
+        "total_queries": 1102,
+        "distinct_shapes": 9,
+        "repeated_shapes": [
+            {
+                "count": 183,
+                "ms": 157.68,
+                "sql": "select * from `booking_containers` where `booking_containers`.`booking_id` = ? and `booking_containers`.`booking_id` is not null"
+            },
+            {
+                "count": 183,
+                "ms": 119.48,
+                "sql": "select * from `booking_movements` where `booking_movements`.`booking_id` = ? and `booking_movements`.`booking_id` is not null"
+            },
+            {
+                "count": 183,
+                "ms": 113.33,
+                "sql": "select * from `employees` where `employees`.`id` = ? limit 1"
+            },
+            {
+                "count": 183,
+                "ms": 109.95,
+                "sql": "select * from `shipping_agents` where `shipping_agents`.`id` = ? limit 1"
+            },
+            {
+                "count": 183,
+                "ms": 133.45,
+                "sql": "select * from `containers` where `containers`.`id` = ? limit 1"
+            },
+            {
+                "count": 183,
+                "ms": 142.02,
+                "sql": "select * from `branches` where `branches`.`id` = ? limit 1"
+            },
+            {
+                "count": 2,
+                "ms": 2.49,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "company_employees": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.28,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "public_settings": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.4,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "public_services": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.9,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "agent_delivery_policy_expenses": {
+        "total_queries": 9,
+        "distinct_shapes": 7,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 3.32,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            },
+            {
+                "count": 2,
+                "ms": 4.63,
+                "sql": "select * from `money_transfers` where `money_transfers`.`delivery_policy_id` = ? and `money_transfers`.`delivery_policy_id` is not null and `type` = ? limit 1"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `money_transfers`.`delivery_policy_id` = 256 and `money_transfers`.`delivery_policy_id` is not null and `type` = 3 limit 1",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` = 256))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select exists(select * from `delivery_policies` where `delivery_policies`.`id` in (256) and exists (select * from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policies`.`id` = `delivery_policy_containers`.`delivery_policy_id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)))) as `exists`",
+                "query_cost": null,
+                "scans": [
+                    {
+                        "table": "delivery_policy_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 256,
+                        "filtered": "10.00",
+                        "condition": "((`leader`.`delivery_policy_containers`.`delivery_policy_id` = 256) and (`leader`.`delivery_policy_containers`.`booking_container_id` is not null))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `agent_expenses` where `agent_expenses`.`delivery_policy_id` = 256 and `agent_expenses`.`delivery_policy_id` is not null and `agent_expenses`.`voided_at` is null",
+                "query_cost": "46.45",
+                "scans": [
+                    {
+                        "table": "agent_expenses",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 447,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`agent_expenses`.`delivery_policy_id` = 256) and (`leader`.`agent_expenses`.`voided_at` is null))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_dashboard": {
+        "total_queries": 13,
+        "distinct_shapes": 12,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.94,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `bookings`",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "index",
+                        "key": "fk_bookings_company_id",
+                        "possible_keys": null,
+                        "rows": 474,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `bookings` where date(`created_at`) = '2026-10-04'",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 474,
+                        "filtered": "100.00",
+                        "condition": "(cast(`leader`.`bookings`.`created_at` as date) = '2026-10-04')"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `bookings` where `created_at` between '2026-09-28 00:00:00' and '2026-10-04 23:59:59'",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 474,
+                        "filtered": "11.11",
+                        "condition": "(`leader`.`bookings`.`created_at` between '2026-09-28 00:00:00' and '2026-10-04 23:59:59')"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `bookings` where month(`created_at`) = '10' and year(`created_at`) = 2026",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 474,
+                        "filtered": "100.00",
+                        "condition": "((month(`leader`.`bookings`.`created_at`) = '10') and (year(`leader`.`bookings`.`created_at`) = 2026))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers`",
+                "query_cost": "71.10",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "index",
+                        "key": "fk_booking_containers_booking_id",
+                        "possible_keys": null,
+                        "rows": 691,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `booking_containers` where date(`created_at`) = '2026-10-04'",
+                "query_cost": "71.10",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 691,
+                        "filtered": "100.00",
+                        "condition": "(cast(`leader`.`booking_containers`.`created_at` as date) = '2026-10-04')"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `cars`",
+                "query_cost": "16.95",
+                "scans": [
+                    {
+                        "table": "cars",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": null,
+                        "rows": 167,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `drivers`",
+                "query_cost": "31.25",
+                "scans": [
+                    {
+                        "table": "drivers",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": null,
+                        "rows": 305,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_accounts": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 3.67,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `companies` order by `name` asc limit 20 offset 0",
+                "query_cost": "5.30",
+                "scans": [],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_accounts_cars_financial_position": {
+        "total_queries": 451,
+        "distinct_shapes": 214,
+        "repeated_shapes": [
+            {
+                "count": 167,
+                "ms": 203.97,
+                "sql": "select * from `delivery_policies` where `car_id` = ? and `created_at` <= ?"
+            },
+            {
+                "count": 2,
+                "ms": 2.46,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            },
+            {
+                "count": 2,
+                "ms": 4.96,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (125, 158)"
+            },
+            {
+                "count": 2,
+                "ms": 5.74,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (153, 189, 199)"
+            },
+            {
+                "count": 2,
+                "ms": 4.18,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (18, 61, 205)"
+            },
+            {
+                "count": 2,
+                "ms": 6.68,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (183)"
+            },
+            {
+                "count": 2,
+                "ms": 5.24,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (241)"
+            },
+            {
+                "count": 2,
+                "ms": 4.49,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (212)"
+            },
+            {
+                "count": 2,
+                "ms": 4.57,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (175)"
+            },
+            {
+                "count": 2,
+                "ms": 6.04,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (64, 106, 143, 159, 160, 204)"
+            },
+            {
+                "count": 2,
+                "ms": 6.2,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (111)"
+            },
+            {
+                "count": 2,
+                "ms": 5.34,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (29, 116, 169, 198)"
+            },
+            {
+                "count": 2,
+                "ms": 3.16,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (208)"
+            },
+            {
+                "count": 2,
+                "ms": 7.39,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (35, 172, 230)"
+            },
+            {
+                "count": 2,
+                "ms": 4.92,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (152)"
+            },
+            {
+                "count": 2,
+                "ms": 7.33,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (184)"
+            },
+            {
+                "count": 2,
+                "ms": 6.51,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (42, 117, 129, 252)"
+            },
+            {
+                "count": 2,
+                "ms": 6.71,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (131, 187, 206)"
+            },
+            {
+                "count": 2,
+                "ms": 6.58,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (1, 14, 107, 192, 202)"
+            },
+            {
+                "count": 2,
+                "ms": 7.56,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (22, 63, 108, 170, 248)"
+            },
+            {
+                "count": 2,
+                "ms": 6.45,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (3, 240)"
+            },
+            {
+                "count": 2,
+                "ms": 4.7,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (16, 80, 114, 147, 177, 218)"
+            },
+            {
+                "count": 2,
+                "ms": 6.39,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (19, 96)"
+            },
+            {
+                "count": 2,
+                "ms": 7.82,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (53)"
+            },
+            {
+                "count": 2,
+                "ms": 8.78,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (37, 52, 69, 71, 72, 85, 119, 120, 127, 144)"
+            },
+            {
+                "count": 2,
+                "ms": 5.86,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (233)"
+            },
+            {
+                "count": 2,
+                "ms": 7.83,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (36, 45, 67, 78, 104, 105)"
+            },
+            {
+                "count": 2,
+                "ms": 4.27,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (130, 243)"
+            },
+            {
+                "count": 2,
+                "ms": 5.02,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (49)"
+            },
+            {
+                "count": 2,
+                "ms": 4.86,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (185)"
+            },
+            {
+                "count": 2,
+                "ms": 7.08,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (32, 47, 58, 73, 83, 121, 123, 124, 136, 146, 165, 167, 176, 231)"
+            },
+            {
+                "count": 2,
+                "ms": 5.05,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (9, 10, 30, 48, 65, 74, 79, 97, 101, 134, 148, 162, 223, 224)"
+            },
+            {
+                "count": 2,
+                "ms": 4.21,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (44, 62, 92, 103, 128, 173, 194, 219, 229)"
+            },
+            {
+                "count": 2,
+                "ms": 13.14,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (31, 51, 54, 66, 82, 91, 98, 100, 135, 149, 232)"
+            },
+            {
+                "count": 2,
+                "ms": 4.24,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (13)"
+            },
+            {
+                "count": 2,
+                "ms": 5.93,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (25, 50, 102, 193, 228)"
+            },
+            {
+                "count": 2,
+                "ms": 7.48,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (23, 236)"
+            },
+            {
+                "count": 2,
+                "ms": 4.74,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (39, 88, 180)"
+            },
+            {
+                "count": 2,
+                "ms": 5.49,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (249)"
+            },
+            {
+                "count": 2,
+                "ms": 5.15,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (33, 40, 68, 70, 84, 99, 122, 133, 145, 215, 216, 226, 256)"
+            },
+            {
+                "count": 2,
+                "ms": 6.18,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (27, 55, 207)"
+            },
+            {
+                "count": 2,
+                "ms": 5.13,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (4, 38, 150, 211, 247)"
+            },
+            {
+                "count": 2,
+                "ms": 6.28,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (89)"
+            },
+            {
+                "count": 2,
+                "ms": 7.34,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (154, 182)"
+            },
+            {
+                "count": 2,
+                "ms": 5.29,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (46, 118, 132, 181, 238)"
+            },
+            {
+                "count": 2,
+                "ms": 4.79,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (246)"
+            },
+            {
+                "count": 2,
+                "ms": 8.35,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (191)"
+            },
+            {
+                "count": 2,
+                "ms": 5.34,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (21, 60, 239, 253)"
+            },
+            {
+                "count": 2,
+                "ms": 5.59,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (174)"
+            },
+            {
+                "count": 2,
+                "ms": 3.1,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (126, 237)"
+            },
+            {
+                "count": 2,
+                "ms": 5.16,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (15, 94, 163, 166, 197, 250)"
+            },
+            {
+                "count": 2,
+                "ms": 3.52,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (11, 34, 43, 57, 86, 151, 227)"
+            },
+            {
+                "count": 2,
+                "ms": 2.94,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (26, 178, 242)"
+            },
+            {
+                "count": 2,
+                "ms": 5.45,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (200)"
+            },
+            {
+                "count": 2,
+                "ms": 5.01,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (235)"
+            },
+            {
+                "count": 2,
+                "ms": 4.08,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (87)"
+            },
+            {
+                "count": 2,
+                "ms": 5.55,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (20, 56, 196)"
+            },
+            {
+                "count": 2,
+                "ms": 5.27,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (234)"
+            },
+            {
+                "count": 2,
+                "ms": 4.64,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (115, 214, 245)"
+            },
+            {
+                "count": 2,
+                "ms": 5.08,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (17, 244)"
+            },
+            {
+                "count": 2,
+                "ms": 3.01,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (109)"
+            },
+            {
+                "count": 2,
+                "ms": 2.58,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (209)"
+            },
+            {
+                "count": 2,
+                "ms": 7.25,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (75, 113, 161, 217)"
+            },
+            {
+                "count": 2,
+                "ms": 6.76,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (24, 59, 90, 179, 203)"
+            },
+            {
+                "count": 2,
+                "ms": 5.91,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (81, 95, 112)"
+            },
+            {
+                "count": 2,
+                "ms": 5.84,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (254, 255)"
+            },
+            {
+                "count": 2,
+                "ms": 5.81,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (76, 157, 195, 221, 251)"
+            },
+            {
+                "count": 2,
+                "ms": 6.75,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (41, 77, 156, 225)"
+            },
+            {
+                "count": 2,
+                "ms": 5.36,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (110, 155, 201)"
+            },
+            {
+                "count": 2,
+                "ms": 7.65,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (137)"
+            },
+            {
+                "count": 2,
+                "ms": 4.77,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (93)"
+            },
+            {
+                "count": 2,
+                "ms": 5.46,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (2, 5, 6, 7, 8, 12, 28, 138, 139, 140, 141, 142, 164, 168, 171, 186, 188, 190, 210, 213, 220, 222)"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (125, 158)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (125,158)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (153, 189, 199)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (153,189,199)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (18, 61, 205)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (18,61,205)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (183)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 183) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (241)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 241) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (212)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 212) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (175)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 175) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (64, 106, 143, 159, 160, 204)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (64,106,143,159,160,204)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (111)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 111) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (29, 116, 169, 198)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "4.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (29,116,169,198)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (208)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 208) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (35, 172, 230)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (35,172,230)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (152)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 152) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (184)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 184) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (42, 117, 129, 252)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "4.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (42,117,129,252)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (131, 187, 206)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (131,187,206)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (1, 14, 107, 192, 202)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (1,14,107,192,202)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (22, 63, 108, 170, 248)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (22,63,108,170,248)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (3, 240)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (3,240)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (16, 80, 114, 147, 177, 218)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (16,80,114,147,177,218)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (19, 96)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (19,96)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (53)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 53) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (37, 52, 69, 71, 72, 85, 119, 120, 127, 144)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (37,52,69,71,72,85,119,120,127,144)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (233)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 233) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (36, 45, 67, 78, 104, 105)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (36,45,67,78,104,105)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (130, 243)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (130,243)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (49)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 49) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (185)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 185) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (32, 47, 58, 73, 83, 121, 123, 124, 136, 146, 165, 167, 176, 231)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (32,47,58,73,83,121,123,124,136,146,165,167,176,231)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (9, 10, 30, 48, 65, 74, 79, 97, 101, 134, 148, 162, 223, 224)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (9,10,30,48,65,74,79,97,101,134,148,162,223,224)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (44, 62, 92, 103, 128, 173, 194, 219, 229)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (44,62,92,103,128,173,194,219,229)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (31, 51, 54, 66, 82, 91, 98, 100, 135, 149, 232)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (31,51,54,66,82,91,98,100,135,149,232)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (13)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 13) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (25, 50, 102, 193, 228)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (25,50,102,193,228)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (23, 236)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (23,236)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (39, 88, 180)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (39,88,180)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (249)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 249) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (33, 40, 68, 70, 84, 99, 122, 133, 145, 215, 216, 226, 256)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (33,40,68,70,84,99,122,133,145,215,216,226,256)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (27, 55, 207)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (27,55,207)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (4, 38, 150, 211, 247)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (4,38,150,211,247)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (89)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 89) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (154, 182)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (154,182)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (46, 118, 132, 181, 238)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (46,118,132,181,238)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (246)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 246) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (191)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 191) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (21, 60, 239, 253)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "4.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (21,60,239,253)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (174)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 174) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (126, 237)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (126,237)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (15, 94, 163, 166, 197, 250)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (15,94,163,166,197,250)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (11, 34, 43, 57, 86, 151, 227)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (11,34,43,57,86,151,227)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (26, 178, 242)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (26,178,242)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (200)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 200) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (235)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 235) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (87)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 87) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (20, 56, 196)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (20,56,196)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (234)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 234) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (115, 214, 245)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (115,214,245)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (17, 244)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (17,244)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (109)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 109) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (209)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 209) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (75, 113, 161, 217)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "4.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (75,113,161,217)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (24, 59, 90, 179, 203)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (24,59,90,179,203)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (81, 95, 112)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (81,95,112)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (254, 255)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "2.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (254,255)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (76, 157, 195, 221, 251)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (76,157,195,221,251)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (41, 77, 156, 225)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "4.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (41,77,156,225)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (110, 155, 201)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "3.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (110,155,201)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (137)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 137) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (93)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`money_transfers`.`delivery_policy_id` = 93) and (`leader`.`money_transfers`.`type` = 3))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (2, 5, 6, 7, 8, 12, 28, 138, 139, 140, 141, 142, 164, 168, 171, 186, 188, 190, 210, 213, 220, 222)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (2,5,6,7,8,12,28,138,139,140,141,142,164,168,171,186,188,190,210,213,220,222)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `cars` order by `car_number` asc",
+                "query_cost": "183.95",
+                "scans": [
+                    {
+                        "table": "cars",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 167,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_accounts_checks": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.03,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_accounts_financial_position": {
+        "total_queries": 142,
+        "distinct_shapes": 16,
+        "repeated_shapes": [
+            {
+                "count": 91,
+                "ms": 172.06,
+                "sql": "select * from `booking_services` where `booking_services`.`booking_id` = ? and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = ?))"
+            },
+            {
+                "count": 16,
+                "ms": 12.28,
+                "sql": "select * from `bookings` where `bookings`.`id` = ? limit 1"
+            },
+            {
+                "count": 15,
+                "ms": 13.56,
+                "sql": "select sum(`value`) as aggregate from `invoice_payments` where `invoice_payments`.`invoice_id` = ? and `invoice_payments`.`invoice_id` is not null and date(`created_at`) <= ?"
+            },
+            {
+                "count": 7,
+                "ms": 8.2,
+                "sql": "select * from `bookings` where `bookings`.`company_id` = ? and `bookings`.`company_id` is not null and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id` and date(`created_at`) <= ?)"
+            },
+            {
+                "count": 2,
+                "ms": 2.52,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 91,
+                "sql": "select * from `booking_services` where `booking_services`.`booking_id` = 89 and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = 0))",
+                "query_cost": "36.40",
+                "scans": [
+                    {
+                        "table": "booking_services",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 259,
+                        "filtered": "10.00",
+                        "condition": "((`leader`.`booking_services`.`booking_id` = 89) and (`leader`.`booking_services`.`service_id` is not null))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `companies` order by `name` asc",
+                "query_cost": "48.30",
+                "scans": [],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `bookings` where `bookings`.`company_id` in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 43, 44, 45, 46, 47, 48, 49)",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_bookings_company_id"
+                        ],
+                        "rows": 474,
+                        "filtered": "100.00",
+                        "condition": "(`leader`.`bookings`.`company_id` in (5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,40,41,43,44,45,46,47,48,49))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `invoices` where `invoices`.`booking_id` in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 130, 131, 132, 13",
+                "query_cost": "27.35",
+                "scans": [
+                    {
+                        "table": "invoices",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_invoices_booking_id"
+                        ],
+                        "rows": 196,
+                        "filtered": "100.00",
+                        "condition": "(`leader`.`invoices`.`booking_id` in (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,9"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_accounts_profit_loss": {
+        "total_queries": 76,
+        "distinct_shapes": 12,
+        "repeated_shapes": [
+            {
+                "count": 55,
+                "ms": 120.37,
+                "sql": "select * from `booking_services` where `booking_services`.`booking_id` = ? and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = ?))"
+            },
+            {
+                "count": 10,
+                "ms": 10.67,
+                "sql": "select * from `bookings` where `bookings`.`id` = ? limit 1"
+            },
+            {
+                "count": 2,
+                "ms": 1.86,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 55,
+                "sql": "select * from `booking_services` where `booking_services`.`booking_id` = 89 and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = 0))",
+                "query_cost": "36.40",
+                "scans": [
+                    {
+                        "table": "booking_services",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 259,
+                        "filtered": "10.00",
+                        "condition": "((`leader`.`booking_services`.`booking_id` = 89) and (`leader`.`booking_services`.`service_id` is not null))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `bookings` where exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id` and `created_at` between '2026-01-01' and '2026-10-04 23:59:59') order by `created_at` desc",
+                "query_cost": "41.33",
+                "scans": [
+                    {
+                        "table": "invoices",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_invoices_booking_id"
+                        ],
+                        "rows": 196,
+                        "filtered": "11.11",
+                        "condition": "(`leader`.`invoices`.`created_at` between '2026-01-01' and '2026-10-04 23:59:59')"
+                    }
+                ],
+                "filesort": true,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `invoices` where `invoices`.`booking_id` in (3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 58, 59, 60, 61, 62, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 130, 131, 132, 134, 135, 136, 137, ",
+                "query_cost": "27.35",
+                "scans": [
+                    {
+                        "table": "invoices",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_invoices_booking_id"
+                        ],
+                        "rows": 196,
+                        "filtered": "100.00",
+                        "condition": "(`leader`.`invoices`.`booking_id` in (3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,42,43,44,45,46,47,48,49,50,51,52,53,54,55,58,59,60,61,62,64,65,66,67,68,69,70,71,72,73,74,75,76,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `booking_containers` where `booking_containers`.`booking_id` in (3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 58, 59, 60, 61, 62, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 130, 131, 132, ",
+                "query_cost": "71.10",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_booking_containers_booking_id"
+                        ],
+                        "rows": 691,
+                        "filtered": "32.42",
+                        "condition": "(`leader`.`booking_containers`.`booking_id` in (3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,42,43,44,45,46,47,48,49,50,51,52,53,54,55,58,59,60,61,62,64,65,66,67,68,69,70,71,72,73,74,75,76,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,9"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select * from `agent_expenses` where `agent_expenses`.`booking_container_id` in (7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 73, 75, 76, 77, 78, 79, 82, 83, 84, 87, 89, 90, 91, 92, 93, 94, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 111, 112, 114, 115, 116, 117, 118, 120, 121, 124, 125, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 143, 144, 146, 147, 148, 149, 150,",
+                "query_cost": "46.45",
+                "scans": [
+                    {
+                        "table": "agent_expenses",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_agent_expenses_booking_container_id"
+                        ],
+                        "rows": 447,
+                        "filtered": "10.00",
+                        "condition": "((`leader`.`agent_expenses`.`booking_container_id` in (7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,24,25,26,27,28,29,30,31,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,73,75,76,77,78,79,82,83,84,87,89,90,91,92,93,94,96,97,98,99,10"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select `delivery_policies`.*, `delivery_policy_containers`.`booking_container_id` as `pivot_booking_container_id`, `delivery_policy_containers`.`delivery_policy_id` as `pivot_delivery_policy_id`, `delivery_policy_containers`.`created_at` as `pivot_created_at`, `delivery_policy_containers`.`updated_at` as `pivot_updated_at` from `delivery_policies` inner join `delivery_policy_containers` on `delivery_policies`.`id` = `delivery_policy_containers`.`delivery_policy_id` where `delivery_policy_containers`.`booking_container_id` in (7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25,",
+                "query_cost": "70.65",
+                "scans": [
+                    {
+                        "table": "delivery_policy_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 256,
+                        "filtered": "50.00",
+                        "condition": "((`leader`.`delivery_policy_containers`.`booking_container_id` in (7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,24,25,26,27,28,29,30,31,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,73,75,76,77,78,79,82,83,84,87,89,90,91,92,93,94,96"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_agents": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 3.11,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_banks": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.45,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_booking_containers_assignments": {
+        "total_queries": 695,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 691,
+                "ms": 673.91,
+                "sql": "select `agents`.*, `booking_container_agents`.`booking_container_id` as `pivot_booking_container_id`, `booking_container_agents`.`agent_id` as `pivot_agent_id`, `booking_container_agents`.`booking_container_status` as `pivot_booking_container_status`, `booking_container_agents`.`stage_type` as `pivot_stage_type`, `booking_container_agents`.`superagent_specification_approved` as `pivot_superagent_s"
+            },
+            {
+                "count": 2,
+                "ms": 1.32,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `booking_containers`",
+                "query_cost": "71.10",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 691,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_bookings": {
+        "total_queries": 16,
+        "distinct_shapes": 13,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 3.47,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            },
+            {
+                "count": 2,
+                "ms": 3.4,
+                "sql": "select count(*) as aggregate from `bookings`"
+            },
+            {
+                "count": 2,
+                "ms": 5.68,
+                "sql": "select count(*) as aggregate from `bookings` where exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_specification_approved` = ? and `is_in_loading` = ? and `superagent_loading_approved` = ?)"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 2,
+                "sql": "select count(*) as aggregate from `bookings`",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "index",
+                        "key": "fk_bookings_company_id",
+                        "possible_keys": null,
+                        "rows": 474,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select count(*) as aggregate from `bookings` where exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_specification_approved` = 1 and `is_in_loading` = 0 and `superagent_loading_approved` = 0)",
+                "query_cost": "72.65",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_booking_containers_booking_id"
+                        ],
+                        "rows": 691,
+                        "filtered": "0.14",
+                        "condition": "((`leader`.`booking_containers`.`superagent_loading_approved` = 0) and (`leader`.`booking_containers`.`is_in_loading` = 0) and (`leader`.`booking_containers`.`superagent_specification_approved` = 1))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `bookings` where exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and (`status` = 0 or (`status` = 1 and `superagent_specification_approved` = 0)))",
+                "query_cost": "113.52",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_booking_containers_booking_id"
+                        ],
+                        "rows": 691,
+                        "filtered": "10.90",
+                        "condition": "(((`leader`.`booking_containers`.`status` = 0) or ((`leader`.`booking_containers`.`superagent_specification_approved` = 0) and (`leader`.`booking_containers`.`status` = 1))) and (`leader`.`booking_containers`.`booking_id` is not null))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `bookings` where exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_loading_approved` = 1 and `superagent_unloading_approved` = 0)",
+                "query_cost": "75.90",
+                "scans": [
+                    {
+                        "table": "booking_containers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": [
+                            "fk_booking_containers_booking_id"
+                        ],
+                        "rows": 691,
+                        "filtered": "1.00",
+                        "condition": "((`leader`.`booking_containers`.`superagent_unloading_approved` = 0) and (`leader`.`booking_containers`.`superagent_loading_approved` = 1))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": true,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `bookings` where (exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`) or exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_unloading_approved` = 1))",
+                "query_cost": "48.90",
+                "scans": [
+                    {
+                        "table": "bookings",
+                        "type": "index",
+                        "key": "fk_bookings_company_id",
+                        "possible_keys": null,
+                        "rows": 474,
+                        "filtered": "100.00",
+                        "condition": "(exists(/* select#2 */ select 1 from `leader`.`invoices` where (`leader`.`bookings`.`id` = `leader`.`invoices`.`booking_id`)) or exists(/* select#3 */ select 1 from `leader`.`booking_containers` where ((`leader`.`booking_containers`.`superagent_unloading_approved` = 1) and (`leader`.`bookings`.`id` "
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_branches": {
+        "total_queries": 159,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 155,
+                "ms": 159.68,
+                "sql": "select * from `factories` where `factories`.`id` = ? limit 1"
+            },
+            {
+                "count": 2,
+                "ms": 2.42,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `branches`",
+                "query_cost": "16.25",
+                "scans": [
+                    {
+                        "table": "branches",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 155,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_cars": {
+        "total_queries": 26,
+        "distinct_shapes": 10,
+        "repeated_shapes": [
+            {
+                "count": 15,
+                "ms": 15.19,
+                "sql": "select * from `delivery_policies` where `delivery_policies`.`car_id` = ? and `delivery_policies`.`car_id` is not null order by `created_at` desc limit 1"
+            },
+            {
+                "count": 2,
+                "ms": 2.59,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            },
+            {
+                "count": 2,
+                "ms": 3.68,
+                "sql": "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 15,
+                "sql": "select * from `delivery_policies` where `delivery_policies`.`car_id` = 179 and `delivery_policies`.`car_id` is not null order by `created_at` desc limit 1",
+                "query_cost": "0.35",
+                "scans": [],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 2,
+                "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "5.00",
+                        "condition": "((`leader`.`money_transfers`.`type` = 3) and (`leader`.`money_transfers`.`delivery_policy_id` in (111,131,137,175,184,187,206,208,233,234,235,246)))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `cars`",
+                "query_cost": "16.95",
+                "scans": [
+                    {
+                        "table": "cars",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": null,
+                        "rows": 167,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_citiesAndRegions": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.76,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_companies": {
+        "total_queries": 711,
+        "distinct_shapes": 11,
+        "repeated_shapes": [
+            {
+                "count": 495,
+                "ms": 967.15,
+                "sql": "select * from `booking_services` where `booking_services`.`booking_id` = ? and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = ?))"
+            },
+            {
+                "count": 171,
+                "ms": 172.9,
+                "sql": "select * from `company_invoices` where `company_invoices`.`company_id` = ? and `company_invoices`.`company_id` is not null order by `created_at` desc limit 1"
+            },
+            {
+                "count": 19,
+                "ms": 25.66,
+                "sql": "select `invoices`.*, `bookings`.`company_id` as `laravel_through_key` from `invoices` inner join `bookings` on `bookings`.`id` = `invoices`.`booking_id` where `bookings`.`company_id` = ?"
+            },
+            {
+                "count": 10,
+                "ms": 10.09,
+                "sql": "select * from `bookings` where `bookings`.`id` = ? limit 1"
+            },
+            {
+                "count": 9,
+                "ms": 7.87,
+                "sql": "select * from `agents` where 0 = 1"
+            },
+            {
+                "count": 2,
+                "ms": 3.03,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 495,
+                "sql": "select * from `booking_services` where `booking_services`.`booking_id` = 89 and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = 0))",
+                "query_cost": "36.40",
+                "scans": [
+                    {
+                        "table": "booking_services",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 259,
+                        "filtered": "10.00",
+                        "condition": "((`leader`.`booking_services`.`booking_id` = 89) and (`leader`.`booking_services`.`service_id` is not null))"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            },
+            {
+                "executions": 171,
+                "sql": "select * from `company_invoices` where `company_invoices`.`company_id` = 49 and `company_invoices`.`company_id` is not null order by `created_at` desc limit 1",
+                "query_cost": "1.35",
+                "scans": [],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_companyTransportations": {
+        "total_queries": 19,
+        "distinct_shapes": 6,
+        "repeated_shapes": [
+            {
+                "count": 9,
+                "ms": 10.09,
+                "sql": "select * from `cities_and_regions` where `cities_and_regions`.`id` = ? limit 1"
+            },
+            {
+                "count": 3,
+                "ms": 5.63,
+                "sql": "select * from `companies` where `companies`.`id` = ? limit 1"
+            },
+            {
+                "count": 3,
+                "ms": 2.35,
+                "sql": "select * from `containers` where `containers`.`id` = ? limit 1"
+            },
+            {
+                "count": 2,
+                "ms": 2.78,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_containers": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.92,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_drivers": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 3.88,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select count(*) as aggregate from `drivers`",
+                "query_cost": "31.25",
+                "scans": [
+                    {
+                        "table": "drivers",
+                        "type": "index",
+                        "key": "PRIMARY",
+                        "possible_keys": null,
+                        "rows": 305,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_employees": {
+        "total_queries": 62,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 58,
+                "ms": 48.31,
+                "sql": "select * from `companies` where `companies`.`id` = ? limit 1"
+            },
+            {
+                "count": 2,
+                "ms": 2.06,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `employees`",
+                "query_cost": "6.80",
+                "scans": [
+                    {
+                        "table": "employees",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 58,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_factories": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.21,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `factories`",
+                "query_cost": "15.25",
+                "scans": [
+                    {
+                        "table": "factories",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 150,
+                        "filtered": "100.00",
+                        "condition": null
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_financial_custody_agents": {
+        "total_queries": 3,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 3.19,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `money_transfers` where (`transfered_type` = 'App\\\\Models\\\\Agent' or `transferer_type` = 'App\\\\Models\\\\Agent') order by `created_at` desc",
+                "query_cost": "198.08",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "19.00",
+                        "condition": "((`leader`.`money_transfers`.`transfered_type` = 'App\\\\Models\\\\Agent') or (`leader`.`money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent'))"
+                    }
+                ],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_financial_custody_superagents": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.9,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `money_transfers` where `transfered_type` = 'App\\\\Models\\\\Superagent'",
+                "query_cost": "69.45",
+                "scans": [
+                    {
+                        "table": "money_transfers",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 677,
+                        "filtered": "10.00",
+                        "condition": "(`leader`.`money_transfers`.`transfered_type` = 'App\\\\Models\\\\Superagent')"
+                    }
+                ],
+                "filesort": false,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_general_expenses": {
+        "total_queries": 6,
+        "distinct_shapes": 5,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 12.43,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `agent_expenses` where `agent_expenses`.`voided_at` is null order by `created_at` desc",
+                "query_cost": "91.15",
+                "scans": [
+                    {
+                        "table": "agent_expenses",
+                        "type": "ALL",
+                        "key": null,
+                        "possible_keys": null,
+                        "rows": 447,
+                        "filtered": "10.00",
+                        "condition": "(`leader`.`agent_expenses`.`voided_at` is null)"
+                    }
+                ],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_permissions": {
+        "total_queries": 4,
+        "distinct_shapes": 2,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.71,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            },
+            {
+                "count": 2,
+                "ms": 1.42,
+                "sql": "select * from `roles`"
+            }
+        ],
+        "explain": []
+    },
+    "web_private_companies": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.76,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_receipts": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.44,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select `id`, `name` from `suppliers` order by `name` asc",
+                "query_cost": "3.55",
+                "scans": [],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_serviceCategories": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.83,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_services": {
+        "total_queries": 38,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 34,
+                "ms": 37.39,
+                "sql": "select * from `service_categories` where `service_categories`.`id` = ? limit 1"
+            },
+            {
+                "count": 2,
+                "ms": 2.73,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_shippingAgents": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.54,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_superagents": {
+        "total_queries": 4,
+        "distinct_shapes": 3,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.06,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_suppliers": {
+        "total_queries": 5,
+        "distinct_shapes": 4,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 1.85,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": [
+            {
+                "executions": 1,
+                "sql": "select * from `suppliers` order by `name` asc limit 20 offset 0",
+                "query_cost": "3.55",
+                "scans": [],
+                "filesort": true,
+                "temporary": false,
+                "error": null
+            }
+        ]
+    },
+    "web_vaultransactions": {
+        "total_queries": 2,
+        "distinct_shapes": 1,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.03,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    },
+    "web_vaults": {
+        "total_queries": 2,
+        "distinct_shapes": 1,
+        "repeated_shapes": [
+            {
+                "count": 2,
+                "ms": 2.44,
+                "sql": "SELECT SUM(SUM_ROWS_EXAMINED) ex, SUM(SUM_ROWS_SENT) sent, SUM(COUNT_STAR) n FROM performance_schema.events_statements_summary_by_thread_by_event_name WHERE THREAD_ID = PS_CURRENT_THREAD_ID()"
+            }
+        ],
+        "explain": []
+    }
+}

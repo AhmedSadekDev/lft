@@ -1,0 +1,224 @@
+{
+    "generated_at": "2026-10-03 19:39:00 UTC",
+    "method": "information_schema TABLES/COLUMNS/STATISTICS/KEY_COLUMN_USAGE/REFERENTIAL_CONSTRAINTS, read-only session, compared per table: engine, collation, columns (ordinal position, type, nullable, default, extra incl. auto_increment, charset, collation), every index (name, uniqueness, type, ordered columns incl. prefix length) and every FK (name, columns, referenced table/columns, ON DELETE, ON UPDATE)",
+    "leader": {
+        "counts": {
+            "tables": 65,
+            "columns": 599,
+            "primary_keys": 64,
+            "auto_increment": 60,
+            "unique_non_pk": 8,
+            "non_unique_indexes": 71,
+            "foreign_keys": 61
+        },
+        "schema_sha256": "3fe917538c719cf241ae664af5c99de0ac097a90ff5b2b46f504dffcc4076452"
+    },
+    "leader_dryrun": {
+        "counts": {
+            "tables": 65,
+            "columns": 599,
+            "primary_keys": 64,
+            "auto_increment": 60,
+            "unique_non_pk": 8,
+            "non_unique_indexes": 71,
+            "foreign_keys": 61
+        },
+        "schema_sha256": "7a136a1ad2ea4e76614fd624a2ad2fb5aa289238a41928a70d24cc90effbdc33"
+    },
+    "tables_compared": 65,
+    "difference_count": 9,
+    "differences": [
+        {
+            "table": "agent_expenses",
+            "kind": "index",
+            "name": "agent_expenses_agent_id_request_key_unique",
+            "leader": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ]
+            },
+            "leader_dryrun": null
+        },
+        {
+            "table": "agent_expenses",
+            "kind": "index",
+            "name": "agent_expense_request_unique",
+            "leader": null,
+            "leader_dryrun": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ]
+            }
+        },
+        {
+            "table": "agent_expenses",
+            "kind": "foreign_key",
+            "name": "fk_agent_expenses_booking_service_id",
+            "leader": {
+                "columns": [
+                    "booking_service_id"
+                ],
+                "ref_table": "booking_services",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "leader_dryrun": {
+                "columns": [
+                    "booking_service_id"
+                ],
+                "ref_table": "booking_services",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "booking_container_stages",
+            "kind": "index",
+            "name": "booking_container_stages_booking_container_id_type_id_unique",
+            "leader": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ]
+            },
+            "leader_dryrun": null
+        },
+        {
+            "table": "booking_container_stages",
+            "kind": "index",
+            "name": "container_stage_unique",
+            "leader": null,
+            "leader_dryrun": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ]
+            }
+        },
+        {
+            "table": "booking_container_stages",
+            "kind": "foreign_key",
+            "name": "fk_booking_container_stages_booking_container_id",
+            "leader": {
+                "columns": [
+                    "booking_container_id"
+                ],
+                "ref_table": "booking_containers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "leader_dryrun": {
+                "columns": [
+                    "booking_container_id"
+                ],
+                "ref_table": "booking_containers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "receipts",
+            "kind": "foreign_key",
+            "name": "fk_receipts_booking_id",
+            "leader": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "leader_dryrun": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "receipts",
+            "kind": "foreign_key",
+            "name": "fk_receipts_supplier_id",
+            "leader": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "leader_dryrun": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "supplier_payments",
+            "kind": "foreign_key",
+            "name": "fk_supplier_payments_supplier_id",
+            "leader": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "leader_dryrun": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            }
+        }
+    ],
+    "identical": false
+}

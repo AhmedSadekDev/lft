@@ -36,7 +36,7 @@ class Employee extends Authenticatable implements JWTSubject
 
     public function getCompany()
     {
-        return $this->company()->first();
+        return $this->relationLoaded('company') ? $this->company : $this->company()->first();
     }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

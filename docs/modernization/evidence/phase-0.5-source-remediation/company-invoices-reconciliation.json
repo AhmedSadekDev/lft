@@ -1,0 +1,158 @@
+{
+    "generated_at": "2026-10-03 19:53:18 UTC",
+    "table": "company_invoices",
+    "authority": "storage/app/backups/leader_pre_remediation_20261003_184935.sql (dump completed 2026-10-03 21:49:40 local; first accidental DROP on leader at 21:49:42 per binlog.000079) - the only backup taken before the incident",
+    "aggregates": {
+        "leader_now": {
+            "row_count": 0,
+            "min_id": null,
+            "max_id": null,
+            "distinct_ids": 0,
+            "total_sum": "0.00",
+            "companies_billed": 0
+        },
+        "leader_dryrun_now": {
+            "row_count": 0,
+            "min_id": null,
+            "max_id": null,
+            "distinct_ids": 0,
+            "total_sum": "0.00",
+            "companies_billed": 0
+        },
+        "match": true
+    },
+    "row_level_vs_backup_184935": {
+        "backup_184935": {
+            "rows": 0,
+            "min_first_col": null,
+            "max_first_col": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "leader_now": {
+            "rows": 0,
+            "min_first_col": null,
+            "max_first_col": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "identical": true
+    },
+    "pre_incident_evidence_row_count": 0,
+    "relationships": {
+        "company_invoices.company_id -> companies": {
+            "leader_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "leader_dryrun_now": {
+                "refs": 0,
+                "orphans": null
+            },
+            "match": true
+        }
+    },
+    "schema": {
+        "columns_identical_to_approved_clone": true,
+        "indexes_identical_to_approved_clone": true,
+        "outgoing_fks_identical_to_approved_clone": true,
+        "columns": {
+            "id": {
+                "pos": 1,
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": null,
+                "extra": "auto_increment",
+                "charset": null,
+                "collation": null
+            },
+            "image": {
+                "pos": 2,
+                "type": "varchar(255)",
+                "nullable": "NO",
+                "default": null,
+                "extra": "",
+                "charset": "utf8mb4",
+                "collation": "utf8mb4_unicode_ci"
+            },
+            "total": {
+                "pos": 3,
+                "type": "double(8,2)",
+                "nullable": "NO",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "user_id": {
+                "pos": 4,
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "company_id": {
+                "pos": 5,
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "created_at": {
+                "pos": 6,
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "updated_at": {
+                "pos": 7,
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            },
+            "type": {
+                "pos": 8,
+                "type": "tinyint(1)",
+                "nullable": "YES",
+                "default": null,
+                "extra": "",
+                "charset": null,
+                "collation": null
+            }
+        },
+        "indexes": {
+            "PRIMARY": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "id"
+                ]
+            }
+        },
+        "outgoing_fks": [],
+        "incoming_fks": [],
+        "incoming_fks_dryrun": [],
+        "incoming_fks_identical_to_approved_clone": true
+    },
+    "create_statement_pre_incident_backup": "CREATE TABLE `company_invoices` ( `id` bigint unsigned NOT NULL, `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, `total` double(8,2) NOT NULL, `user_id` bigint unsigned NOT NULL, `company_id` bigint unsigned NOT NULL, `created_at` timestamp NULL DEFAULT NULL, `updated_at` timestamp NULL DEFAULT NULL, `type` tinyint(1) DEFAULT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    "create_statement_manual_recovery_binlog": "CREATE TABLE IF NOT EXISTS `company_invoices` ( `id` bigint unsigned NOT NULL, `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, `total` double(8,2) NOT NULL, `user_id` bigint unsigned NOT NULL, `company_id` bigint unsigned NOT NULL, `created_at` timestamp NULL DEFAULT NULL, `updated_at` timestamp NULL DEFAULT NULL, `type` tinyint(1) DEFAULT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    "manual_recovery_ddl_equals_pre_incident_ddl": true,
+    "binlog_history": [
+        "21:50:13 thread 219: DROP + CREATE (accidental restore #1; dump contains no rows for this table)",
+        "21:51:44 thread 222: DROP TABLE company_invoices - process stopped before CREATE (accidental restore #2)",
+        "21:53:16 thread 225: DROP + CREATE (accidental restore #3)",
+        "21:54:26-28 thread 226: DROP + CREATE (accidental restore #4)",
+        "21:56:41 thread 230: CREATE TABLE IF NOT EXISTS leader.company_invoices (manual recovery; no-op if table existed, no rows inserted)",
+        "No Write/Update/Delete row events for leader.company_invoices exist anywhere in binlog.000079"
+    ],
+    "identical_to_pre_incident_state": true,
+    "incoming_fk_note": "Incoming FKs identical to approved clone."
+}

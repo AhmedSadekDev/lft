@@ -1,0 +1,23 @@
+{
+    "generated_at": "2026-10-03 20:41:09 UTC",
+    "request_key_stats": {
+        "leader": {
+            "total_rows": "447",
+            "null_keys": "189",
+            "non_null_keys": "258",
+            "distinct_keys": "258",
+            "duplicate_groups": "0",
+            "keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+        },
+        "canonical_clone": {
+            "total_rows": "447",
+            "null_keys": "189",
+            "non_null_keys": "258",
+            "distinct_keys": "258",
+            "duplicate_groups": "0",
+            "keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+        },
+        "match": true
+    },
+    "pass": true
+}

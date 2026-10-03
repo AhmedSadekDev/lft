@@ -1,0 +1,30 @@
+{
+    "generated_at": "2026-10-03 21:01:26 UTC",
+    "database": "leader",
+    "discovery": "Laravel discovers only database/migrations/*.php (non-recursive). Legacy files live in database/migrations/legacy (165 files) and are never discovered. Sanctum and Telescope package migrations are disabled via Sanctum::ignoreMigrations() / Telescope::ignoreMigrations() in AppServiceProvider::register().",
+    "before_strategy_b": {
+        "pending": 153,
+        "note": "all 152 legacy PHP migrations + agent_photos were pending on leader (migrations table empty); see storage/app/phase05_completion/migrate_status_before.txt"
+    },
+    "after_adoption_migrate_status": {
+        "2026_10_01_000000_canonical_baseline_schema": "Ran (batch 1)",
+        "2026_10_01_000001_create_agent_photos_table": "Pending"
+    },
+    "migrate_pretend": {
+        "exit": 0,
+        "migrations_that_would_run": [
+            "2026_10_01_000001_create_agent_photos_table"
+        ],
+        "output": "INFO  Running migrations.  \n\r\n  2026_10_01_000001_create_agent_photos_table    \r\n  ⇂ create table `agent_photos` (`id` bigint unsigned not null auto_increment primary key, `agent_id` bigint unsigned not null, `path` varchar(255) not null, `original_name` varchar(255) not null, `created_at` timestamp null, `updated_at` timestamp null) default character set utf8mb4 collate 'utf8mb4_unicode_ci'  \n  ⇂ alter table `agent_photos` add index `agent_photos_created_at_index`(`created_at`)  \n  ⇂ alter table `agent_photos` add index `agent_photos_agent_id_index`(`agent_id`)"
+    },
+    "legacy_migrations_would_replay": false,
+    "structure_still_matches_fingerprint": true,
+    "read_only_commands_binlog_unchanged": true,
+    "future_execution": {
+        "existing_leader": "`php artisan migrate` would run only post-baseline migrations not yet recorded (currently 2026_10_01_000001_create_agent_photos_table, intentionally NOT run in Phase 0.5).",
+        "fresh_environment": "`php artisan migrate` on an empty MySQL database runs the canonical baseline, then every post-baseline migration.",
+        "other_existing_environments": "Must first equal the fingerprint (`php artisan lft:baseline:verify`), then `LFT_ALLOW_BASELINE_ADOPTION=1 php artisan lft:baseline:adopt`. Running `migrate` on a populated, unadopted database is refused by the baseline guard.",
+        "rollback": "The baseline down() throws: rollback/reset/refresh past the baseline are refused by design (restore from backup instead)."
+    },
+    "pass": true
+}

@@ -11,8 +11,8 @@ class BookingContainerAgents extends Controller
 {
     public function index()
     {
-        $containers = BookingContainer::all();
-        
+        $containers = BookingContainer::withCount('agents')->get();
+
         return view('admin.bookingsagents.index', compact('containers'));
     }
     

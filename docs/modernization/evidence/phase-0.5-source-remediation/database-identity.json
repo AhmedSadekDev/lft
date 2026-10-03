@@ -1,0 +1,16 @@
+{
+    "captured_at": "2026-10-03 18:59:34",
+    "database": "leader",
+    "hostname": "DESKTOP-VCL5N83",
+    "port": 3306,
+    "version": "8.4.3",
+    "current_user": "root@localhost",
+    "table_count": 65,
+    "migration_rows": 0,
+    "pk_count": 0,
+    "fk_count": 0,
+    "unique_count": 0,
+    "auto_increment_count": 0,
+    "secondary_indexes_count": 0,
+    "matches_expected_broken_baseline": true
+}

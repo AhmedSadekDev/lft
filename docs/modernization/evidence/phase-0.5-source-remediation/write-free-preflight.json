@@ -1,0 +1,30 @@
+{
+    "captured_at": "2026-10-03 18:59:34",
+    "database": "leader",
+    "total_processes": 2,
+    "active_writes_detected": 0,
+    "processes": [
+        {
+            "Id": 5,
+            "User": "event_scheduler",
+            "Host": "localhost",
+            "db": null,
+            "Command": "Daemon",
+            "Time": 13972,
+            "State": "Waiting on empty queue",
+            "Info": null
+        },
+        {
+            "Id": 238,
+            "User": "root",
+            "Host": "localhost:50217",
+            "db": "leader",
+            "Command": "Query",
+            "Time": 0,
+            "State": "init",
+            "Info": "SHOW FULL PROCESSLIST"
+        }
+    ],
+    "write_free_window_established": true,
+    "maintenance_status": "WRITE_FREE_CONFIRMED"
+}

@@ -1,0 +1,962 @@
+{
+    "captured_at": "2026-10-03 19:10:55",
+    "database": "leader",
+    "all_prechecks_passed": true,
+    "pk_prechecks": {
+        "agent_car_tranfers": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "agent_expenses": {
+            "null_count": 0,
+            "total_count": 447,
+            "distinct_count": 447,
+            "status": "PASS"
+        },
+        "agents": {
+            "null_count": 0,
+            "total_count": 19,
+            "distinct_count": 19,
+            "status": "PASS"
+        },
+        "app_notifications": {
+            "null_count": 0,
+            "total_count": 5510,
+            "distinct_count": 5510,
+            "status": "PASS"
+        },
+        "bank_trnsactions": {
+            "null_count": 0,
+            "total_count": 16,
+            "distinct_count": 16,
+            "status": "PASS"
+        },
+        "banks": {
+            "null_count": 0,
+            "total_count": 11,
+            "distinct_count": 11,
+            "status": "PASS"
+        },
+        "booking_container_agents": {
+            "null_count": 0,
+            "total_count": 1578,
+            "distinct_count": 1578,
+            "status": "PASS"
+        },
+        "booking_container_stages": {
+            "null_count": 0,
+            "total_count": 446,
+            "distinct_count": 446,
+            "status": "PASS"
+        },
+        "booking_containers": {
+            "null_count": 0,
+            "total_count": 691,
+            "distinct_count": 691,
+            "status": "PASS"
+        },
+        "booking_contrainer_extra_costs": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "booking_movements": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "booking_papers": {
+            "null_count": 0,
+            "total_count": 788,
+            "distinct_count": 788,
+            "status": "PASS"
+        },
+        "booking_services": {
+            "null_count": 0,
+            "total_count": 259,
+            "distinct_count": 259,
+            "status": "PASS"
+        },
+        "bookings": {
+            "null_count": 0,
+            "total_count": 474,
+            "distinct_count": 474,
+            "status": "PASS"
+        },
+        "branches": {
+            "null_count": 0,
+            "total_count": 155,
+            "distinct_count": 155,
+            "status": "PASS"
+        },
+        "cars": {
+            "null_count": 0,
+            "total_count": 167,
+            "distinct_count": 167,
+            "status": "PASS"
+        },
+        "choose_us": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "cities_and_regions": {
+            "null_count": 0,
+            "total_count": 40,
+            "distinct_count": 40,
+            "status": "PASS"
+        },
+        "companies": {
+            "null_count": 0,
+            "total_count": 43,
+            "distinct_count": 43,
+            "status": "PASS"
+        },
+        "company_fatoorahs": {
+            "null_count": 0,
+            "total_count": 2,
+            "distinct_count": 2,
+            "status": "PASS"
+        },
+        "company_invoices": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "company_services": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "company_transportations": {
+            "null_count": 0,
+            "total_count": 3,
+            "distinct_count": 3,
+            "status": "PASS"
+        },
+        "contact_us": {
+            "null_count": 0,
+            "total_count": 5,
+            "distinct_count": 5,
+            "status": "PASS"
+        },
+        "containers": {
+            "null_count": 0,
+            "total_count": 7,
+            "distinct_count": 7,
+            "status": "PASS"
+        },
+        "daily_booking_containers": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "delivery_policies": {
+            "null_count": 0,
+            "total_count": 256,
+            "distinct_count": 256,
+            "status": "PASS"
+        },
+        "delivery_policy_containers": {
+            "null_count": 0,
+            "total_count": 256,
+            "distinct_count": 256,
+            "status": "PASS"
+        },
+        "drivers": {
+            "null_count": 0,
+            "total_count": 305,
+            "distinct_count": 305,
+            "status": "PASS"
+        },
+        "employees": {
+            "null_count": 0,
+            "total_count": 58,
+            "distinct_count": 58,
+            "status": "PASS"
+        },
+        "factories": {
+            "null_count": 0,
+            "total_count": 150,
+            "distinct_count": 150,
+            "status": "PASS"
+        },
+        "failed_jobs": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "images": {
+            "null_count": 0,
+            "total_count": 867,
+            "distinct_count": 867,
+            "status": "PASS"
+        },
+        "invoice_payments": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "invoices": {
+            "null_count": 0,
+            "total_count": 225,
+            "distinct_count": 225,
+            "status": "PASS"
+        },
+        "log_activities": {
+            "null_count": 0,
+            "total_count": 1933,
+            "distinct_count": 1933,
+            "status": "PASS"
+        },
+        "migrations": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "money_transfers": {
+            "null_count": 0,
+            "total_count": 677,
+            "distinct_count": 677,
+            "status": "PASS"
+        },
+        "notes": {
+            "null_count": 0,
+            "total_count": 5,
+            "distinct_count": 5,
+            "status": "PASS"
+        },
+        "notifications": {
+            "null_count": 0,
+            "total_count": 1071,
+            "distinct_count": 1071,
+            "status": "PASS"
+        },
+        "otps": {
+            "null_count": 0,
+            "total_count": 9,
+            "distinct_count": 9,
+            "status": "PASS"
+        },
+        "our_services": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "payingcars": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "permissions": {
+            "null_count": 0,
+            "total_count": 129,
+            "distinct_count": 129,
+            "status": "PASS"
+        },
+        "personal_access_tokens": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "private_companies": {
+            "null_count": 0,
+            "total_count": 4,
+            "distinct_count": 4,
+            "status": "PASS"
+        },
+        "receipts": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "reviews": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "roles": {
+            "null_count": 0,
+            "total_count": 2,
+            "distinct_count": 2,
+            "status": "PASS"
+        },
+        "service_categories": {
+            "null_count": 0,
+            "total_count": 4,
+            "distinct_count": 4,
+            "status": "PASS"
+        },
+        "services": {
+            "null_count": 0,
+            "total_count": 34,
+            "distinct_count": 34,
+            "status": "PASS"
+        },
+        "settings": {
+            "null_count": 0,
+            "total_count": 1,
+            "distinct_count": 1,
+            "status": "PASS"
+        },
+        "shipments": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "shipping_agents": {
+            "null_count": 0,
+            "total_count": 18,
+            "distinct_count": 18,
+            "status": "PASS"
+        },
+        "sponsers": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "static_pages": {
+            "null_count": 0,
+            "total_count": 4,
+            "distinct_count": 4,
+            "status": "PASS"
+        },
+        "superagent_transactions": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "superagents": {
+            "null_count": 0,
+            "total_count": 11,
+            "distinct_count": 11,
+            "status": "PASS"
+        },
+        "supplier_payments": {
+            "null_count": 0,
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "suppliers": {
+            "null_count": 0,
+            "total_count": 3,
+            "distinct_count": 3,
+            "status": "PASS"
+        },
+        "model_has_permissions": {
+            "composite_columns": [
+                "permission_id",
+                "model_id",
+                "model_type"
+            ],
+            "total_count": 0,
+            "distinct_count": 0,
+            "status": "PASS"
+        },
+        "model_has_roles": {
+            "composite_columns": [
+                "role_id",
+                "model_id",
+                "model_type"
+            ],
+            "total_count": 8,
+            "distinct_count": 8,
+            "status": "PASS"
+        },
+        "role_has_permissions": {
+            "composite_columns": [
+                "permission_id",
+                "role_id"
+            ],
+            "total_count": 201,
+            "distinct_count": 201,
+            "status": "PASS"
+        },
+        "telescope_entries_sequence": {
+            "null_count": 0,
+            "total_count": 66068,
+            "distinct_count": 66068,
+            "status": "PASS"
+        }
+    },
+    "unique_prechecks": {
+        "agent_expenses": {
+            "columns": [
+                "agent_id",
+                "request_key"
+            ],
+            "non_null_rows": 258,
+            "distinct_rows": 258,
+            "status": "PASS"
+        },
+        "booking_container_stages": {
+            "columns": [
+                "booking_container_id",
+                "type_id"
+            ],
+            "non_null_rows": 446,
+            "distinct_rows": 446,
+            "status": "PASS"
+        },
+        "receipts": {
+            "columns": [
+                "booking_service_id"
+            ],
+            "non_null_rows": 0,
+            "distinct_rows": 0,
+            "status": "PASS"
+        },
+        "roles": {
+            "columns": [
+                "name",
+                "guard_name"
+            ],
+            "non_null_rows": 2,
+            "distinct_rows": 2,
+            "status": "PASS"
+        },
+        "permissions": {
+            "columns": [
+                "name",
+                "guard_name"
+            ],
+            "non_null_rows": 129,
+            "distinct_rows": 129,
+            "status": "PASS"
+        },
+        "personal_access_tokens": {
+            "columns": [
+                "token"
+            ],
+            "non_null_rows": 0,
+            "distinct_rows": 0,
+            "status": "PASS"
+        },
+        "failed_jobs": {
+            "columns": [
+                "uuid"
+            ],
+            "non_null_rows": 0,
+            "distinct_rows": 0,
+            "status": "PASS"
+        },
+        "telescope_entries": {
+            "columns": [
+                "uuid"
+            ],
+            "non_null_rows": 66068,
+            "distinct_rows": 66068,
+            "status": "PASS"
+        }
+    },
+    "fk_prechecks": {
+        "employees.company_id -> companies.id": {
+            "child_table": "employees",
+            "child_column": "company_id",
+            "parent_table": "companies",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "branches.factory_id -> factories.id": {
+            "child_table": "branches",
+            "child_column": "factory_id",
+            "parent_table": "factories",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "bookings.company_id -> companies.id": {
+            "child_table": "bookings",
+            "child_column": "company_id",
+            "parent_table": "companies",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "bookings.employee_id -> employees.id": {
+            "child_table": "bookings",
+            "child_column": "employee_id",
+            "parent_table": "employees",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_containers.booking_id -> bookings.id": {
+            "child_table": "booking_containers",
+            "child_column": "booking_id",
+            "parent_table": "bookings",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_containers.container_id -> containers.id": {
+            "child_table": "booking_containers",
+            "child_column": "container_id",
+            "parent_table": "containers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_movements.booking_id -> bookings.id": {
+            "child_table": "booking_movements",
+            "child_column": "booking_id",
+            "parent_table": "bookings",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_movements.container_id -> containers.id": {
+            "child_table": "booking_movements",
+            "child_column": "container_id",
+            "parent_table": "containers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "otps.company_id -> companies.id": {
+            "child_table": "otps",
+            "child_column": "company_id",
+            "parent_table": "companies",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_containers.branch_id -> branches.id": {
+            "child_table": "booking_containers",
+            "child_column": "branch_id",
+            "parent_table": "branches",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "invoices.booking_id -> bookings.id": {
+            "child_table": "invoices",
+            "child_column": "booking_id",
+            "parent_table": "bookings",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "company_transportations.company_id -> companies.id": {
+            "child_table": "company_transportations",
+            "child_column": "company_id",
+            "parent_table": "companies",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "company_transportations.container_id -> containers.id": {
+            "child_table": "company_transportations",
+            "child_column": "container_id",
+            "parent_table": "containers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "company_transportations.departure_id -> cities_and_regions.id": {
+            "child_table": "company_transportations",
+            "child_column": "departure_id",
+            "parent_table": "cities_and_regions",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "company_transportations.loading_id -> cities_and_regions.id": {
+            "child_table": "company_transportations",
+            "child_column": "loading_id",
+            "parent_table": "cities_and_regions",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "company_transportations.aging_id -> cities_and_regions.id": {
+            "child_table": "company_transportations",
+            "child_column": "aging_id",
+            "parent_table": "cities_and_regions",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "services.service_category_id -> service_categories.id": {
+            "child_table": "services",
+            "child_column": "service_category_id",
+            "parent_table": "service_categories",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "branches.country_id -> cities_and_regions.id": {
+            "child_table": "branches",
+            "child_column": "country_id",
+            "parent_table": "cities_and_regions",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "branches.city_id -> cities_and_regions.id": {
+            "child_table": "branches",
+            "child_column": "city_id",
+            "parent_table": "cities_and_regions",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "company_services.service_id -> services.id": {
+            "child_table": "company_services",
+            "child_column": "service_id",
+            "parent_table": "services",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "company_services.company_id -> companies.id": {
+            "child_table": "company_services",
+            "child_column": "company_id",
+            "parent_table": "companies",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_container_agents.booking_container_id -> booking_containers.id": {
+            "child_table": "booking_container_agents",
+            "child_column": "booking_container_id",
+            "parent_table": "booking_containers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_container_agents.agent_id -> agents.id": {
+            "child_table": "booking_container_agents",
+            "child_column": "agent_id",
+            "parent_table": "agents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "daily_booking_containers.booking_container_id -> booking_containers.id": {
+            "child_table": "daily_booking_containers",
+            "child_column": "booking_container_id",
+            "parent_table": "booking_containers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "daily_booking_containers.superagent_id -> superagents.id": {
+            "child_table": "daily_booking_containers",
+            "child_column": "superagent_id",
+            "parent_table": "superagents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "otps.agent_id -> agents.id": {
+            "child_table": "otps",
+            "child_column": "agent_id",
+            "parent_table": "agents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "agent_expenses.agent_id -> agents.id": {
+            "child_table": "agent_expenses",
+            "child_column": "agent_id",
+            "parent_table": "agents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "agent_expenses.booking_container_id -> booking_containers.id": {
+            "child_table": "agent_expenses",
+            "child_column": "booking_container_id",
+            "parent_table": "booking_containers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "agent_expenses.service_id -> services.id": {
+            "child_table": "agent_expenses",
+            "child_column": "service_id",
+            "parent_table": "services",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_containers.departure_id -> cities_and_regions.id": {
+            "child_table": "booking_containers",
+            "child_column": "departure_id",
+            "parent_table": "cities_and_regions",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_containers.loading_id -> cities_and_regions.id": {
+            "child_table": "booking_containers",
+            "child_column": "loading_id",
+            "parent_table": "cities_and_regions",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_containers.aging_id -> cities_and_regions.id": {
+            "child_table": "booking_containers",
+            "child_column": "aging_id",
+            "parent_table": "cities_and_regions",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "delivery_policies.car_id -> cars.id": {
+            "child_table": "delivery_policies",
+            "child_column": "car_id",
+            "parent_table": "cars",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "delivery_policies.driver_id -> drivers.id": {
+            "child_table": "delivery_policies",
+            "child_column": "driver_id",
+            "parent_table": "drivers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_papers.booking_id -> bookings.id": {
+            "child_table": "booking_papers",
+            "child_column": "booking_id",
+            "parent_table": "bookings",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "bookings.shipping_agent_id -> shipping_agents.id": {
+            "child_table": "bookings",
+            "child_column": "shipping_agent_id",
+            "parent_table": "shipping_agents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "bookings.factory_id -> factories.id": {
+            "child_table": "bookings",
+            "child_column": "factory_id",
+            "parent_table": "factories",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "otps.superagent_id -> superagents.id": {
+            "child_table": "otps",
+            "child_column": "superagent_id",
+            "parent_table": "superagents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "shipments.car_id -> cars.id": {
+            "child_table": "shipments",
+            "child_column": "car_id",
+            "parent_table": "cars",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "agent_car_tranfers.car_id -> cars.id": {
+            "child_table": "agent_car_tranfers",
+            "child_column": "car_id",
+            "parent_table": "cars",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "agent_car_tranfers.agent_id -> agents.id": {
+            "child_table": "agent_car_tranfers",
+            "child_column": "agent_id",
+            "parent_table": "agents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "bank_trnsactions.bank_id -> banks.id": {
+            "child_table": "bank_trnsactions",
+            "child_column": "bank_id",
+            "parent_table": "banks",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "superagent_transactions.superagent_id -> superagents.id": {
+            "child_table": "superagent_transactions",
+            "child_column": "superagent_id",
+            "parent_table": "superagents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "shipments.agent_id -> agents.id": {
+            "child_table": "shipments",
+            "child_column": "agent_id",
+            "parent_table": "agents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "bank_trnsactions.trans_bank_id -> banks.id": {
+            "child_table": "bank_trnsactions",
+            "child_column": "trans_bank_id",
+            "parent_table": "banks",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "bank_trnsactions.company_id -> companies.id": {
+            "child_table": "bank_trnsactions",
+            "child_column": "company_id",
+            "parent_table": "companies",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "payingcars.car_id -> cars.id": {
+            "child_table": "payingcars",
+            "child_column": "car_id",
+            "parent_table": "cars",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_contrainer_extra_costs.booking_container_id -> booking_containers.id": {
+            "child_table": "booking_contrainer_extra_costs",
+            "child_column": "booking_container_id",
+            "parent_table": "booking_containers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_contrainer_extra_costs.car_id -> cars.id": {
+            "child_table": "booking_contrainer_extra_costs",
+            "child_column": "car_id",
+            "parent_table": "cars",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_contrainer_extra_costs.driver_id -> drivers.id": {
+            "child_table": "booking_contrainer_extra_costs",
+            "child_column": "driver_id",
+            "parent_table": "drivers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "invoice_payments.bank_id -> banks.id": {
+            "child_table": "invoice_payments",
+            "child_column": "bank_id",
+            "parent_table": "banks",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "invoice_payments.invoice_id -> invoices.id": {
+            "child_table": "invoice_payments",
+            "child_column": "invoice_id",
+            "parent_table": "invoices",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_services.bank_id -> banks.id": {
+            "child_table": "booking_services",
+            "child_column": "bank_id",
+            "parent_table": "banks",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_services.agent_id -> agents.id": {
+            "child_table": "booking_services",
+            "child_column": "agent_id",
+            "parent_table": "agents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "companies.private_company_id -> private_companies.id": {
+            "child_table": "companies",
+            "child_column": "private_company_id",
+            "parent_table": "private_companies",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "receipts.booking_id -> bookings.id": {
+            "child_table": "receipts",
+            "child_column": "booking_id",
+            "parent_table": "bookings",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "receipts.supplier_id -> suppliers.id": {
+            "child_table": "receipts",
+            "child_column": "supplier_id",
+            "parent_table": "suppliers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "supplier_payments.supplier_id -> suppliers.id": {
+            "child_table": "supplier_payments",
+            "child_column": "supplier_id",
+            "parent_table": "suppliers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "agent_expenses.booking_service_id -> booking_services.id": {
+            "child_table": "agent_expenses",
+            "child_column": "booking_service_id",
+            "parent_table": "booking_services",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_container_stages.booking_container_id -> booking_containers.id": {
+            "child_table": "booking_container_stages",
+            "child_column": "booking_container_id",
+            "parent_table": "booking_containers",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        },
+        "booking_papers.agent_id -> agents.id": {
+            "child_table": "booking_papers",
+            "child_column": "agent_id",
+            "parent_table": "agents",
+            "parent_column": "id",
+            "orphan_count": 0,
+            "status": "PASS"
+        }
+    }
+}

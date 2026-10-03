@@ -1,0 +1,583 @@
+{
+    "generated_at": "2026-10-03 20:33:11 UTC",
+    "database": "leader_dryrun",
+    "guard_env": "LFT_ALLOW_SCHEMA_REMEDIATION_DRYRUN=1",
+    "select_database": "leader_dryrun",
+    "decisions": {
+        "fks": {
+            "fk_receipts_booking_id": {
+                "table": "receipts",
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION",
+                "source": "2026_07_23_000002_create_receipts_table.php: foreignId(booking_id)->nullable()->constrained(bookings)->nullOnDelete()"
+            },
+            "fk_receipts_supplier_id": {
+                "table": "receipts",
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION",
+                "source": "2026_07_23_000002_create_receipts_table.php / 2026_07_23_000003: foreignId(supplier_id)->nullable()->constrained(suppliers)->nullOnDelete()"
+            },
+            "fk_supplier_payments_supplier_id": {
+                "table": "supplier_payments",
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION",
+                "source": "2026_07_23_000004_create_supplier_payments_table.php: foreignId(supplier_id)->constrained(suppliers)->cascadeOnDelete()"
+            },
+            "fk_agent_expenses_booking_service_id": {
+                "table": "agent_expenses",
+                "columns": [
+                    "booking_service_id"
+                ],
+                "ref_table": "booking_services",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION",
+                "source": "2026_09_09_000001_add_booking_service_id_to_agent_expenses_table.php: foreign(booking_service_id)->references(id)->on(booking_services)->onDelete('cascade')"
+            },
+            "fk_booking_container_stages_booking_container_id": {
+                "table": "booking_container_stages",
+                "columns": [
+                    "booking_container_id"
+                ],
+                "ref_table": "booking_containers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION",
+                "source": "2026_09_13_000001_add_parallel_container_stages.php: foreignId(booking_container_id)->constrained()->cascadeOnDelete()"
+            }
+        },
+        "on_update_note": "None of the five source migrations specifies onUpdate; MySQL default (reported as NO ACTION) is the historical intent.",
+        "unique_names": {
+            "agent_expense_request_unique": {
+                "table": "agent_expenses",
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ],
+                "source": "2026_09_13_000001_add_parallel_container_stages.php: unique(['agent_id','request_key'], 'agent_expense_request_unique')"
+            },
+            "container_stage_unique": {
+                "table": "booking_container_stages",
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ],
+                "source": "2026_09_13_000001_add_parallel_container_stages.php: unique(['booking_container_id','type_id'], 'container_stage_unique')"
+            }
+        },
+        "set_null_requires_nullable": [
+            "receipts.booking_id",
+            "receipts.supplier_id"
+        ]
+    },
+    "schema_before_sha256": "7a136a1ad2ea4e76614fd624a2ad2fb5aa289238a41928a70d24cc90effbdc33",
+    "counts_before": {
+        "tables": 65,
+        "columns": 599,
+        "primary_keys": 64,
+        "auto_increment": 60,
+        "unique_non_pk": 8,
+        "non_unique_indexes": 71,
+        "foreign_keys": 61,
+        "fk_backing_indexes": 59,
+        "historical_non_unique_indexes": 12,
+        "fk_on_delete": {
+            "CASCADE": 29,
+            "NO ACTION": 5,
+            "SET NULL": 27
+        }
+    },
+    "delta": [
+        {
+            "type": "REPLACE_FK",
+            "table": "receipts",
+            "name": "fk_receipts_booking_id",
+            "current": "receipts(booking_id)->bookings(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "target": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "current_def": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "target_def": {
+                "table": "receipts",
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION",
+                "source": "2026_07_23_000002_create_receipts_table.php: foreignId(booking_id)->nullable()->constrained(bookings)->nullOnDelete()"
+            }
+        },
+        {
+            "type": "REPLACE_FK",
+            "table": "receipts",
+            "name": "fk_receipts_supplier_id",
+            "current": "receipts(supplier_id)->suppliers(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "target": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "current_def": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "target_def": {
+                "table": "receipts",
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION",
+                "source": "2026_07_23_000002_create_receipts_table.php / 2026_07_23_000003: foreignId(supplier_id)->nullable()->constrained(suppliers)->nullOnDelete()"
+            }
+        },
+        {
+            "type": "REPLACE_FK",
+            "table": "supplier_payments",
+            "name": "fk_supplier_payments_supplier_id",
+            "current": "supplier_payments(supplier_id)->suppliers(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "target": "supplier_payments(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "current_def": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "target_def": {
+                "table": "supplier_payments",
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION",
+                "source": "2026_07_23_000004_create_supplier_payments_table.php: foreignId(supplier_id)->constrained(suppliers)->cascadeOnDelete()"
+            }
+        },
+        {
+            "type": "REPLACE_FK",
+            "table": "agent_expenses",
+            "name": "fk_agent_expenses_booking_service_id",
+            "current": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "target": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "current_def": {
+                "columns": [
+                    "booking_service_id"
+                ],
+                "ref_table": "booking_services",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "target_def": {
+                "table": "agent_expenses",
+                "columns": [
+                    "booking_service_id"
+                ],
+                "ref_table": "booking_services",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION",
+                "source": "2026_09_09_000001_add_booking_service_id_to_agent_expenses_table.php: foreign(booking_service_id)->references(id)->on(booking_services)->onDelete('cascade')"
+            }
+        },
+        {
+            "type": "REPLACE_FK",
+            "table": "booking_container_stages",
+            "name": "fk_booking_container_stages_booking_container_id",
+            "current": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "target": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "current_def": {
+                "columns": [
+                    "booking_container_id"
+                ],
+                "ref_table": "booking_containers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "target_def": {
+                "table": "booking_container_stages",
+                "columns": [
+                    "booking_container_id"
+                ],
+                "ref_table": "booking_containers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION",
+                "source": "2026_09_13_000001_add_parallel_container_stages.php: foreignId(booking_container_id)->constrained()->cascadeOnDelete()"
+            }
+        }
+    ],
+    "preflight": {
+        "fk_receipts_booking_id": {
+            "child": "receipts.booking_id",
+            "child_type": "bigint unsigned",
+            "child_nullable": "YES",
+            "parent": "bookings.id",
+            "parent_type": "bigint unsigned",
+            "types_compatible": true,
+            "parent_is_primary_key": true,
+            "non_null_child_refs": 0,
+            "orphans": 0,
+            "nullable_ok": true,
+            "pass": true
+        },
+        "fk_receipts_supplier_id": {
+            "child": "receipts.supplier_id",
+            "child_type": "bigint unsigned",
+            "child_nullable": "YES",
+            "parent": "suppliers.id",
+            "parent_type": "bigint unsigned",
+            "types_compatible": true,
+            "parent_is_primary_key": true,
+            "non_null_child_refs": 0,
+            "orphans": 0,
+            "nullable_ok": true,
+            "pass": true
+        },
+        "fk_supplier_payments_supplier_id": {
+            "child": "supplier_payments.supplier_id",
+            "child_type": "bigint unsigned",
+            "child_nullable": "NO",
+            "parent": "suppliers.id",
+            "parent_type": "bigint unsigned",
+            "types_compatible": true,
+            "parent_is_primary_key": true,
+            "non_null_child_refs": 0,
+            "orphans": 0,
+            "nullable_ok": true,
+            "pass": true
+        },
+        "fk_agent_expenses_booking_service_id": {
+            "child": "agent_expenses.booking_service_id",
+            "child_type": "bigint unsigned",
+            "child_nullable": "YES",
+            "parent": "booking_services.id",
+            "parent_type": "bigint unsigned",
+            "types_compatible": true,
+            "parent_is_primary_key": true,
+            "non_null_child_refs": 40,
+            "orphans": 0,
+            "nullable_ok": true,
+            "pass": true
+        },
+        "fk_booking_container_stages_booking_container_id": {
+            "child": "booking_container_stages.booking_container_id",
+            "child_type": "bigint unsigned",
+            "child_nullable": "NO",
+            "parent": "booking_containers.id",
+            "parent_type": "bigint unsigned",
+            "types_compatible": true,
+            "parent_is_primary_key": true,
+            "non_null_child_refs": 446,
+            "orphans": 0,
+            "nullable_ok": true,
+            "pass": true
+        },
+        "agent_expense_request_unique": {
+            "duplicate_groups": 0,
+            "pass": true
+        },
+        "container_stage_unique": {
+            "duplicate_groups": 0,
+            "pass": true
+        }
+    },
+    "binlog_before": {
+        "file": "binlog.000079",
+        "position": 108753286
+    },
+    "executed": [
+        {
+            "op": "REPLACE_FK",
+            "table": "receipts",
+            "name": "fk_receipts_booking_id",
+            "observed_before": "receipts(booking_id)->bookings(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "statements": [
+                "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_booking_id`",
+                "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_booking_id` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION"
+            ],
+            "observed_after": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "verified": true,
+            "duration_ms": 3256
+        },
+        {
+            "op": "REPLACE_FK",
+            "table": "receipts",
+            "name": "fk_receipts_supplier_id",
+            "observed_before": "receipts(supplier_id)->suppliers(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "statements": [
+                "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_supplier_id`",
+                "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION"
+            ],
+            "observed_after": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "verified": true,
+            "duration_ms": 3196.2
+        },
+        {
+            "op": "REPLACE_FK",
+            "table": "supplier_payments",
+            "name": "fk_supplier_payments_supplier_id",
+            "observed_before": "supplier_payments(supplier_id)->suppliers(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "statements": [
+                "ALTER TABLE `supplier_payments` DROP FOREIGN KEY `fk_supplier_payments_supplier_id`",
+                "ALTER TABLE `supplier_payments` ADD CONSTRAINT `fk_supplier_payments_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
+            ],
+            "observed_after": "supplier_payments(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "verified": true,
+            "duration_ms": 1892.7
+        },
+        {
+            "op": "REPLACE_FK",
+            "table": "agent_expenses",
+            "name": "fk_agent_expenses_booking_service_id",
+            "observed_before": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "statements": [
+                "ALTER TABLE `agent_expenses` DROP FOREIGN KEY `fk_agent_expenses_booking_service_id`",
+                "ALTER TABLE `agent_expenses` ADD CONSTRAINT `fk_agent_expenses_booking_service_id` FOREIGN KEY (`booking_service_id`) REFERENCES `booking_services` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
+            ],
+            "observed_after": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "verified": true,
+            "duration_ms": 3406
+        },
+        {
+            "op": "REPLACE_FK",
+            "table": "booking_container_stages",
+            "name": "fk_booking_container_stages_booking_container_id",
+            "observed_before": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE NO ACTION ON UPDATE NO ACTION",
+            "statements": [
+                "ALTER TABLE `booking_container_stages` DROP FOREIGN KEY `fk_booking_container_stages_booking_container_id`",
+                "ALTER TABLE `booking_container_stages` ADD CONSTRAINT `fk_booking_container_stages_booking_container_id` FOREIGN KEY (`booking_container_id`) REFERENCES `booking_containers` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
+            ],
+            "observed_after": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "verified": true,
+            "duration_ms": 2108
+        }
+    ],
+    "binlog_after": {
+        "file": "binlog.000079",
+        "position": 108756454
+    },
+    "schema_after_sha256": "184d02eaa5780b5f307c64dde4a2e72b2438e55204323d5dcd86089a165b62ea",
+    "counts_after": {
+        "tables": 65,
+        "columns": 599,
+        "primary_keys": 64,
+        "auto_increment": 60,
+        "unique_non_pk": 8,
+        "non_unique_indexes": 71,
+        "foreign_keys": 61,
+        "fk_backing_indexes": 59,
+        "historical_non_unique_indexes": 12,
+        "fk_on_delete": {
+            "CASCADE": 32,
+            "SET NULL": 29
+        }
+    },
+    "schema_diff_before_after": [
+        {
+            "table": "agent_expenses",
+            "what": "fk",
+            "name": "fk_agent_expenses_booking_service_id",
+            "a": {
+                "columns": [
+                    "booking_service_id"
+                ],
+                "ref_table": "booking_services",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "b": {
+                "columns": [
+                    "booking_service_id"
+                ],
+                "ref_table": "booking_services",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "booking_container_stages",
+            "what": "fk",
+            "name": "fk_booking_container_stages_booking_container_id",
+            "a": {
+                "columns": [
+                    "booking_container_id"
+                ],
+                "ref_table": "booking_containers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "b": {
+                "columns": [
+                    "booking_container_id"
+                ],
+                "ref_table": "booking_containers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "receipts",
+            "what": "fk",
+            "name": "fk_receipts_booking_id",
+            "a": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "b": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "receipts",
+            "what": "fk",
+            "name": "fk_receipts_supplier_id",
+            "a": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "b": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "supplier_payments",
+            "what": "fk",
+            "name": "fk_supplier_payments_supplier_id",
+            "a": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "NO ACTION",
+                "on_update": "NO ACTION"
+            },
+            "b": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            }
+        }
+    ],
+    "only_intended_objects_changed": true,
+    "data_unchanged": {
+        "tables_identical": 65,
+        "tables_different": [],
+        "pass": true
+    },
+    "metrics_unchanged": true,
+    "status": "PASSED"
+}

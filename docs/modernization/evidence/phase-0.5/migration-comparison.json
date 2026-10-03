@@ -1,1944 +1,1552 @@
-[
-    {
-        "number": 1,
-        "file": "2014_10_12_000000_create_users_table.php",
-        "created_tables": [
-            "users"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 2,
-        "file": "2014_10_12_100000_create_password_resets_table.php",
-        "created_tables": [
-            "password_resets"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 3,
-        "file": "2019_08_19_000000_create_failed_jobs_table.php",
-        "created_tables": [
-            "failed_jobs"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 4,
-        "file": "2019_12_14_000001_create_personal_access_tokens_table.php",
-        "created_tables": [
-            "personal_access_tokens"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 5,
-        "file": "2023_01_02_214541_create_permission_tables.php",
-        "created_tables": [],
-        "altered_tables": [],
-        "classification": "MATCHED",
-        "details": []
-    },
-    {
-        "number": 6,
-        "file": "2023_01_03_214802_create_containers_table.php",
-        "created_tables": [
-            "containers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 7,
-        "file": "2023_01_06_230608_create_companies_table.php",
-        "created_tables": [
-            "companies"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 8,
-        "file": "2023_01_09_200829_create_employees_table.php",
-        "created_tables": [
-            "employees"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 9,
-        "file": "2023_01_09_224456_create_factories_table.php",
-        "created_tables": [
-            "factories"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 10,
-        "file": "2023_01_10_191147_create_branches_table.php",
-        "created_tables": [
-            "branches"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 11,
-        "file": "2023_01_17_095242_create_bookings_table.php",
-        "created_tables": [
-            "bookings"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 12,
-        "file": "2023_01_17_193757_create_second_bookings_table.php",
-        "created_tables": [
-            "second_bookings"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 13,
-        "file": "2023_01_17_202749_create_third_bookings_table.php",
-        "created_tables": [
-            "third_bookings"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 14,
-        "file": "2023_01_21_114617_create_booking_containers_table.php",
-        "created_tables": [
-            "booking_containers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 15,
-        "file": "2023_01_21_154616_create_booking_movements_table.php",
-        "created_tables": [
-            "booking_movements"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 16,
-        "file": "2023_03_10_145616_create_otps_table.php",
-        "created_tables": [
-            "otps"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 17,
-        "file": "2023_03_10_180953_add_session_id_column_to_users_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "users",
-            "users"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'users' does not exist in DB.",
-            "Target table 'users' does not exist in DB."
-        ]
-    },
-    {
-        "number": 18,
-        "file": "2023_03_11_005001_create_static_pages_table.php",
-        "created_tables": [
-            "static_pages"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 19,
-        "file": "2023_03_11_131628_create_our_services_table.php",
-        "created_tables": [
-            "our_services"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 20,
-        "file": "2023_03_11_154859_create_choose_us_table.php",
-        "created_tables": [
-            "choose_us"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 21,
-        "file": "2023_03_11_164224_create_sponsers_table.php",
-        "created_tables": [
-            "sponsers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 22,
-        "file": "2023_03_11_170900_create_reviews_table.php",
-        "created_tables": [
-            "reviews"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 23,
-        "file": "2023_03_11_180258_create_settings_table.php",
-        "created_tables": [
-            "settings"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 24,
-        "file": "2023_03_11_192831_add_phone_and_address_columns_to_users_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "users",
-            "users"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'users' does not exist in DB.",
-            "Target table 'users' does not exist in DB."
-        ]
-    },
-    {
-        "number": 25,
-        "file": "2023_03_19_071304_create_contact_us_table.php",
-        "created_tables": [
-            "contact_us"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 26,
-        "file": "2023_03_28_210648_add_password_and_session_id_to_companies_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "companies",
-            "companies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: companies.password, companies.session_id, companies.password, companies.session_id"
-        ]
-    },
-    {
-        "number": 27,
-        "file": "2023_03_28_221748_alter_company_id_in_otp_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "otps",
-            "otps"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Some columns exist (otps.company_id, otps.company_id), but others missing (otps.user_id, otps.user_id)."
-        ]
-    },
-    {
-        "number": 28,
-        "file": "2023_03_29_174300_create_notifications_table.php",
-        "created_tables": [
-            "notifications"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 29,
-        "file": "2023_04_07_020644_add_branches_to_booking_containers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_containers",
-            "booking_containers"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (booking_containers.branch_id, booking_containers.arrival_date, booking_containers.branch_id, booking_containers.arrival_date), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 30,
-        "file": "2023_04_07_021607_drop_branch_and_arrival_date_from_third_bookings_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "third_bookings",
-            "third_bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'third_bookings' does not exist in DB.",
-            "Target table 'third_bookings' does not exist in DB."
-        ]
-    },
-    {
-        "number": 31,
-        "file": "2023_04_07_130931_add_container_type_to_third_bookings_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "third_bookings",
-            "third_bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'third_bookings' does not exist in DB.",
-            "Target table 'third_bookings' does not exist in DB."
-        ]
-    },
-    {
-        "number": 32,
-        "file": "2023_04_08_111532_add_taxed_invoice_column_to_bookings_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "bookings",
-            "bookings"
-        ],
-        "classification": "NOT MATCHED",
-        "details": [
-            "All added columns missing: bookings.taxed, bookings.taxed"
-        ]
-    },
-    {
-        "number": 33,
-        "file": "2023_04_08_135802_create_invoices_table.php",
-        "created_tables": [
-            "invoices"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 34,
-        "file": "2023_04_08_191534_create_cities_and_regions_table.php",
-        "created_tables": [
-            "cities_and_regions"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 35,
-        "file": "2023_04_08_234951_create_invoice_transportations_table.php",
-        "created_tables": [
-            "invoice_transportations"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 36,
-        "file": "2023_04_08_234980_create_company_transportations_table.php",
-        "created_tables": [
-            "company_transportations"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 37,
-        "file": "2023_04_10_004133_add_booking_id_column_to_invoice_transportations_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_transportations",
-            "invoice_transportations"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'invoice_transportations' does not exist in DB.",
-            "Target table 'invoice_transportations' does not exist in DB."
-        ]
-    },
-    {
-        "number": 38,
-        "file": "2023_04_11_001716_create_invoice_services_table.php",
-        "created_tables": [
-            "invoice_services"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 39,
-        "file": "2023_04_11_230451_add_discount_column_to_invoices_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoices",
-            "invoices"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: invoices.discount, invoices.discount"
-        ]
-    },
-    {
-        "number": 40,
-        "file": "2023_04_13_144003_alter_booking_number_in_second_bookings_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "second_bookings",
-            "second_bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'second_bookings' does not exist in DB.",
-            "Target table 'second_bookings' does not exist in DB."
-        ]
-    },
-    {
-        "number": 41,
-        "file": "2023_04_13_144639_alter_container_number_in_bookings_containers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_containers",
-            "booking_containers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: booking_containers.sail_of_number, booking_containers.container_no, booking_containers.sail_of_number, booking_containers.container_no, booking_containers.sail_of_number, booking_containers.container_no, booking_containers.sail_of_number, booking_containers.container_no"
-        ]
-    },
-    {
-        "number": 42,
-        "file": "2023_04_14_113754_create_shipping_agents_table.php",
-        "created_tables": [
-            "shipping_agents"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 43,
-        "file": "2023_04_14_134007_alter_shipping_agency_column_in_second_bookings_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "second_bookings",
-            "second_bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'second_bookings' does not exist in DB.",
-            "Target table 'second_bookings' does not exist in DB."
-        ]
-    },
-    {
-        "number": 44,
-        "file": "2023_04_14_142231_create_service_categories_table.php",
-        "created_tables": [
-            "service_categories"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 45,
-        "file": "2023_04_14_150556_create_services_table.php",
-        "created_tables": [
-            "services"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 46,
-        "file": "2023_04_16_193415_add_taxed_column_to_company_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "companies",
-            "companies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: companies.taxed, companies.taxed"
-        ]
-    },
-    {
-        "number": 47,
-        "file": "2023_04_16_213301_alter_certificate_number_column_to_second_bookings_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "second_bookings",
-            "second_bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'second_bookings' does not exist in DB.",
-            "Target table 'second_bookings' does not exist in DB."
-        ]
-    },
-    {
-        "number": 48,
-        "file": "2023_04_16_220933_add_service_id_column_to_invoice_services_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_services",
-            "invoice_services"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'invoice_services' does not exist in DB.",
-            "Target table 'invoice_services' does not exist in DB."
-        ]
-    },
-    {
-        "number": 49,
-        "file": "2023_05_01_231622_add_country_and_city_columns_to_branches_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "branches",
-            "branches"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (branches.country_id, branches.city_id, branches.country_id, branches.city_id), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 50,
-        "file": "2023_05_20_151319_add_booking_id_to_invoice_services_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_services",
-            "invoice_services"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'invoice_services' does not exist in DB.",
-            "Target table 'invoice_services' does not exist in DB."
-        ]
-    },
-    {
-        "number": 51,
-        "file": "2023_05_22_171621_add_sail_number_to_invoice_transportations.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_transportations",
-            "invoice_transportations"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'invoice_transportations' does not exist in DB.",
-            "Target table 'invoice_transportations' does not exist in DB."
-        ]
-    },
-    {
-        "number": 52,
-        "file": "2023_06_01_173403_add_branch_number_to_invoice_transportations_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_transportations",
-            "invoice_transportations"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'invoice_transportations' does not exist in DB.",
-            "Target table 'invoice_transportations' does not exist in DB."
-        ]
-    },
-    {
-        "number": 53,
-        "file": "2023_06_01_195054_create_drivers_table.php",
-        "created_tables": [
-            "drivers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 54,
-        "file": "2023_06_01_195244_create_cars_table.php",
-        "created_tables": [
-            "cars"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 55,
-        "file": "2023_06_01_195901_alter_invoice_number_column_invoices_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoices",
-            "invoices"
-        ],
-        "classification": "NOT MATCHED",
-        "details": [
-            "All added columns missing: invoices.company_id, invoices.company_id"
-        ]
-    },
-    {
-        "number": 56,
-        "file": "2023_06_01_202147_add_invoice_number_auto_increment_to_invoices_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "companies",
-            "companies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: companies.invoice_number_auto_increment, companies.invoice_number_auto_increment"
-        ]
-    },
-    {
-        "number": 57,
-        "file": "2023_06_02_131506_add_service_status_to_service_categories_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "service_categories",
-            "services",
-            "service_categories",
-            "services"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Some columns exist (service_categories.service_status, service_categories.service_status, service_categories.service_status, service_categories.service_status), but others missing (services.service_status, services.service_status, services.service_status, services.service_status)."
-        ]
-    },
-    {
-        "number": 58,
-        "file": "2023_06_04_185938_alter_service_type_column_data_type_in_invoice_service_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_services",
-            "invoice_services"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'invoice_services' does not exist in DB.",
-            "Target table 'invoice_services' does not exist in DB."
-        ]
-    },
-    {
-        "number": 59,
-        "file": "2023_06_06_224639_create_superagents_table.php",
-        "created_tables": [
-            "superagents"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 60,
-        "file": "2023_06_06_224919_create_agents_table.php",
-        "created_tables": [
-            "agents"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 61,
-        "file": "2023_06_09_010342_create_yards_table.php",
-        "created_tables": [
-            "yards"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 62,
-        "file": "2023_06_09_122648_create_company_service_table.php",
-        "created_tables": [
-            "company_services"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 63,
-        "file": "2023_06_09_124910_drop_column_cost_from_services_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "services",
-            "services"
-        ],
-        "classification": "NOT MATCHED",
-        "details": [
-            "All added columns missing: services.code, services.service_category, services.code, services.service_category"
-        ]
-    },
-    {
-        "number": 64,
-        "file": "2023_06_09_225651_create_booking_container_agents_table.php",
-        "created_tables": [
-            "booking_container_agents"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 65,
-        "file": "2023_06_09_225833_create_daily_booking_containers_table.php",
-        "created_tables": [
-            "daily_booking_containers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 66,
-        "file": "2023_06_09_230145_add_status_to_booking_containers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_containers",
-            "booking_containers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: booking_containers.status, booking_containers.status"
-        ]
-    },
-    {
-        "number": 67,
-        "file": "2023_06_10_005839_create_notes_table.php",
-        "created_tables": [
-            "notes"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 68,
-        "file": "2023_06_10_122741_add_yard_id_to_booking_containers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_containers",
-            "booking_containers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: booking_containers.yard_id, booking_containers.yard_id"
-        ]
-    },
-    {
-        "number": 69,
-        "file": "2023_06_22_214316_add_image_to_agents_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agents",
-            "agents"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: agents.image, agents.image"
-        ]
-    },
-    {
-        "number": 70,
-        "file": "2023_06_22_221410_add_agent_id_to_otps_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "otps",
-            "otps"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (otps.agent_id, otps.agent_id), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 71,
-        "file": "2023_06_23_043918_edit_invoice_number_seal_number_into_strings.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_transportations",
-            "invoice_transportations",
-            "invoice_transportations",
-            "invoice_transportations"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'invoice_transportations' does not exist in DB.",
-            "Target table 'invoice_transportations' does not exist in DB.",
-            "Target table 'invoice_transportations' does not exist in DB.",
-            "Target table 'invoice_transportations' does not exist in DB."
-        ]
-    },
-    {
-        "number": 72,
-        "file": "2023_06_23_185918_create_financial_custody_agents_table.php",
-        "created_tables": [
-            "financial_custody_agents"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 73,
-        "file": "2023_06_23_206340_create_agent_expenses_table.php",
-        "created_tables": [
-            "agent_expenses"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 74,
-        "file": "2023_06_24_010833_add_notes_to_financial_custody_agents_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "financial_custody_agents",
-            "financial_custody_agents"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'financial_custody_agents' does not exist in DB.",
-            "Target table 'financial_custody_agents' does not exist in DB."
-        ]
-    },
-    {
-        "number": 75,
-        "file": "2023_06_25_072945_remove_text_fields_from_invoice_transportations_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_transportations",
-            "invoice_transportations"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'invoice_transportations' does not exist in DB.",
-            "Target table 'invoice_transportations' does not exist in DB."
-        ]
-    },
-    {
-        "number": 76,
-        "file": "2023_06_27_015733_alter_transfered_id_in_financial_custody_agents_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "financial_custody_agents",
-            "financial_custody_agents"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'financial_custody_agents' does not exist in DB.",
-            "Target table 'financial_custody_agents' does not exist in DB."
-        ]
-    },
-    {
-        "number": 77,
-        "file": "2023_06_27_021223_drop_service_category_id_from_agent_expenses_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agent_expenses"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: agent_expenses.booking_id"
-        ]
-    },
-    {
-        "number": 78,
-        "file": "2023_06_27_085421_replace_invoice_transportations_table_with_booking_containers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_containers",
-            "booking_containers"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (booking_containers.container_json, booking_containers.departure_id, booking_containers.departure_json, booking_containers.loading_id, booking_containers.loading_json, booking_containers.aging_id, booking_containers.aging_json, booking_containers.price, booking_containers.yard_json, booking_containers.container_json, booking_containers.departure_id, booking_containers.departure_json, booking_containers.loading_id, booking_containers.loading_json, booking_containers.aging_id, booking_containers.aging_json, booking_containers.price, booking_containers.yard_json), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 79,
-        "file": "2023_06_27_085437_drop_invoice_transportations_table.php",
-        "created_tables": [
-            "invoice_transportations"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 80,
-        "file": "2023_06_27_085718_rename_invoice_services_table_into_booking_services_table_and_edit_it.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_services",
-            "invoice_services"
-        ],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 81,
-        "file": "2023_06_27_085811_refactor_invoices_table.php",
-        "created_tables": [
-            "invoices",
-            "invoices"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 82,
-        "file": "2023_07_05_223157_rename_financial_custody_agents_to_money_transfers.php",
-        "created_tables": [],
-        "altered_tables": [
-            "financial_custody_agents",
-            "financial_custody_agents"
-        ],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 83,
-        "file": "2023_07_05_224344_create_delivery_policies_table.php",
-        "created_tables": [
-            "delivery_policies",
-            "delivery_policy_containers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 84,
-        "file": "2023_07_05_225954_create_images_table.php",
-        "created_tables": [
-            "images"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 85,
-        "file": "2023_07_05_230354_create_booking_papers_table.php",
-        "created_tables": [
-            "booking_papers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 86,
-        "file": "2023_07_05_231222_add_delivery_policy_id_to_money_transfers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "money_transfers",
-            "money_transfers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: money_transfers.delivery_policy_id, money_transfers.delivery_policy_id"
-        ]
-    },
-    {
-        "number": 87,
-        "file": "2023_07_05_233424_add_delivery_policy_id_to_agent_expenses_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agent_expenses",
-            "agent_expenses"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: agent_expenses.delivery_policy_id, agent_expenses.delivery_policy_id"
-        ]
-    },
-    {
-        "number": 88,
-        "file": "2023_07_06_065106_add_booking_json_to_invoices_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoices",
-            "invoices"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: invoices.booking_json, invoices.booking_json"
-        ]
-    },
-    {
-        "number": 89,
-        "file": "2023_07_06_065822_move_second_and_third_bookings_into_bookings.php",
-        "created_tables": [
-            "bookings",
-            "bookings",
-            "second_bookings",
-            "third_bookings"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 90,
-        "file": "2023_07_11_120537_add_booking_container_id_to_booking_papers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_papers",
-            "booking_papers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: booking_papers.booking_container_id, booking_papers.booking_container_id"
-        ]
-    },
-    {
-        "number": 91,
-        "file": "2023_09_03_211828_add_superagent_id_to_otps_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "otps",
-            "otps"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (otps.superagent_id, otps.superagent_id), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 92,
-        "file": "2023_10_28_170701_create_log_activities_table.php",
-        "created_tables": [
-            "log_activities"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 93,
-        "file": "2023_10_28_205450_add_container_status_to_log_activities_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "log_activities",
-            "log_activities"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: log_activities.container_status, log_activities.container_status"
-        ]
-    },
-    {
-        "number": 94,
-        "file": "2023_11_07_201936_create_app_notifications_table.php",
-        "created_tables": [
-            "app_notifications"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 95,
-        "file": "2023_11_07_205249_add_device_token_to_agents_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agents",
-            "agents"
-        ],
-        "classification": "MATCHED",
-        "details": []
-    },
-    {
-        "number": 96,
-        "file": "2023_11_07_205308_add_device_token_to_superagents_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "superagents",
-            "superagents"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: superagents.device_token, superagents.device_token"
-        ]
-    },
-    {
-        "number": 97,
-        "file": "2023_11_28_081002_add_employee_name_to_bookings.php",
-        "created_tables": [],
-        "altered_tables": [
-            "bookings",
-            "bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: bookings.employee_name, bookings.employee_name"
-        ]
-    },
-    {
-        "number": 98,
-        "file": "2023_11_28_083615_add_factory_to_bookings.php",
-        "created_tables": [],
-        "altered_tables": [
-            "bookings",
-            "bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: bookings.factory_id, bookings.factory_id"
-        ]
-    },
-    {
-        "number": 99,
-        "file": "2023_12_16_184810_add_yard_id_to_bookings_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "bookings",
-            "bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: bookings.yard_id, bookings.yard_id"
-        ]
-    },
-    {
-        "number": 100,
-        "file": "2024_05_25_111836_add_feilds_to_companies_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "companies",
-            "companies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: companies.opening_balance, companies.opening_balance"
-        ]
-    },
-    {
-        "number": 101,
-        "file": "2024_05_25_113557_create_shipments_table.php",
-        "created_tables": [
-            "shipments"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 102,
-        "file": "2024_05_25_122243_create_company_invoices_table.php",
-        "created_tables": [
-            "company_invoices"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 103,
-        "file": "2024_05_26_204008_add_wallet_to_companies_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "companies",
-            "companies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: companies.wallet, companies.wallet"
-        ]
-    },
-    {
-        "number": 104,
-        "file": "2024_05_26_214243_add_wallet_to_cars_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "cars",
-            "cars"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: cars.wallet, cars.wallet"
-        ]
-    },
-    {
-        "number": 105,
-        "file": "2024_05_26_223511_create_agent_car_tranfers_table.php",
-        "created_tables": [
-            "agent_car_tranfers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 106,
-        "file": "2024_05_27_090121_add_wallet_to_agents_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agents",
-            "agents"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: agents.wallet, agents.wallet"
-        ]
-    },
-    {
-        "number": 107,
-        "file": "2024_05_28_155139_create_vaults_table.php",
-        "created_tables": [
-            "vaults"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 108,
-        "file": "2024_05_29_052720_create_banks_table.php",
-        "created_tables": [
-            "banks"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 109,
-        "file": "2024_05_29_053940_create_bank_trnsactions_table.php",
-        "created_tables": [
-            "bank_trnsactions"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 110,
-        "file": "2024_05_30_161649_add_user_id_to_bookings_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "bookings",
-            "bookings"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: bookings.user_id, bookings.user_id"
-        ]
-    },
-    {
-        "number": 111,
-        "file": "2024_06_01_162452_add_wallet_to_superagents_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "superagents",
-            "superagents"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: superagents.wallet, superagents.wallet"
-        ]
-    },
-    {
-        "number": 112,
-        "file": "2024_06_01_193347_create_superagent_transactions_table.php",
-        "created_tables": [
-            "superagent_transactions"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 113,
-        "file": "2024_06_01_205840_add_image_to_agent_car_tranfers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agent_car_tranfers",
-            "agent_car_tranfers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: agent_car_tranfers.image, agent_car_tranfers.image"
-        ]
-    },
-    {
-        "number": 114,
-        "file": "2024_06_02_201240_ad_feilds_to_shipments_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "shipments",
-            "shipments"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: shipments.image, shipments.agent_id, shipments.image, shipments.agent_id"
-        ]
-    },
-    {
-        "number": 115,
-        "file": "2024_06_08_081753_modify_in_vaults_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "vaults",
-            "vaults"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Target table 'vaults' does not exist in DB.",
-            "Target table 'vaults' does not exist in DB."
-        ]
-    },
-    {
-        "number": 116,
-        "file": "2024_06_08_082355_add_feilds_to_bank_transactions_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "bank_trnsactions",
-            "bank_trnsactions"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: bank_trnsactions.trans_bank_id, bank_trnsactions.trans_bank_id"
-        ]
-    },
-    {
-        "number": 117,
-        "file": "2024_06_08_105318_modify_in_money_trasnfers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "money_transfers",
-            "money_transfers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: money_transfers.value, money_transfers.value"
-        ]
-    },
-    {
-        "number": 118,
-        "file": "2024_06_09_041629_add_feilds_to_agent_expenses_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agent_expenses",
-            "agent_expenses"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: agent_expenses.booking_container_id, agent_expenses.booking_container_id"
-        ]
-    },
-    {
-        "number": 119,
-        "file": "2024_06_10_045035_add_feilds_to_agent_expenses_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agent_expenses",
-            "agent_expenses"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: agent_expenses.user_id, agent_expenses.admin_approval, agent_expenses.type_id, agent_expenses.user_id, agent_expenses.admin_approval, agent_expenses.type_id"
-        ]
-    },
-    {
-        "number": 120,
-        "file": "2024_06_10_152723_add_fields_to_booking_containers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_containers",
-            "booking_container_agents",
-            "daily_booking_containers",
-            "booking_containers",
-            "booking_container_agents",
-            "daily_booking_containers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: booking_containers.superagent_specification_approved, booking_containers.superagent_loading_approved, booking_containers.superagent_unloading_approved, booking_containers.superagent_specification_approved, booking_containers.superagent_loading_approved, booking_containers.superagent_unloading_approved, booking_containers.superagent_specification_approved, booking_containers.superagent_loading_approved, booking_containers.superagent_unloading_approved, booking_container_agents.superagent_specification_approved, booking_container_agents.superagent_loading_approved, booking_container_agents.superagent_unloading_approved, booking_container_agents.superagent_specification_approved, booking_container_agents.superagent_loading_approved, booking_container_agents.superagent_unloading_approved, booking_container_agents.superagent_specification_approved, booking_container_agents.superagent_loading_approved, booking_container_agents.superagent_unloading_approved, daily_booking_containers.superagent_specification_approved, daily_booking_containers.superagent_loading_approved, daily_booking_containers.superagent_unloading_approved, daily_booking_containers.superagent_specification_approved, daily_booking_containers.superagent_loading_approved, daily_booking_containers.superagent_unloading_approved, daily_booking_containers.superagent_specification_approved, daily_booking_containers.superagent_loading_approved, daily_booking_containers.superagent_unloading_approved, booking_containers.superagent_specification_approved, booking_containers.superagent_loading_approved, booking_containers.superagent_unloading_approved, booking_containers.superagent_specification_approved, booking_containers.superagent_loading_approved, booking_containers.superagent_unloading_approved, booking_containers.superagent_specification_approved, booking_containers.superagent_loading_approved, booking_containers.superagent_unloading_approved, booking_container_agents.superagent_specification_approved, booking_container_agents.superagent_loading_approved, booking_container_agents.superagent_unloading_approved, booking_container_agents.superagent_specification_approved, booking_container_agents.superagent_loading_approved, booking_container_agents.superagent_unloading_approved, booking_container_agents.superagent_specification_approved, booking_container_agents.superagent_loading_approved, booking_container_agents.superagent_unloading_approved, daily_booking_containers.superagent_specification_approved, daily_booking_containers.superagent_loading_approved, daily_booking_containers.superagent_unloading_approved, daily_booking_containers.superagent_specification_approved, daily_booking_containers.superagent_loading_approved, daily_booking_containers.superagent_unloading_approved, daily_booking_containers.superagent_specification_approved, daily_booking_containers.superagent_loading_approved, daily_booking_containers.superagent_unloading_approved"
-        ]
-    },
-    {
-        "number": 121,
-        "file": "2024_06_10_184953_add_fields_to_booking_papers_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_papers",
-            "booking_papers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: booking_papers.agent_id, booking_papers.agent_id"
-        ]
-    },
-    {
-        "number": 122,
-        "file": "2024_06_17_174451_add_feilds_to_bank_trnsactions_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "bank_trnsactions",
-            "bank_trnsactions"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: bank_trnsactions.company_id, bank_trnsactions.company_id"
-        ]
-    },
-    {
-        "number": 123,
-        "file": "2024_06_17_235811_add_feilds_to_company_invoices_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "company_invoices",
-            "company_invoices"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: company_invoices.type, company_invoices.type"
-        ]
-    },
-    {
-        "number": 124,
-        "file": "2024_06_19_012955_create_vault_transactions_table.php",
-        "created_tables": [
-            "vault_transactions"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 125,
-        "file": "2024_06_20_215018_create_payingcars_table.php",
-        "created_tables": [
-            "payingcars"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 126,
-        "file": "2024_07_18_135838_create_booking_contrainer_extra_costs_table.php",
-        "created_tables": [
-            "booking_contrainer_extra_costs"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 127,
-        "file": "2024_07_19_200026_create_invoice_payments_table.php",
-        "created_tables": [
-            "invoice_payments"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 128,
-        "file": "2024_07_20_125920_add_details_to_delivery_policies_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "delivery_policies",
-            "delivery_policies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: delivery_policies.cost, delivery_policies.cost"
-        ]
-    },
-    {
-        "number": 129,
-        "file": "2024_12_22_000000_add_financial_fields_to_booking_services_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_services",
-            "booking_services"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (booking_services.vault_id, booking_services.bank_id, booking_services.created_by, booking_services.updated_by, booking_services.vault_id, booking_services.bank_id, booking_services.created_by, booking_services.updated_by), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 130,
-        "file": "2024_12_22_100000_add_payment_type_to_booking_services_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_services",
-            "booking_services"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (booking_services.payment_type, booking_services.agent_id, booking_services.payment_type, booking_services.agent_id), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 131,
-        "file": "2025_01_21_000000_create_private_companies_table.php",
-        "created_tables": [
-            "private_companies"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 132,
-        "file": "2025_01_21_100000_add_private_company_id_to_companies_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "companies",
-            "companies"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (companies.private_company_id, companies.private_company_id), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 133,
-        "file": "2025_01_21_200000_add_contact_fields_to_private_companies_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "private_companies",
-            "private_companies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: private_companies.phone1, private_companies.phone2, private_companies.tel_fax, private_companies.email, private_companies.address, private_companies.phone1, private_companies.phone2, private_companies.tel_fax, private_companies.email, private_companies.address"
-        ]
-    },
-    {
-        "number": 134,
-        "file": "2025_01_25_000000_add_payment_fields_to_invoice_payments_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_payments",
-            "invoice_payments"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: invoice_payments.payment_type, invoice_payments.check_bank_name, invoice_payments.check_number, invoice_payments.check_due_date, invoice_payments.check_paid_at, invoice_payments.notes, invoice_payments.payment_type, invoice_payments.check_bank_name, invoice_payments.check_number, invoice_payments.check_due_date, invoice_payments.check_paid_at, invoice_payments.notes"
-        ]
-    },
-    {
-        "number": 135,
-        "file": "2025_10_28_210010_add_date_and_address_to_delivery_policies_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "delivery_policies",
-            "delivery_policies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: delivery_policies.date, delivery_policies.address, delivery_policies.date, delivery_policies.address"
-        ]
-    },
-    {
-        "number": 136,
-        "file": "2025_10_28_211329_add_office_commission_to_delivery_policies_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "delivery_policies",
-            "delivery_policies"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: delivery_policies.office_commission, delivery_policies.office_commission"
-        ]
-    },
-    {
-        "number": 137,
-        "file": "2026_03_12_120000_add_bank_transaction_id_to_invoice_payments_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "invoice_payments",
-            "invoice_payments"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: invoice_payments.bank_transaction_id, invoice_payments.bank_transaction_id"
-        ]
-    },
-    {
-        "number": 138,
-        "file": "2026_04_04_000001_backfill_agent_expenses_booking_links.php",
-        "created_tables": [],
-        "altered_tables": [],
-        "classification": "DATA EFFECT NOT PROVABLE",
-        "details": [
-            "DML \/ Data backfill script without schema alterations."
-        ]
-    },
-    {
-        "number": 139,
-        "file": "2026_04_16_000001_add_payment_group_uuid_to_payingcars_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "payingcars",
-            "payingcars"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (payingcars.payment_group_uuid, payingcars.payment_group_uuid), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 140,
-        "file": "2026_07_18_000000_add_container_and_type_id_to_app_notifications_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "app_notifications",
-            "app_notifications"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: app_notifications.booking_container_id, app_notifications.type_id, app_notifications.booking_container_id, app_notifications.type_id"
-        ]
-    },
-    {
-        "number": 141,
-        "file": "2026_07_21_235321_add_is_read_to_app_notifications_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "app_notifications",
-            "app_notifications"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: app_notifications.is_read, app_notifications.is_read"
-        ]
-    },
-    {
-        "number": 142,
-        "file": "2026_07_22_000000_add_invoice_print_section_to_service_categories_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "service_categories",
-            "service_categories"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: service_categories.invoice_print_section, service_categories.invoice_print_section"
-        ]
-    },
-    {
-        "number": 143,
-        "file": "2026_07_23_000001_create_suppliers_table.php",
-        "created_tables": [
-            "suppliers"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 144,
-        "file": "2026_07_23_000002_create_receipts_table.php",
-        "created_tables": [
-            "receipts"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 145,
-        "file": "2026_07_23_000003_add_supplier_fields_to_receipts_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "receipts",
-            "receipts"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (receipts.payment_source, receipts.supplier_id, receipts.supplier_invoice_number, receipts.supplier_id, receipts.payment_source, receipts.supplier_id, receipts.supplier_invoice_number, receipts.supplier_id), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 146,
-        "file": "2026_07_23_000004_create_supplier_payments_table.php",
-        "created_tables": [
-            "supplier_payments"
-        ],
-        "altered_tables": [],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    },
-    {
-        "number": 147,
-        "file": "2026_07_23_000005_add_suppliers_permissions.php",
-        "created_tables": [],
-        "altered_tables": [],
-        "classification": "DATA EFFECT NOT PROVABLE",
-        "details": [
-            "Permission seeder; permissions checked separately in permissions table."
-        ]
-    },
-    {
-        "number": 148,
-        "file": "2026_07_24_000001_link_booking_services_and_supplier_receipts.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_services",
-            "receipts",
-            "receipts",
-            "booking_services"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Some columns exist (booking_services.supplier_id, booking_services.supplier_invoice_number, booking_services.supplier_id, receipts.supplier_id, receipts.supplier_invoice_number, receipts.booking_service_id, receipts.booking_service_id, receipts.supplier_id, receipts.supplier_id, receipts.supplier_invoice_number, receipts.booking_service_id, receipts.booking_service_id, receipts.supplier_id, booking_services.supplier_id, booking_services.supplier_invoice_number, booking_services.supplier_id), but others missing (booking_services.booking_service_id, booking_services.booking_service_id, booking_services.booking_service_id, booking_services.booking_service_id)."
-        ]
-    },
-    {
-        "number": 149,
-        "file": "2026_09_08_000000_add_approval_timestamps_to_booking_containers.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_containers",
-            "booking_container_agents",
-            "booking_containers",
-            "booking_container_agents"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: booking_containers.specification_completed_at, booking_containers.specification_approved_at, booking_containers.loading_completed_at, booking_containers.loading_approved_at, booking_containers.unloading_completed_at, booking_containers.unloading_approved_at, booking_containers.specification_completed_at, booking_containers.specification_approved_at, booking_containers.loading_completed_at, booking_containers.loading_approved_at, booking_containers.unloading_completed_at, booking_containers.unloading_approved_at, booking_container_agents.specification_completed_at, booking_container_agents.specification_approved_at, booking_container_agents.loading_completed_at, booking_container_agents.loading_approved_at, booking_container_agents.unloading_completed_at, booking_container_agents.unloading_approved_at, booking_container_agents.specification_completed_at, booking_container_agents.specification_approved_at, booking_container_agents.loading_completed_at, booking_container_agents.loading_approved_at, booking_container_agents.unloading_completed_at, booking_container_agents.unloading_approved_at, booking_containers.specification_completed_at, booking_containers.specification_approved_at, booking_containers.loading_completed_at, booking_containers.loading_approved_at, booking_containers.unloading_completed_at, booking_containers.unloading_approved_at, booking_containers.specification_completed_at, booking_containers.specification_approved_at, booking_containers.loading_completed_at, booking_containers.loading_approved_at, booking_containers.unloading_completed_at, booking_containers.unloading_approved_at, booking_container_agents.specification_completed_at, booking_container_agents.specification_approved_at, booking_container_agents.loading_completed_at, booking_container_agents.loading_approved_at, booking_container_agents.unloading_completed_at, booking_container_agents.unloading_approved_at, booking_container_agents.specification_completed_at, booking_container_agents.specification_approved_at, booking_container_agents.loading_completed_at, booking_container_agents.loading_approved_at, booking_container_agents.unloading_completed_at, booking_container_agents.unloading_approved_at"
-        ]
-    },
-    {
-        "number": 150,
-        "file": "2026_09_08_000001_add_waiting_and_loading_stage_to_booking_containers.php",
-        "created_tables": [],
-        "altered_tables": [
-            "booking_containers",
-            "booking_container_agents",
-            "daily_booking_containers",
-            "booking_containers",
-            "booking_container_agents",
-            "daily_booking_containers"
-        ],
-        "classification": "MATCHED",
-        "details": [
-            "Columns exist physically: booking_containers.is_in_loading, booking_containers.moved_to_loading_at, booking_containers.is_in_loading, booking_containers.moved_to_loading_at, booking_containers.is_in_loading, booking_containers.moved_to_loading_at, booking_container_agents.is_in_loading, booking_container_agents.moved_to_loading_at, booking_container_agents.is_in_loading, booking_container_agents.moved_to_loading_at, booking_container_agents.is_in_loading, booking_container_agents.moved_to_loading_at, daily_booking_containers.is_in_loading, daily_booking_containers.moved_to_loading_at, daily_booking_containers.is_in_loading, daily_booking_containers.moved_to_loading_at, daily_booking_containers.is_in_loading, daily_booking_containers.moved_to_loading_at, booking_containers.is_in_loading, booking_containers.moved_to_loading_at, booking_containers.is_in_loading, booking_containers.moved_to_loading_at, booking_containers.is_in_loading, booking_containers.moved_to_loading_at, booking_container_agents.is_in_loading, booking_container_agents.moved_to_loading_at, booking_container_agents.is_in_loading, booking_container_agents.moved_to_loading_at, booking_container_agents.is_in_loading, booking_container_agents.moved_to_loading_at, daily_booking_containers.is_in_loading, daily_booking_containers.moved_to_loading_at, daily_booking_containers.is_in_loading, daily_booking_containers.moved_to_loading_at, daily_booking_containers.is_in_loading, daily_booking_containers.moved_to_loading_at"
-        ]
-    },
-    {
-        "number": 151,
-        "file": "2026_09_09_000001_add_booking_service_id_to_agent_expenses_table.php",
-        "created_tables": [],
-        "altered_tables": [
-            "agent_expenses",
-            "agent_expenses"
-        ],
-        "classification": "PARTIALLY MATCHED",
-        "details": [
-            "Columns exist physically (agent_expenses.booking_service_id, agent_expenses.booking_service_id), but expected indexes\/foreign keys are physically absent."
-        ]
-    },
-    {
-        "number": 152,
-        "file": "2026_09_13_000001_add_parallel_container_stages.php",
-        "created_tables": [
-            "booking_container_stages"
-        ],
-        "altered_tables": [
-            "booking_container_agents",
-            "agent_expenses",
-            "agent_expenses",
-            "booking_container_agents"
-        ],
-        "classification": "SUPERSEDED",
-        "details": [
-            "Structural refactoring (table drop or rename)."
-        ]
-    }
-]
+{
+    "audit_date": "2026-10-03 18:13:05",
+    "total_migrations": 153,
+    "classification_summary": {
+        "NOT MATCHED": 7,
+        "MATCHED": 116,
+        "PARTIALLY MATCHED": 7,
+        "AMBIGUOUS": 1,
+        "SUPERSEDED": 20,
+        "DATA EFFECT NOT PROVABLE": 2
+    },
+    "migrations": [
+        {
+            "id": 1,
+            "migration_file": "2014_10_12_000000_create_users_table.php",
+            "tables_affected": [
+                "users"
+            ],
+            "classification": "NOT MATCHED",
+            "details": "Table 'users' does not physically exist in MySQL.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 2,
+            "migration_file": "2014_10_12_100000_create_password_resets_table.php",
+            "tables_affected": [
+                "password_resets"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'password_resets' and all initial columns (3/3) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 3,
+            "migration_file": "2019_08_19_000000_create_failed_jobs_table.php",
+            "tables_affected": [
+                "failed_jobs"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'failed_jobs' and all initial columns (7/7) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 4,
+            "migration_file": "2019_12_14_000001_create_personal_access_tokens_table.php",
+            "tables_affected": [
+                "personal_access_tokens"
+            ],
+            "classification": "PARTIALLY MATCHED",
+            "details": "Column 'personal_access_tokens.tokenable' not found in current physical schema. | Table exists with 8/9 initial columns present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 5,
+            "migration_file": "2023_01_02_214541_create_permission_tables.php",
+            "tables_affected": [],
+            "classification": "AMBIGUOUS",
+            "details": "",
+            "evidence": ""
+        },
+        {
+            "id": 6,
+            "migration_file": "2023_01_03_214802_create_containers_table.php",
+            "tables_affected": [
+                "containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'containers' and all initial columns (5/5) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 7,
+            "migration_file": "2023_01_06_230608_create_companies_table.php",
+            "tables_affected": [
+                "companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'companies' and all initial columns (10/10) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 8,
+            "migration_file": "2023_01_09_200829_create_employees_table.php",
+            "tables_affected": [
+                "employees"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'employees' and all initial columns (9/9) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 9,
+            "migration_file": "2023_01_09_224456_create_factories_table.php",
+            "tables_affected": [
+                "factories"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'factories' and all initial columns (7/7) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 10,
+            "migration_file": "2023_01_10_191147_create_branches_table.php",
+            "tables_affected": [
+                "branches"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'branches' and all initial columns (10/10) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 11,
+            "migration_file": "2023_01_17_095242_create_bookings_table.php",
+            "tables_affected": [
+                "bookings"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'bookings' and all initial columns (5/5) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 12,
+            "migration_file": "2023_01_17_193757_create_second_bookings_table.php",
+            "tables_affected": [
+                "second_bookings"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Table 'second_bookings' was created here but later dropped/merged by subsequent migrations.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 13,
+            "migration_file": "2023_01_17_202749_create_third_bookings_table.php",
+            "tables_affected": [
+                "third_bookings"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Table 'third_bookings' was created here but later dropped/merged by subsequent migrations.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 14,
+            "migration_file": "2023_01_21_114617_create_booking_containers_table.php",
+            "tables_affected": [
+                "booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'booking_containers' and all initial columns (7/7) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 15,
+            "migration_file": "2023_01_21_154616_create_booking_movements_table.php",
+            "tables_affected": [
+                "booking_movements"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'booking_movements' and all initial columns (10/10) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 16,
+            "migration_file": "2023_03_10_145616_create_otps_table.php",
+            "tables_affected": [
+                "otps"
+            ],
+            "classification": "PARTIALLY MATCHED",
+            "details": "Column 'otps.user_id' not found in current physical schema. | Table exists with 5/6 initial columns present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 17,
+            "migration_file": "2023_03_10_180953_add_session_id_column_to_users_table.php",
+            "tables_affected": [
+                "users"
+            ],
+            "classification": "MATCHED",
+            "details": "Target table 'users' does not exist physically. | Table alter specifies column modifications without net additions/drops.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 18,
+            "migration_file": "2023_03_11_005001_create_static_pages_table.php",
+            "tables_affected": [
+                "static_pages"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'static_pages' and all initial columns (7/7) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 19,
+            "migration_file": "2023_03_11_131628_create_our_services_table.php",
+            "tables_affected": [
+                "our_services"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'our_services' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 20,
+            "migration_file": "2023_03_11_154859_create_choose_us_table.php",
+            "tables_affected": [
+                "choose_us"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'choose_us' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 21,
+            "migration_file": "2023_03_11_164224_create_sponsers_table.php",
+            "tables_affected": [
+                "sponsers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'sponsers' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 22,
+            "migration_file": "2023_03_11_170900_create_reviews_table.php",
+            "tables_affected": [
+                "reviews"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'reviews' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 23,
+            "migration_file": "2023_03_11_180258_create_settings_table.php",
+            "tables_affected": [
+                "settings"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'settings' and all initial columns (11/11) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 24,
+            "migration_file": "2023_03_11_192831_add_phone_and_address_columns_to_users_table.php",
+            "tables_affected": [
+                "users"
+            ],
+            "classification": "MATCHED",
+            "details": "Target table 'users' does not exist physically. | Table alter specifies column modifications without net additions/drops.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 25,
+            "migration_file": "2023_03_19_071304_create_contact_us_table.php",
+            "tables_affected": [
+                "contact_us"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'contact_us' and all initial columns (5/5) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 26,
+            "migration_file": "2023_03_28_210648_add_password_and_session_id_to_companies_table.php",
+            "tables_affected": [
+                "companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'companies.password' is present physically. | Added column 'companies.session_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 27,
+            "migration_file": "2023_03_28_221748_alter_company_id_in_otp_table.php",
+            "tables_affected": [
+                "otps"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'otps.company_id' is present physically. | Dropped column 'otps.user_id' is absent physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 28,
+            "migration_file": "2023_03_29_174300_create_notifications_table.php",
+            "tables_affected": [
+                "notifications"
+            ],
+            "classification": "PARTIALLY MATCHED",
+            "details": "Column 'notifications.notifiable' not found in current physical schema. | Table exists with 6/7 initial columns present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 29,
+            "migration_file": "2023_04_07_020644_add_branches_to_booking_containers_table.php",
+            "tables_affected": [
+                "booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_containers.branch_id' is present physically. | Added column 'booking_containers.arrival_date' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 30,
+            "migration_file": "2023_04_07_021607_drop_branch_and_arrival_date_from_third_bookings_table.php",
+            "tables_affected": [
+                "third_bookings"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'third_bookings' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 31,
+            "migration_file": "2023_04_07_130931_add_container_type_to_third_bookings_table.php",
+            "tables_affected": [
+                "third_bookings"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'third_bookings' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 32,
+            "migration_file": "2023_04_08_111532_add_taxed_invoice_column_to_bookings_table.php",
+            "tables_affected": [
+                "bookings"
+            ],
+            "classification": "NOT MATCHED",
+            "details": "Added column 'bookings.taxed' is missing physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 33,
+            "migration_file": "2023_04_08_135802_create_invoices_table.php",
+            "tables_affected": [
+                "invoices"
+            ],
+            "classification": "PARTIALLY MATCHED",
+            "details": "Column 'invoices.taxed' not found in current physical schema. | Column 'invoices.transportation_before_vat' not found in current physical schema. | Column 'invoices.is_vated' not found in current physical schema. | Column 'invoices.vat' not found in current physical schema. | Column 'invoices.transportation_after_vat' not found in current physical schema. | Column 'invoices.transportation_extensions_fees' not found in current physical schema. | Column 'invoices.total_before_discount' not found in current physical schema. | Column 'invoices.total_after_discount' not found in current physical schema. | Column 'invoices.total_additional_discount' not found in current physical schema. | Column 'invoices.transportation_data' not found in current physical schema. | Column 'invoices.extensions_data' not found in current physical schema. | Table exists with 5/16 initial columns present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 34,
+            "migration_file": "2023_04_08_191534_create_cities_and_regions_table.php",
+            "tables_affected": [
+                "cities_and_regions"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'cities_and_regions' and all initial columns (4/4) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 35,
+            "migration_file": "2023_04_08_234951_create_invoice_transportations_table.php",
+            "tables_affected": [
+                "invoice_transportations"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Table 'invoice_transportations' was created here but later dropped/merged by subsequent migrations.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 36,
+            "migration_file": "2023_04_08_234980_create_company_transportations_table.php",
+            "tables_affected": [
+                "company_transportations"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'company_transportations' and all initial columns (14/14) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 37,
+            "migration_file": "2023_04_10_004133_add_booking_id_column_to_invoice_transportations_table.php",
+            "tables_affected": [
+                "invoice_transportations"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'invoice_transportations' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 38,
+            "migration_file": "2023_04_11_001716_create_invoice_services_table.php",
+            "tables_affected": [
+                "invoice_services"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Table 'invoice_services' was created here but later dropped/merged by subsequent migrations.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 39,
+            "migration_file": "2023_04_11_230451_add_discount_column_to_invoices_table.php",
+            "tables_affected": [
+                "invoices"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'invoices.discount' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 40,
+            "migration_file": "2023_04_13_144003_alter_booking_number_in_second_bookings_table.php",
+            "tables_affected": [
+                "second_bookings"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'second_bookings' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 41,
+            "migration_file": "2023_04_13_144639_alter_container_number_in_bookings_containers_table.php",
+            "tables_affected": [
+                "booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_containers.sail_of_number' is present physically. | Added column 'booking_containers.container_no' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 42,
+            "migration_file": "2023_04_14_113754_create_shipping_agents_table.php",
+            "tables_affected": [
+                "shipping_agents"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'shipping_agents' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 43,
+            "migration_file": "2023_04_14_134007_alter_shipping_agency_column_in_second_bookings_table.php",
+            "tables_affected": [
+                "second_bookings"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'second_bookings' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 44,
+            "migration_file": "2023_04_14_142231_create_service_categories_table.php",
+            "tables_affected": [
+                "service_categories"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'service_categories' and all initial columns (5/5) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 45,
+            "migration_file": "2023_04_14_150556_create_services_table.php",
+            "tables_affected": [
+                "services"
+            ],
+            "classification": "PARTIALLY MATCHED",
+            "details": "Column 'services.code' not found in current physical schema. | Column 'services.service_category' not found in current physical schema. | Column 'services.service_status' not found in current physical schema. | Table exists with 5/8 initial columns present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 46,
+            "migration_file": "2023_04_16_193415_add_taxed_column_to_company_table.php",
+            "tables_affected": [
+                "companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'companies.taxed' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 47,
+            "migration_file": "2023_04_16_213301_alter_certificate_number_column_to_second_bookings_table.php",
+            "tables_affected": [
+                "second_bookings"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'second_bookings' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 48,
+            "migration_file": "2023_04_16_220933_add_service_id_column_to_invoice_services_table.php",
+            "tables_affected": [
+                "invoice_services"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'invoice_services' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 49,
+            "migration_file": "2023_05_01_231622_add_country_and_city_columns_to_branches_table.php",
+            "tables_affected": [
+                "branches"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'branches.country_id' is present physically. | Added column 'branches.city_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 50,
+            "migration_file": "2023_05_20_151319_add_booking_id_to_invoice_services_table.php",
+            "tables_affected": [
+                "invoice_services"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'invoice_services' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 51,
+            "migration_file": "2023_05_22_171621_add_sail_number_to_invoice_transportations.php",
+            "tables_affected": [
+                "invoice_transportations"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'invoice_transportations' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 52,
+            "migration_file": "2023_06_01_173403_add_branch_number_to_invoice_transportations_table.php",
+            "tables_affected": [
+                "invoice_transportations"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'invoice_transportations' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 53,
+            "migration_file": "2023_06_01_195054_create_drivers_table.php",
+            "tables_affected": [
+                "drivers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'drivers' and all initial columns (5/5) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 54,
+            "migration_file": "2023_06_01_195244_create_cars_table.php",
+            "tables_affected": [
+                "cars"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'cars' and all initial columns (4/4) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 55,
+            "migration_file": "2023_06_01_195901_alter_invoice_number_column_invoices_table.php",
+            "tables_affected": [
+                "invoices"
+            ],
+            "classification": "NOT MATCHED",
+            "details": "Added column 'invoices.company_id' is missing physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 56,
+            "migration_file": "2023_06_01_202147_add_invoice_number_auto_increment_to_invoices_table.php",
+            "tables_affected": [
+                "companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'companies.invoice_number_auto_increment' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 57,
+            "migration_file": "2023_06_02_131506_add_service_status_to_service_categories_table.php",
+            "tables_affected": [
+                "service_categories",
+                "services"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'service_categories.service_status' is present physically. | Dropped column 'services.service_status' is absent physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 58,
+            "migration_file": "2023_06_04_185938_alter_service_type_column_data_type_in_invoice_service_table.php",
+            "tables_affected": [
+                "invoice_services"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'invoice_services' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 59,
+            "migration_file": "2023_06_06_224639_create_superagents_table.php",
+            "tables_affected": [
+                "superagents"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'superagents' and all initial columns (8/8) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 60,
+            "migration_file": "2023_06_06_224919_create_agents_table.php",
+            "tables_affected": [
+                "agents"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'agents' and all initial columns (8/8) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 61,
+            "migration_file": "2023_06_09_010342_create_yards_table.php",
+            "tables_affected": [
+                "yards"
+            ],
+            "classification": "NOT MATCHED",
+            "details": "Table 'yards' does not physically exist in MySQL.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 62,
+            "migration_file": "2023_06_09_122648_create_company_service_table.php",
+            "tables_affected": [
+                "company_services"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'company_services' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 63,
+            "migration_file": "2023_06_09_124910_drop_column_cost_from_services_table.php",
+            "tables_affected": [
+                "services"
+            ],
+            "classification": "MATCHED",
+            "details": "Dropped column 'services.code' is absent physically. | Dropped column 'services.service_category' is absent physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 64,
+            "migration_file": "2023_06_09_225651_create_booking_container_agents_table.php",
+            "tables_affected": [
+                "booking_container_agents"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'booking_container_agents' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 65,
+            "migration_file": "2023_06_09_225833_create_daily_booking_containers_table.php",
+            "tables_affected": [
+                "daily_booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'daily_booking_containers' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 66,
+            "migration_file": "2023_06_09_230145_add_status_to_booking_containers_table.php",
+            "tables_affected": [
+                "booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_containers.status' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 67,
+            "migration_file": "2023_06_10_005839_create_notes_table.php",
+            "tables_affected": [
+                "notes"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'notes' and all initial columns (8/8) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 68,
+            "migration_file": "2023_06_10_122741_add_yard_id_to_booking_containers_table.php",
+            "tables_affected": [
+                "booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_containers.yard_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 69,
+            "migration_file": "2023_06_22_214316_add_image_to_agents_table.php",
+            "tables_affected": [
+                "agents"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'agents.image' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 70,
+            "migration_file": "2023_06_22_221410_add_agent_id_to_otps_table.php",
+            "tables_affected": [
+                "otps"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'otps.agent_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 71,
+            "migration_file": "2023_06_23_043918_edit_invoice_number_seal_number_into_strings.php",
+            "tables_affected": [
+                "invoice_transportations"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'invoice_transportations' was dropped or renamed by a later migration. | Target table 'invoice_transportations' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 72,
+            "migration_file": "2023_06_23_185918_create_financial_custody_agents_table.php",
+            "tables_affected": [
+                "financial_custody_agents"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Table 'financial_custody_agents' was created here but later dropped/merged by subsequent migrations.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 73,
+            "migration_file": "2023_06_23_206340_create_agent_expenses_table.php",
+            "tables_affected": [
+                "agent_expenses"
+            ],
+            "classification": "PARTIALLY MATCHED",
+            "details": "Column 'agent_expenses.service_category_id' not found in current physical schema. | Column 'agent_expenses.image' not found in current physical schema. | Table exists with 9/11 initial columns present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 74,
+            "migration_file": "2023_06_24_010833_add_notes_to_financial_custody_agents_table.php",
+            "tables_affected": [
+                "financial_custody_agents"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'financial_custody_agents' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 75,
+            "migration_file": "2023_06_25_072945_remove_text_fields_from_invoice_transportations_table.php",
+            "tables_affected": [
+                "invoice_transportations"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'invoice_transportations' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 76,
+            "migration_file": "2023_06_27_015733_alter_transfered_id_in_financial_custody_agents_table.php",
+            "tables_affected": [
+                "financial_custody_agents"
+            ],
+            "classification": "SUPERSEDED",
+            "details": "Target table 'financial_custody_agents' was dropped or renamed by a later migration.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 77,
+            "migration_file": "2023_06_27_021223_drop_service_category_id_from_agent_expenses_table.php",
+            "tables_affected": [
+                "agent_expenses"
+            ],
+            "classification": "PARTIALLY MATCHED",
+            "details": "Added column 'agent_expenses.booking_id' is present physically. | Dropped column 'agent_expenses.booking_container_id' still exists physically. | Dropped column 'agent_expenses.service_category_id' is absent physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 78,
+            "migration_file": "2023_06_27_085421_replace_invoice_transportations_table_with_booking_containers_table.php",
+            "tables_affected": [
+                "booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_containers.container_json' is present physically. | Added column 'booking_containers.departure_id' is present physically. | Added column 'booking_containers.departure_json' is present physically. | Added column 'booking_containers.loading_id' is present physically. | Added column 'booking_containers.loading_json' is present physically. | Added column 'booking_containers.aging_id' is present physically. | Added column 'booking_containers.aging_json' is present physically. | Added column 'booking_containers.price' is present physically. | Added column 'booking_containers.yard_json' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 79,
+            "migration_file": "2023_06_27_085437_drop_invoice_transportations_table.php",
+            "tables_affected": [
+                "invoice_transportations"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'invoice_transportations' was dropped and is absent from physical schema.",
+            "evidence": "information_schema.TABLES lookup"
+        },
+        {
+            "id": 80,
+            "migration_file": "2023_06_27_085718_rename_invoice_services_table_into_booking_services_table_and_edit_it.php",
+            "tables_affected": [
+                "invoice_services",
+                "booking_services"
+            ],
+            "classification": "MATCHED",
+            "details": "Renamed from 'invoice_services' to 'booking_services' confirmed physically.",
+            "evidence": "information_schema.TABLES lookup"
+        },
+        {
+            "id": 81,
+            "migration_file": "2023_06_27_085811_refactor_invoices_table.php",
+            "tables_affected": [
+                "invoices"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'invoices' and all initial columns (14/14) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 82,
+            "migration_file": "2023_07_05_223157_rename_financial_custody_agents_to_money_transfers.php",
+            "tables_affected": [
+                "financial_custody_agents",
+                "money_transfers"
+            ],
+            "classification": "MATCHED",
+            "details": "Renamed from 'financial_custody_agents' to 'money_transfers' confirmed physically.",
+            "evidence": "information_schema.TABLES lookup"
+        },
+        {
+            "id": 83,
+            "migration_file": "2023_07_05_224344_create_delivery_policies_table.php",
+            "tables_affected": [
+                "delivery_policies",
+                "delivery_policy_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'delivery_policies' and all initial columns (11/11) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 84,
+            "migration_file": "2023_07_05_225954_create_images_table.php",
+            "tables_affected": [
+                "images"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'images' and all initial columns (6/6) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 85,
+            "migration_file": "2023_07_05_230354_create_booking_papers_table.php",
+            "tables_affected": [
+                "booking_papers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'booking_papers' and all initial columns (5/5) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 86,
+            "migration_file": "2023_07_05_231222_add_delivery_policy_id_to_money_transfers_table.php",
+            "tables_affected": [
+                "money_transfers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'money_transfers.delivery_policy_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 87,
+            "migration_file": "2023_07_05_233424_add_delivery_policy_id_to_agent_expenses_table.php",
+            "tables_affected": [
+                "agent_expenses"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'agent_expenses.delivery_policy_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 88,
+            "migration_file": "2023_07_06_065106_add_booking_json_to_invoices_table.php",
+            "tables_affected": [
+                "invoices"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'invoices.booking_json' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 89,
+            "migration_file": "2023_07_06_065822_move_second_and_third_bookings_into_bookings.php",
+            "tables_affected": [
+                "bookings",
+                "second_bookings",
+                "third_bookings"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'bookings' and all initial columns (14/14) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 90,
+            "migration_file": "2023_07_11_120537_add_booking_container_id_to_booking_papers_table.php",
+            "tables_affected": [
+                "booking_papers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_papers.booking_container_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 91,
+            "migration_file": "2023_09_03_211828_add_superagent_id_to_otps_table.php",
+            "tables_affected": [
+                "otps"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'otps.superagent_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 92,
+            "migration_file": "2023_10_28_170701_create_log_activities_table.php",
+            "tables_affected": [
+                "log_activities"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'log_activities' and all initial columns (7/7) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 93,
+            "migration_file": "2023_10_28_205450_add_container_status_to_log_activities_table.php",
+            "tables_affected": [
+                "log_activities"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'log_activities.container_status' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 94,
+            "migration_file": "2023_11_07_201936_create_app_notifications_table.php",
+            "tables_affected": [
+                "app_notifications"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'app_notifications' and all initial columns (8/8) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 95,
+            "migration_file": "2023_11_07_205249_add_device_token_to_agents_table.php",
+            "tables_affected": [
+                "agents"
+            ],
+            "classification": "MATCHED",
+            "details": "Table alter specifies column modifications without net additions/drops.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 96,
+            "migration_file": "2023_11_07_205308_add_device_token_to_superagents_table.php",
+            "tables_affected": [
+                "superagents"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'superagents.device_token' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 97,
+            "migration_file": "2023_11_28_081002_add_employee_name_to_bookings.php",
+            "tables_affected": [
+                "bookings"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'bookings.employee_name' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 98,
+            "migration_file": "2023_11_28_083615_add_factory_to_bookings.php",
+            "tables_affected": [
+                "bookings"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'bookings.factory_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 99,
+            "migration_file": "2023_12_16_184810_add_yard_id_to_bookings_table.php",
+            "tables_affected": [
+                "bookings"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'bookings.yard_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 100,
+            "migration_file": "2024_05_25_111836_add_feilds_to_companies_table.php",
+            "tables_affected": [
+                "companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'companies.opening_balance' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 101,
+            "migration_file": "2024_05_25_113557_create_shipments_table.php",
+            "tables_affected": [
+                "shipments"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'shipments' and all initial columns (9/9) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 102,
+            "migration_file": "2024_05_25_122243_create_company_invoices_table.php",
+            "tables_affected": [
+                "company_invoices"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'company_invoices' and all initial columns (7/7) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 103,
+            "migration_file": "2024_05_26_204008_add_wallet_to_companies_table.php",
+            "tables_affected": [
+                "companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'companies.wallet' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 104,
+            "migration_file": "2024_05_26_214243_add_wallet_to_cars_table.php",
+            "tables_affected": [
+                "cars"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'cars.wallet' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 105,
+            "migration_file": "2024_05_26_223511_create_agent_car_tranfers_table.php",
+            "tables_affected": [
+                "agent_car_tranfers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'agent_car_tranfers' and all initial columns (8/8) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 106,
+            "migration_file": "2024_05_27_090121_add_wallet_to_agents_table.php",
+            "tables_affected": [
+                "agents"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'agents.wallet' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 107,
+            "migration_file": "2024_05_28_155139_create_vaults_table.php",
+            "tables_affected": [
+                "vaults"
+            ],
+            "classification": "NOT MATCHED",
+            "details": "Table 'vaults' does not physically exist in MySQL.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 108,
+            "migration_file": "2024_05_29_052720_create_banks_table.php",
+            "tables_affected": [
+                "banks"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'banks' and all initial columns (5/5) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 109,
+            "migration_file": "2024_05_29_053940_create_bank_trnsactions_table.php",
+            "tables_affected": [
+                "bank_trnsactions"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'bank_trnsactions' and all initial columns (9/9) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 110,
+            "migration_file": "2024_05_30_161649_add_user_id_to_bookings_table.php",
+            "tables_affected": [
+                "bookings"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'bookings.user_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 111,
+            "migration_file": "2024_06_01_162452_add_wallet_to_superagents_table.php",
+            "tables_affected": [
+                "superagents"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'superagents.wallet' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 112,
+            "migration_file": "2024_06_01_193347_create_superagent_transactions_table.php",
+            "tables_affected": [
+                "superagent_transactions"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'superagent_transactions' and all initial columns (7/7) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 113,
+            "migration_file": "2024_06_01_205840_add_image_to_agent_car_tranfers_table.php",
+            "tables_affected": [
+                "agent_car_tranfers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'agent_car_tranfers.image' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 114,
+            "migration_file": "2024_06_02_201240_ad_feilds_to_shipments_table.php",
+            "tables_affected": [
+                "shipments"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'shipments.image' is present physically. | Added column 'shipments.agent_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 115,
+            "migration_file": "2024_06_08_081753_modify_in_vaults_table.php",
+            "tables_affected": [
+                "vaults"
+            ],
+            "classification": "MATCHED",
+            "details": "Target table 'vaults' does not exist physically. | Table alter specifies column modifications without net additions/drops.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 116,
+            "migration_file": "2024_06_08_082355_add_feilds_to_bank_transactions_table.php",
+            "tables_affected": [
+                "bank_trnsactions"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'bank_trnsactions.trans_bank_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 117,
+            "migration_file": "2024_06_08_105318_modify_in_money_trasnfers_table.php",
+            "tables_affected": [
+                "money_transfers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'money_transfers.value' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 118,
+            "migration_file": "2024_06_09_041629_add_feilds_to_agent_expenses_table.php",
+            "tables_affected": [
+                "agent_expenses"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'agent_expenses.booking_container_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 119,
+            "migration_file": "2024_06_10_045035_add_feilds_to_agent_expenses_table.php",
+            "tables_affected": [
+                "agent_expenses"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'agent_expenses.user_id' is present physically. | Added column 'agent_expenses.admin_approval' is present physically. | Added column 'agent_expenses.type_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 120,
+            "migration_file": "2024_06_10_152723_add_fields_to_booking_containers_table.php",
+            "tables_affected": [
+                "booking_containers",
+                "booking_container_agents",
+                "daily_booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_containers.superagent_specification_approved' is present physically. | Added column 'booking_containers.superagent_loading_approved' is present physically. | Added column 'booking_containers.superagent_unloading_approved' is present physically. | Added column 'booking_container_agents.superagent_specification_approved' is present physically. | Added column 'booking_container_agents.superagent_loading_approved' is present physically. | Added column 'booking_container_agents.superagent_unloading_approved' is present physically. | Added column 'daily_booking_containers.superagent_specification_approved' is present physically. | Added column 'daily_booking_containers.superagent_loading_approved' is present physically. | Added column 'daily_booking_containers.superagent_unloading_approved' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 121,
+            "migration_file": "2024_06_10_184953_add_fields_to_booking_papers_table.php",
+            "tables_affected": [
+                "booking_papers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_papers.agent_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 122,
+            "migration_file": "2024_06_17_174451_add_feilds_to_bank_trnsactions_table.php",
+            "tables_affected": [
+                "bank_trnsactions"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'bank_trnsactions.company_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 123,
+            "migration_file": "2024_06_17_235811_add_feilds_to_company_invoices_table.php",
+            "tables_affected": [
+                "company_invoices"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'company_invoices.type' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 124,
+            "migration_file": "2024_06_19_012955_create_vault_transactions_table.php",
+            "tables_affected": [
+                "vault_transactions"
+            ],
+            "classification": "NOT MATCHED",
+            "details": "Table 'vault_transactions' does not physically exist in MySQL.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 125,
+            "migration_file": "2024_06_20_215018_create_payingcars_table.php",
+            "tables_affected": [
+                "payingcars"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'payingcars' and all initial columns (8/8) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 126,
+            "migration_file": "2024_07_18_135838_create_booking_contrainer_extra_costs_table.php",
+            "tables_affected": [
+                "booking_contrainer_extra_costs"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'booking_contrainer_extra_costs' and all initial columns (9/9) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 127,
+            "migration_file": "2024_07_19_200026_create_invoice_payments_table.php",
+            "tables_affected": [
+                "invoice_payments"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'invoice_payments' and all initial columns (9/9) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 128,
+            "migration_file": "2024_07_20_125920_add_details_to_delivery_policies_table.php",
+            "tables_affected": [
+                "delivery_policies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'delivery_policies.cost' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 129,
+            "migration_file": "2024_12_22_000000_add_financial_fields_to_booking_services_table.php",
+            "tables_affected": [
+                "booking_services"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_services.vault_id' is present physically. | Added column 'booking_services.bank_id' is present physically. | Added column 'booking_services.created_by' is present physically. | Added column 'booking_services.updated_by' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 130,
+            "migration_file": "2024_12_22_100000_add_payment_type_to_booking_services_table.php",
+            "tables_affected": [
+                "booking_services"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_services.payment_type' is present physically. | Added column 'booking_services.agent_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 131,
+            "migration_file": "2025_01_21_000000_create_private_companies_table.php",
+            "tables_affected": [
+                "private_companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'private_companies' and all initial columns (7/7) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 132,
+            "migration_file": "2025_01_21_100000_add_private_company_id_to_companies_table.php",
+            "tables_affected": [
+                "companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'companies.private_company_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 133,
+            "migration_file": "2025_01_21_200000_add_contact_fields_to_private_companies_table.php",
+            "tables_affected": [
+                "private_companies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'private_companies.phone1' is present physically. | Added column 'private_companies.phone2' is present physically. | Added column 'private_companies.tel_fax' is present physically. | Added column 'private_companies.email' is present physically. | Added column 'private_companies.address' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 134,
+            "migration_file": "2025_01_25_000000_add_payment_fields_to_invoice_payments_table.php",
+            "tables_affected": [
+                "invoice_payments"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'invoice_payments.payment_type' is present physically. | Added column 'invoice_payments.check_bank_name' is present physically. | Added column 'invoice_payments.check_number' is present physically. | Added column 'invoice_payments.check_due_date' is present physically. | Added column 'invoice_payments.check_paid_at' is present physically. | Added column 'invoice_payments.notes' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 135,
+            "migration_file": "2025_10_28_210010_add_date_and_address_to_delivery_policies_table.php",
+            "tables_affected": [
+                "delivery_policies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'delivery_policies.date' is present physically. | Added column 'delivery_policies.address' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 136,
+            "migration_file": "2025_10_28_211329_add_office_commission_to_delivery_policies_table.php",
+            "tables_affected": [
+                "delivery_policies"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'delivery_policies.office_commission' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 137,
+            "migration_file": "2026_03_12_120000_add_bank_transaction_id_to_invoice_payments_table.php",
+            "tables_affected": [
+                "invoice_payments"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'invoice_payments.bank_transaction_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 138,
+            "migration_file": "2026_04_04_000001_backfill_agent_expenses_booking_links.php",
+            "tables_affected": [],
+            "classification": "DATA EFFECT NOT PROVABLE",
+            "details": "Migration performs runtime data backfills or permission seeding with no DDL structure declarations.",
+            "evidence": "No Schema:: operations in up() method."
+        },
+        {
+            "id": 139,
+            "migration_file": "2026_04_16_000001_add_payment_group_uuid_to_payingcars_table.php",
+            "tables_affected": [
+                "payingcars"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'payingcars.payment_group_uuid' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 140,
+            "migration_file": "2026_07_18_000000_add_container_and_type_id_to_app_notifications_table.php",
+            "tables_affected": [
+                "app_notifications"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'app_notifications.booking_container_id' is present physically. | Added column 'app_notifications.type_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 141,
+            "migration_file": "2026_07_21_235321_add_is_read_to_app_notifications_table.php",
+            "tables_affected": [
+                "app_notifications"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'app_notifications.is_read' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 142,
+            "migration_file": "2026_07_22_000000_add_invoice_print_section_to_service_categories_table.php",
+            "tables_affected": [
+                "service_categories"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'service_categories.invoice_print_section' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 143,
+            "migration_file": "2026_07_23_000001_create_suppliers_table.php",
+            "tables_affected": [
+                "suppliers"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'suppliers' and all initial columns (5/5) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 144,
+            "migration_file": "2026_07_23_000002_create_receipts_table.php",
+            "tables_affected": [
+                "receipts"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'receipts' and all initial columns (9/9) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 145,
+            "migration_file": "2026_07_23_000003_add_supplier_fields_to_receipts_table.php",
+            "tables_affected": [
+                "receipts"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'receipts.payment_source' is present physically. | Added column 'receipts.supplier_id' is present physically. | Added column 'receipts.supplier_invoice_number' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 146,
+            "migration_file": "2026_07_23_000004_create_supplier_payments_table.php",
+            "tables_affected": [
+                "supplier_payments"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'supplier_payments' and all initial columns (8/8) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 147,
+            "migration_file": "2026_07_23_000005_add_suppliers_permissions.php",
+            "tables_affected": [],
+            "classification": "DATA EFFECT NOT PROVABLE",
+            "details": "Migration performs runtime data backfills or permission seeding with no DDL structure declarations.",
+            "evidence": "No Schema:: operations in up() method."
+        },
+        {
+            "id": 148,
+            "migration_file": "2026_07_24_000001_link_booking_services_and_supplier_receipts.php",
+            "tables_affected": [
+                "booking_services",
+                "receipts"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_services.supplier_id' is present physically. | Added column 'booking_services.supplier_invoice_number' is present physically. | Added column 'receipts.booking_service_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 149,
+            "migration_file": "2026_09_08_000000_add_approval_timestamps_to_booking_containers.php",
+            "tables_affected": [
+                "booking_containers",
+                "booking_container_agents"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_containers.specification_completed_at' is present physically. | Added column 'booking_containers.specification_approved_at' is present physically. | Added column 'booking_containers.loading_completed_at' is present physically. | Added column 'booking_containers.loading_approved_at' is present physically. | Added column 'booking_containers.unloading_completed_at' is present physically. | Added column 'booking_containers.unloading_approved_at' is present physically. | Added column 'booking_container_agents.specification_completed_at' is present physically. | Added column 'booking_container_agents.specification_approved_at' is present physically. | Added column 'booking_container_agents.loading_completed_at' is present physically. | Added column 'booking_container_agents.loading_approved_at' is present physically. | Added column 'booking_container_agents.unloading_completed_at' is present physically. | Added column 'booking_container_agents.unloading_approved_at' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 150,
+            "migration_file": "2026_09_08_000001_add_waiting_and_loading_stage_to_booking_containers.php",
+            "tables_affected": [
+                "booking_containers",
+                "booking_container_agents",
+                "daily_booking_containers"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'booking_containers.is_in_loading' is present physically. | Added column 'booking_containers.moved_to_loading_at' is present physically. | Added column 'booking_container_agents.is_in_loading' is present physically. | Added column 'booking_container_agents.moved_to_loading_at' is present physically. | Added column 'daily_booking_containers.is_in_loading' is present physically. | Added column 'daily_booking_containers.moved_to_loading_at' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 151,
+            "migration_file": "2026_09_09_000001_add_booking_service_id_to_agent_expenses_table.php",
+            "tables_affected": [
+                "agent_expenses"
+            ],
+            "classification": "MATCHED",
+            "details": "Added column 'agent_expenses.booking_service_id' is present physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 152,
+            "migration_file": "2026_09_13_000001_add_parallel_container_stages.php",
+            "tables_affected": [
+                "booking_container_stages",
+                "booking_container_agents",
+                "agent_expenses"
+            ],
+            "classification": "MATCHED",
+            "details": "Table 'booking_container_stages' and all initial columns (8/8) exist physically.",
+            "evidence": "information_schema.COLUMNS lookup"
+        },
+        {
+            "id": 153,
+            "migration_file": "2026_10_01_000001_create_agent_photos_table.php",
+            "tables_affected": [
+                "agent_photos"
+            ],
+            "classification": "NOT MATCHED",
+            "details": "Table 'agent_photos' does not physically exist in MySQL.",
+            "evidence": "information_schema.COLUMNS lookup"
+        }
+    ]
+}

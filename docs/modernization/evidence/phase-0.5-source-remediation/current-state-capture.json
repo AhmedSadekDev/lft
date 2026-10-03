@@ -1,0 +1,204 @@
+{
+    "initial_capture": {
+        "captured_at": "2026-10-03 19:36:03 UTC",
+        "session_read_only": 1,
+        "database": "leader",
+        "mysql_version": "8.4.3",
+        "server": {
+            "hostname": "DESKTOP-VCL5N83",
+            "port": 3306,
+            "datadir": "D:\\laragon\\data\\mysql-8.4\\",
+            "lock_wait_timeout": 50
+        },
+        "schema_counts": {
+            "leader": {
+                "tables": 65,
+                "columns": 599,
+                "primary_keys": 64,
+                "auto_increment": 60,
+                "unique_non_pk": 8,
+                "non_unique_indexes": 71,
+                "foreign_keys": 61,
+                "views": 0,
+                "migrations_rows": 0
+            },
+            "leader_dryrun": {
+                "tables": 65,
+                "columns": 599,
+                "primary_keys": 64,
+                "auto_increment": 60,
+                "unique_non_pk": 8,
+                "non_unique_indexes": 71,
+                "foreign_keys": 61,
+                "views": 0,
+                "migrations_rows": 0
+            }
+        },
+        "databases_on_server": [
+            "al_hafiz_app",
+            "alramadyacademy",
+            "alsanam",
+            "by3li",
+            "cloudtal_obstetrics_and_gynecology",
+            "hamimm_live",
+            "hamimm_live_2",
+            "hayatdiscount",
+            "information_schema",
+            "kasib",
+            "leader",
+            "leader_dryrun",
+            "leader_restore_verify",
+            "lms_academy",
+            "mologistic",
+            "mysql",
+            "ocean_erp",
+            "performance_schema",
+            "polishing",
+            "rabasystem",
+            "secretvisitor",
+            "sys",
+            "taqrer",
+            "test",
+            "tezahb",
+            "vera_water"
+        ],
+        "processlist": [
+            {
+                "Id": 5,
+                "User": "event_scheduler",
+                "Host": "localhost",
+                "db": null,
+                "Command": "Daemon",
+                "Time": 16161,
+                "State": "Waiting on empty queue",
+                "Info": null
+            },
+            {
+                "Id": 279,
+                "User": "root",
+                "Host": "localhost:55592",
+                "db": "leader",
+                "Command": "Query",
+                "Time": 0,
+                "State": "init",
+                "Info": "SHOW FULL PROCESSLIST"
+            }
+        ],
+        "innodb_trx": [],
+        "metadata_locks_available": true,
+        "metadata_locks_leader": [],
+        "global_status": [
+            {
+                "Variable_name": "Com_alter_table",
+                "Value": "990"
+            },
+            {
+                "Variable_name": "Com_create_table",
+                "Value": "386"
+            },
+            {
+                "Variable_name": "Com_delete",
+                "Value": "13"
+            },
+            {
+                "Variable_name": "Com_drop_table",
+                "Value": "238"
+            },
+            {
+                "Variable_name": "Com_insert",
+                "Value": "682"
+            },
+            {
+                "Variable_name": "Com_truncate",
+                "Value": "2"
+            },
+            {
+                "Variable_name": "Com_update",
+                "Value": "106"
+            },
+            {
+                "Variable_name": "Threads_connected",
+                "Value": "1"
+            },
+            {
+                "Variable_name": "Threads_running",
+                "Value": "2"
+            },
+            {
+                "Variable_name": "Uptime",
+                "Value": "16221"
+            }
+        ]
+    },
+    "end_of_investigation_recheck": {
+        "captured_at": "2026-10-03 19:58:05 UTC",
+        "leader_schema_sha256": "3fe917538c719cf241ae664af5c99de0ac097a90ff5b2b46f504dffcc4076452",
+        "leader_schema_sha256_at_comparison": "3fe917538c719cf241ae664af5c99de0ac097a90ff5b2b46f504dffcc4076452",
+        "schema_unchanged_during_investigation": true,
+        "counts": {
+            "tables": 65,
+            "columns": 599,
+            "primary_keys": 64,
+            "auto_increment": 60,
+            "unique_non_pk": 8,
+            "non_unique_indexes": 71,
+            "foreign_keys": 61,
+            "migrations_rows": 0
+        },
+        "processlist": [
+            {
+                "Id": 5,
+                "User": "event_scheduler",
+                "Host": "localhost",
+                "db": null,
+                "Command": "Daemon",
+                "Time": 17483,
+                "State": "Waiting on empty queue",
+                "Info": null
+            },
+            {
+                "Id": 288,
+                "User": "root",
+                "Host": "localhost:55443",
+                "db": null,
+                "Command": "Query",
+                "Time": 0,
+                "State": "init",
+                "Info": "SHOW FULL PROCESSLIST"
+            }
+        ],
+        "innodb_trx": [],
+        "write_counters_initial": {
+            "Com_alter_table": "990",
+            "Com_create_table": "386",
+            "Com_delete": "13",
+            "Com_drop_table": "238",
+            "Com_insert": "682",
+            "Com_truncate": "2",
+            "Com_update": "106"
+        },
+        "write_counters_now": {
+            "Com_alter_table": "990",
+            "Com_create_db": "11",
+            "Com_create_table": "386",
+            "Com_delete": "13",
+            "Com_drop_db": "5",
+            "Com_drop_table": "238",
+            "Com_insert": "682",
+            "Com_insert_select": "68",
+            "Com_replace": "0",
+            "Com_truncate": "2",
+            "Com_update": "106"
+        },
+        "write_counters_unchanged_for_tracked_keys": true,
+        "current_binlog": {
+            "Log_name": "binlog.000079",
+            "File_size": 108750228,
+            "Encrypted": "No"
+        },
+        "binlog_000079_size_bytes": 108750228,
+        "binlog_000079_last_write": "2026-10-03 19:20:36"
+    },
+    "running_remediation_process": "NONE - only event_scheduler daemon and this read-only session; no php/mysql client processes other than mysqld (Win32_Process scan at initial capture)",
+    "investigation_session_mode": "SET SESSION transaction_read_only = 1 on every connection; only SELECT / SHOW / information_schema / performance_schema queries; mysqlbinlog read of binlog files; text parsing of backup .sql files (no restore)"
+}

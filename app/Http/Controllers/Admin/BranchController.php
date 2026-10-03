@@ -27,7 +27,7 @@ class BranchController extends Controller
     public function index()
     {
         $input = [
-            'branches' => Branch::all(),
+            'branches' => Branch::with('factory')->get(),
         ];
 
         return view('admin.branches.index', $input);

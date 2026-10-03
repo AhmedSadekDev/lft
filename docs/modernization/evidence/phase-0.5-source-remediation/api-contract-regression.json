@@ -1,0 +1,1262 @@
+{
+    "generated_at": "2026-10-03 20:45:53 UTC",
+    "phase": "post-targeted-correction",
+    "harness": "storage/app/phase05_completion/50_api_contracts.php (rebuild of the Phase 0.5 clone suite; original scratch/ harness no longer exists). In-process Laravel HTTP kernel, Telescope disabled, every request inside a rolled-back DB transaction, stateless JWT auth.",
+    "reference_before": "leader_restore_verify = restore of the fresh pre-correction backup of leader (exact pre-correction state)",
+    "leader_run_binlog": {
+        "before": {
+            "file": "binlog.000079",
+            "position": 158389175
+        },
+        "after": {
+            "file": "binlog.000079",
+            "position": 158389175
+        },
+        "no_writes_persisted": true
+    },
+    "fixtures": {
+        "agent_id": 25,
+        "superagent_id": 3,
+        "user_id": null,
+        "booking_number": "6469996650",
+        "stage": {
+            "booking_container_id": 423,
+            "type_id": 1
+        },
+        "expense_booking_container_id": 100
+    },
+    "contracts_total": 31,
+    "classification_counts": {
+        "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS": 8,
+        "HEALTHY": 18,
+        "PRE_EXISTING_PENDING_MIGRATION_AGENT_PHOTOS": 1,
+        "NOT_TESTABLE_PRE_EXISTING": 4
+    },
+    "pre_existing_notes": {
+        "yards": "PRE-EXISTING FUNCTIONAL DEFECT: table `yards` never created (migration 2023_06_09_010342 never applied); not fixed in Phase 0.5",
+        "agent_photos": "PRE-EXISTING: post-baseline migration 2026_10_01_000001_create_agent_photos_table is pending (table never existed on leader)",
+        "NOT_TESTABLE": "PRE-EXISTING: guard provider table `users` absent from the schema"
+    },
+    "regressions_introduced": 0,
+    "contracts": {
+        "agent_loading_assignments": {
+            "uri": "/api/agent/booking/fetch_loading_assignments",
+            "guard": "agent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.yards' doesn't exist (SQL: select * from `yards` where `yards`.`id` in (5, 7))"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ]
+            },
+            "classification": "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS",
+            "regression": false
+        },
+        "agent_specification_assignments": {
+            "uri": "/api/agent/booking/fetch_specification_assignments",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ]
+            },
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_unloading_assignments": {
+            "uri": "/api/agent/booking/fetch_unloading_assignments",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ]
+            },
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_expenses": {
+            "uri": "/api/agent/fetch_all_expenses",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ]
+            },
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_latest_expenses": {
+            "uri": "/api/agent/fetch_latest_expenses",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_wallet": {
+            "uri": "/api/agent/wallets",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "data",
+                    "message"
+                ],
+                "data_count": 1
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "data",
+                    "message"
+                ],
+                "data_count": 1
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "data",
+                    "message"
+                ],
+                "data_count": 1,
+                "message": ""
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "data",
+                    "message"
+                ]
+            },
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_profile": {
+            "uri": "/api/agent/fetch_profile",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 6
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 6
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 6,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_financial_custody": {
+            "uri": "/api/agent/fetch_financial_custody",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 3
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 3
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 3,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_delivery_policies": {
+            "uri": "/api/agent/fetch_delivery_policies",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 12
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 12
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 12,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_service_categories": {
+            "uri": "/api/agent/fetch_service_categories",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 4
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 4
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 4,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_containers_with_no_policies": {
+            "uri": "/api/agent/containers-with-no-policies",
+            "guard": "agent",
+            "before_copy": {
+                "status": 200
+            },
+            "canonical_clone": {
+                "status": 200
+            },
+            "leader": {
+                "status": 200
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "agent_photos": {
+            "uri": "/api/agent/photos",
+            "guard": "agent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.agent_photos' doesn't exist (SQL: select count(*) as aggregate from `agent_photos` where `agent_id` = 25)"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 200,
+                "top_level_keys": null
+            },
+            "classification": "PRE_EXISTING_PENDING_MIGRATION_AGENT_PHOTOS",
+            "regression": false
+        },
+        "public_booking_tracking": {
+            "uri": "/api/booking/track",
+            "guard": null,
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "message",
+                    "data"
+                ],
+                "data_count": 1
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "message",
+                    "data"
+                ],
+                "data_count": 1
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "message",
+                    "data"
+                ],
+                "data_count": 1,
+                "message": "Orders"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "message"
+                ]
+            },
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "desktop_orders": {
+            "uri": "/api/desktop/orders/all",
+            "guard": "desktop",
+            "before_copy": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "canonical_clone": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "leader": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ]
+            },
+            "classification": "NOT_TESTABLE_PRE_EXISTING",
+            "regression": false
+        },
+        "desktop_companies": {
+            "uri": "/api/desktop/companies/all",
+            "guard": "desktop",
+            "before_copy": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "canonical_clone": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "leader": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "NOT_TESTABLE_PRE_EXISTING",
+            "regression": false
+        },
+        "superagent_combined_assignments": {
+            "uri": "/api/superagent/booking/all",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.yards' doesn't exist (SQL: select * from `yards` where exists (select * from `booking_containers` inner join `bookings` on `bookings`.`id` = `booking_containers`.`booking_id` where `yards`.`id` = `bookings`.`yard_id` and not exists (s"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ]
+            },
+            "classification": "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS",
+            "regression": false
+        },
+        "superagent_specification": {
+            "uri": "/api/superagent/booking/specification",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.yards' doesn't exist (SQL: select * from `yards` where `yards`.`id` in (7))"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS",
+            "regression": false
+        },
+        "superagent_waiting": {
+            "uri": "/api/superagent/booking/waiting",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 3
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 3
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 3,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "superagent_loading": {
+            "uri": "/api/superagent/booking/loading",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.yards' doesn't exist (SQL: select * from `yards` where `yards`.`id` in (3, 4, 5, 7, 9, 10))"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS",
+            "regression": false
+        },
+        "superagent_unloading": {
+            "uri": "/api/superagent/booking/unloading",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.yards' doesn't exist (SQL: select * from `yards` where `yards`.`id` in (3, 4, 5, 7, 11))"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS",
+            "regression": false
+        },
+        "superagent_missions_all": {
+            "uri": "/api/superagent/booking/missions/all",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.yards' doesn't exist (SQL: select * from `yards` where `yards`.`id` in (7))"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS",
+            "regression": false
+        },
+        "superagent_home": {
+            "uri": "/api/superagent/fetch_home",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 4
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 4
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 4,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "superagent_containers_expenses": {
+            "uri": "/api/superagent/containers-expenses",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 2
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 2
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 2,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "superagent_wallets": {
+            "uri": "/api/superagent/wallets",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "data",
+                    "message"
+                ],
+                "data_count": 1
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "data",
+                    "message"
+                ],
+                "data_count": 1
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "data",
+                    "message"
+                ],
+                "data_count": 1,
+                "message": ""
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "superagent_stage_receipts": {
+            "uri": "/api/superagent/booking/stage_receipts",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 6
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 6
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 6,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "superagent_pending_stage_receipts": {
+            "uri": "/api/superagent/booking/pending_stage_receipts",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 13
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 13
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 13,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "superagent_specification_assignments": {
+            "uri": "/api/superagent/booking/specification_assignments",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "canonical_clone": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0
+            },
+            "leader": {
+                "status": 200,
+                "top_level_keys": [
+                    "status",
+                    "errNum",
+                    "message",
+                    "data"
+                ],
+                "data_count": 0,
+                "message": "نجاح"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "HEALTHY",
+            "regression": false
+        },
+        "superagent_loading_assignments": {
+            "uri": "/api/superagent/booking/loading_assignments",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.yards' doesn't exist (SQL: select * from `yards` where exists (select * from `booking_containers` inner join `bookings` on `bookings`.`id` = `booking_containers`.`booking_id` where `yards`.`id` = `bookings`.`yard_id` and not exists (s"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS",
+            "regression": false
+        },
+        "superagent_unloading_assignments": {
+            "uri": "/api/superagent/booking/unloading_assignments",
+            "guard": "superagent",
+            "before_copy": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null
+            },
+            "canonical_clone": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null
+            },
+            "leader": {
+                "status": 500,
+                "top_level_keys": [
+                    "message",
+                    "exception",
+                    "file",
+                    "line",
+                    "trace"
+                ],
+                "data_count": null,
+                "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.yards' doesn't exist (SQL: select * from `yards` where `yards`.`id` = 3 limit 1)"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": false,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "PRE_EXISTING_FUNCTIONAL_DEFECT_YARDS",
+            "regression": false
+        },
+        "admin_suppliers_index": {
+            "uri": "/dashboard/suppliers",
+            "guard": "web",
+            "before_copy": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "canonical_clone": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "leader": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "NOT_TESTABLE_PRE_EXISTING",
+            "regression": false
+        },
+        "admin_receipts_index": {
+            "uri": "/dashboard/receipts",
+            "guard": "web",
+            "before_copy": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "canonical_clone": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "leader": {
+                "status": null,
+                "result": "NOT_TESTABLE"
+            },
+            "contract_identical_to_before": true,
+            "contract_identical_to_clone": true,
+            "body_identical_to_before": true,
+            "recorded_2026_10_03_clone_suite": null,
+            "classification": "NOT_TESTABLE_PRE_EXISTING",
+            "regression": false
+        }
+    },
+    "pass": true
+}

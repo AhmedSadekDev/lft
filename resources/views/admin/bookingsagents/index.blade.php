@@ -27,7 +27,7 @@
                                     {{ $container->container_no }}
                                 </td>
                                 <td>
-                                    {{ $container->agents->count() }}
+                                    {{ $container->agents_count }}
                                 </td>
 
                                 <td>{{ $container->created_at }}</td>

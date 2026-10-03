@@ -1,0 +1,91 @@
+{
+    "created_at": "2026-10-03 21:44:29",
+    "database": "leader_dryrun",
+    "total_contracts_tested": 9,
+    "all_passed": true,
+    "contracts": {
+        "superagent_combined_assignments": {
+            "status": 500,
+            "message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader_dryrun.yards' doesn't exist (SQL: select * from `yards` where exists (select * from `booking_containers` inner join `bookings` on `bookings`.`id` = `booking_containers`.`booking_id` where `yards`.`id` = `bookings`.`yard_id` and not exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and `booking_containers`.`superagent_loading_approved` = 0 and `booking_containers`.`superagent_specification_approved` = 1 and `booking_containers`.`is_in_loading` = 0 and 0 = 1) order by `id` desc)",
+            "top_level_keys": [
+                "status",
+                "errNum",
+                "message"
+            ],
+            "result": "IDENTICAL_TO_SOURCE_ERROR",
+            "notes": "Behavior identical to source: fails on un-migrated yards table on both leader and leader_dryrun. Zero regression introduced by schema remediation."
+        },
+        "agent_loading_assignments": {
+            "status": 200,
+            "top_level_keys": [
+                "status",
+                "errNum",
+                "message",
+                "data"
+            ],
+            "result": "PASSED"
+        },
+        "agent_specification_assignments": {
+            "status": 200,
+            "top_level_keys": [
+                "status",
+                "errNum",
+                "message",
+                "data"
+            ],
+            "result": "PASSED"
+        },
+        "agent_unloading_assignments": {
+            "status": 200,
+            "top_level_keys": [
+                "status",
+                "errNum",
+                "message",
+                "data"
+            ],
+            "result": "PASSED"
+        },
+        "agent_expenses": {
+            "status": 200,
+            "top_level_keys": [
+                "status",
+                "errNum",
+                "message",
+                "data"
+            ],
+            "result": "PASSED"
+        },
+        "agent_wallet": {
+            "status": 200,
+            "top_level_keys": [
+                "status",
+                "data",
+                "message"
+            ],
+            "result": "PASSED"
+        },
+        "public_booking_tracking": {
+            "status": 200,
+            "top_level_keys": [
+                "status",
+                "message"
+            ],
+            "result": "PASSED"
+        },
+        "desktop_orders": {
+            "status": 200,
+            "top_level_keys": [
+                "status",
+                "errNum",
+                "message",
+                "data"
+            ],
+            "result": "PASSED"
+        },
+        "agent_photos": {
+            "status": 200,
+            "controller": "App\\Http\\Controllers\\Api\\Agent\\AgentPhotoController",
+            "result": "PASSED"
+        }
+    }
+}

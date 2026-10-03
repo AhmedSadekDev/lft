@@ -1,0 +1,1536 @@
+{
+    "generated_at": "2026-10-03 21:27:22 UTC",
+    "database": "leader",
+    "sql_file": "docs/modernization/phase-1-performance-indexes.sql",
+    "sql_file_sha256": "f91116132092b12539a55ee43596524d0031f61efb957311ac2b67af4c8c8e3e",
+    "binlog": {
+        "file": "binlog.000079",
+        "start": 162769529,
+        "stop": 162772254,
+        "alter_statements": 9,
+        "row_events": 0,
+        "other_statements": [],
+        "alters": [
+            "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_transferer` (`transferer_type`, `transferer_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_transfered` (`transfered_type`, `transfered_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_delivery_policy` (`delivery_policy_id`, `type`), ALGORITHM=INPLACE, LOCK=NONE",
+            "ALTER TABLE `images` ADD INDEX `idx_images_imageable` (`imageable_type`, `imageable_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "ALTER TABLE `delivery_policy_containers` ADD INDEX `idx_dpc_policy_container` (`delivery_policy_id`, `booking_container_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "ALTER TABLE `bookings` ADD INDEX `idx_bookings_booking_number` (`booking_number`), ALGORITHM=INPLACE, LOCK=NONE",
+            "ALTER TABLE `booking_services` ADD INDEX `idx_booking_services_booking_id` (`booking_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "ALTER TABLE `booking_papers` ADD INDEX `idx_booking_papers_container_type` (`booking_container_id`, `type`), ALGORITHM=INPLACE, LOCK=NONE",
+            "ALTER TABLE `agent_expenses` ADD INDEX `idx_agent_expenses_delivery_policy_id` (`delivery_policy_id`), ALGORITHM=INPLACE, LOCK=NONE"
+        ]
+    },
+    "data_unchanged": {
+        "checksum_before": {
+            "leader.money_transfers": 723981319,
+            "leader.images": 3615077013,
+            "leader.delivery_policy_containers": 1360463615,
+            "leader.bookings": 1508373356,
+            "leader.booking_services": 1973200790,
+            "leader.booking_papers": 1610286662,
+            "leader.agent_expenses": 155523316
+        },
+        "checksum_after": {
+            "leader.money_transfers": 723981319,
+            "leader.images": 3615077013,
+            "leader.delivery_policy_containers": 1360463615,
+            "leader.bookings": 1508373356,
+            "leader.booking_services": 1973200790,
+            "leader.booking_papers": 1610286662,
+            "leader.agent_expenses": 155523316
+        },
+        "identical": true,
+        "row_counts_before": {
+            "money_transfers": 677,
+            "images": 867,
+            "delivery_policy_containers": 256,
+            "bookings": 474,
+            "booking_services": 259,
+            "booking_papers": 788,
+            "agent_expenses": 447
+        },
+        "row_counts_after": {
+            "money_transfers": 677,
+            "images": 867,
+            "delivery_policy_containers": 256,
+            "bookings": 474,
+            "booking_services": 259,
+            "booking_papers": 788,
+            "agent_expenses": 447
+        }
+    },
+    "precheck": {
+        "idx_money_transfers_transferer": {
+            "existing_indexes_on_table": {
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        },
+        "idx_money_transfers_transfered": {
+            "existing_indexes_on_table": {
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        },
+        "idx_money_transfers_delivery_policy": {
+            "existing_indexes_on_table": {
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        },
+        "idx_images_imageable": {
+            "existing_indexes_on_table": {
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        },
+        "idx_dpc_policy_container": {
+            "existing_indexes_on_table": {
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        },
+        "idx_bookings_booking_number": {
+            "existing_indexes_on_table": {
+                "fk_bookings_company_id": "company_id",
+                "fk_bookings_employee_id": "employee_id",
+                "fk_bookings_factory_id": "factory_id",
+                "fk_bookings_shipping_agent_id": "shipping_agent_id",
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        },
+        "idx_booking_services_booking_id": {
+            "existing_indexes_on_table": {
+                "fk_booking_services_agent_id": "agent_id",
+                "fk_booking_services_bank_id": "bank_id",
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        },
+        "idx_booking_papers_container_type": {
+            "existing_indexes_on_table": {
+                "fk_booking_papers_agent_id": "agent_id",
+                "fk_booking_papers_booking_id": "booking_id",
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        },
+        "idx_agent_expenses_delivery_policy_id": {
+            "existing_indexes_on_table": {
+                "agent_expense_request_unique": "agent_id,request_key",
+                "fk_agent_expenses_booking_container_id": "booking_container_id",
+                "fk_agent_expenses_booking_service_id": "booking_service_id",
+                "fk_agent_expenses_service_id": "service_id",
+                "PRIMARY": "id"
+            },
+            "overlap": []
+        }
+    },
+    "indexes": {
+        "idx_money_transfers_transferer": {
+            "table": "money_transfers",
+            "columns": [
+                "transferer_type",
+                "transferer_id"
+            ],
+            "sql": "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_transferer` (`transferer_type`, `transferer_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 720.3,
+            "queries": [
+                {
+                    "contract": "agent_expenses",
+                    "sql": "select * from `money_transfers` where `money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent' and `money_transfers`.`transferer_id` = 25 and `money_transfers`.`transferer_id` is not null and not exists (select * from `delivery_policies` where `money_transfers`.`delivery_policy_id` = `delivery_policies`.`id` and exists (select * from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policies`.`id` = `delivery_policy_containers`.`delivery_policy_id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` whe",
+                    "before": {
+                        "query_cost": "480.98",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            },
+                            {
+                                "table": "<subquery2>",
+                                "access_type": "eq_ref",
+                                "key": "<auto_distinct_key>",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            },
+                            {
+                                "table": "delivery_policies",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 680
+                    },
+                    "after": {
+                        "query_cost": "153.25",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_transferer",
+                                "rows_examined_per_scan": 80
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_transferer",
+                                "rows_examined_per_scan": 80
+                            },
+                            {
+                                "table": "delivery_policies",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ref",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 81
+                    }
+                },
+                {
+                    "contract": "agent_financial_custody",
+                    "sql": "select sum(`value`) as aggregate from `money_transfers` where `money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent' and `money_transfers`.`transferer_id` = 25 and `money_transfers`.`transferer_id` is not null and date(`created_at`) = '2026-10-04'",
+                    "before": {
+                        "query_cost": "69.45",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "handler_reads": 680
+                    },
+                    "after": {
+                        "query_cost": "13.25",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_transferer",
+                                "rows_examined_per_scan": 80
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_transferer",
+                                "rows_examined_per_scan": 80
+                            }
+                        ],
+                        "handler_reads": 81
+                    }
+                }
+            ]
+        },
+        "idx_money_transfers_transfered": {
+            "table": "money_transfers",
+            "columns": [
+                "transfered_type",
+                "transfered_id"
+            ],
+            "sql": "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_transfered` (`transfered_type`, `transfered_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 584.7,
+            "queries": [
+                {
+                    "contract": "web_financial_custody_superagents",
+                    "sql": "select * from `money_transfers` where `transfered_type` = 'App\\\\Models\\\\Superagent'",
+                    "before": {
+                        "query_cost": "69.45",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "handler_reads": 680
+                    },
+                    "after": {
+                        "query_cost": "0.35",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_transfered",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_transfered",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 1
+                    }
+                }
+            ]
+        },
+        "idx_money_transfers_delivery_policy": {
+            "table": "money_transfers",
+            "columns": [
+                "delivery_policy_id",
+                "type"
+            ],
+            "sql": "ALTER TABLE `money_transfers` ADD INDEX `idx_money_transfers_delivery_policy` (`delivery_policy_id`, `type`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 397.1,
+            "queries": [
+                {
+                    "contract": "agent_delivery_policies",
+                    "sql": "select * from `money_transfers` where `type` = 3 and `money_transfers`.`delivery_policy_id` in (154, 155, 156, 157, 158, 162, 165, 167, 174, 175, 176, 177)",
+                    "before": {
+                        "query_cost": "69.45",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "handler_reads": 680
+                    },
+                    "after": {
+                        "query_cost": "8.41",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "range",
+                                "key": "idx_money_transfers_delivery_policy",
+                                "rows_examined_per_scan": 12
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "range",
+                                "key": "idx_money_transfers_delivery_policy",
+                                "rows_examined_per_scan": 12
+                            }
+                        ],
+                        "handler_reads": 24
+                    }
+                },
+                {
+                    "contract": "agent_delivery_policy_expenses",
+                    "sql": "select * from `money_transfers` where `money_transfers`.`delivery_policy_id` = 256 and `money_transfers`.`delivery_policy_id` is not null and `type` = 4 limit 1",
+                    "before": {
+                        "query_cost": "69.45",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "handler_reads": 680
+                    },
+                    "after": {
+                        "query_cost": "0.35",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_delivery_policy",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_delivery_policy",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 1
+                    }
+                },
+                {
+                    "contract": "web_accounts_cars_financial_position",
+                    "sql": "select * from `money_transfers` where `type` = 4 and `money_transfers`.`delivery_policy_id` in (125, 158)",
+                    "before": {
+                        "query_cost": "69.45",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "handler_reads": 680
+                    },
+                    "after": {
+                        "query_cost": "1.41",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "range",
+                                "key": "idx_money_transfers_delivery_policy",
+                                "rows_examined_per_scan": 2
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "range",
+                                "key": "idx_money_transfers_delivery_policy",
+                                "rows_examined_per_scan": 2
+                            }
+                        ],
+                        "handler_reads": 2
+                    }
+                },
+                {
+                    "contract": "web_accounts_cars_financial_position",
+                    "sql": "select * from `money_transfers` where `type` = 4 and `money_transfers`.`delivery_policy_id` in (153, 189, 199)",
+                    "before": {
+                        "query_cost": "69.45",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            }
+                        ],
+                        "handler_reads": 680
+                    },
+                    "after": {
+                        "query_cost": "2.11",
+                        "target_table": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "range",
+                                "key": "idx_money_transfers_delivery_policy",
+                                "rows_examined_per_scan": 3
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "range",
+                                "key": "idx_money_transfers_delivery_policy",
+                                "rows_examined_per_scan": 3
+                            }
+                        ],
+                        "handler_reads": 3
+                    }
+                }
+            ]
+        },
+        "idx_images_imageable": {
+            "table": "images",
+            "columns": [
+                "imageable_type",
+                "imageable_id"
+            ],
+            "sql": "ALTER TABLE `images` ADD INDEX `idx_images_imageable` (`imageable_type`, `imageable_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 764.5,
+            "queries": [
+                {
+                    "contract": "agent_delivery_policies",
+                    "sql": "select * from `images` where `images`.`imageable_id` in (154, 155, 156, 157, 158, 162, 165, 167, 174, 175, 176, 177) and `images`.`imageable_type` = 'App\\\\Models\\\\DeliveryPolicy'",
+                    "before": {
+                        "query_cost": "89.20",
+                        "target_table": [
+                            {
+                                "table": "images",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 867
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "images",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 867
+                            }
+                        ],
+                        "handler_reads": 870
+                    },
+                    "after": {
+                        "query_cost": "8.41",
+                        "target_table": [
+                            {
+                                "table": "images",
+                                "access_type": "range",
+                                "key": "idx_images_imageable",
+                                "rows_examined_per_scan": 12
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "images",
+                                "access_type": "range",
+                                "key": "idx_images_imageable",
+                                "rows_examined_per_scan": 12
+                            }
+                        ],
+                        "handler_reads": 12
+                    }
+                },
+                {
+                    "contract": "public_booking_papers",
+                    "sql": "select * from `images` where `images`.`imageable_type` = 'App\\\\Models\\\\BookingPaper' and `images`.`imageable_id` = 890 and `images`.`imageable_id` is not null limit 1",
+                    "before": {
+                        "query_cost": "89.20",
+                        "target_table": [
+                            {
+                                "table": "images",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 867
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "images",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 867
+                            }
+                        ],
+                        "handler_reads": 868
+                    },
+                    "after": {
+                        "query_cost": "0.35",
+                        "target_table": [
+                            {
+                                "table": "images",
+                                "access_type": "ref",
+                                "key": "idx_images_imageable",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "images",
+                                "access_type": "ref",
+                                "key": "idx_images_imageable",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 1
+                    }
+                }
+            ]
+        },
+        "idx_dpc_policy_container": {
+            "table": "delivery_policy_containers",
+            "columns": [
+                "delivery_policy_id",
+                "booking_container_id"
+            ],
+            "sql": "ALTER TABLE `delivery_policy_containers` ADD INDEX `idx_dpc_policy_container` (`delivery_policy_id`, `booking_container_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 1412,
+            "queries": [
+                {
+                    "contract": "agent_expenses",
+                    "sql": "select * from `money_transfers` where `money_transfers`.`transferer_type` = 'App\\\\Models\\\\Agent' and `money_transfers`.`transferer_id` = 25 and `money_transfers`.`transferer_id` is not null and not exists (select * from `delivery_policies` where `money_transfers`.`delivery_policy_id` = `delivery_policies`.`id` and exists (select * from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policies`.`id` = `delivery_policy_containers`.`delivery_policy_id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` whe",
+                    "before": {
+                        "query_cost": "480.98",
+                        "target_table": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            },
+                            {
+                                "table": "<subquery2>",
+                                "access_type": "eq_ref",
+                                "key": "<auto_distinct_key>",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            },
+                            {
+                                "table": "delivery_policies",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 680
+                    },
+                    "after": {
+                        "query_cost": "153.25",
+                        "target_table": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ref",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ref",
+                                "key": "idx_money_transfers_transferer",
+                                "rows_examined_per_scan": 80
+                            },
+                            {
+                                "table": "delivery_policies",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ref",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 81
+                    }
+                },
+                {
+                    "contract": "agent_expenses",
+                    "sql": "select * from `agent_expenses` where `agent_expenses`.`agent_id` = 25 and `agent_expenses`.`agent_id` is not null and not exists (select * from `bookings` where `agent_expenses`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`)) and not exists (select * from `booking_containers` where `agent_expenses`.`booking_container_id` = `booking_containers`.`id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`))) and not exists (select * from `delivery_policies` where `agent_expenses`.`delivery_policy_id` = ",
+                    "before": {
+                        "query_cost": "120.10",
+                        "target_table": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "agent_expenses",
+                                "access_type": "ref",
+                                "key": "agent_expense_request_unique",
+                                "rows_examined_per_scan": 4
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policies",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 5
+                    },
+                    "after": {
+                        "query_cost": "2.80",
+                        "target_table": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ref",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "agent_expenses",
+                                "access_type": "ref",
+                                "key": "agent_expense_request_unique",
+                                "rows_examined_per_scan": 4
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policies",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ref",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 5
+                    }
+                },
+                {
+                    "contract": "agent_delivery_policies",
+                    "sql": "select * from `delivery_policies` where not exists (select * from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policies`.`id` = `delivery_policy_containers`.`delivery_policy_id` and exists (select * from `bookings` where `booking_containers`.`booking_id` = `bookings`.`id` and exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`))) and exists (select * from `money_transfers` where `delivery_policies`.`id` = `money_transfers`.`delivery_policy_id` and `transferer_id` = 25 and `type` = 3)",
+                    "before": {
+                        "query_cost": "368.82",
+                        "target_table": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "<subquery5>",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": null
+                            },
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            },
+                            {
+                                "table": "delivery_policies",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 10853
+                    },
+                    "after": {
+                        "query_cost": "78.46",
+                        "target_table": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ref",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "<subquery5>",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": null
+                            },
+                            {
+                                "table": "money_transfers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 677
+                            },
+                            {
+                                "table": "delivery_policies",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ref",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "bookings",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            },
+                            {
+                                "table": "invoices",
+                                "access_type": "ref",
+                                "key": "fk_invoices_booking_id",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 1151
+                    }
+                },
+                {
+                    "contract": "agent_delivery_policies",
+                    "sql": "select `booking_containers`.*, `delivery_policy_containers`.`delivery_policy_id` as `pivot_delivery_policy_id`, `delivery_policy_containers`.`booking_container_id` as `pivot_booking_container_id`, `delivery_policy_containers`.`created_at` as `pivot_created_at`, `delivery_policy_containers`.`updated_at` as `pivot_updated_at` from `booking_containers` inner join `delivery_policy_containers` on `booking_containers`.`id` = `delivery_policy_containers`.`booking_container_id` where `delivery_policy_containers`.`delivery_policy_id` in (154, 155, 156, 157, 158, 162, 165, 167, 174, 175, 176, 177)",
+                    "before": {
+                        "query_cost": "70.65",
+                        "target_table": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 256
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 271
+                    },
+                    "after": {
+                        "query_cost": "12.61",
+                        "target_table": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "range",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 12
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "delivery_policy_containers",
+                                "access_type": "range",
+                                "key": "idx_dpc_policy_container",
+                                "rows_examined_per_scan": 12
+                            },
+                            {
+                                "table": "booking_containers",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 36
+                    }
+                }
+            ]
+        },
+        "idx_bookings_booking_number": {
+            "table": "bookings",
+            "columns": [
+                "booking_number"
+            ],
+            "sql": "ALTER TABLE `bookings` ADD INDEX `idx_bookings_booking_number` (`booking_number`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 900.8,
+            "queries": [
+                {
+                    "contract": "public_booking_tracking",
+                    "sql": "select * from `bookings` where `booking_number` = '6469996650' limit 1",
+                    "before": {
+                        "query_cost": "48.90",
+                        "target_table": [
+                            {
+                                "table": "bookings",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 474
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "bookings",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 474
+                            }
+                        ],
+                        "handler_reads": 476
+                    },
+                    "after": {
+                        "query_cost": "0.35",
+                        "target_table": [
+                            {
+                                "table": "bookings",
+                                "access_type": "ref",
+                                "key": "idx_bookings_booking_number",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "bookings",
+                                "access_type": "ref",
+                                "key": "idx_bookings_booking_number",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 1
+                    }
+                },
+                {
+                    "contract": "public_booking_papers",
+                    "sql": "select * from `bookings` where `booking_number` = '6469996650' limit 1",
+                    "before": {
+                        "query_cost": "48.90",
+                        "target_table": [
+                            {
+                                "table": "bookings",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 474
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "bookings",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 474
+                            }
+                        ],
+                        "handler_reads": 476
+                    },
+                    "after": {
+                        "query_cost": "0.35",
+                        "target_table": [
+                            {
+                                "table": "bookings",
+                                "access_type": "ref",
+                                "key": "idx_bookings_booking_number",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "bookings",
+                                "access_type": "ref",
+                                "key": "idx_bookings_booking_number",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 1
+                    }
+                }
+            ]
+        },
+        "idx_booking_services_booking_id": {
+            "table": "booking_services",
+            "columns": [
+                "booking_id"
+            ],
+            "sql": "ALTER TABLE `booking_services` ADD INDEX `idx_booking_services_booking_id` (`booking_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 524.4,
+            "queries": [
+                {
+                    "contract": "web_accounts_financial_position",
+                    "sql": "select * from `booking_services` where `booking_services`.`booking_id` = 117 and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = 0))",
+                    "before": {
+                        "query_cost": "36.40",
+                        "target_table": [
+                            {
+                                "table": "booking_services",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 259
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "service_categories",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 4
+                            },
+                            {
+                                "table": "booking_services",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 259
+                            },
+                            {
+                                "table": "services",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 272
+                    },
+                    "after": {
+                        "query_cost": "2.75",
+                        "target_table": [
+                            {
+                                "table": "booking_services",
+                                "access_type": "ref",
+                                "key": "idx_booking_services_booking_id",
+                                "rows_examined_per_scan": 3
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "service_categories",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 4
+                            },
+                            {
+                                "table": "booking_services",
+                                "access_type": "ref",
+                                "key": "idx_booking_services_booking_id",
+                                "rows_examined_per_scan": 3
+                            },
+                            {
+                                "table": "services",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 14
+                    }
+                },
+                {
+                    "contract": "web_accounts_profit_loss",
+                    "sql": "select * from `booking_services` where `booking_services`.`booking_id` = 256 and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = 0))",
+                    "before": {
+                        "query_cost": "36.40",
+                        "target_table": [
+                            {
+                                "table": "booking_services",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 259
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "service_categories",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 4
+                            },
+                            {
+                                "table": "booking_services",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 259
+                            },
+                            {
+                                "table": "services",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 272
+                    },
+                    "after": {
+                        "query_cost": "2.75",
+                        "target_table": [
+                            {
+                                "table": "booking_services",
+                                "access_type": "ref",
+                                "key": "idx_booking_services_booking_id",
+                                "rows_examined_per_scan": 3
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "service_categories",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 4
+                            },
+                            {
+                                "table": "booking_services",
+                                "access_type": "ref",
+                                "key": "idx_booking_services_booking_id",
+                                "rows_examined_per_scan": 3
+                            },
+                            {
+                                "table": "services",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 14
+                    }
+                },
+                {
+                    "contract": "web_companies",
+                    "sql": "select * from `booking_services` where `booking_services`.`booking_id` = 213 and `booking_services`.`booking_id` is not null and exists (select * from `services` where `booking_services`.`service_id` = `services`.`id` and exists (select * from `service_categories` where `services`.`service_category_id` = `service_categories`.`id` and `service_categories`.`service_status` = 0))",
+                    "before": {
+                        "query_cost": "36.40",
+                        "target_table": [
+                            {
+                                "table": "booking_services",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 259
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "service_categories",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 4
+                            },
+                            {
+                                "table": "booking_services",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 259
+                            },
+                            {
+                                "table": "services",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 271
+                    },
+                    "after": {
+                        "query_cost": "2.05",
+                        "target_table": [
+                            {
+                                "table": "booking_services",
+                                "access_type": "ref",
+                                "key": "idx_booking_services_booking_id",
+                                "rows_examined_per_scan": 2
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "service_categories",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 4
+                            },
+                            {
+                                "table": "booking_services",
+                                "access_type": "ref",
+                                "key": "idx_booking_services_booking_id",
+                                "rows_examined_per_scan": 2
+                            },
+                            {
+                                "table": "services",
+                                "access_type": "eq_ref",
+                                "key": "PRIMARY",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 12
+                    }
+                }
+            ]
+        },
+        "idx_booking_papers_container_type": {
+            "table": "booking_papers",
+            "columns": [
+                "booking_container_id",
+                "type"
+            ],
+            "sql": "ALTER TABLE `booking_papers` ADD INDEX `idx_booking_papers_container_type` (`booking_container_id`, `type`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 750.1,
+            "queries": [
+                {
+                    "contract": "superagent_containers_expenses",
+                    "sql": "select * from `booking_papers` where `booking_container_id` = 100 and `type` in (1)",
+                    "before": {
+                        "query_cost": "80.05",
+                        "target_table": [
+                            {
+                                "table": "booking_papers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 788
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "booking_papers",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 788
+                            }
+                        ],
+                        "handler_reads": 791
+                    },
+                    "after": {
+                        "query_cost": "0.35",
+                        "target_table": [
+                            {
+                                "table": "booking_papers",
+                                "access_type": "ref",
+                                "key": "idx_booking_papers_container_type",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "booking_papers",
+                                "access_type": "ref",
+                                "key": "idx_booking_papers_container_type",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 1
+                    }
+                }
+            ]
+        },
+        "idx_agent_expenses_delivery_policy_id": {
+            "table": "agent_expenses",
+            "columns": [
+                "delivery_policy_id"
+            ],
+            "sql": "ALTER TABLE `agent_expenses` ADD INDEX `idx_agent_expenses_delivery_policy_id` (`delivery_policy_id`), ALGORITHM=INPLACE, LOCK=NONE",
+            "present_after": true,
+            "selected_by_optimizer": true,
+            "ddl_ms": 467.4,
+            "queries": [
+                {
+                    "contract": "agent_delivery_policy_expenses",
+                    "sql": "select * from `agent_expenses` where `agent_expenses`.`delivery_policy_id` = 256 and `agent_expenses`.`delivery_policy_id` is not null and `agent_expenses`.`voided_at` is null",
+                    "before": {
+                        "query_cost": "46.45",
+                        "target_table": [
+                            {
+                                "table": "agent_expenses",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 447
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "agent_expenses",
+                                "access_type": "ALL",
+                                "key": null,
+                                "rows_examined_per_scan": 447
+                            }
+                        ],
+                        "handler_reads": 450
+                    },
+                    "after": {
+                        "query_cost": "0.35",
+                        "target_table": [
+                            {
+                                "table": "agent_expenses",
+                                "access_type": "ref",
+                                "key": "idx_agent_expenses_delivery_policy_id",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "all_tables": [
+                            {
+                                "table": "agent_expenses",
+                                "access_type": "ref",
+                                "key": "idx_agent_expenses_delivery_policy_id",
+                                "rows_examined_per_scan": 1
+                            }
+                        ],
+                        "handler_reads": 1
+                    }
+                }
+            ]
+        }
+    }
+}

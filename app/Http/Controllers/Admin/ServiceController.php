@@ -28,7 +28,7 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $input = [
-            'services'          => Service::all(),
+            'services'          => Service::with('serviceCategory')->get(),
             'route_create'      => route('services.create'),
             'import_route'      => route('services.import'),
         ];

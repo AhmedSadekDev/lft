@@ -90,8 +90,11 @@ class Agent extends  Authenticatable implements JWTSubject
     {
         return $this->hasMany(BookingContainerAgent::class);
     }
-    public function getNumberOfBookingsAttribute()
+    public function getNumberOfBookingsAttribute($value)
     {
+        if ($value !== null) {
+            return $value;
+        }
         $number_of_bookings = $this->booking_containers()->whereDate("created_at", now())->distinct()->count("booking_container_id");
         return $number_of_bookings;
     }

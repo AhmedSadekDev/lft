@@ -54,6 +54,12 @@ class AgentController extends Controller
 
             $agents = Agent::orderBy("id", "desc")->ofFilter()->get();
 
+            $todayBookings = BookingContainerAgent::whereIn('agent_id', $agents->modelKeys())
+                ->whereDate('created_at', now())
+                ->groupBy('agent_id')
+                ->selectRaw('agent_id, count(distinct booking_container_id) as aggregate')
+                ->pluck('aggregate', 'agent_id');
+            $agents->each(fn (Agent $agent) => $agent->setAttribute('number_of_bookings', (int) ($todayBookings[$agent->id] ?? 0)));
 
             $data = AgentResource::collection($agents);
 

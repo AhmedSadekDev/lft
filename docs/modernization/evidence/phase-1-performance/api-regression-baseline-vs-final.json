@@ -1,0 +1,952 @@
+{
+    "generated_at": "2026-10-03 21:38:48 UTC",
+    "a": "baseline",
+    "b": "after_code",
+    "normalization": "CSRF session token replaced; 5xx bodies reduced to exception message",
+    "summary": {
+        "identical": 67,
+        "different": 0,
+        "missing": 0
+    },
+    "contracts": {
+        "agent_specification_assignments": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                78,
+                78
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_unloading_assignments": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                78,
+                78
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_home_statistics": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                398,
+                398
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_expenses": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                78,
+                78
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_latest_expenses": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                78,
+                78
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_wallet": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                59,
+                59
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_profile": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                644,
+                644
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_financial_custody": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                177,
+                177
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_delivery_policies": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                5779,
+                5779
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_service_categories": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                2363,
+                2363
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_containers_with_no_policies": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                0,
+                0
+            ],
+            "result": "IDENTICAL"
+        },
+        "agent_cities": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                2674,
+                2674
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_fetch_agents": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                1240,
+                1240
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_notifications": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                641547,
+                641547
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_fetch_drivers": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                33973,
+                33973
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_fetch_cars": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                8742,
+                8742
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_waiting": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                685,
+                685
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_home": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                450,
+                450
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_profile": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                530,
+                530
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_containers_expenses": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                103,
+                103
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_wallets": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                55,
+                55
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_stage_receipts": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                203,
+                203
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_pending_stage_receipts": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                7772,
+                7772
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_specification_assignments": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                78,
+                78
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_fetch_agents": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                2737,
+                2737
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_notifications": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                260975,
+                260975
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "superagent_agents_notifications": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                928242,
+                928242
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "public_booking_tracking": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                175,
+                175
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "public_container_details": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                852,
+                852
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "public_booking_papers": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                239,
+                239
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "company_bookings": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                90844,
+                90844
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "company_employees": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                14883,
+                14883
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "public_settings": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                227,
+                227
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "public_services": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                54,
+                54
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "agent_delivery_policy_expenses": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                202,
+                202
+            ],
+            "top_level_keys_equal": true,
+            "type_shape_equal": true,
+            "result": "IDENTICAL"
+        },
+        "web_dashboard": {
+            "status": [
+                500,
+                500
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                131,
+                131
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_accounts": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                84804,
+                84804
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_accounts_cars_financial_position": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                134504,
+                134504
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_accounts_checks": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                63245,
+                63245
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_accounts_financial_position": {
+            "status": [
+                500,
+                500
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                147,
+                147
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_accounts_profit_loss": {
+            "status": [
+                500,
+                500
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                148,
+                148
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_agents": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                113049,
+                113049
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_banks": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                85756,
+                85756
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_booking_containers_assignments": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                874054,
+                874054
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_bookings": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                173839,
+                173839
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_branches": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                336633,
+                336633
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_cars": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                122647,
+                122647
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_citiesAndRegions": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                103819,
+                103819
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_companies": {
+            "status": [
+                500,
+                500
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                233,
+                233
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_companyTransportations": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                80376,
+                80376
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_containers": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                83026,
+                83026
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_drivers": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                105914,
+                105914
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_employees": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                184412,
+                184412
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_factories": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                299096,
+                299096
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_financial_custody_agents": {
+            "status": [
+                500,
+                500
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                253,
+                253
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_financial_custody_superagents": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                65008,
+                65008
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_general_expenses": {
+            "status": [
+                500,
+                500
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                151,
+                151
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_permissions": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                66762,
+                66762
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_private_companies": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                76299,
+                76299
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_receipts": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                65305,
+                65305
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_serviceCategories": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                68983,
+                68983
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_services": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                103331,
+                103331
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_shippingAgents": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                82143,
+                82143
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_superagents": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                88544,
+                88544
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_suppliers": {
+            "status": [
+                200,
+                200
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                70297,
+                70297
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_vaultransactions": {
+            "status": [
+                500,
+                500
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                191,
+                191
+            ],
+            "result": "IDENTICAL"
+        },
+        "web_vaults": {
+            "status": [
+                500,
+                500
+            ],
+            "content_type_equal": true,
+            "body_identical": true,
+            "bytes": [
+                131,
+                131
+            ],
+            "result": "IDENTICAL"
+        }
+    }
+}

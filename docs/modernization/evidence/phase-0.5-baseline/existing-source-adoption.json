@@ -1,0 +1,87 @@
+{
+    "generated_at": "2026-10-03 21:01:12 UTC",
+    "database": "leader",
+    "artisan_target_check": "leader",
+    "structure_matches_fingerprint_before": true,
+    "migrations_rows_before": 0,
+    "write_free": {
+        "observed_at": "2026-10-03 21:01:22 UTC",
+        "watch_seconds": 10,
+        "binlog_start": {
+            "file": "binlog.000079",
+            "position": 159011369
+        },
+        "binlog_end": {
+            "file": "binlog.000079",
+            "position": 159011369
+        },
+        "binlog_unchanged": true,
+        "global_write_counter_delta": {
+            "Com_alter_table": 0,
+            "Com_create_table": 0,
+            "Com_delete": 0,
+            "Com_drop_table": 0,
+            "Com_insert": 0,
+            "Com_replace": 0,
+            "Com_truncate": 0,
+            "Com_update": 0,
+            "Innodb_rows_deleted": 0,
+            "Innodb_rows_inserted": 0,
+            "Innodb_rows_updated": 0
+        },
+        "processlist_excluding_self": [
+            {
+                "ID": 5,
+                "USER": "event_scheduler",
+                "HOST": "localhost",
+                "DB": null,
+                "COMMAND": "Daemon",
+                "TIME": 21280,
+                "STATE": "Waiting on empty queue",
+                "INFO": null
+            }
+        ],
+        "innodb_trx": [],
+        "metadata_locks_leader": [],
+        "pass": true
+    },
+    "adopt": {
+        "command": "DB_DATABASE=leader TELESCOPE_ENABLED=false LFT_ALLOW_BASELINE_ADOPTION=1 php artisan lft:baseline:adopt",
+        "exit": 0,
+        "output": "[ok] mysql_driver\r\n  [ok] migrations_table_exists\r\n  [ok] structure_matches_fingerprint\r\n  [ok] no_migration_recorded_yet\r\nleader: recorded 2026_10_01_000000_canonical_baseline_schema (batch 1). No other change was made."
+    },
+    "binlog_proof": {
+        "range": [
+            {
+                "file": "binlog.000079",
+                "position": 159011369
+            },
+            {
+                "file": "binlog.000079",
+                "position": 159011714
+            }
+        ],
+        "row_operations": [
+            "INSERT INTO leader.migrations"
+        ],
+        "row_values": [
+            "###   @1=1\r",
+            "###   @2='2026_10_01_000000_canonical_baseline_schema'\r",
+            "###   @3=1\r"
+        ],
+        "ddl_statements": 0,
+        "only_one_insert_into_leader_migrations": true
+    },
+    "migrations_rows_after": [
+        {
+            "id": 1,
+            "migration": "2026_10_01_000000_canonical_baseline_schema",
+            "batch": 1
+        }
+    ],
+    "status": "PASSED",
+    "metadata_writes": [
+        "INSERT INTO leader.migrations (migration, batch) VALUES ('2026_10_01_000000_canonical_baseline_schema', 1)"
+    ],
+    "business_tables_touched": 0
+}

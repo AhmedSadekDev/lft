@@ -29,7 +29,7 @@ class Branch extends Model
 
     public function getFactory()
     {
-        return $this->factory()->first();
+        return $this->relationLoaded('factory') ? $this->factory : $this->factory()->first();
     }
 
 

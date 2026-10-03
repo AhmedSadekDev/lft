@@ -1,0 +1,576 @@
+{
+    "generated_at": "2026-10-03 20:41:09 UTC",
+    "mode": "postflight",
+    "leader_schema_sha256": "184d02eaa5780b5f307c64dde4a2e72b2438e55204323d5dcd86089a165b62ea",
+    "canonical_schema_sha256": "184d02eaa5780b5f307c64dde4a2e72b2438e55204323d5dcd86089a165b62ea",
+    "identical": true,
+    "differences": [],
+    "dimensions": {
+        "primary_keys": {
+            "leader": 64,
+            "canonical": 64,
+            "missing_in_leader": [],
+            "extra_in_leader": [],
+            "identical": true
+        },
+        "auto_increment": {
+            "leader": 60,
+            "canonical": 60,
+            "missing_in_leader": [],
+            "extra_in_leader": [],
+            "identical": true
+        },
+        "unique": {
+            "leader": 8,
+            "canonical": 8,
+            "missing_in_leader": [],
+            "extra_in_leader": [],
+            "identical": true
+        },
+        "non_unique_indexes": {
+            "leader": 71,
+            "canonical": 71,
+            "missing_in_leader": [],
+            "extra_in_leader": [],
+            "identical": true
+        },
+        "foreign_keys": {
+            "leader": 61,
+            "canonical": 61,
+            "missing_in_leader": [],
+            "extra_in_leader": [],
+            "identical": true
+        },
+        "columns": {
+            "leader": 599,
+            "canonical": 599,
+            "missing_in_leader": [],
+            "extra_in_leader": [],
+            "identical": true
+        }
+    },
+    "counts": {
+        "leader": {
+            "tables": 65,
+            "columns": 599,
+            "primary_keys": 64,
+            "auto_increment": 60,
+            "unique_non_pk": 8,
+            "non_unique_indexes": 71,
+            "foreign_keys": 61,
+            "fk_backing_indexes": 59,
+            "historical_non_unique_indexes": 12,
+            "fk_on_delete": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            }
+        },
+        "canonical": {
+            "tables": 65,
+            "columns": 599,
+            "primary_keys": 64,
+            "auto_increment": 60,
+            "unique_non_pk": 8,
+            "non_unique_indexes": 71,
+            "foreign_keys": 61,
+            "fk_backing_indexes": 59,
+            "historical_non_unique_indexes": 12,
+            "fk_on_delete": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            },
+            "migrations_rows": 0
+        }
+    },
+    "foreign_keys_full_definition": [
+        {
+            "name": "fk_agent_car_tranfers_agent_id",
+            "child": "agent_car_tranfers(agent_id)",
+            "parent": "agents(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_agent_car_tranfers_car_id",
+            "child": "agent_car_tranfers(car_id)",
+            "parent": "cars(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_agent_expenses_agent_id",
+            "child": "agent_expenses(agent_id)",
+            "parent": "agents(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_agent_expenses_booking_container_id",
+            "child": "agent_expenses(booking_container_id)",
+            "parent": "booking_containers(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_agent_expenses_booking_service_id",
+            "child": "agent_expenses(booking_service_id)",
+            "parent": "booking_services(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_agent_expenses_service_id",
+            "child": "agent_expenses(service_id)",
+            "parent": "services(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_bank_trnsactions_bank_id",
+            "child": "bank_trnsactions(bank_id)",
+            "parent": "banks(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_bank_trnsactions_company_id",
+            "child": "bank_trnsactions(company_id)",
+            "parent": "companies(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_bank_trnsactions_trans_bank_id",
+            "child": "bank_trnsactions(trans_bank_id)",
+            "parent": "banks(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_container_agents_agent_id",
+            "child": "booking_container_agents(agent_id)",
+            "parent": "agents(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_container_agents_booking_container_id",
+            "child": "booking_container_agents(booking_container_id)",
+            "parent": "booking_containers(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_container_stages_booking_container_id",
+            "child": "booking_container_stages(booking_container_id)",
+            "parent": "booking_containers(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_containers_aging_id",
+            "child": "booking_containers(aging_id)",
+            "parent": "cities_and_regions(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_containers_booking_id",
+            "child": "booking_containers(booking_id)",
+            "parent": "bookings(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_containers_branch_id",
+            "child": "booking_containers(branch_id)",
+            "parent": "branches(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_containers_container_id",
+            "child": "booking_containers(container_id)",
+            "parent": "containers(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_containers_departure_id",
+            "child": "booking_containers(departure_id)",
+            "parent": "cities_and_regions(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_containers_loading_id",
+            "child": "booking_containers(loading_id)",
+            "parent": "cities_and_regions(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_contrainer_extra_costs_booking_container_id",
+            "child": "booking_contrainer_extra_costs(booking_container_id)",
+            "parent": "booking_containers(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_contrainer_extra_costs_car_id",
+            "child": "booking_contrainer_extra_costs(car_id)",
+            "parent": "cars(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_contrainer_extra_costs_driver_id",
+            "child": "booking_contrainer_extra_costs(driver_id)",
+            "parent": "drivers(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_movements_booking_id",
+            "child": "booking_movements(booking_id)",
+            "parent": "bookings(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_movements_container_id",
+            "child": "booking_movements(container_id)",
+            "parent": "containers(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_papers_agent_id",
+            "child": "booking_papers(agent_id)",
+            "parent": "agents(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_papers_booking_id",
+            "child": "booking_papers(booking_id)",
+            "parent": "bookings(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_services_agent_id",
+            "child": "booking_services(agent_id)",
+            "parent": "agents(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_booking_services_bank_id",
+            "child": "booking_services(bank_id)",
+            "parent": "banks(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_bookings_company_id",
+            "child": "bookings(company_id)",
+            "parent": "companies(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_bookings_employee_id",
+            "child": "bookings(employee_id)",
+            "parent": "employees(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_bookings_factory_id",
+            "child": "bookings(factory_id)",
+            "parent": "factories(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_bookings_shipping_agent_id",
+            "child": "bookings(shipping_agent_id)",
+            "parent": "shipping_agents(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_branches_city_id",
+            "child": "branches(city_id)",
+            "parent": "cities_and_regions(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_branches_country_id",
+            "child": "branches(country_id)",
+            "parent": "cities_and_regions(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_branches_factory_id",
+            "child": "branches(factory_id)",
+            "parent": "factories(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_companies_private_company_id",
+            "child": "companies(private_company_id)",
+            "parent": "private_companies(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_company_services_company_id",
+            "child": "company_services(company_id)",
+            "parent": "companies(id)",
+            "on_delete": "SET NULL",
+            "on_update": "CASCADE",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_company_services_service_id",
+            "child": "company_services(service_id)",
+            "parent": "services(id)",
+            "on_delete": "SET NULL",
+            "on_update": "CASCADE",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_company_transportations_aging_id",
+            "child": "company_transportations(aging_id)",
+            "parent": "cities_and_regions(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_company_transportations_company_id",
+            "child": "company_transportations(company_id)",
+            "parent": "companies(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_company_transportations_container_id",
+            "child": "company_transportations(container_id)",
+            "parent": "containers(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_company_transportations_departure_id",
+            "child": "company_transportations(departure_id)",
+            "parent": "cities_and_regions(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_company_transportations_loading_id",
+            "child": "company_transportations(loading_id)",
+            "parent": "cities_and_regions(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_daily_booking_containers_booking_container_id",
+            "child": "daily_booking_containers(booking_container_id)",
+            "parent": "booking_containers(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_daily_booking_containers_superagent_id",
+            "child": "daily_booking_containers(superagent_id)",
+            "parent": "superagents(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_delivery_policies_car_id",
+            "child": "delivery_policies(car_id)",
+            "parent": "cars(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_delivery_policies_driver_id",
+            "child": "delivery_policies(driver_id)",
+            "parent": "drivers(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_employees_company_id",
+            "child": "employees(company_id)",
+            "parent": "companies(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_invoice_payments_bank_id",
+            "child": "invoice_payments(bank_id)",
+            "parent": "banks(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_invoice_payments_invoice_id",
+            "child": "invoice_payments(invoice_id)",
+            "parent": "invoices(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_invoices_booking_id",
+            "child": "invoices(booking_id)",
+            "parent": "bookings(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_otps_agent_id",
+            "child": "otps(agent_id)",
+            "parent": "agents(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_otps_company_id",
+            "child": "otps(company_id)",
+            "parent": "companies(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_otps_superagent_id",
+            "child": "otps(superagent_id)",
+            "parent": "superagents(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_payingcars_car_id",
+            "child": "payingcars(car_id)",
+            "parent": "cars(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_receipts_booking_id",
+            "child": "receipts(booking_id)",
+            "parent": "bookings(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_receipts_supplier_id",
+            "child": "receipts(supplier_id)",
+            "parent": "suppliers(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_services_service_category_id",
+            "child": "services(service_category_id)",
+            "parent": "service_categories(id)",
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_shipments_agent_id",
+            "child": "shipments(agent_id)",
+            "parent": "agents(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_shipments_car_id",
+            "child": "shipments(car_id)",
+            "parent": "cars(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_superagent_transactions_superagent_id",
+            "child": "superagent_transactions(superagent_id)",
+            "parent": "superagents(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        },
+        {
+            "name": "fk_supplier_payments_supplier_id",
+            "child": "supplier_payments(supplier_id)",
+            "parent": "suppliers(id)",
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "equals_canonical_full_definition": true
+        }
+    ],
+    "fk_comparison_method": "Every FK compared on child table, child columns, parent table, parent columns, ON DELETE and ON UPDATE (never by name alone)."
+}

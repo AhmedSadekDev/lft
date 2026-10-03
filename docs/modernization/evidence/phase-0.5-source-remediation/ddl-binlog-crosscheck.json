@@ -1,0 +1,129 @@
+{
+    "generated_at": "2026-10-03 20:41:33 UTC",
+    "clone": {
+        "database": "leader_dryrun",
+        "binlog_range": [
+            {
+                "file": "binlog.000079",
+                "position": 108753286
+            },
+            {
+                "file": "binlog.000079",
+                "position": 108756454
+            }
+        ],
+        "journaled_statements": [
+            "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_booking_id`",
+            "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_booking_id` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_supplier_id`",
+            "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "ALTER TABLE `supplier_payments` DROP FOREIGN KEY `fk_supplier_payments_supplier_id`",
+            "ALTER TABLE `supplier_payments` ADD CONSTRAINT `fk_supplier_payments_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "ALTER TABLE `agent_expenses` DROP FOREIGN KEY `fk_agent_expenses_booking_service_id`",
+            "ALTER TABLE `agent_expenses` ADD CONSTRAINT `fk_agent_expenses_booking_service_id` FOREIGN KEY (`booking_service_id`) REFERENCES `booking_services` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "ALTER TABLE `booking_container_stages` DROP FOREIGN KEY `fk_booking_container_stages_booking_container_id`",
+            "ALTER TABLE `booking_container_stages` ADD CONSTRAINT `fk_booking_container_stages_booking_container_id` FOREIGN KEY (`booking_container_id`) REFERENCES `booking_containers` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
+        ],
+        "binlog_statements": [
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_booking_id`"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_booking_id` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_supplier_id`"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `supplier_payments` DROP FOREIGN KEY `fk_supplier_payments_supplier_id`"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `supplier_payments` ADD CONSTRAINT `fk_supplier_payments_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `agent_expenses` DROP FOREIGN KEY `fk_agent_expenses_booking_service_id`"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `agent_expenses` ADD CONSTRAINT `fk_agent_expenses_booking_service_id` FOREIGN KEY (`booking_service_id`) REFERENCES `booking_services` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `booking_container_stages` DROP FOREIGN KEY `fk_booking_container_stages_booking_container_id`"
+            },
+            {
+                "db": "leader_dryrun",
+                "sql": "ALTER TABLE `booking_container_stages` ADD CONSTRAINT `fk_booking_container_stages_booking_container_id` FOREIGN KEY (`booking_container_id`) REFERENCES `booking_containers` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION"
+            }
+        ],
+        "binlog_row_event_tables": [],
+        "statement_databases": [
+            "leader_dryrun"
+        ],
+        "journal_equals_binlog": true,
+        "pass": true
+    },
+    "source": {
+        "database": "leader",
+        "binlog_range": [
+            {
+                "file": "binlog.000079",
+                "position": 158387445
+            },
+            {
+                "file": "binlog.000079",
+                "position": 158389175
+            }
+        ],
+        "journaled_statements": [
+            "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_booking_id`",
+            "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_booking_id` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_supplier_id`",
+            "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "ALTER TABLE `agent_expenses` RENAME INDEX `agent_expenses_agent_id_request_key_unique` TO `agent_expense_request_unique`",
+            "ALTER TABLE `booking_container_stages` RENAME INDEX `booking_container_stages_booking_container_id_type_id_unique` TO `container_stage_unique`"
+        ],
+        "binlog_statements": [
+            {
+                "db": "leader",
+                "sql": "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_booking_id`"
+            },
+            {
+                "db": "leader",
+                "sql": "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_booking_id` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION"
+            },
+            {
+                "db": "leader",
+                "sql": "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_supplier_id`"
+            },
+            {
+                "db": "leader",
+                "sql": "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION"
+            },
+            {
+                "db": "leader",
+                "sql": "ALTER TABLE `agent_expenses` RENAME INDEX `agent_expenses_agent_id_request_key_unique` TO `agent_expense_request_unique`"
+            },
+            {
+                "db": "leader",
+                "sql": "ALTER TABLE `booking_container_stages` RENAME INDEX `booking_container_stages_booking_container_id_type_id_unique` TO `container_stage_unique`"
+            }
+        ],
+        "binlog_row_event_tables": [],
+        "statement_databases": [
+            "leader"
+        ],
+        "journal_equals_binlog": true,
+        "pass": true
+    }
+}

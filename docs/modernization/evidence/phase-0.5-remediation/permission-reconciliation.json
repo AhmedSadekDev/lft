@@ -1,0 +1,30 @@
+{
+    "created_at": "2026-10-03 18:37:32",
+    "overall_permission_match": true,
+    "metrics": {
+        "roles_count": {
+            "source": 2,
+            "clone": 2
+        },
+        "permissions_count": {
+            "source": 129,
+            "clone": 129
+        },
+        "role_has_permissions_count": {
+            "source": 201,
+            "clone": 201
+        },
+        "model_has_roles_count": {
+            "source": 8,
+            "clone": 8
+        },
+        "model_has_permissions_count": {
+            "source": 0,
+            "clone": 0
+        },
+        "suppliers_update_typo_preserved": {
+            "has_suppliers_udpate": true,
+            "has_suppliers_update": true
+        }
+    }
+}

@@ -1,0 +1,220 @@
+{
+    "generated_at": "2026-10-03 20:34:03 UTC",
+    "database": "leader_dryrun",
+    "count_checks": {
+        "tables": {
+            "expected": 65,
+            "actual": 65,
+            "pass": true
+        },
+        "primary_keys": {
+            "expected": 64,
+            "actual": 64,
+            "pass": true
+        },
+        "auto_increment": {
+            "expected": 60,
+            "actual": 60,
+            "pass": true
+        },
+        "unique_non_pk": {
+            "expected": 8,
+            "actual": 8,
+            "pass": true
+        },
+        "historical_non_unique_indexes": {
+            "expected": 12,
+            "actual": 12,
+            "pass": true
+        },
+        "foreign_keys": {
+            "expected": 61,
+            "actual": 61,
+            "pass": true
+        },
+        "migrations_rows": {
+            "expected": 0,
+            "actual": 0,
+            "pass": true
+        }
+    },
+    "counts": {
+        "tables": 65,
+        "columns": 599,
+        "primary_keys": 64,
+        "auto_increment": 60,
+        "unique_non_pk": 8,
+        "non_unique_indexes": 71,
+        "foreign_keys": 61,
+        "fk_backing_indexes": 59,
+        "historical_non_unique_indexes": 12,
+        "fk_on_delete": {
+            "CASCADE": 32,
+            "SET NULL": 29
+        },
+        "migrations_rows": 0
+    },
+    "reviewed_fk_checks_full_definition": {
+        "fk_receipts_booking_id": {
+            "child_table": "receipts",
+            "child_columns": [
+                "booking_id"
+            ],
+            "parent_table": "bookings",
+            "parent_columns": [
+                "id"
+            ],
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "expected": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "fk_receipts_supplier_id": {
+            "child_table": "receipts",
+            "child_columns": [
+                "supplier_id"
+            ],
+            "parent_table": "suppliers",
+            "parent_columns": [
+                "id"
+            ],
+            "on_delete": "SET NULL",
+            "on_update": "NO ACTION",
+            "expected": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "fk_supplier_payments_supplier_id": {
+            "child_table": "supplier_payments",
+            "child_columns": [
+                "supplier_id"
+            ],
+            "parent_table": "suppliers",
+            "parent_columns": [
+                "id"
+            ],
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "expected": "supplier_payments(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "fk_agent_expenses_booking_service_id": {
+            "child_table": "agent_expenses",
+            "child_columns": [
+                "booking_service_id"
+            ],
+            "parent_table": "booking_services",
+            "parent_columns": [
+                "id"
+            ],
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "expected": "agent_expenses(booking_service_id)->booking_services(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        },
+        "fk_booking_container_stages_booking_container_id": {
+            "child_table": "booking_container_stages",
+            "child_columns": [
+                "booking_container_id"
+            ],
+            "parent_table": "booking_containers",
+            "parent_columns": [
+                "id"
+            ],
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION",
+            "expected": "booking_container_stages(booking_container_id)->booking_containers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "pass": true
+        }
+    },
+    "unique_name_checks": {
+        "agent_expense_request_unique": {
+            "table": "agent_expenses",
+            "columns": [
+                "agent_id",
+                "request_key"
+            ],
+            "unique": true,
+            "pass": true
+        },
+        "container_stage_unique": {
+            "table": "booking_container_stages",
+            "columns": [
+                "booking_container_id",
+                "type_id"
+            ],
+            "unique": true,
+            "pass": true
+        }
+    },
+    "booking_papers_agent_id": [
+        {
+            "name": "fk_booking_papers_agent_id",
+            "child_table": "booking_papers",
+            "child_columns": [
+                "agent_id"
+            ],
+            "parent_table": "agents",
+            "parent_columns": [
+                "id"
+            ],
+            "on_delete": "CASCADE",
+            "on_update": "NO ACTION"
+        }
+    ],
+    "data_vs_pre_incident_backup_184935": {
+        "tables_compared": 65,
+        "tables_identical": 65,
+        "tables_different": [],
+        "business_tables_different": [],
+        "telescope_entries": {
+            "backup_184935": {
+                "rows": 66068,
+                "min_first_col": 1,
+                "max_first_col": 66068,
+                "content_sha256": "da2d578348221f17610e783018fb3ff4e9befabd75a8865535f814d33615611a"
+            },
+            "leader_dryrun": {
+                "rows": 66068,
+                "min_first_col": 1,
+                "max_first_col": 66068,
+                "content_sha256": "da2d578348221f17610e783018fb3ff4e9befabd75a8865535f814d33615611a"
+            },
+            "identical": true
+        },
+        "rows_total_leader_dryrun": 82960,
+        "pass_business": true,
+        "comparison": {
+            "tables_equal": 65,
+            "tables_different": 0,
+            "different_tables": []
+        },
+        "pass_all_tables": true
+    },
+    "metrics_vs_leader": {
+        "financial_row_variance": 0,
+        "financial_monetary_variance_egp": "0.00",
+        "workflow_variance": 0,
+        "permission_variance": 0,
+        "request_key_stats": {
+            "leader_dryrun": {
+                "total_rows": "447",
+                "null_keys": "189",
+                "non_null_keys": "258",
+                "distinct_keys": "258",
+                "duplicate_groups": "0",
+                "keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+            },
+            "leader": {
+                "total_rows": "447",
+                "null_keys": "189",
+                "non_null_keys": "258",
+                "distinct_keys": "258",
+                "duplicate_groups": "0",
+                "keys_sha256": "6ce35c4f3d03c28e840ff7b75fd59bb54095dfa58f3c7779b0292e872a5fcc0e"
+            },
+            "match": true
+        },
+        "pass": true
+    },
+    "pass": true
+}

@@ -1,0 +1,422 @@
+{
+    "generated_at": "2026-10-03 20:40:10 UTC",
+    "database": "leader",
+    "guard_env": "LFT_ALLOW_SOURCE_SCHEMA_REMEDIATION=1",
+    "canonical_target": "evidence/phase-0.5-source-remediation/canonical-clone-schema.json",
+    "canonical_schema_sha256": "184d02eaa5780b5f307c64dde4a2e72b2438e55204323d5dcd86089a165b62ea",
+    "canonical_file_integrity": true,
+    "clone_still_equals_frozen_target": true,
+    "schema_before_sha256": "3fe917538c719cf241ae664af5c99de0ac097a90ff5b2b46f504dffcc4076452",
+    "counts_before": {
+        "tables": 65,
+        "columns": 599,
+        "primary_keys": 64,
+        "auto_increment": 60,
+        "unique_non_pk": 8,
+        "non_unique_indexes": 71,
+        "foreign_keys": 61,
+        "fk_backing_indexes": 59,
+        "historical_non_unique_indexes": 12,
+        "fk_on_delete": {
+            "CASCADE": 34,
+            "SET NULL": 27
+        }
+    },
+    "full_diff_before": [
+        {
+            "table": "agent_expenses",
+            "what": "index",
+            "name": "agent_expenses_agent_id_request_key_unique",
+            "a": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ]
+            },
+            "b": null
+        },
+        {
+            "table": "agent_expenses",
+            "what": "index",
+            "name": "agent_expense_request_unique",
+            "a": null,
+            "b": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ]
+            }
+        },
+        {
+            "table": "booking_container_stages",
+            "what": "index",
+            "name": "booking_container_stages_booking_container_id_type_id_unique",
+            "a": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ]
+            },
+            "b": null
+        },
+        {
+            "table": "booking_container_stages",
+            "what": "index",
+            "name": "container_stage_unique",
+            "a": null,
+            "b": {
+                "unique": true,
+                "type": "BTREE",
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ]
+            }
+        },
+        {
+            "table": "receipts",
+            "what": "fk",
+            "name": "fk_receipts_booking_id",
+            "a": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "b": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION"
+            }
+        },
+        {
+            "table": "receipts",
+            "what": "fk",
+            "name": "fk_receipts_supplier_id",
+            "a": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "b": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION"
+            }
+        }
+    ],
+    "delta": [
+        {
+            "type": "REPLACE_FK",
+            "table": "receipts",
+            "name": "fk_receipts_booking_id",
+            "current": "receipts(booking_id)->bookings(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "target": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "current_def": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "target_def": {
+                "columns": [
+                    "booking_id"
+                ],
+                "ref_table": "bookings",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION",
+                "table": "receipts"
+            }
+        },
+        {
+            "type": "REPLACE_FK",
+            "table": "receipts",
+            "name": "fk_receipts_supplier_id",
+            "current": "receipts(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "target": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "current_def": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
+            },
+            "target_def": {
+                "columns": [
+                    "supplier_id"
+                ],
+                "ref_table": "suppliers",
+                "ref_columns": [
+                    "id"
+                ],
+                "on_delete": "SET NULL",
+                "on_update": "NO ACTION",
+                "table": "receipts"
+            }
+        },
+        {
+            "type": "RENAME_INDEX",
+            "table": "agent_expenses",
+            "from": "agent_expenses_agent_id_request_key_unique",
+            "to": "agent_expense_request_unique",
+            "columns": [
+                "agent_id",
+                "request_key"
+            ]
+        },
+        {
+            "type": "RENAME_INDEX",
+            "table": "booking_container_stages",
+            "from": "booking_container_stages_booking_container_id_type_id_unique",
+            "to": "container_stage_unique",
+            "columns": [
+                "booking_container_id",
+                "type_id"
+            ]
+        }
+    ],
+    "unexplained_differences": [],
+    "preflight": {
+        "fk_receipts_booking_id": {
+            "child": "receipts.booking_id",
+            "child_type": "bigint unsigned",
+            "child_nullable": "YES",
+            "parent": "bookings.id",
+            "parent_type": "bigint unsigned",
+            "types_compatible": true,
+            "parent_is_primary_key": true,
+            "non_null_child_refs": 0,
+            "orphans": 0,
+            "nullable_ok": true,
+            "pass": true
+        },
+        "fk_receipts_supplier_id": {
+            "child": "receipts.supplier_id",
+            "child_type": "bigint unsigned",
+            "child_nullable": "YES",
+            "parent": "suppliers.id",
+            "parent_type": "bigint unsigned",
+            "types_compatible": true,
+            "parent_is_primary_key": true,
+            "non_null_child_refs": 0,
+            "orphans": 0,
+            "nullable_ok": true,
+            "pass": true
+        },
+        "agent_expense_request_unique": {
+            "duplicate_groups": 0,
+            "pass": true
+        },
+        "container_stage_unique": {
+            "duplicate_groups": 0,
+            "pass": true
+        }
+    },
+    "fresh_data_preflight": {
+        "tables_identical_to_backup_184935": 64,
+        "tables_different_vs_backup_184935": [
+            "telescope_entries"
+        ],
+        "business_tables_different": [],
+        "telescope_entries_append_only": {
+            "reference_rows": 66068,
+            "current_rows": 66069,
+            "reference_max_sequence": 66068,
+            "reference_rows_missing_or_changed": 0,
+            "appended_sequences": [
+                "66069"
+            ],
+            "append_only": true
+        },
+        "unchanged_since_fresh_backup": true,
+        "pass": true
+    },
+    "write_free_immediately_before_ddl": {
+        "observed_at": "2026-10-03 20:40:24 UTC",
+        "watch_seconds": 10,
+        "binlog_start": {
+            "file": "binlog.000079",
+            "position": 158387445
+        },
+        "binlog_end": {
+            "file": "binlog.000079",
+            "position": 158387445
+        },
+        "binlog_unchanged": true,
+        "global_write_counter_delta": {
+            "Com_alter_table": 0,
+            "Com_create_table": 0,
+            "Com_delete": 0,
+            "Com_drop_table": 0,
+            "Com_insert": 0,
+            "Com_replace": 0,
+            "Com_truncate": 0,
+            "Com_update": 0,
+            "Innodb_rows_deleted": 0,
+            "Innodb_rows_inserted": 0,
+            "Innodb_rows_updated": 0
+        },
+        "processlist_excluding_self": [
+            {
+                "ID": "5",
+                "USER": "event_scheduler",
+                "HOST": "localhost",
+                "DB": null,
+                "COMMAND": "Daemon",
+                "TIME": "20022",
+                "STATE": "Waiting on empty queue",
+                "INFO": null
+            }
+        ],
+        "innodb_trx": [],
+        "metadata_locks_leader": [],
+        "pass": true
+    },
+    "select_database": "leader",
+    "binlog_before": {
+        "file": "binlog.000079",
+        "position": 158387445
+    },
+    "executed": [
+        {
+            "op": "REPLACE_FK",
+            "table": "receipts",
+            "name": "fk_receipts_booking_id",
+            "observed_before": "receipts(booking_id)->bookings(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "statements": [
+                "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_booking_id`",
+                "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_booking_id` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION"
+            ],
+            "observed_after": "receipts(booking_id)->bookings(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "verified": true,
+            "duration_ms": 5901.9
+        },
+        {
+            "op": "REPLACE_FK",
+            "table": "receipts",
+            "name": "fk_receipts_supplier_id",
+            "observed_before": "receipts(supplier_id)->suppliers(id) ON DELETE CASCADE ON UPDATE NO ACTION",
+            "statements": [
+                "ALTER TABLE `receipts` DROP FOREIGN KEY `fk_receipts_supplier_id`",
+                "ALTER TABLE `receipts` ADD CONSTRAINT `fk_receipts_supplier_id` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION"
+            ],
+            "observed_after": "receipts(supplier_id)->suppliers(id) ON DELETE SET NULL ON UPDATE NO ACTION",
+            "verified": true,
+            "duration_ms": 3593.5
+        },
+        {
+            "op": "RENAME_INDEX",
+            "table": "agent_expenses",
+            "from": "agent_expenses_agent_id_request_key_unique",
+            "to": "agent_expense_request_unique",
+            "observed_before": {
+                "unique": true,
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ]
+            },
+            "statements": [
+                "ALTER TABLE `agent_expenses` RENAME INDEX `agent_expenses_agent_id_request_key_unique` TO `agent_expense_request_unique`"
+            ],
+            "observed_after": {
+                "unique": true,
+                "columns": [
+                    "agent_id",
+                    "request_key"
+                ]
+            },
+            "verified": true,
+            "duration_ms": 756
+        },
+        {
+            "op": "RENAME_INDEX",
+            "table": "booking_container_stages",
+            "from": "booking_container_stages_booking_container_id_type_id_unique",
+            "to": "container_stage_unique",
+            "observed_before": {
+                "unique": true,
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ]
+            },
+            "statements": [
+                "ALTER TABLE `booking_container_stages` RENAME INDEX `booking_container_stages_booking_container_id_type_id_unique` TO `container_stage_unique`"
+            ],
+            "observed_after": {
+                "unique": true,
+                "columns": [
+                    "booking_container_id",
+                    "type_id"
+                ]
+            },
+            "verified": true,
+            "duration_ms": 283.9
+        }
+    ],
+    "binlog_after": {
+        "file": "binlog.000079",
+        "position": 158389175
+    },
+    "schema_after_sha256": "184d02eaa5780b5f307c64dde4a2e72b2438e55204323d5dcd86089a165b62ea",
+    "counts_after": {
+        "tables": 65,
+        "columns": 599,
+        "primary_keys": 64,
+        "auto_increment": 60,
+        "unique_non_pk": 8,
+        "non_unique_indexes": 71,
+        "foreign_keys": 61,
+        "fk_backing_indexes": 59,
+        "historical_non_unique_indexes": 12,
+        "fk_on_delete": {
+            "CASCADE": 32,
+            "SET NULL": 29
+        }
+    },
+    "full_diff_after_vs_canonical": [],
+    "source_equals_canonical": true,
+    "status": "PASSED"
+}

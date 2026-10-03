@@ -1,0 +1,379 @@
+{
+    "generated_at": "2026-10-03 20:41:09 UTC",
+    "mode": "postflight",
+    "authority": "storage/app/backups/leader_pre_remediation_20261003_184935.sql (only backup taken before the 21:49:42 incident)",
+    "vs_pre_incident_backup_184935": {
+        "tables_compared": 65,
+        "tables_identical": 64,
+        "tables_different": [
+            "telescope_entries"
+        ],
+        "business_tables_different": [],
+        "telescope_entries": {
+            "backup_184935": {
+                "rows": 66068,
+                "min_first_col": 1,
+                "max_first_col": 66068,
+                "content_sha256": "da2d578348221f17610e783018fb3ff4e9befabd75a8865535f814d33615611a"
+            },
+            "leader_now": {
+                "rows": 66069,
+                "min_first_col": 1,
+                "max_first_col": 66069,
+                "content_sha256": "af9ac8b894a7bd6c02928be3bc0e677b3b429690b41cf95a90d1544c736ccc3e"
+            },
+            "identical": false,
+            "rows_only_in_backup_184935": 0,
+            "rows_only_in_leader_now": 1,
+            "sample_first_col_only_in_backup_184935": [],
+            "sample_first_col_only_in_leader_now": [
+                "66069"
+            ]
+        },
+        "rows_total_leader_now": 82961,
+        "pass_business": true
+    },
+    "per_table": {
+        "agent_car_tranfers": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "agent_expenses": {
+            "rows_backup": 447,
+            "rows_now": 447,
+            "identical": true
+        },
+        "agents": {
+            "rows_backup": 19,
+            "rows_now": 19,
+            "identical": true
+        },
+        "app_notifications": {
+            "rows_backup": 5510,
+            "rows_now": 5510,
+            "identical": true
+        },
+        "bank_trnsactions": {
+            "rows_backup": 16,
+            "rows_now": 16,
+            "identical": true
+        },
+        "banks": {
+            "rows_backup": 11,
+            "rows_now": 11,
+            "identical": true
+        },
+        "booking_container_agents": {
+            "rows_backup": 1578,
+            "rows_now": 1578,
+            "identical": true
+        },
+        "booking_container_stages": {
+            "rows_backup": 446,
+            "rows_now": 446,
+            "identical": true
+        },
+        "booking_containers": {
+            "rows_backup": 691,
+            "rows_now": 691,
+            "identical": true
+        },
+        "booking_contrainer_extra_costs": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "booking_movements": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "booking_papers": {
+            "rows_backup": 788,
+            "rows_now": 788,
+            "identical": true
+        },
+        "booking_services": {
+            "rows_backup": 259,
+            "rows_now": 259,
+            "identical": true
+        },
+        "bookings": {
+            "rows_backup": 474,
+            "rows_now": 474,
+            "identical": true
+        },
+        "branches": {
+            "rows_backup": 155,
+            "rows_now": 155,
+            "identical": true
+        },
+        "cars": {
+            "rows_backup": 167,
+            "rows_now": 167,
+            "identical": true
+        },
+        "choose_us": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "cities_and_regions": {
+            "rows_backup": 40,
+            "rows_now": 40,
+            "identical": true
+        },
+        "companies": {
+            "rows_backup": 43,
+            "rows_now": 43,
+            "identical": true
+        },
+        "company_fatoorahs": {
+            "rows_backup": 2,
+            "rows_now": 2,
+            "identical": true
+        },
+        "company_invoices": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "company_services": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "company_transportations": {
+            "rows_backup": 3,
+            "rows_now": 3,
+            "identical": true
+        },
+        "contact_us": {
+            "rows_backup": 5,
+            "rows_now": 5,
+            "identical": true
+        },
+        "containers": {
+            "rows_backup": 7,
+            "rows_now": 7,
+            "identical": true
+        },
+        "daily_booking_containers": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "delivery_policies": {
+            "rows_backup": 256,
+            "rows_now": 256,
+            "identical": true
+        },
+        "delivery_policy_containers": {
+            "rows_backup": 256,
+            "rows_now": 256,
+            "identical": true
+        },
+        "drivers": {
+            "rows_backup": 305,
+            "rows_now": 305,
+            "identical": true
+        },
+        "employees": {
+            "rows_backup": 58,
+            "rows_now": 58,
+            "identical": true
+        },
+        "factories": {
+            "rows_backup": 150,
+            "rows_now": 150,
+            "identical": true
+        },
+        "failed_jobs": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "images": {
+            "rows_backup": 867,
+            "rows_now": 867,
+            "identical": true
+        },
+        "invoice_payments": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "invoices": {
+            "rows_backup": 225,
+            "rows_now": 225,
+            "identical": true
+        },
+        "log_activities": {
+            "rows_backup": 1933,
+            "rows_now": 1933,
+            "identical": true
+        },
+        "migrations": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "model_has_permissions": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "model_has_roles": {
+            "rows_backup": 8,
+            "rows_now": 8,
+            "identical": true
+        },
+        "money_transfers": {
+            "rows_backup": 677,
+            "rows_now": 677,
+            "identical": true
+        },
+        "notes": {
+            "rows_backup": 5,
+            "rows_now": 5,
+            "identical": true
+        },
+        "notifications": {
+            "rows_backup": 1071,
+            "rows_now": 1071,
+            "identical": true
+        },
+        "otps": {
+            "rows_backup": 9,
+            "rows_now": 9,
+            "identical": true
+        },
+        "our_services": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "password_resets": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "payingcars": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "permissions": {
+            "rows_backup": 129,
+            "rows_now": 129,
+            "identical": true
+        },
+        "personal_access_tokens": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "private_companies": {
+            "rows_backup": 4,
+            "rows_now": 4,
+            "identical": true
+        },
+        "receipts": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "reviews": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "role_has_permissions": {
+            "rows_backup": 201,
+            "rows_now": 201,
+            "identical": true
+        },
+        "roles": {
+            "rows_backup": 2,
+            "rows_now": 2,
+            "identical": true
+        },
+        "service_categories": {
+            "rows_backup": 4,
+            "rows_now": 4,
+            "identical": true
+        },
+        "services": {
+            "rows_backup": 34,
+            "rows_now": 34,
+            "identical": true
+        },
+        "settings": {
+            "rows_backup": 1,
+            "rows_now": 1,
+            "identical": true
+        },
+        "shipments": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "shipping_agents": {
+            "rows_backup": 18,
+            "rows_now": 18,
+            "identical": true
+        },
+        "sponsers": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "static_pages": {
+            "rows_backup": 4,
+            "rows_now": 4,
+            "identical": true
+        },
+        "superagent_transactions": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "superagents": {
+            "rows_backup": 11,
+            "rows_now": 11,
+            "identical": true
+        },
+        "supplier_payments": {
+            "rows_backup": 0,
+            "rows_now": 0,
+            "identical": true
+        },
+        "suppliers": {
+            "rows_backup": 3,
+            "rows_now": 3,
+            "identical": true
+        },
+        "telescope_entries": {
+            "rows_backup": 66068,
+            "rows_now": 66069,
+            "identical": false
+        }
+    },
+    "telescope_entries_deviation_D1": {
+        "reference_rows": 66068,
+        "current_rows": 66069,
+        "reference_max_sequence": 66068,
+        "reference_rows_missing_or_changed": 0,
+        "appended_sequences": [
+            "66069"
+        ],
+        "append_only": true,
+        "explanation": "Single telemetry row (type=command, \"php artisan --version\") written by Laravel Telescope at 2026-10-03 23:26:18 local during this run, before TELESCOPE_ENABLED=false was enforced; binlog.000079 position 108750228-108750736. Not business data. Not deleted (no DML authorised)."
+    },
+    "vs_fresh_backup_state": {
+        "tables_different": [],
+        "allowed": []
+    },
+    "pass": true
+}

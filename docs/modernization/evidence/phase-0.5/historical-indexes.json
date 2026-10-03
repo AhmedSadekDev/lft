@@ -1,0 +1,155 @@
+{
+    "total_expected_indexes": 18,
+    "indexes": [
+        {
+            "migration": "2023_01_02_214541_create_permission_tables.php",
+            "table": "permissions",
+            "columns": [
+                "name",
+                "guard_name"
+            ],
+            "type": "UNIQUE"
+        },
+        {
+            "migration": "2023_01_02_214541_create_permission_tables.php",
+            "table": "roles",
+            "columns": [
+                "name",
+                "guard_name"
+            ],
+            "type": "UNIQUE"
+        },
+        {
+            "migration": "2023_01_02_214541_create_permission_tables.php",
+            "table": "model_has_permissions",
+            "columns": [
+                "model_id",
+                "model_type"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2023_01_02_214541_create_permission_tables.php",
+            "table": "model_has_roles",
+            "columns": [
+                "model_id",
+                "model_type"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2014_10_12_000000_create_users_table.php",
+            "table": "users",
+            "columns": [
+                "email"
+            ],
+            "type": "UNIQUE"
+        },
+        {
+            "migration": "2014_10_12_100000_create_password_resets_table.php",
+            "table": "password_resets",
+            "columns": [
+                "email"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2019_08_19_000000_create_failed_jobs_table.php",
+            "table": "failed_jobs",
+            "columns": [
+                "uuid"
+            ],
+            "type": "UNIQUE"
+        },
+        {
+            "migration": "2019_12_14_000001_create_personal_access_tokens_table.php",
+            "table": "personal_access_tokens",
+            "columns": [
+                "token"
+            ],
+            "type": "UNIQUE"
+        },
+        {
+            "migration": "2026_04_16_000001_add_payment_group_uuid_to_payingcars_table.php",
+            "table": "payingcars",
+            "columns": [
+                "payment_group_uuid"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2026_07_23_000002_create_receipts_table.php",
+            "table": "receipts",
+            "columns": [
+                "supplier_invoice_number"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2026_07_23_000002_create_receipts_table.php",
+            "table": "receipts",
+            "columns": [
+                "payment_source"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2026_07_23_000004_create_supplier_payments_table.php",
+            "table": "supplier_payments",
+            "columns": [
+                "source_id"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2026_07_24_000001_link_booking_services_and_supplier_receipts.php",
+            "table": "receipts",
+            "columns": [
+                "booking_service_id"
+            ],
+            "type": "UNIQUE"
+        },
+        {
+            "migration": "2026_09_13_000001_add_parallel_container_stages.php",
+            "table": "booking_container_stages",
+            "columns": [
+                "booking_container_id",
+                "type_id"
+            ],
+            "type": "UNIQUE"
+        },
+        {
+            "migration": "2026_09_13_000001_add_parallel_container_stages.php",
+            "table": "booking_container_agents",
+            "columns": [
+                "stage_type"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2026_09_13_000001_add_parallel_container_stages.php",
+            "table": "agent_expenses",
+            "columns": [
+                "agent_id",
+                "request_key"
+            ],
+            "type": "UNIQUE"
+        },
+        {
+            "migration": "2026_10_01_000001_create_agent_photos_table.php",
+            "table": "agent_photos",
+            "columns": [
+                "agent_id"
+            ],
+            "type": "INDEX"
+        },
+        {
+            "migration": "2026_10_01_000001_create_agent_photos_table.php",
+            "table": "agent_photos",
+            "columns": [
+                "created_at"
+            ],
+            "type": "INDEX"
+        }
+    ]
+}

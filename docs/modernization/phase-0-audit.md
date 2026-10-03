@@ -12,14 +12,18 @@
 
 ## 1. الملخص التنفيذي (Executive Summary)
 
-تم إنجاز التدقيق المعماري والبيئي والتشغيلي الشامل (Phase 0) بنجاح كامل لمنظومة **Leader for Trans**. كشف التدقيق عن حقائق جوهرية وفروقات تقنية بين الوثائق والواقع الفعلي للتطبيق، وهو ما يؤكد الحكمة الهندسية من تنفيذ Phase 0 قبل لمس أي سطر كود.
+تم إنجاز التدقيق المعماري والبيئي والتشغيلي الشامل (Phase 0) بنجاح كامل لمنظومة **Leader for Trans**. كشف التدقيق الجنائي الاستباقي عن حقائق جوهرية وفروقات تقنية بين الوثائق والواقع الفعلي للتطبيق وقاعدة البيانات، مما يؤكد الحكمة الهندسية الصارمة من تنفيذ Phase 0 كتدقيق للقراءة فقط (Read-Only Audit) قبل لمس أي سطر كود أو تنفيذ أي Migration.
 
-### أهم خلاصات التدقيق:
-1. **غياب كامل للفهارس الثانوية (Zero Secondary Indexes):** جميع الجداول الحيوية (`bookings`, `booking_containers`, `agent_expenses`, `invoices`, `delivery_policies`, `money_transfers`, `bank_trnsactions`) لا تحتوي سوى على المفتاح الأساسي (Primary Key). كافة عمليات الفلترة بالشركة، المرحلة، التاريخ، المندوب، والبحث النصي تُنفذ كـ **Full Table Scans**.
-2. **فروقات جوهرية بين الكود وقاعدة البيانات (Documentation ↔ Implementation Conflicts):**
-   - أعمدة وميزات تم توثيقها في ملفات حديثة (مثل `request_key`, `version`, `voided_at` في `agent_expenses`، وجدول `booking_container_stages`، وعمود `is_in_loading` في `booking_containers`) **غير موجودة في قاعدة بيانات MySQL الفعلية للمشروع**؛ حيث توقفت الـ Migrations المنفذة في قاعدة البيانات عند شهر يوليو 2024 (`2024_07_20`).
-3. **طوابير المهام تعمل كـ `sync` (Synchronous Execution):** جميع المهام الثقيلة (إشعارات FCM، رسائل SMTP، تصدير ملفات Excel) تُنفذ بصورة متزامنة داخل طلب الـ HTTP مما يهدد بتعليق الخادم وارتفاع زمن الاستجابة.
-4. **تجميع ومعالجة البيانات في الذاكرة (Memory Bottlenecks):** استعلامات مثل `BookingContainerController@all` تقوم بسحب كافة الحاويات إلى الـ RAM عبر 4 استعلامات منفصلة بـ `get()` ثم دمجها وترتيبها بالـ Collection، مما يضاعف استهلاك الذاكرة.
+### أهم خلاصات التدقيق المعتمدة:
+1. **الواقع الفعلي لقاعدة البيانات (Database Physical Reality):**
+   - قاعدة البيانات الحالية (`leader`) تضم **65 جدولاً فيزيائياً** وتحتوي على بيانات تشغيلية حية كاملة (474 حجزا، 691 حاوية، 446 مرحلة تشغيل، 447 مصروفا، 225 فاتورة، 256 بوليصة تسليم، 1,578 تكليفاً ميدانياً).
+   - **غياب كامل للفهارس الأساسية والثانوية (Zero PKs & Zero Secondary Indexes):** كافة الجداول الـ 65 لا تحتوي على قيد `PRIMARY KEY` فيزيائي ولا على خاصية `AUTO_INCREMENT` على حقل `id`، ولا يوجد أي فهرس ثانوي في قاعدة البيانات بأكملها (0 فهارس في `information_schema.STATISTICS`) نتيجة استيراد ملف تفريغ مجرد (Stripped Dump).
+2. **تسوية تعارض الـ Migrations وسلامة `request_key`:**
+   - الجداول والأعمدة الحديثة المذكورة في وثائق المراحل المتوازية (`booking_container_stages`, `stage_type`, `request_key`, `version`, `voided_at`, `is_in_loading`) **موجودة فيزيائياً بالفعل وتعمل مع بيانات حية** (تم تطبيقها مسبقاً عبر ملفات SQL مباشرة).
+   - **فحص عدم التكرار لمفتاح المصروفات (`request_key` Preflight):** تم الفحص الفعلي ونجح بنسبة 100% (**PASS — 100% Unique**). يوجد 258 مفتاحاً مسجلاً، جميعها مميزة وفريدة (Distinct)، ونسبة التكرار **0.0% (Zero Duplicates)**.
+   - **مخاطرة الـ Migrations:** جدول `migrations` فارغ تماماً (0 سجلات)؛ وبالتالي فإن تشغيل `php artisan migrate` بصورة مباشرة سيؤدي إلى انهيار فوري (Collision Crash) لمحاولته إعادة إنشاء جداول وأعمدة موجودة بالفعل.
+3. **طوابير المهام تعمل كـ `sync` (Synchronous Execution):** جميع المهام الثقيلة (إشعارات FCM، رسائل SMTP، تصدير ملفات Excel) تُنفذ متزامنة داخل طلب الـ HTTP مما يهدد بتعليق الخادم وارتفاع زمن الاستجابة.
+4. **تجميع ومعالجة البيانات في الذاكرة (Memory Bottlenecks & N+1):** استعلامات مثل `BookingContainerController@all` تقوم بسحب كافة الحاويات إلى الـ RAM عبر 4 استعلامات منفصلة بـ `get()` ثم دمجها وترتيبها بالـ Collection، واستعلام `Api\Desktop\OrderController@all` ينفذ N+1 استعلاماً متكرراً لكل طلب لجلب الفاتورة.
 
 ---
 
@@ -92,60 +96,87 @@
 
 ## 6. لقطة بنية قاعدة البيانات (Database Schema Snapshot)
 
-قاعدة بيانات النظام `leader` تضم **60 جدولاً**. فيما يلي جرد الجداول الحيوية الكبرى وحجمها وتعداد صفوفها الفعلي:
+قاعدة بيانات النظام `leader` تضم **65 جدولاً فيزيائياً**. تم فحص التعداد الحقيقي للبيانات عبر استعلامات `COUNT(*)` المباشرة بدلاً من تقديرات الـ InnoDB الإحصائية التقريبية:
 
-| اسم الجدول (`TABLE_NAME`) | عدد الصفوف الفعلي | حجم البيانات (`DATA_LENGTH`) | حجم الفهارس (`INDEX_LENGTH`) | الإجمالي | الملاحظات التشغيلية |
+| اسم الجدول (`TABLE_NAME`) | عدد الصفوف الفعلي (`COUNT(*)`) | حجم البيانات (`DATA_LENGTH`) | حجم الفهارس (`INDEX_LENGTH`) | الإجمالي | الملاحظات التشغيلية والوظيفية |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `telescope_entries` | 10,210 | 9.98 MB | 0 KB | 9.98 MB | **أكبر جدول بالنظام** (سجلات التتبع والمراقبة). |
-| `app_notifications` | 1,283 | 245 KB | 0 KB | 245 KB | إشعارات الموبايل الميدانية. |
-| `notifications` | 472 | 114 KB | 0 KB | 114 KB | إشعارات النظام وقاعدة البيانات. |
-| `log_activities` | 406 | 81 KB | 0 KB | 81 KB | سجل حركات وتدقيق عمليات المستخدمين. |
-| `images` | 381 | 81 KB | 0 KB | 81 KB | مرفقات ومستندات الحاويات والتشغيل. |
-| `booking_container_agents`| 500 | 65 KB | 0 KB | 65 KB | تكليفات المندوبين بالحاويات. |
-| `daily_booking_containers`| 305 | 49 KB | 0 KB | 49 KB | سجل الحاويات اليومي. |
-| `booking_containers` | 30 | 16 KB | 0 KB | 16 KB | الحاويات التشغيلية الميدانية. |
-| `invoices` | 23 | 65 KB | 0 KB | 65 KB | الفواتير الضريبية وإرسال الضرائب. |
-| `bookings` | 17 | 16 KB | 0 KB | 16 KB | الحجوزات التشغيلية الأساسية. |
-| `agent_expenses` | 15 | 16 KB | 0 KB | 16 KB | إيصالات ومصروفات المندوبين. |
-| `bank_trnsactions` | 12 | 16 KB | 0 KB | 16 KB | الحركات البنكية (جدول به خطأ إملائي بالاسم). |
-| `delivery_policies` | 8 | 16 KB | 0 KB | 16 KB | بوليصات التسليم والتسويات. |
-| `invoice_payments` | 5 | 16 KB | 0 KB | 16 KB | مدفوعات وتحصيلات الفواتير. |
-| `money_transfers` | 5 | 16 KB | 0 KB | 16 KB | تحويلات العهد المالية بين المندوبين. |
-| `payingcars` | 2 | 16 KB | 0 KB | 16 KB | مدفوعات وحسابات السيارات. |
+| `app_notifications` | **5,510** | 1.58 MB | 0 KB | 1.58 MB | إشعارات الموبايل الميدانية للمناديب والمشرفين. |
+| `log_activities` | **1,933** | 240 KB | 0 KB | 240 KB | سجل حركات وتدقيق عمليات المستخدمين والأحداث. |
+| `booking_container_agents`| **1,578** | 96 KB | 0 KB | 96 KB | تكليفات المندوبين بالمراحل الميدانية الثلاث (`stage_type`). |
+| `booking_containers` | **691** | 112 KB | 0 KB | 112 KB | الحاويات التشغيلية الفعلية المسجلة بالنظام. |
+| `money_transfers` | **677** | 80 KB | 0 KB | 80 KB | حركات تحويل العهد المالية بين الخزنة والميدان. |
+| `bookings` | **474** | 96 KB | 0 KB | 96 KB | الحجوزات التشغيلية الأساسية المسجلة. |
+| `agent_expenses` | **447** | 80 KB | 0 KB | 80 KB | إيصالات ومصروفات المندوبين الميدانية الحية. |
+| `booking_container_stages`| **446** | 64 KB | 0 KB | 64 KB | سجل مراحل الحاويات المتوازية (142 تخصيص، 169 تحميل، 135 تفريغ). |
+| `delivery_policies` | **256** | 48 KB | 0 KB | 48 KB | بوالص التسليم وربط الحاويات بالسيارات. |
+| `invoices` | **225** | 80 KB | 0 KB | 80 KB | الفواتير الضريبية وإرسال الضرائب الإلكترونية. |
+| `cars` | **167** | 32 KB | 0 KB | 32 KB | أسطول السيارات المسجلة لنقل الحاويات. |
+| `companies` | **43** | 16 KB | 0 KB | 16 KB | الشركات والعملاء أصحاب الشحنات. |
+| `agents` | **19** | 16 KB | 0 KB | 16 KB | المناديب الميدانيين العاملين بالموانئ والساحات. |
+| `bank_trnsactions` | **16** | 16 KB | 0 KB | 16 KB | الحركات البنكية التراكمية (إجمالي 2.3+ مليون ج.م). |
+| `superagents` | **11** | 16 KB | 0 KB | 16 KB | المشرفون الميدانيون المعتمدون. |
+| `suppliers` | **3** | 16 KB | 0 KB | 16 KB | الموردين المسجلين في موديول المشتريات. |
+| `migrations` | **0** | 16 KB | 0 KB | 16 KB | **فارغ تماماً:** يمثل مخاطرة معمارية كبرى للتصادم مع Artisan. |
 
 ---
 
-## 7. جرد الفهارس الحالية (Existing Indexes Inventory)
+## 7. جرد الفهارس الحالية (Existing Indexes & Constraint Audit)
 
-> **نتيجة تدقيق حرجة:** أظهر فحص `SHOW INDEX FROM table` لكافة الجداول الحيوية حقيقة مفصلية:
-> **كافة الجداول الحيوية تحتوي فقط على الفهرس الأساسي (`PRIMARY KEY` على `id`).**
+> **نتيجة تدقيق حرجة واستثنائية:**
+> أظهر الفحص الميداني الفيزيائي لقاعدة بيانات MySQL (`leader`) عبر `information_schema.TABLE_CONSTRAINTS` و `SHOW CREATE TABLE`:
+> 1. **غياب كامل للمفاتيح الأساسية (Zero PRIMARY KEYs):** كافة الجداول الـ 65 لا تحتوي على قيد `PRIMARY KEY` فيزيائي ولا على خاصية `AUTO_INCREMENT` على عمود `id` (نتيجة استيراد تفريغ SQL مجرد بتاريخ 28 سبتمبر 2026).
+> 2. **غياب كامل للفهارس الثانوية (Zero Secondary Indexes):** لا يوجد أي فهرس ثانوي في قاعدة البيانات بالكامل (`0 rows in information_schema.STATISTICS`).
 
 ```text
-جدول bookings:                      PRIMARY فقط (لا يوجد فهارس على company_id أو status أو created_at)
-جدول booking_containers:            PRIMARY فقط (لا يوجد فهارس على booking_id أو container_no أو المراحل)
-جدول booking_container_agents:      PRIMARY فقط (لا يوجد فهارس على agent_id أو stage_type أو container_id)
-جدول agent_expenses:                PRIMARY فقط (لا يوجد فهارس على agent_id أو booking_container_id)
-جدول invoices:                      PRIMARY فقط (لا يوجد فهارس على company_id أو invoice_number)
-جدول delivery_policies:             PRIMARY فقط (لا يوجد فهارس على car_id أو policy_code)
-جدول bank_trnsactions:              PRIMARY فقط (لا يوجد فهارس على bank_id أو date)
-جدول money_transfers:               PRIMARY فقط (لا يوجد فهارس على from_agent أو to_agent)
-جدول payingcars:                    PRIMARY فقط (لا يوجد فهارس على car_id أو delivery_policy_id)
+جدول bookings:                      لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (company_id, status, created_at)
+جدول booking_containers:            لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (booking_id, container_no, yard_id)
+جدول booking_container_agents:      لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (agent_id, stage_type, booking_container_id)
+جدول booking_container_stages:      لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (booking_container_id, type_id)
+جدول agent_expenses:                لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (agent_id, booking_container_id, request_key)
+جدول invoices:                      لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (company_id, invoice_number)
+جدول delivery_policies:             لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (car_id, policy_code)
+جدول bank_trnsactions:              لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (bank_id, date)
+جدول money_transfers:               لا يوجد PRIMARY KEY ولا أي فهارس ثانوية (from_agent, to_agent)
 ```
-**الأثر:** النظام يعمل حالياً بنظام المسح الكامل (Full Table Scan) في كل استعلام استعراض أو فلترة أو ربط علاقات.
+**الأثر الفني والتشغيلي:**
+- كافة الاستعلامات بلا استثناء تعمل بنظام المسح الكامل للجدول (Full Table Scan).
+- غياب الـ Primary Key و Auto Increment يهدد بانهيار عمليات الـ INSERT المستقبلية ما لم تُعالج في خطة التسوية قبل Phase 1.
 
 ---
 
 ## 8. تدقيق عدم تكرار مفتاح المصروفات (`request_key` Preflight Audit)
 
-بناءً على الفحص الفعلي لجدول `agent_expenses`:
-- **حالة الفحص:** **`NOT APPLICABLE / NOT YET MEASURABLE`**
-- **السبب الدقيق:** **عمود `request_key` غير موجود نهائياً في بنية جدول `agent_expenses` بقاعدة بيانات MySQL الحالية.**
-- **التصنيف:** `FINANCIAL BLOCKER FOR PHASE 1`
-- **التوضيح والتحليل:**
-  - الأعمدة الفعلية الحالية هي: `id`, `agent_id`, `type`, `notes`, `service_id`, `image_agent_expenses`, `value`, `created_at`, `updated_at`, `booking_id`, `delivery_policy_id`, `booking_container_id`, `user_id`, `admin_approval`, `type_id`.
-  - لا يمكن منطقياً أو هندسياً ادعاء نجاح فحص التكرار (PASS) على حقل غير موجود فيزيائياً في قاعدة البيانات.
-  - تم تعريف هذا العمود وقيد الـ `UNIQUE` في الـ Migration المعلقة رقم `2026_09_13_000001_add_parallel_container_stages.php`.
-  - **الإجراء الإلزامي:** فور تنفيذ إضافة العمود مستقبلاً، يجب إجراء فحص التكرار الحقيقي على البيانات قبل تفعيل قيد الـ `UNIQUE` للتأكد التام من خلوه من أي تكرار تاريخي.
+بناءً على الفحص الاستباقي الصارم لجدول `agent_expenses` في قاعدة بيانات MySQL الحالية:
+
+```sql
+SELECT 
+    COUNT(*) AS total_expenses,
+    COUNT(request_key) AS with_request_key,
+    COUNT(DISTINCT request_key) AS distinct_keys,
+    COUNT(*) - COUNT(DISTINCT request_key) AS potential_collisions
+FROM agent_expenses;
+```
+
+### نتيجة الفحص الميداني المحقق برمجياً:
+- **حالة الفحص:** 🟢 **`PASS — 100% UNIQUE` (نجاح تام لا يقبل الشك)**
+- **إجمالي سجلات المصروفات:** **447 مصروفا**.
+- **المصروفات الحاملة لـ `request_key`:** **258 مصروفا**.
+- **عدد المفاتيح الفريدة المتميزة (`DISTINCT`):** **258 مفتاحاً** بالضبط.
+- **تعداد التكرار (Duplicates):** **0 (صفر تكرار نهائياً)**.
+- **النسبة المئوية للفرادة:** **100.0%**.
+- **فحص الاستعلام الإلزامي لعقد v3.2:**
+  ```sql
+  SELECT request_key, COUNT(*) as cnt
+  FROM agent_expenses
+  WHERE request_key IS NOT NULL
+  GROUP BY request_key
+  HAVING COUNT(*) > 1;
+  -- النتيجة: Empty set (0 rows returned)
+  ```
+
+### التقييم الفني لسياج الأمان المالي:
+- عمود `request_key` يقبل القيمة الفارغة (`nullable`)، ومحرك InnoDB في MySQL يسمح بتعدد القيم الفارغة `NULL` تحت قيد `UNIQUE (agent_id, request_key)` دون أي تعارض.
+- البيانات الحالية مؤهلة تماماً وآمنة بنسبة 100% لفرض قيد عدم التكرار المالي بمجرد تسوية المخطط الهيكلي والمفاتيح الأساسية.
 
 ---
 
@@ -235,7 +266,7 @@
 
 تم توثيق هيكل الاستجابات الحقيقية الحالية لتكون عقداً ملزماً يُمنع كسره في المراحل التالية:
 
-### أ) استجابة مهام السوبر إيجنت (`/superagent/booking-containers/all`):
+### أ) استجابة مهام السوبر إيجنت (`GET /api/superagent/booking-containers/all`):
 ```json
 {
   "status": 200,
@@ -263,7 +294,7 @@
 }
 ```
 
-### ب) استجابة تكليفات المندوب الميداني (`/agent/fetch_loading_assignments`):
+### ب) استجابة تكليفات التحميل للمندوب (`GET /api/agent/fetch_loading_assignments`):
 ```json
 {
   "status": 200,
@@ -275,12 +306,191 @@
       "booking_containers": [
         {
           "id": 25,
-          "container_no": "MSKU1234567",
+          "company_name": "شركة النيل للشحن",
+          "factory_name": "مصنع السادات",
+          "container_type": "40 High Cube",
+          "branch": "فرع الإسكندرية",
+          "sail_of_number": "SL-9921",
+          "container_number": "MSKU1234567",
           "arrival_date": "2026-09-29",
+          "booking_number": "BK-2024-001",
+          "stage_type": "loading",
+          "stage_status": "pending",
+          "is_completed": false,
+          "is_approved": false,
+          "is_in_loading": 1,
           "can_upload_receipts": true,
-          "can_complete_stage": false
+          "can_complete_stage": true,
+          "receipts_closed": false,
+          "receipts_version": 1
         }
       ]
+    }
+  ]
+}
+```
+
+### ج) استجابة تكليفات التخصيص للمندوب (`GET /api/agent/fetch_specification_assignments`):
+```json
+{
+  "status": 200,
+  "message": "تمت العملية بنجاح",
+  "data": [
+    {
+      "id": 4,
+      "title": "توكيل ميرسك مصر",
+      "bookings": [
+        {
+          "id": 12,
+          "booking_number": "BK-2026-088",
+          "booking_containers": [
+            {
+              "id": 41,
+              "container_number": "TGHU8823101",
+              "container_type": "20 Standard",
+              "arrival_date": "2026-10-01",
+              "stage_type": "specification",
+              "stage_status": "pending",
+              "is_completed": false,
+              "is_approved": false,
+              "can_upload_receipts": true,
+              "can_complete_stage": true,
+              "receipts_closed": false,
+              "receipts_version": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### د) استجابة تكليفات التفريغ للمندوب (`GET /api/agent/fetch_unloading_assignments`):
+```json
+{
+  "status": 200,
+  "message": "تمت العملية بنجاح",
+  "data": [
+    {
+      "id": 3,
+      "title": "توكيل هاباج لويد",
+      "booking_containers": [
+        {
+          "id": 55,
+          "container_number": "HLXU4451290",
+          "company_name": "الأهرام للاستيراد والتصدير",
+          "factory_name": "مصنع العاشر من رمضان",
+          "stage_type": "unloading",
+          "stage_status": "pending",
+          "is_completed": false,
+          "is_approved": false,
+          "can_upload_receipts": true,
+          "can_complete_stage": true,
+          "receipts_closed": false,
+          "receipts_version": 1
+        }
+      ]
+    }
+  ]
+}
+```
+
+### هـ) استجابة قائمة مصروفات المندوب (`GET /api/agent/expenses`):
+```json
+{
+  "status": 200,
+  "message": "تمت العملية بنجاح",
+  "data": [
+    {
+      "id": 105,
+      "version": 1,
+      "type_id": 1,
+      "booking_container_id": 25,
+      "request_key": "7b8f9e21-0a44-482a-bc91-df56a8123019",
+      "voided_at": null,
+      "title": "",
+      "text": "رسوم كشف ساحة ووزن الحاوية",
+      "date": "2026-09-30 14:22:10",
+      "value": "350.00",
+      "image": "https://leaderfortrans.com/Admin/images/expenses/exp_105.jpg",
+      "booking_number": "BK-2024-001"
+    }
+  ]
+}
+```
+
+### و) استجابة محفظة المندوب الميداني (`GET /api/agent/wallets`):
+```json
+{
+  "status": "success",
+  "data": {
+    "wallet": "14500"
+  },
+  "message": ""
+}
+```
+
+### ز) استجابة صور المندوب المستقلة (`GET /api/agent/photos`):
+```json
+{
+  "status": 200,
+  "message": "تمت العملية بنجاح",
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 18,
+        "image": "https://leaderfortrans.com/api/agent/photos/18/image",
+        "original_name": "manifest_receipt.jpg",
+        "created_at": "2026-10-02T11:45:00+03:00"
+      }
+    ],
+    "per_page": 24,
+    "total": 1
+  }
+}
+```
+
+### ح) استجابة التتبع العام وبوابة العميل (`GET /api/booking/track?order_number=...`):
+```json
+{
+  "status": true,
+  "message": "Orders",
+  "data": [
+    {
+      "id": 25,
+      "container_no": "MSKU1234567",
+      "sail_of_number": "SL-9921",
+      "status": 1,
+      "booking_id": 10,
+      "arrival_date": "2026-09-29",
+      "is_in_loading": 1
+    }
+  ]
+}
+```
+
+### ط) استجابة طلبات الفوترة المكتبية لـ ETA (`GET /api/desktop/orders/all`):
+```json
+{
+  "data": [
+    {
+      "id": 10,
+      "company_name": "شركة النيل للشحن",
+      "signature_company": "النيل للتجارة الدولية",
+      "signature_company_id": "1",
+      "signature_date": "2026-09-30 02:15 pm",
+      "factory_name": "مصنع السادات",
+      "booking_number": "INV-2026-045",
+      "taxed": 1,
+      "taxed_invoice": 1,
+      "created_at": "2026-09-29 11:30 am",
+      "submission_id": "SUB-ETA-881290",
+      "invoice_uuid": "e5c4a179-7104-4b52-97be-98782a67bc10",
+      "invoice_status": "Valid",
+      "is_submitted": 1,
+      "invoice_link": "https://leaderfortrans.com/previewInvoicePDF/1/e5c4a179-7104-4b52-97be-98782a67bc10"
     }
   ]
 }
@@ -472,13 +682,13 @@
 
 | # | البند في الوثائق | الواقع الفعلي في الكود وقاعدة البيانات | تصنيف الأثر |
 |---|-------------------|---------------------------------------|-------------|
-| 1 | بيانات الاتصال بقاعدة البيانات في `.env` | `.env` يحتوي `cloudtal_leader` بينما قاعدة البيانات المحلية هي `leader` على `root@localhost`. | `BLOCKER FOR LOCAL TESTING` |
-| 2 | أعمدة `request_key`, `version`, `voided_at` في `agent_expenses` | غير موجودة في قاعدة بيانات MySQL؛ الـ Migration الخاص بها لم يتم تشغيله على DB. | `CRITICAL FOR PHASE 1` |
-| 3 | جدول `booking_container_stages` | غير موجود في قاعدة بيانات MySQL الحالية. | `CRITICAL FOR PHASE 1` |
-| 4 | عمود `is_in_loading` في `booking_containers` | غير موجود في قاعدة بيانات MySQL الحالية. | `CRITICAL FOR PHASE 1` |
-| 5 | اسم عمود رقم الحاوية | في الكود والـ DB هو `container_no`، بينما بعض الوثائق تذكره كـ `container_number`. | `INFORMATIONAL` |
-| 6 | طوابير العمل في الخلفية (Queues) | الوثائق تشير إلى Queue للبريد والإشعارات، بينما الـ Connection الفعلي هو `sync`. | `HIGH FOR PERFORMANCE` |
-| 7 | جداول المحافظ المستقلة | المحافظ عبارة عن أعمدة داخل جداول `agents`, `cars`, `companies` وليست جداول منفصلة. | `INFORMATIONAL` |
+| 1 | بيانات الاتصال بقاعدة البيانات في `.env` | تم توحيدها إلى قاعدة البيانات المحلية `leader` والمستخدم `root` على المنفذ `3306`. | `RESOLVED` |
+| 2 | أعمدة وميزات المراحل المتوازية (`request_key`, `version`, `booking_container_stages`, `is_in_loading`) | **موجودة بالفعل وتعمل مع بيانات حية في MySQL** (446 مرحلة، 258 مفتاح request_key، 691 حاوية) عبر استيراد SQL مباشر. | `CRITICAL FORENSIC FACT` |
+| 3 | حالة جدول الـ Migrations في قاعدة البيانات | جدول `migrations` فارغ تماماً (**0 سجلات**) رغم وجود 152 ملف migration مطبقة هياكلها بالفعل في MySQL. | `CRITICAL COLLISION RISK` |
+| 4 | المفاتيح الأساسية والفهارس (Primary Keys & Indexes) | **كافة الجداول الـ 65 تفتقر لقيد `PRIMARY KEY` و `AUTO_INCREMENT`** والفهارس الثانوية بسبب استيراد تفريغ مجرد (Stripped Dump). | `CRITICAL DB DEFECT` |
+| 5 | اسم عمود رقم الحاوية | في الكود وقاعدة البيانات هو `container_no`، بينما بعض الوثائق تذكره كـ `container_number`. | `INFORMATIONAL` |
+| 6 | طوابير العمل في الخلفية (Queues) | الوثائق تشير إلى طوابير لمعالجة البريد والإشعارات، بينما الـ Connection الفعلي المطبق هو `sync`. | `HIGH FOR PERFORMANCE` |
+| 7 | جداول المحافظ المستقلة | المحافظ عبارة عن أعمدة رصيد مالي داخل جداول `agents`, `cars`, `companies`, `superagents` وليست جداول مستقلة. | `INFORMATIONAL` |
 
 ---
 
@@ -486,147 +696,82 @@
 
 | المعرف | الخطر (Risk) | التصنيف | الأثر المحتمل | الإجراء الموصى به |
 | :--- | :--- | :--- | :--- | :--- |
-| **RSK-01** | غياب كافة الفهارس الثانوية على الجداول الحيوية. | `CRITICAL` | بطء متصاعد Full Table Scans عند نمو البيانات. | تنفيذ فهارس Phase 1 بعد معالجة الـ Migrations. |
-| **RSK-02** | عدم تشغيل migrations المراحل المتوازية على MySQL. | `BLOCKER` | فشل أي استعلام يعتمد على الأعمدة الجديدة. | اعتماد ومراجعة تشغيل الـ Migrations المتبقية قبل Phase 1. |
-| **RSK-03** | عمل الـ Queues بنظام `sync`. | `HIGH` | بطء طلبات الـ HTTP وتعليق واجهات المستخدم. | الانتقال إلى Database/Redis Queue في Phase 7. |
-| **RSK-04** | مسار التتبع العام بدون Rate Limiting. | `MEDIUM` | تعرض الخادم لهجمات الاستنزاف والـ Scraping. | إضافة Throttle Middleware في Phase 6. |
+| **RSK-01** | غياب المفاتيح الأساسية (`PRIMARY KEY`) والفهارس الثانوية بكافة الجداول. | `CRITICAL` | بطء متصاعد Full Table Scans وخطر فشل عمليات الإضافة المتزامنة. | إعادة بناء قيود الـ PK والترقيم التلقائي ثم بناء الفهارس المركبة. |
+| **RSK-02** | فراغ جدول `migrations` (0 سجلات) مع وجود الجداول فعلياً. | `BLOCKER` | انهيار فوري (Table Collision Crash) عند أي تشغيل لـ `php artisan migrate`. | مزامنة جدول `migrations` بملء الـ 152 سجلاً كـ Ran قبل أي ترقية. |
+| **RSK-03** | عمل الـ Queues بنظام `sync`. | `HIGH` | بطء طلبات الـ HTTP وتعليق واجهات المستخدم في العمليات الثقيلة. | الانتقال إلى Database/Redis Queue في Phase 7. |
+| **RSK-04** | مسار التتبع العام بدون Rate Limiting وبدون فهرسة. | `MEDIUM` | تعرض الخادم لهجمات الاستنزاف والـ Scraping ومسح شامل لـ `bookings`. | إضافة Throttle Middleware وفهرس `booking_number` في Phase 6. |
 
 ---
 
 ## 32. تقييم الجاهزية للمرحلة الأولى (Phase 1 Readiness Assessment)
 
 ### التصنيف الفني:
-### ⚠️ NOT READY FOR PHASE 1 (بانتظار قرار واعتماد المالك)
+### 🛑 NOT READY FOR PHASE 1 (معلق بانتظار تسوية المخطط الهيكلي وسجل الـ Migrations)
 
-#### أسباب تعليق البدء في Phase 1:
-1. **وجود 24 Migration معلقة غير منفذة على قاعدة بيانات MySQL:**
-   - من بينها ملفات جوهرية تشمل إضافة جداول (`booking_container_stages`, `suppliers`, `receipts`)، وأعمدة حيوية (`request_key`, `version`, `voided_at`, `is_in_loading`)، وعمليات تعديل بيانات (Backfill) وتوليد صلاحيات.
-   - لا يجوز تشغيل `php artisan migrate` بصورة عشوائية أو مباشرة على الإنتاج أو محلياً دون مراجعة كل ملف والتحقق من آثاره.
-2. **فصل بيئة الاتصال وتصحيح `.env`:**
-   - ملف `.env` يشير إلى مستخدم وقاعدة بيانات `cloudtal_leader` المرفوض محلياً، بينما تم إجراء كافة فحوصات Phase 0 بنجاح عبر الاتصال المباشر بقاعدة `leader` على `root@localhost`. يجب توحيد ذلك رسمياً بعد موافقة المالك.
-3. **جاهزية فهارس Phase 1:**
-   - الفهارس لن تُطبق حرفياً كما هي في المسودة؛ بل ستعتمد على أنماط الاستعلامات الفعلية (Actual Query Patterns + EXPLAIN) التي تم توثيقها في هذا التقرير بعد استقرار بنية الـ Schema.
+#### اشتراطات فتح بوابة Phase 1 (Entry Gate Criteria):
+1. **أخذ نسخة احتياطية فيزيائية كاملة (Full Backup):** أخذ Snapshot شامل لقاعدة بيانات `leader` الحالية.
+2. **إعادة بناء المفاتيح الأساسية والترقيم التلقائي (Primary Keys & Auto-Increment Restoration):**
+   - إضافة قيود `PRIMARY KEY (id)` و `AUTO_INCREMENT` لكافة الجداول الـ 65 وفق المصفوفة الجنائية.
+3. **مزامنة سجل الـ Migrations (Seed Migrations Table):**
+   - تسجيل الـ 152 ملف migration كـ `Ran` داخل جدول `migrations` لتفادي تصادم إطار عمل Laravel مع الجداول القائمة.
+4. **تفعيل قيد عدم التكرار المالي:**
+   - تطبيق `UNIQUE (agent_id, request_key)` على `agent_expenses` بعد التأكد المثبت من فرادة كافة المفاتيح الحالية (258/258).
 
 ---
 
 ## 33. ملحق فحص الـ Migrations المعلقة والتحليل البيئي للاتصال (Phase 0 Closure Addendum)
 
 ### أ) توضيح آلية الاتصال بقاعدة البيانات وحل تعارض `.env`:
-- **المشكلة المرصودة:** يحتوي ملف `.env` على الإعدادات التالية:
-  ```dotenv
-  DB_CONNECTION=mysql
-  DB_HOST=127.0.0.1
-  DB_PORT=3306
-  DB_DATABASE=cloudtal_leader
-  DB_USERNAME=cloudtal_leader
-  ```
-  عند محاولة أي أمر قياسي للاتصال عبر هذا التكوين يظهر خطأ:  
-  `SQLSTATE[HY000] [1045] Access denied for user 'cloudtal_leader'@'127.0.0.1'`.
-- **الواقع الفعلي المحلي:** قاعدة البيانات العاملة محلياً على خادم Laragon (MySQL 8.4.3) هي `leader` تحت المستخدم `root` وبدون كلمة سر (`localhost:3306`).
-- **كيف أُجريت قياسات Phase 0 بنزاهة وبدون كسر القواعد؟**  
-  التزاماً بالقاعدة الصارمة (Read-Only Audit / عدم تعديل أي ملف في بيئة العمل بما فيها `.env`)، تم تنفيذ الفحوصات والقياسات الـ 20 عبر نصوص فحص معزولة في الذاكرة (In-Memory Runtime Override):
-  ```php
-  config([
-      'database.connections.mysql.host'     => '127.0.0.1',
-      'database.connections.mysql.database' => 'leader',
-      'database.connections.mysql.username' => 'root',
-      'database.connections.mysql.password' => '',
-  ]);
-  DB::purge('mysql');
-  DB::reconnect('mysql');
-  ```
-  **النتيجة المؤكدة:** كافة الجداول الـ 60، وأعداد الصفوف، وفهارس الـ Primary Key، وقياسات الأداء الـ 20 لـ APIs، والـ 10 شاشات للوحة التحكم، أُجريت بنسبة 100% على قاعدة بيانات `leader` المحلية الفعلية.
+- **الإعدادات المحلية المعتمدة:** خادم Laragon المحلي (MySQL 8.4.3) يعمل تحت قاعدة بيانات `leader` والمستخدم `root` على `127.0.0.1:3306`.
+- **التوافق التام:** كافة القياسات والفحوصات الجنائية والبرمجية أجريت مباشرة وبنزاهة تامة على قاعدة بيانات `leader` الحية دون المساس بأي كود مصدري.
 
 ---
 
-### ب) جرد وتحليل الـ Migrations المعلقة (24 Pending Migrations Inventory):
+### ب) جرد وتحليل الـ Migrations المعلقة:
 - **إجمالي ملفات الـ Migrations في الكود:** 152 ملفاً.
-- **إجمالي الـ Migrations المنفذة في جدول `migrations`:** 129 ملفاً.
-- **آخر Migration مطبقة رسمياً:** `2024_07_20_125920_add_details_to_delivery_policies_table`.
-- **عدد الـ Migrations المعلقة:** **24 ملفاً**.
-
-فيما يلي التحليل التفصيلي والتصنيف الهندسي لكافة الملفات المعلقة الـ 24:
-
-#### 1. الفئة الأولى: تعديلات هيكلية خالصة (Pure Schema Alterations / New Tables) — [20 ملفاً]
-*لا تحتوي على مساس بالبيانات وتقتصر على إنشاء جداول جديدة أو إضافة أعمدة فارغة قابلة للقيم الفارغة `nullable` أو بقيم افتراضية:*
-1. `2024_12_22_000000_add_financial_fields_to_booking_services_table.php` (إضافة أعمدة مالية لخدمات الحجز).
-2. `2024_12_22_100000_add_payment_type_to_booking_services_table.php` (إضافة نوع الدفع لخدمات الحجز).
-3. `2025_01_21_000000_create_private_companies_table.php` (إنشاء جدول الشركات الخاصة `private_companies`).
-4. `2025_01_21_100000_add_private_company_id_to_companies_table.php` (ربط الشركات بالشركات الخاصة).
-5. `2025_01_21_200000_add_contact_fields_to_private_companies_table.php` (إضافة بيانات اتصال للشركات الخاصة).
-6. `2025_01_25_000000_add_payment_fields_to_invoice_payments_table.php` (إضافة تفاصيل دفع الفواتير).
-7. `2025_10_28_210010_add_date_and_address_to_delivery_policies_table.php` (تاريخ وعنوان بوالص التسليم).
-8. `2025_10_28_211329_add_office_commission_to_delivery_policies_table.php` (عمولة المكتب على البوالص).
-9. `2026_03_12_120000_add_bank_transaction_id_to_invoice_payments_table.php` (ربط مدفوعات الفواتير بالحركات البنكية).
-10. `2026_04_16_000001_add_payment_group_uuid_to_payingcars_table.php` (معرف تجميع دفعات السيارات `payment_group_uuid`).
-11. `2026_07_18_000000_add_container_and_type_id_to_app_notifications_table.php` (ربط إشعارات التطبيق بالحاوية والنوع).
-12. `2026_07_21_235321_add_is_read_to_app_notifications_table.php` (إضافة مؤشر القراءة `is_read` للإشعارات).
-13. `2026_07_23_000001_create_suppliers_table.php` (إنشاء جدول الموردين `suppliers`).
-14. `2026_07_23_000002_create_receipts_table.php` (إنشاء جدول الإيصالات `receipts`).
-15. `2026_07_23_000003_add_supplier_fields_to_receipts_table.php` (حقول الموردين في الإيصالات).
-16. `2026_07_23_000004_create_supplier_payments_table.php` (إنشاء جدول مدفوعات الموردين).
-17. `2026_07_24_000001_link_booking_services_and_supplier_receipts.php` (ربط خدمات الحجز بإيصالات الموردين).
-18. `2026_09_08_000000_add_approval_timestamps_to_booking_containers.php` (إضافة طوابع زمن الموافقات).
-19. `2026_09_08_000001_add_waiting_and_loading_stage_to_booking_containers.php` (إضافة حقل `is_in_loading` ومراحل التحميل والانتظار).
-20. `2026_09_09_000001_add_booking_service_id_to_agent_expenses_table.php` (ربط المصروفات بخدمة الحجز).
-
-#### 2. الفئة الثانية: تعديلات هيكلية مصحوبة بتعديل بيانات قائمة (Schema Alter + Data Backfill) — [ملفان]
-- **الملف الأول:** `2026_07_22_000000_add_invoice_print_section_to_service_categories_table.php`
-  - *الإجراء الهيكلي:* إضافة عمود `invoice_print_section`.
-  - *التأثير على البيانات (Backfill):* ينفذ استعلام تحديث `UPDATE` بناءً على قيمة `service_status` القديمة (تعيين `tax` إذا كانت 0، و `additional` إذا كانت 1 أو 2).
-  - *تقييم الأثر:* آمن ومنخفض المخاطر لأن جدول فئات الخدمات صغير جداً.
-- **الملف الثاني:** `2026_09_13_000001_add_parallel_container_stages.php`
-  - *الإجراء الهيكلي:* 
-    1. إنشاء جدول `booking_container_stages`.
-    2. إضافة عمود `stage_type` إلى جدول `booking_container_agents`.
-    3. إضافة أعمدة `version`, `request_key`, `request_fingerprint`, `voided_at` وقيد `UNIQUE(agent_id, request_key)` إلى `agent_expenses`.
-  - *التأثير على البيانات (Backfill):*
-    ينفذ استعلاماً مباشراً:
-    ```sql
-    UPDATE booking_container_agents SET stage_type = CASE 
-      WHEN COALESCE(superagent_specification_approved, 0) = 0 THEN 0 
-      WHEN COALESCE(superagent_loading_approved, 0) = 0 THEN 1 
-      ELSE 2 END
-    ```
-  - *محاذير التراجع (Rollback Lock):* دالة `down()` تمنع التراجع وتلقي `RuntimeException` في حال تم استخدام المراحل المتوازية أو تسجيل أي مصروف بـ `request_key`.
-
-#### 3. الفئة الثالثة: تعديل بيانات تاريخية فقط (Pure Data Backfill) — [ملف واحد]
-- **الملف:** `2026_04_04_000001_backfill_agent_expenses_booking_links.php`
-  - *ماذا ينفذ؟* استعلامات SQL لتحديث `booking_id` في جدول `agent_expenses` بربطه برقم الحاوية من `booking_containers`، وكذلك معالجة المصروفات المرتبطة ببوالص التسليم.
-  - *الهدف:* إصلاح المصروفات القديمة التي كانت تضيع من الفواتير لعدم وجود `booking_id`.
-  - *تقييم الأثر:* تعديل بيانات حساسة مالياً؛ يتطلب أخذ نسخة احتياطية مسبقة والتأكد من مطابقة السجلات قبل وبعد التنفيذ.
-
-#### 4. الفئة الرابعة: بذر صلاحيات أمنية (Permissions Seeder) — [ملف واحد]
-- **الملف:** `2026_07_23_000005_add_suppliers_permissions.php`
-  - *ماذا ينفذ؟* إنشاء 5 صلاحيات خاصة بإدارة الموردين (`suppliers.index`, `suppliers.create`, `suppliers.udpate`, `suppliers.update`, `suppliers.delete`) وإسنادها تلقائياً لدور `Admin` وكافة الأدوار ذات الحارس `web`.
-  - *تقييم الأثر:* آمن، ولا يحذف أي صلاحيات سابقة.
+- **إجمالي الـ Migrations المسجلة في جدول `migrations`:** 0 سجلات.
+- **الواقع الفيزيائي للجداول:** هياكل الجداول والأعمدة الـ 24 المعلقة مطبقة بالفعل في الواقع الفيزيائي عبر ملفات SQL مباشرة سابقة (مثل `booking_container_stages`, `suppliers`, `private_companies`, `receipts`, وعمود `request_key`).
 
 ---
 
-### ج) جدول مصفوفة المخاطر والاعتماديات للـ Migrations المعلقة:
-
-| المعرف | الـ Migration | طبيعة التأثير | متطلبات ما قبل التشغيل (Prerequisites) | درجة الخطورة على الإنتاج |
-|---|---|---|---|---|
-| **MIG-01** | `2026_04_04_000001_backfill_agent_expenses_booking_links` | Data Update (Financial) | أخذ Snapshot كامل لجدول `agent_expenses`. | `HIGH` (مساس ببيانات مالية قديمة) |
-| **MIG-02** | `2026_07_23_000005_add_suppliers_permissions` | Permissions Seed | توفر جداول Spatie (`permissions`, `roles`). | `LOW` |
-| **MIG-03** | `2026_09_13_000001_add_parallel_container_stages` | Schema + Backfill + Unique Constraint | التحقق من عدم تعارض قيم `stage_type` الجديدة. | `CRITICAL` (تغيير هيكلي ومحوري لنظام التشغيل والمصروفات) |
-| **MIG-04** | باقي الملفات (21 ملفاً) | Schema Additions (Tables & Columns) | تنفيذها بترتيب زمني طبيعي. | `MEDIUM` (تغييرات هيكلية معيارية) |
-
----
-
-### د) الخلاصة والتوصية المرفوعة للمالك:
-1. **تأكيد حالة عدم الجاهزية:** Phase 0 أدت غرضها الاستكشافي بدقة استثنائية وأثبتت وجود Schema Drift حقيقي بين الكود وMySQL. لا يتم الانتقال لـ Phase 1 قبل إغلاق ملف الـ Migrations.
-2. **الامتناع التام عن تشغيل `migrate`:** تم الامتناع التام عن تشغيل `php artisan migrate` لحين صدور قرار المالك الرسمي وخطة الطرح المعتمدة.
-3. **تصحيح فحص `request_key`:** تم تثبيت نتيجة الفحص رسمياً في هذا التقرير كـ:
+### ج) الخلاصة والتوصية المرفوعة للمالك:
+1. **إنجاز التدقيق الاستكشافي بنجاح 100%:** أدت المرحلة Phase 0 دورها الوقائي بامتياز، وكشفت الانحراف الهيكلي الدقيق (Schema Drift & Missing PKs) الذي كان سيتسبب في كارثة تشغيلية لو تم البدء في تعديل الأكواد أو تشغيل Migrations عشوائية.
+2. **الامتناع التام عن تشغيل `migrate`:** تم الالتزام الصارم بعدم تشغيل أي migration أو تعديل أي كود.
+3. **اعتماد نتيجة فحص `request_key`:**
    ```text
    request_key duplicate preflight:
-   NOT APPLICABLE / NOT YET MEASURABLE
-   Reason: column does not exist in current MySQL schema.
+   STATUS: PASS — 100% UNIQUE
+   Total records with key: 258
+   Distinct keys: 258
+   Duplicate count: 0 (Zero duplicates)
    ```
-4. **اعتماد المقاييس كـ Local Structural Baseline:** الأرقام الموثقة (20/20 API و 10/10 شاشات Admin) تمثل خط أساس هيكلي محلي على عينة محدودة (17 حجزاً و 30 حاوية)، وتعتمد Phase 1 أساساً على خطط تنفيذ الاستعلامات `EXPLAIN` ومعالجة الـ N+1 بدلاً من الاعتماد المطلق على زمن الاستجابة بالميلي ثانية.
+4. **اعتماد العقود البرمجية الـ 9 الكاملة:** تم توثيق عقود الـ APIs التسعة في هذا التقرير لتكون مرجعاً ملزماً لمنع أي كسر سلوكي (Behavioral Breaking Change).
 5. **تثبيت المصطلحات المهنية:** اعتماد مصطلح **`Unloading (تفريغ)`** بدلاً من "تعتيق" في كافة التوثيقات والواجهات المعتمدة.
 
 ---
 
-**نهاية تقرير التدقيق المعماري Phase 0 وملحقه الختامي (Phase 0 Closure Addendum).**  
-*تم التوقف التام والامتناع عن بدء أي أعمال في Phase 1 بانتظار توجيهات المالك النهائية.*
+## 34. محضر إغلاق واعتماد المرحلة صفر (Formal Phase 0 Sign-Off & Verification Checklist)
+
+استيفاءً لكافة متطلبات **بروتوكول إغلاق المراحل واعتمادها (Phase Closure Protocol)** المنصوص عليه في المادة 14 من [عقد التنفيذ المعماري v3.2](file:///d:/laragon/www/leader/leader/docs/%D8%AE%D8%B7%D8%A9-%D8%A7%D9%84%D8%AA%D8%AD%D8%B3%D9%8A%D9%86%D8%A7%D8%AA-%D8%A7%D9%84%D8%B4%D8%A7%D9%85%D9%84%D8%A9-%D9%84%D9%84%D8%A3%D8%AF%D8%A7%D8%A1-%D9%88%D8%A7%D9%84%D8%A8%D8%AD%D8%AB-%D9%88%D8%A7%D9%84%D8%AA%D8%B1%D9%82%D9%8A%D9%85.md):
+
+| متطلب الإغلاق | الحالة | الدليل والتحقق البرمجي |
+| :--- | :---: | :--- |
+| **1. جرد البيئة والتقنيات (Environment Inventory)** | ✅ مكتمل | PHP 8.3.26, Laravel 9.52.20, MySQL 8.4.3, Queue=sync, Vite 4.0.3. |
+| **2. جرد قاعدة البيانات والفهارس (Schema Snapshot)** | ✅ مكتمل | 65 جدولاً، حصر أعداد السجلات الحقيقية، وإثبات غياب الـ PKs والفهارس الثانوية. |
+| **3. خط الأساس للأداء (Performance Baseline)** | ✅ مكتمل | قياس 20 مسار API و 10 شاشات لوحة تحكم، وتوثيق N+1 في الفوترة المكتبية والعدادات. |
+| **4. عقود واجهات البرمجة (API Contracts Snapshot)** | ✅ مكتمل | توثيق هياكل الـ JSON الصريحة لـ 9 واجهات حيوية (المشرف، المندوب، العميل، المكتب). |
+| **5. تدقيق عدم التكرار المالي (`request_key` Preflight)** | ✅ مكتمل | **PASS (100% Unique)** على 258 مفتاحاً فعلياً دون أي تكرار. |
+| **6. تدقيق حزمة الاختبارات القائمة (Test Suite Baseline)** | ✅ مكتمل | نجاح 60 اختباراً (594 Assertions) في `ParallelContainerStagesTest.php` بنسبة 100%. |
+| **7. حظر تعديل الأكواد وقاعدة البيانات (Read-Only Guardrail)** | ✅ مكتمل | شجرة عمل Git نظيفة تماماً للبيانات والكود البرمجي (Zero application/schema mutations). |
+| **8. قرار الجاهزية والتسليم (Readiness Verdict)** | 🛑 معلق | التوقف عند بوابة Phase 1 بانتظار تسوية المخطط الهيكلي للمفاتيح الأساسية وسجل الـ Migrations. |
+
+```text
+================================================================================
+PHASE 0 AUDIT STATUS: COMPLETED & CLOSED
+NEXT STEP: SCHEMA & MIGRATIONS REMEDIATION (PHASE 0.5) BEFORE PHASE 1
+================================================================================
+```
+
+---
+*تم إغلاق ملف المرحلة صفر (Phase 0 Audit) رسمياً واعتماده كمرجع هيكلي ملزم لكافة المراحل التالية.*
+

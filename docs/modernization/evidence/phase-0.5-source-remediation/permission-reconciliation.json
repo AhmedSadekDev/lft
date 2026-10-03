@@ -1,0 +1,69 @@
+{
+    "generated_at": "2026-10-03 20:41:09 UTC",
+    "mode": "postflight",
+    "metrics": {
+        "roles_count": {
+            "leader": "2",
+            "canonical_clone": "2",
+            "pre_incident_evidence": 2,
+            "match": true
+        },
+        "permissions_count": {
+            "leader": "129",
+            "canonical_clone": "129",
+            "pre_incident_evidence": 129,
+            "match": true
+        },
+        "role_has_permissions_count": {
+            "leader": "201",
+            "canonical_clone": "201",
+            "pre_incident_evidence": 201,
+            "match": true
+        },
+        "model_has_roles_count": {
+            "leader": "8",
+            "canonical_clone": "8",
+            "pre_incident_evidence": 8,
+            "match": true
+        },
+        "model_has_permissions_count": {
+            "leader": "0",
+            "canonical_clone": "0",
+            "pre_incident_evidence": 0,
+            "match": true
+        },
+        "role_has_permissions_sha256": {
+            "leader": "b7b7178abe57b3c762b7bd564a3879c7cd835cdacae74a65f063fc91a073d630",
+            "canonical_clone": "b7b7178abe57b3c762b7bd564a3879c7cd835cdacae74a65f063fc91a073d630",
+            "pre_incident_evidence": null,
+            "match": true
+        },
+        "model_has_roles_sha256": {
+            "leader": "9f40254fe4d69abae11632fee0df2908d7e9f120694c36278509caba4040bc8a",
+            "canonical_clone": "9f40254fe4d69abae11632fee0df2908d7e9f120694c36278509caba4040bc8a",
+            "pre_incident_evidence": null,
+            "match": true
+        },
+        "permissions_sha256": {
+            "leader": "b53663fb7cebe7099e31b9819f506b81efc6c1549b5844eb4517146acdfe1dae",
+            "canonical_clone": "b53663fb7cebe7099e31b9819f506b81efc6c1549b5844eb4517146acdfe1dae",
+            "pre_incident_evidence": null,
+            "match": true
+        },
+        "suppliers_udpate_typo_rows": {
+            "leader": "1",
+            "canonical_clone": "1",
+            "pre_incident_evidence": null,
+            "match": true
+        }
+    },
+    "permission_variance": 0,
+    "row_level_identical_to_backup_184935": {
+        "roles": true,
+        "permissions": true,
+        "role_has_permissions": true,
+        "model_has_roles": true,
+        "model_has_permissions": true
+    },
+    "overall_permission_match": true
+}

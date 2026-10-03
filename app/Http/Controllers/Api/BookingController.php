@@ -42,12 +42,15 @@ class BookingController extends Controller
 
     public function getCompanyBookings()
     {
+        // relations read by BookingResource / ContainerResource
+        $relations = ['bookingContainers.container', 'bookingContainers.branch', 'last_movements', 'employee', 'shippingAgent'];
+
         if (auth('employees')->check()) {
             $employeeId = auth('employees')->id();
-            $bookings = Booking::where('employee_id', $employeeId)->get();
+            $bookings = Booking::with($relations)->where('employee_id', $employeeId)->get();
         } else {
             $company = auth()->user();
-            $bookings = $company->bookings; // حسب العلاقة المعرفة في الموديل
+            $bookings = $company->bookings()->with($relations)->get(); // حسب العلاقة المعرفة في الموديل
         }
     
         return $this->returnAllData(BookingResource::collection($bookings));

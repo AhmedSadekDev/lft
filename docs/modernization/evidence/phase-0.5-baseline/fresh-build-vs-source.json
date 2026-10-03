@@ -1,0 +1,128 @@
+{
+    "generated_at": "2026-10-03 20:57:46 UTC",
+    "fresh_build_baseline_only": {
+        "database": "lft_fresh_baseline (disposable, empty utf8mb4_unicode_ci)",
+        "artisan_target_check": "lft_fresh_baseline",
+        "migrate": {
+            "command": "DB_DATABASE=lft_fresh_baseline TELESCOPE_ENABLED=false php artisan migrate --force --path=database/migrations/2026_10_01_000000_canonical_baseline_schema.php",
+            "exit": 0,
+            "output": "INFO  Preparing database.  \n\r\n  Creating migration table   1,204ms DONE\r\n\r\n   INFO  Running migrations.  \n\r\n  2026_10_01_000000_canonical_baseline_schema   45,254ms DONE"
+        },
+        "counts": {
+            "tables": 65,
+            "columns": 599,
+            "primary_keys": 64,
+            "auto_increment": 60,
+            "unique_non_pk": 8,
+            "non_unique_indexes": 71,
+            "foreign_keys": 61,
+            "fk_backing_indexes": 59,
+            "historical_non_unique_indexes": 12,
+            "fk_on_delete": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            }
+        },
+        "schema_sha256": "184d02eaa5780b5f307c64dde4a2e72b2438e55204323d5dcd86089a165b62ea",
+        "leader_schema_sha256": "184d02eaa5780b5f307c64dde4a2e72b2438e55204323d5dcd86089a165b62ea",
+        "differences_vs_leader": [],
+        "identical_to_leader": true,
+        "lft_baseline_verify": true,
+        "migrate_status": {
+            "2026_10_01_000000_canonical_baseline_schema": "Ran (batch 1)",
+            "2026_10_01_000001_create_agent_photos_table": "Pending"
+        }
+    },
+    "fresh_build_full_migrate": {
+        "database": "lft_fresh_full (disposable, empty utf8mb4_unicode_ci)",
+        "artisan_target_check": "lft_fresh_full",
+        "discovered_before_migrate": [],
+        "migrate": {
+            "command": "DB_DATABASE=lft_fresh_full TELESCOPE_ENABLED=true php artisan migrate --force",
+            "exit": 0,
+            "output": "INFO  Preparing database.  \n\r\n  Creating migration table   477ms DONE\r\n\r\n   INFO  Running migrations.  \n\r\n  2026_10_01_000000_canonical_baseline_schema   64,969ms DONE\r\n  2026_10_01_000001_create_agent_photos_table   1,525ms DONE"
+        },
+        "migrations_rows": [
+            {
+                "migration": "2026_10_01_000000_canonical_baseline_schema",
+                "batch": 1
+            },
+            {
+                "migration": "2026_10_01_000001_create_agent_photos_table",
+                "batch": 1
+            }
+        ],
+        "counts": {
+            "tables": 66,
+            "columns": 605,
+            "primary_keys": 65,
+            "auto_increment": 61,
+            "unique_non_pk": 8,
+            "non_unique_indexes": 73,
+            "foreign_keys": 61,
+            "fk_backing_indexes": 59,
+            "historical_non_unique_indexes": 14,
+            "fk_on_delete": {
+                "CASCADE": 32,
+                "SET NULL": 29
+            }
+        },
+        "differences_vs_leader": [
+            {
+                "table": "agent_photos",
+                "what": "table",
+                "a": false,
+                "b": true
+            }
+        ],
+        "only_difference_is_pending_post_baseline_agent_photos": true,
+        "telescope_or_sanctum_package_migrations_discovered": false,
+        "migrate_status": {
+            "2026_10_01_000000_canonical_baseline_schema": "Ran (batch 1)",
+            "2026_10_01_000001_create_agent_photos_table": "Ran (batch 1)"
+        }
+    },
+    "negative_tests_populated_unadopted_database": {
+        "database": "leader_restore_verify (restore of the fresh pre-correction backup of leader)",
+        "artisan_target_check": "leader_restore_verify",
+        "verify_differences": 6,
+        "adopt_dry_run": {
+            "command": "DB_DATABASE=leader_restore_verify TELESCOPE_ENABLED=false php artisan lft:baseline:adopt --dry-run",
+            "exit": 1,
+            "output": "[ok] mysql_driver\r\n  [ok] migrations_table_exists\r\n  [FAIL] structure_matches_fingerprint\r\n  [ok] no_migration_recorded_yet\r\n[\n    {\n        \"table\": \"agent_expenses\",\n        \"what\": \"index\",\n        \"name\": \"agent_expense_request_unique\",\n        \"expected\": {\n            \"unique\": true,\n            \"type\": \"BTREE\",\n            \"columns\": [\n                \"agent_id\",\n                \"request_key\"\n            ]\n        },\n        \"actual\": null\n    },\n    {\n        \"table\": \"agent_expenses\",\n        \"what\": \"index\",\n        \"name\": \"agent_expenses_agent_id_request_key_unique\",\n        \"expected\": null,\n        \"actual\": {\n            \"unique\": true,\n            \"type\": \"BTREE\",\n            \"columns\": [\n                \"agent_id\",\n                \"request_key\"\n            ]\n        }\n    },\n    {\n        \"table\": \"booking_container_stages\",\n        \"what\": \"index\",\n        \"name\": \"container_stage_unique\",\n        \"expected\": {\n            \"unique\": true,\n            \"type\": \"BTREE\",\n            \"columns\": [\n                \"booking_container_id\",\n                \"type_id\"\n            ]\n        },\n        \"actual\": null\n    },\n    {\n        \"table\": \"booking_container_stages\",\n        \"what\": \"index\",\n        \"name\": \"booking_container_stages_booking_container_id_type_id_unique\",\n        \"expected\": null,\n        \"actual\": {\n            \"unique\": true,\n            \"type\": \"BTREE\",\n            \"columns\": [\n                \"booking_container_id\",\n                \"type_id\"\n            ]\n        }\n    },\n    {\n        \"table\": \"receipts\",\n        \"what\": \"fk\",\n        \"name\": \"fk_receipts_booking_id\",\n        \"expected\": {\n            \"columns\": [\n                \"booking_id\"\n            ],\n            \"ref_table\": \"bookings\",\n            \"ref_columns\": [\n                \"id\"\n            ],\n            \"on_delete\": \"SET NULL\",\n            \"on_update\": \"NO ACTION\"\n        },\n        \"actual\": {\n            \"columns\": [\n                \"booking_id\"\n            ],\n            \"ref_table\": \"bookings\",\n            \"ref_columns\": [\n                \"id\"\n            ],\n            \"on_delete\": \"CASCADE\",\n            \"on_update\": \"NO ACTION\"\n        }\n    },\n    {\n        \"table\": \"receipts\",\n        \"what\": \"fk\",\n        \"name\": \"fk_receipts_supplier_id\",\n        \"expected\": {\n            \"columns\": [\n                \"supplier_id\"\n            ],\n            \"ref_table\": \"suppliers\",\n            \"ref_columns\": [\n                \"id\"\n            ],\n            \"on_delete\": \"SET NULL\",\n            \"on_update\": \"NO ACTION\"\n        },\n        \"actual\": {\n            \"columns\": [\n                \"supplier_id\"\n            ],\n            \"ref_table\": \"suppliers\",\n            \"ref_columns\": [\n                \"id\"\n            ],\n            \"on_delete\": \"CASCADE\",\n            \"on_update\": \"NO ACTION\"\n        }\n    }\n]\r\nRefused: leader_restore_verify cannot adopt the canonical baseline."
+        },
+        "adopt_refused": true,
+        "migrate": {
+            "command": "DB_DATABASE=leader_restore_verify TELESCOPE_ENABLED=false php artisan migrate --force",
+            "exit": 1,
+            "output": "INFO  Running migrations.  \n\r\n  2026_10_01_000000_canonical_baseline_schema   7ms FAIL\r\n\r\n   RuntimeException \r\n\r\n  Canonical baseline refused: the database already contains 64 baseline table(s) (e.g. agent_car_tranfers, agent_expenses, agents, app_notifications, bank_trnsactions). Existing databases are adopted with `php artisan lft:baseline:adopt`, never migrated.\r\n\r\n  at D:\\laragon\\www\\leader\\leader\\database\\migrations\\2026_10_01_000000_canonical_baseline_schema.php:24\r\n     20▕ \r\n     21▕         $existing = array_column($db->select('SELECT TABLE_NAME AS t FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()'), 't');\r\n     22▕         $clash = array_values(array_intersect(CanonicalBaseline::tables(), $existing));\r\n     23▕         if ($clash !== []) {\r\n  ➜  24▕             throw new RuntimeException(sprintf(\r\n     25▕                 'Canonical baseline refused: the database already contains %d baseline table(s) (e.g. %s). Existing databases are adopted with `php artisan lft:baseline:adopt`, never migrated.',\r\n     26▕                 count($clash),\r\n     27▕                 implode(', ', array_slice($clash, 0, 5))\r\n     28▕             ));\r\n\r\n  1   D:\\laragon\\www\\leader\\leader\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php:496\r\n      Illuminate\\Database\\Migrations\\Migration@anonymous\\D:\\laragon\\www\\leader\\leader\\database\\migrations\\2026_10_01_000000_canonical_baseline_schema.php:11$f8::up()\r\n\r\n  2   D:\\laragon\\www\\leader\\leader\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php:414\r\n      Illuminate\\Database\\Migrations\\Migrator::runMethod(Object(Illuminate\\Database\\MySqlConnection), Object(Illuminate\\Database\\Migrations\\Migration@anonymous\\D:\\laragon\\www\\leader\\leader\\database\\migrations\\2026_10_01_000000_canonical_baseline_schema.php:11$f8), \"up\")"
+        },
+        "migrate_refused_by_baseline_guard": true,
+        "schema_unchanged": true,
+        "migrations_rows_after": 0
+    },
+    "leader_before_adoption": {
+        "artisan_target_check": "leader",
+        "verify": {
+            "database": "leader",
+            "fingerprint_sha256": "b72a8f02f612641d23aefaae55d81c2c57c2b658ba298ae1513796b823e40cb1",
+            "identical": true,
+            "differences": []
+        },
+        "migrate_status": {
+            "2026_10_01_000000_canonical_baseline_schema": "Pending",
+            "2026_10_01_000001_create_agent_photos_table": "Pending"
+        },
+        "adopt_dry_run": {
+            "command": "DB_DATABASE=leader TELESCOPE_ENABLED=false php artisan lft:baseline:adopt --dry-run",
+            "exit": 0,
+            "output": "[ok] mysql_driver\r\n  [ok] migrations_table_exists\r\n  [ok] structure_matches_fingerprint\r\n  [ok] no_migration_recorded_yet\r\nDry run: leader is eligible; would record 2026_10_01_000000_canonical_baseline_schema in batch 1."
+        },
+        "binlog_unchanged": true
+    },
+    "disposable_databases_dropped": [
+        "lft_fresh_baseline",
+        "lft_fresh_full"
+    ],
+    "pass": true
+}
