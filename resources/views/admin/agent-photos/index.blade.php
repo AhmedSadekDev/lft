@@ -16,55 +16,156 @@
         border-radius: .5rem;
         overflow: hidden;
         transition: box-shadow .2s ease, transform .2s ease;
+        position: relative;
     }
     .agent-photos-page .photo-card:hover {
         box-shadow: 0 .5rem 1.5rem rgba(24, 28, 50, .1);
         transform: translateY(-2px);
     }
+    .agent-photos-page .photo-card.is-selected {
+        border-color: #3699ff;
+        background-color: #f0f7ff;
+    }
     .agent-photos-page .photo-preview {
         align-items: center;
         background: #f3f6f9;
         display: flex;
-        height: 220px;
+        height: 200px;
         justify-content: center;
         overflow: hidden;
+        position: relative;
     }
     .agent-photos-page .photo-preview img {
         height: 100%;
         object-fit: contain;
         width: 100%;
     }
+    .agent-photos-page .photo-checkbox-wrap {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 5;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 4px 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
     .agent-photos-page .photo-name {
         overflow-wrap: anywhere;
+        font-size: 0.85rem;
+    }
+    .agent-photos-page .nav-tabs .nav-link {
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0.75rem 1.25rem;
+    }
+    .agent-photos-page .nav-tabs .nav-link.active {
+        color: #3699ff;
+        border-bottom: 2px solid #3699ff;
+    }
+    .agent-photos-page .bulk-toolbar {
+        background: #e1f0ff;
+        border: 1px solid #b5d8ff;
+        border-radius: .5rem;
+        padding: 0.75rem 1.25rem;
+    }
+    .search-results-box {
+        max-height: 250px;
+        overflow-y: auto;
+        border: 1px solid #ebedf3;
+        border-radius: 6px;
+        margin-top: 5px;
+    }
+    .search-result-item {
+        padding: 10px 12px;
+        border-bottom: 1px solid #f3f6f9;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .search-result-item:hover, .search-result-item.selected {
+        background: #f3f6f9;
+    }
+    .search-result-item:last-child {
+        border-bottom: none;
     }
     @media (max-width: 575.98px) {
         .agent-photos-page .photo-preview {
-            height: 190px;
+            height: 170px;
         }
     }
 </style>
+
 <div class="container">
     @include('layouts.includes.breadcrumb', ['page' => 'صور المناديب'])
     <div class="agent-photos-page">
         <div class="card card-custom">
             <div class="card-header align-items-center flex-wrap py-5">
                 <div>
-                    <h3 class="card-title mb-2">صور المناديب</h3>
-                    <p class="photos-intro">استعرض الصور المرفوعة من المناديب، مع إمكانية تصفيتها حسب المندوب أو التاريخ.</p>
+                    <h3 class="card-title mb-2">صور المناديب وتسكين الحجوزات</h3>
+                    <p class="photos-intro">استعرض الصور المرفوعة من المناديب، واحذف غير المطلوب، وسكّن كل صورة في الطلب أو الحاوية الخاصة بها.</p>
                 </div>
-                <span class="badge badge-light-primary font-size-h6 px-4 py-3">{{ $photos->total() }} صورة</span>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge badge-light-primary font-size-h6 px-4 py-3">{{ $photos->total() }} صورة معروضة</span>
+                </div>
             </div>
+
+            <!-- تبويبات حالة التسكين -->
+            <div class="px-7 pt-4">
+                <ul class="nav nav-tabs nav-tabs-line mb-0">
+                    <li class="nav-item">
+                        <a class="nav-link {{ ($status ?? 'all') === 'unassigned' ? 'active' : '' }}" 
+                           href="{{ route('agent-photos.index', array_merge(request()->except('page'), ['status' => 'unassigned'])) }}">
+                            <i class="fas fa-clock mr-2 text-warning"></i>
+                            الصور غير المسكّنة
+                            <span class="badge badge-warning ml-2">{{ $unassignedCount ?? 0 }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ ($status ?? 'all') === 'assigned' ? 'active' : '' }}" 
+                           href="{{ route('agent-photos.index', array_merge(request()->except('page'), ['status' => 'assigned'])) }}">
+                            <i class="fas fa-check-circle mr-2 text-success"></i>
+                            الصور المسكّنة
+                            <span class="badge badge-success ml-2">{{ $assignedCount ?? 0 }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ ($status ?? 'all') === 'all' ? 'active' : '' }}" 
+                           href="{{ route('agent-photos.index', array_merge(request()->except('page'), ['status' => 'all'])) }}">
+                            <i class="fas fa-images mr-2 text-primary"></i>
+                            جميع الصور
+                            <span class="badge badge-light-primary ml-2">{{ $totalCount ?? 0 }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <div class="card-body">
                 @if(session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                 @endif
                 @if($errors->any())
                     <div class="alert alert-danger">{{ $errors->first() }}</div>
                 @endif
-                <form method="GET" action="{{ route('agent-photos.index') }}" class="photos-filters mb-8">
+
+                <!-- فلاتر البحث -->
+                <form method="GET" action="{{ route('agent-photos.index') }}" class="photos-filters mb-6">
+                    <input type="hidden" name="status" value="{{ $status ?? 'all' }}">
                     <div class="row align-items-end">
                         <div class="col-md-4 form-group mb-md-0">
-                            <label for="photo-agent">المندوب</label>
+                            <label for="photo-agent" class="font-weight-bold">المندوب</label>
                             <select id="photo-agent" name="agent_id" class="form-control">
                                 <option value="">كل المناديب</option>
                                 @foreach($agents as $agent)
@@ -73,45 +174,146 @@
                             </select>
                         </div>
                         <div class="col-md-3 form-group mb-md-0">
-                            <label for="photo-from">من تاريخ</label>
+                            <label for="photo-from" class="font-weight-bold">من تاريخ</label>
                             <input id="photo-from" type="date" name="from" value="{{ request('from') }}" class="form-control">
                         </div>
                         <div class="col-md-3 form-group mb-md-0">
-                            <label for="photo-to">إلى تاريخ</label>
+                            <label for="photo-to" class="font-weight-bold">إلى تاريخ</label>
                             <input id="photo-to" type="date" name="to" value="{{ request('to') }}" class="form-control">
                         </div>
                         <div class="col-md-2 mt-4 mt-md-0 d-flex">
-                            <button class="btn btn-primary flex-grow-1" type="submit">تطبيق</button>
-                            <a class="btn btn-light mr-2" href="{{ route('agent-photos.index') }}" title="إلغاء الفلاتر" aria-label="إلغاء الفلاتر">
+                            <button class="btn btn-primary flex-grow-1" type="submit">
+                                <i class="fas fa-filter"></i> تطبيق
+                            </button>
+                            <a class="btn btn-light mr-2" href="{{ route('agent-photos.index', ['status' => $status ?? 'all']) }}" title="إلغاء الفلاتر">
                                 <i class="fas fa-undo"></i>
                             </a>
                         </div>
                     </div>
                 </form>
+
+                <!-- شريط العمليات الجماعية -->
+                <div class="bulk-toolbar mb-6 d-flex flex-wrap align-items-center justify-content-between" id="bulkToolbar" style="display: none !important;">
+                    <div class="d-flex align-items-center mb-2 mb-md-0">
+                        <div class="custom-control custom-checkbox mr-3">
+                            <input type="checkbox" class="custom-control-input" id="selectAllCheckbox">
+                            <label class="custom-control-label font-weight-bold" for="selectAllCheckbox">تحديد الكل في هذه الصفحة</label>
+                        </div>
+                        <span class="badge badge-primary px-3 py-2" id="selectedCountBadge">تم تحديد 0 صورة</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="btn btn-success btn-sm mr-2" id="bulkAssignBtn">
+                            <i class="fas fa-folder-plus"></i> تسكين الصور المحددة في حجز
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" id="bulkDeleteBtn">
+                            <i class="fas fa-trash-alt"></i> حذف الصور المحددة
+                        </button>
+                    </div>
+                </div>
+
+                <!-- شبكة الصور -->
                 <div class="row">
                     @forelse($photos as $photo)
+                        @php
+                            $isAssigned = !empty($photo->booking_id);
+                            $bookingNum = $photo->booking?->booking_number ?: ($photo->booking_id ? '#' . $photo->booking_id : null);
+                            $containerNum = $photo->bookingContainer?->container_no ?: null;
+                            $companyName = $photo->booking?->factory?->name ?: ($photo->booking?->company?->name ?: null);
+                        @endphp
                         <div class="col-sm-6 col-lg-4 col-xl-3 mb-5">
-                            <div class="card photo-card h-100">
+                            <div class="card photo-card h-100" id="card-photo-{{ $photo->id }}">
+                                <div class="photo-checkbox-wrap">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input photo-checkbox" 
+                                               id="chk-{{ $photo->id }}" 
+                                               value="{{ $photo->id }}"
+                                               data-photo-id="{{ $photo->id }}"
+                                               data-photo-url="{{ route('agent-photos.image', $photo) }}"
+                                               data-photo-name="{{ $photo->original_name }}">
+                                        <label class="custom-control-label" for="chk-{{ $photo->id }}"></label>
+                                    </div>
+                                </div>
+
                                 <a class="photo-preview" href="{{ route('agent-photos.image', $photo) }}" target="_blank" rel="noopener" aria-label="عرض الصورة كاملة">
                                     <img src="{{ route('agent-photos.image', $photo) }}" alt="{{ $photo->original_name }}" loading="lazy">
                                 </a>
-                                <div class="card-body d-flex flex-column p-5">
-                                    <div class="d-flex align-items-start justify-content-between mb-3">
-                                        <strong class="text-dark">{{ $photo->agent?->name ?? 'مندوب غير متاح' }}</strong>
-                                        <span class="text-muted font-size-sm text-nowrap mr-2">{{ $photo->created_at->format('Y-m-d H:i') }}</span>
+
+                                <div class="card-body d-flex flex-column p-4">
+                                    <!-- معلومات المندوب والتاريخ -->
+                                    <div class="d-flex align-items-start justify-content-between mb-2">
+                                        <strong class="text-dark font-size-sm">
+                                            <i class="fas fa-user-tie text-muted mr-1"></i> {{ $photo->agent?->name ?? 'مندوب غير متاح' }}
+                                        </strong>
+                                        <span class="text-muted font-size-xs text-nowrap mr-1">{{ $photo->created_at->format('Y-m-d H:i') }}</span>
                                     </div>
-                                    <div class="photo-name text-muted mb-5" title="{{ $photo->original_name }}">{{ $photo->original_name }}</div>
-                                    <div class="d-flex align-items-center justify-content-between mt-auto">
-                                        <a class="btn btn-sm btn-light-primary" href="{{ route('agent-photos.image', $photo) }}" target="_blank" rel="noopener">
-                                            <i class="fas fa-eye"></i> عرض الصورة
-                                        </a>
-                                        <form method="POST" action="{{ route('agent-photos.destroy', $photo) }}" onsubmit="return confirm('هل أنت متأكد من حذف هذه الصورة؟ لا يمكن التراجع عن هذا الإجراء.');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-light-danger" aria-label="حذف الصورة">
-                                                <i class="fas fa-trash-alt"></i> حذف
+
+                                    <!-- اسم الصورة -->
+                                    <div class="photo-name text-muted mb-2 text-truncate" title="{{ $photo->original_name }}">
+                                        <i class="far fa-image mr-1"></i> {{ $photo->original_name }}
+                                    </div>
+
+                                    <!-- حالة التسكين -->
+                                    <div class="mb-3">
+                                        @if($isAssigned)
+                                            <div class="d-flex flex-wrap align-items-center">
+                                                <span class="badge badge-success font-size-xs px-2 py-1 mr-1 mb-1" title="تم تسكين الصورة في حجز">
+                                                    <i class="fas fa-check-circle"></i> حجز {{ $bookingNum }}
+                                                </span>
+                                                @if($containerNum)
+                                                    <span class="badge badge-light-primary font-size-xs px-2 py-1 mr-1 mb-1" title="رقم الحاوية">
+                                                        <i class="fas fa-box"></i> {{ $containerNum }}
+                                                    </span>
+                                                @endif
+                                                <a href="{{ route('bookings.booking_papers', $photo->booking_id) }}" 
+                                                   target="_blank" 
+                                                   class="btn btn-xs btn-light-info mb-1" 
+                                                   title="عرض أوراق الحجز">
+                                                    <i class="fas fa-external-link-alt"></i> الأوراق
+                                                </a>
+                                            </div>
+                                            @if($companyName)
+                                                <div class="text-muted font-size-xs text-truncate mt-1" title="{{ $companyName }}">
+                                                    <i class="fas fa-building mr-1"></i> {{ $companyName }}
+                                                </div>
+                                            @endif
+                                        @else
+                                            <span class="badge badge-light-warning font-size-xs px-2 py-1">
+                                                <i class="fas fa-clock"></i> في انتظار التسكين
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <!-- أزرار الإجراءات -->
+                                    <div class="mt-auto pt-2 border-top">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <!-- زر التسكين -->
+                                            <button type="button" 
+                                                    class="btn btn-sm {{ $isAssigned ? 'btn-light-warning' : 'btn-success' }} single-assign-btn" 
+                                                    data-photo-id="{{ $photo->id }}"
+                                                    data-photo-url="{{ route('agent-photos.image', $photo) }}"
+                                                    data-photo-name="{{ $photo->original_name }}"
+                                                    data-current-booking="{{ $photo->booking_id }}"
+                                                    data-current-booking-num="{{ $bookingNum }}"
+                                                    title="{{ $isAssigned ? 'تعديل أو إعادة التسكين' : 'تسكين في حجز / حاوية' }}">
+                                                <i class="fas fa-folder-plus"></i> {{ $isAssigned ? 'إعادة تسكين' : 'تسكين' }}
                                             </button>
-                                        </form>
+
+                                            <div class="d-flex align-items-center">
+                                                <!-- عرض كامل -->
+                                                <a class="btn btn-sm btn-light-primary mr-1" href="{{ route('agent-photos.image', $photo) }}" target="_blank" rel="noopener" title="عرض الصورة كاملة">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+
+                                                <!-- زر الحذف -->
+                                                <form method="POST" action="{{ route('agent-photos.destroy', $photo) }}" onsubmit="return confirm('هل أنت متأكد من حذف هذه الصورة نهائيًا؟');" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-light-danger" title="حذف الصورة">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -119,18 +321,382 @@
                     @empty
                         <div class="col-12">
                             <div class="text-center text-muted py-15">
-                                <i class="far fa-images fa-3x mb-4 d-block"></i>
-                                <div class="font-size-h6">لا توجد صور{{ request()->filled('agent_id') || request()->filled('from') || request()->filled('to') ? ' مطابقة للفلاتر' : ' مرفوعة حتى الآن' }}.</div>
-                                <div class="mt-2">يمكنك تعديل الفلاتر أو العودة لاحقًا لمراجعة الصور الجديدة.</div>
+                                <i class="far fa-images fa-4x mb-4 d-block text-secondary"></i>
+                                <div class="font-size-h5 font-weight-bold">
+                                    @if(($status ?? 'all') === 'unassigned')
+                                        رائع! لا توجد صور بانتظار التسكين.
+                                    @elseif(($status ?? 'all') === 'assigned')
+                                        لا توجد صور مسكّنة مطابقة للفلاتر.
+                                    @else
+                                        لا توجد صور مرفوعة حتى الآن.
+                                    @endif
+                                </div>
+                                <div class="mt-2 text-muted">يمكنك تعديل الفلاتر أو التبديل بين التبويبات أعلاه.</div>
                             </div>
                         </div>
                     @endforelse
                 </div>
-                <div class="d-flex justify-content-center mt-3">
+
+                <!-- الترقيم -->
+                <div class="d-flex justify-content-center mt-5">
                     {{ $photos->links('pagination::bootstrap-4') }}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal: تسكين الصورة / الصور في حجز -->
+<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="assignForm" method="POST" action="{{ route('agent-photos.assign') }}">
+                @csrf
+                <div class="modal-header bg-light-primary py-4">
+                    <h5 class="modal-title font-weight-bold" id="assignModalLabel">
+                        <i class="fas fa-folder-plus text-primary mr-2"></i> تسكين الصور في حجز أو حاوية
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-6">
+                    <!-- حاوية الصور المختارة للتسكين -->
+                    <div class="mb-4">
+                        <label class="font-weight-bold">الصور المحددة للتسكين:</label>
+                        <div id="assignSelectedPhotosPreviews" class="d-flex flex-wrap gap-2 p-2 border rounded bg-light" style="max-height: 120px; overflow-y: auto;">
+                            <!-- يتم ملؤها ديناميكيًا بواسطة JS -->
+                        </div>
+                        <div id="assignPhotoIdsInputs">
+                            <!-- inputs hidden for photo_ids[] -->
+                        </div>
+                    </div>
+
+                    <!-- البحث عن الحجز أو الحاوية -->
+                    <div class="form-group mb-4">
+                        <label for="bookingSearchInput" class="font-weight-bold">
+                            ابحث برقم الحجز أو رقم الحاوية أو اسم المصنع/الشركة: <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                            <input type="text" id="bookingSearchInput" class="form-control" placeholder="اكتب رقم الحجز (مثال: BK-1020) أو رقم الحاوية (مثال: MSCU1234567)..." autocomplete="off">
+                            <div class="input-group-append" id="searchLoadingSpinner" style="display: none;">
+                                <span class="input-group-text"><i class="fas fa-spinner fa-spin text-primary"></i></span>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted">اكتب للبحث الفوري، ثم اختر الحجز المناسب من القائمة أدناه.</small>
+
+                        <!-- نتائج البحث -->
+                        <div id="searchResultsList" class="search-results-box" style="display: none;"></div>
+                    </div>
+
+                    <!-- الحجز المختار -->
+                    <div id="selectedBookingBox" class="alert alert-custom alert-light-success fade show mb-4" role="alert" style="display: none;">
+                        <div class="alert-icon"><i class="fas fa-check-circle text-success"></i></div>
+                        <div class="alert-text">
+                            <strong id="selectedBookingTitle">الحجز المختار: </strong>
+                            <div id="selectedBookingDetails" class="text-muted font-size-sm mt-1"></div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="booking_id" id="selectedBookingId" value="" required>
+
+                    <!-- اختيار الحاوية التابعة للحجز -->
+                    <div class="form-group mb-4" id="containerSelectionGroup" style="display: none;">
+                        <label for="selectedContainerId" class="font-weight-bold">تحديد الحاوية (اختياري):</label>
+                        <select name="booking_container_id" id="selectedContainerId" class="form-control">
+                            <option value="">كامل الحجز (عام - بدون تحديد حاوية معينة)</option>
+                        </select>
+                        <small class="form-text text-muted">إذا كانت الصورة خاصة بحاوية معينة، يرجى اختيارها من هنا.</small>
+                    </div>
+
+                    <!-- نوع المستند / الصورة -->
+                    <div class="form-group mb-2">
+                        <label for="paperTypeSelect" class="font-weight-bold">نوع الملف / الصورة في أوراق الحجز: <span class="text-danger">*</span></label>
+                        <select name="type" id="paperTypeSelect" class="form-control" required>
+                            <option value="1" selected>صورة الحاوية</option>
+                            <option value="0">جواب تخصيص</option>
+                            <option value="6">جواب التحميل</option>
+                            <option value="5">صورة سيل ملاحي</option>
+                            <option value="4">جواب التعتيق</option>
+                            <option value="3">كارتة سيارة</option>
+                            <option value="8">إذن شحن</option>
+                            <option value="9">صورة أخرى</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer py-3 bg-light">
+                    <button type="button" class="btn btn-secondary font-weight-bold" data-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-success font-weight-bold" id="confirmAssignBtn" disabled>
+                        <i class="fas fa-save mr-1"></i> تأكيد تسكين الصورة
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- نموذج الحذف الجماعي المخفي -->
+<form id="bulkDeleteForm" method="POST" action="{{ route('agent-photos.bulk-destroy') }}" style="display: none;">
+    @csrf
+    <div id="bulkDeleteInputs"></div>
+</form>
+
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        const searchUrl = "{{ route('agent-photos.search-bookings') }}";
+        let searchTimeout = null;
+        let currentSelectedPhotos = [];
+
+        // تحديث شريط العمليات الجماعية بناءً على التحديد
+        function updateBulkToolbar() {
+            const checkedBoxes = $('.photo-checkbox:checked');
+            const count = checkedBoxes.length;
+
+            if (count > 0) {
+                $('#bulkToolbar').slideDown(200);
+                $('#selectedCountBadge').text(`تم تحديد ${count} صورة`);
+            } else {
+                $('#bulkToolbar').slideUp(200);
+                $('#selectAllCheckbox').prop('checked', false);
+            }
+
+            $('.photo-card').removeClass('is-selected');
+            checkedBoxes.each(function() {
+                $(`#card-photo-${$(this).val()}`).addClass('is-selected');
+            });
+        }
+
+        // تحديد / إلغاء تحديد الكل
+        $('#selectAllCheckbox').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            $('.photo-checkbox').prop('checked', isChecked);
+            updateBulkToolbar();
+        });
+
+        // تغيير حالة مربع اختيار فردي
+        $(document).on('change', '.photo-checkbox', function() {
+            updateBulkToolbar();
+        });
+
+        // فتح نافذة التسكين لصورة مفردة
+        $('.single-assign-btn').on('click', function(e) {
+            e.preventDefault();
+            const photoId = $(this).data('photo-id');
+            const photoUrl = $(this).data('photo-url');
+            const photoName = $(this).data('photo-name');
+
+            openAssignModal([{
+                id: photoId,
+                url: photoUrl,
+                name: photoName
+            }]);
+        });
+
+        // فتح نافذة التسكين للمحدد جماعيًا
+        $('#bulkAssignBtn').on('click', function() {
+            const selected = [];
+            $('.photo-checkbox:checked').each(function() {
+                selected.push({
+                    id: $(this).val(),
+                    url: $(this).data('photo-url'),
+                    name: $(this).data('photo-name')
+                });
+            });
+
+            if (selected.length === 0) {
+                alert('يرجى تحديد صورة واحدة على الأقل أولاً.');
+                return;
+            }
+
+            openAssignModal(selected);
+        });
+
+        // تنفيذ الحذف الجماعي
+        $('#bulkDeleteBtn').on('click', function() {
+            const selectedIds = [];
+            $('.photo-checkbox:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length === 0) {
+                alert('يرجى تحديد صورة واحدة على الأقل أولاً.');
+                return;
+            }
+
+            if (!confirm(`هل أنت متأكد من حذف ${selectedIds.length} صور محددة نهائيًا؟`)) {
+                return;
+            }
+
+            const inputsContainer = $('#bulkDeleteInputs');
+            inputsContainer.empty();
+            selectedIds.forEach(id => {
+                inputsContainer.append(`<input type="hidden" name="photo_ids[]" value="${id}">`);
+            });
+
+            $('#bulkDeleteForm').submit();
+        });
+
+        // دالة تهيئة وفتح مودال التسكين
+        function openAssignModal(photos) {
+            currentSelectedPhotos = photos;
+
+            // معاينة الصور
+            const previewsContainer = $('#assignSelectedPhotosPreviews');
+            const hiddenInputsContainer = $('#assignPhotoIdsInputs');
+            previewsContainer.empty();
+            hiddenInputsContainer.empty();
+
+            photos.forEach(p => {
+                previewsContainer.append(`
+                    <div class="d-inline-flex flex-column align-items-center m-1 p-1 border bg-white rounded" style="width: 80px;" title="${p.name}">
+                        <img src="${p.url}" style="height: 50px; width: 70px; object-fit: cover;" class="rounded mb-1">
+                        <span class="font-size-xs text-truncate text-muted text-center" style="max-width: 70px;">${p.name}</span>
+                    </div>
+                `);
+                hiddenInputsContainer.append(`<input type="hidden" name="photo_ids[]" value="${p.id}">`);
+            });
+
+            // إعادة ضبط حقول البحث
+            $('#bookingSearchInput').val('');
+            $('#searchResultsList').hide().empty();
+            $('#selectedBookingBox').hide();
+            $('#selectedBookingId').val('');
+            $('#containerSelectionGroup').hide();
+            $('#selectedContainerId').html('<option value="">كامل الحجز (عام - بدون تحديد حاوية معينة)</option>');
+            $('#confirmAssignBtn').prop('disabled', true);
+            $('#paperTypeSelect').val('1');
+
+            $('#assignModalLabel').html(`
+                <i class="fas fa-folder-plus text-primary mr-2"></i> تسكين ${photos.length} ${photos.length === 1 ? 'صورة' : 'صور'} في حجز أو حاوية
+            `);
+
+            $('#assignModal').modal('show');
+            setTimeout(() => $('#bookingSearchInput').focus(), 400);
+        }
+
+        // البحث اللحظي عند الكتابة
+        $('#bookingSearchInput').on('input', function() {
+            const query = $(this).val().trim();
+            clearTimeout(searchTimeout);
+
+            if (query.length < 1) {
+                $('#searchResultsList').hide().empty();
+                $('#searchLoadingSpinner').hide();
+                return;
+            }
+
+            $('#searchLoadingSpinner').show();
+            searchTimeout = setTimeout(function() {
+                $.ajax({
+                    url: searchUrl,
+                    type: 'GET',
+                    data: { q: query },
+                    dataType: 'json',
+                    success: function(results) {
+                        $('#searchLoadingSpinner').hide();
+                        renderSearchResults(results, query);
+                    },
+                    error: function() {
+                        $('#searchLoadingSpinner').hide();
+                    }
+                });
+            }, 300);
+        });
+
+        // عرض نتائج البحث في القائمة
+        function renderSearchResults(results, query) {
+            const container = $('#searchResultsList');
+            container.empty();
+
+            if (!results || results.length === 0) {
+                container.html(`
+                    <div class="p-3 text-center text-muted">
+                        <i class="fas fa-info-circle mr-1"></i> لا توجد حجوزات أو حاويات مطابقة للبحث "${query}".
+                    </div>
+                `).show();
+                return;
+            }
+
+            results.forEach(booking => {
+                let containersHtml = '';
+                if (booking.containers && booking.containers.length > 0) {
+                    containersHtml = '<div class="mt-1 d-flex flex-wrap gap-1">';
+                    booking.containers.forEach(c => {
+                        const matchBadge = c.is_match ? 'badge-primary' : 'badge-light-dark';
+                        containersHtml += `
+                            <span class="badge ${matchBadge} font-size-xs mr-1 mb-1">
+                                <i class="fas fa-box"></i> ${c.container_no}
+                            </span>
+                        `;
+                    });
+                    containersHtml += '</div>';
+                }
+
+                const item = $(`
+                    <div class="search-result-item" data-booking='${JSON.stringify(booking)}'>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong class="text-primary font-size-md">
+                                    <i class="fas fa-receipt mr-1"></i> حجز: ${booking.booking_number}
+                                </strong>
+                                <span class="text-muted font-size-sm ml-2">#ID: ${booking.id}</span>
+                            </div>
+                            <span class="badge badge-light-info font-size-xs">${booking.client_name}</span>
+                        </div>
+                        ${containersHtml}
+                    </div>
+                `);
+
+                item.on('click', function() {
+                    selectBooking(booking);
+                });
+
+                container.append(item);
+            });
+
+            container.show();
+        }
+
+        // اختيار حجز من النتائج
+        function selectBooking(booking) {
+            $('#selectedBookingId').val(booking.id);
+            $('#selectedBookingTitle').html(`الحجز المختار: <span class="text-primary">${booking.booking_number}</span>`);
+            $('#selectedBookingDetails').html(`
+                <span><i class="fas fa-building mr-1"></i> العميل/المصنع: <strong>${booking.client_name}</strong></span>
+                <span class="ml-3"><i class="fas fa-cubes mr-1"></i> عدد الحاويات: <strong>${booking.containers ? booking.containers.length : 0}</strong></span>
+            `);
+            $('#selectedBookingBox').slideDown(150);
+            $('#searchResultsList').hide();
+            $('#confirmAssignBtn').prop('disabled', false);
+
+            // ملء الحاويات المتاحة للحجز المختار
+            const containerSelect = $('#selectedContainerId');
+            containerSelect.empty();
+            containerSelect.append('<option value="">كامل الحجز (عام - بدون تحديد حاوية معينة)</option>');
+
+            let preselectContainerId = '';
+            if (booking.containers && booking.containers.length > 0) {
+                booking.containers.forEach(c => {
+                    const isMatched = c.is_match;
+                    if (isMatched && !preselectContainerId) {
+                        preselectContainerId = c.id;
+                    }
+                    containerSelect.append(`
+                        <option value="${c.id}" ${isMatched ? 'selected' : ''}>
+                            حاوية: ${c.container_no} ${c.sail_of_number ? '(سيل: ' + c.sail_of_number + ')' : ''}
+                        </option>
+                    `);
+                });
+                $('#containerSelectionGroup').slideDown(150);
+            } else {
+                $('#containerSelectionGroup').hide();
+            }
+        }
+    });
+</script>
 @endsection

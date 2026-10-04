@@ -28,6 +28,7 @@ class AgentPhotosTest extends TestCase
             $table->timestamps();
         });
         (require database_path('migrations/2026_10_01_000001_create_agent_photos_table.php'))->up();
+        (require database_path('migrations/2026_10_05_000001_add_booking_fields_to_agent_photos_table.php'))->up();
         Agent::create(['id' => 1, 'name' => 'First agent']);
         Agent::create(['id' => 2, 'name' => 'Second agent']);
     }
@@ -103,7 +104,14 @@ class AgentPhotosTest extends TestCase
 
     public function test_dashboard_routes_require_existing_agent_view_permission(): void
     {
-        foreach (['agent-photos.index', 'agent-photos.image', 'agent-photos.destroy'] as $name) {
+        foreach ([
+            'agent-photos.index',
+            'agent-photos.image',
+            'agent-photos.destroy',
+            'agent-photos.search-bookings',
+            'agent-photos.assign',
+            'agent-photos.bulk-destroy',
+        ] as $name) {
             $middleware = Route::getRoutes()->getByName($name)->gatherMiddleware();
             $this->assertContains('auth', $middleware);
             $this->assertContains('permission:agents.index', $middleware);
@@ -152,4 +160,154 @@ class AgentPhotosTest extends TestCase
         $this->getJson('/api/agent/photos')->assertUnauthorized();
         $this->postJson('/api/agent/photos')->assertUnauthorized();
     }
+
+    public function test_bulk_destroy_deletes_multiple_photos_and_files(): void
+    {
+        $photo1 = AgentPhoto::create(['agent_id' => 1, 'path' => 'p1.jpg', 'original_name' => 'p1.jpg']);
+        $photo2 = AgentPhoto::create(['agent_id' => 1, 'path' => 'p2.jpg', 'original_name' => 'p2.jpg']);
+        Storage::disk('agent_photos')->put('p1.jpg', 'content-1');
+        Storage::disk('agent_photos')->put('p2.jpg', 'content-2');
+
+        $user = \Mockery::mock(\App\Models\User::class)->makePartial();
+        $user->shouldReceive('can')->with('agents.index')->andReturn(true);
+        $this->actingAs($user, 'web');
+
+        $response = $this->postJson(route('agent-photos.bulk-destroy'), [
+            'photo_ids' => [$photo1->id, $photo2->id],
+        ])->assertOk();
+
+        $this->assertTrue($response->json('status'));
+        $this->assertSame(2, $response->json('deleted_count'));
+        $this->assertDatabaseMissing('agent_photos', ['id' => $photo1->id]);
+        $this->assertDatabaseMissing('agent_photos', ['id' => $photo2->id]);
+        Storage::disk('agent_photos')->assertMissing('p1.jpg');
+        Storage::disk('agent_photos')->assertMissing('p2.jpg');
+    }
+
+    public function test_assign_photo_copies_to_public_storage_and_creates_booking_paper(): void
+    {
+        Storage::fake('public');
+        Schema::create('bookings', function (Blueprint $table) {
+            $table->id();
+            $table->string('booking_number')->nullable();
+            $table->timestamps();
+        });
+        Schema::create('booking_containers', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('booking_id');
+            $table->string('container_no')->nullable();
+            $table->string('sail_of_number')->nullable();
+            $table->timestamps();
+        });
+        Schema::create('booking_papers', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('booking_id');
+            $table->unsignedBigInteger('booking_container_id')->nullable();
+            $table->unsignedBigInteger('agent_id')->nullable();
+            $table->tinyInteger('type')->default(1);
+            $table->timestamps();
+        });
+        Schema::create('images', function (Blueprint $table) {
+            $table->id();
+            $table->string('image');
+            $table->unsignedBigInteger('imageable_id');
+            $table->string('imageable_type');
+            $table->timestamps();
+        });
+
+        $booking = \App\Models\Booking::create(['booking_number' => 'BK-999']);
+        $container = \App\Models\BookingContainer::create(['booking_id' => $booking->id, 'container_no' => 'MSCU12345']);
+
+        $photo = AgentPhoto::create(['agent_id' => 1, 'path' => 'agent_pic.jpg', 'original_name' => 'agent_pic.jpg']);
+        Storage::disk('agent_photos')->put('agent_pic.jpg', 'fake-image-bytes');
+
+        $user = \Mockery::mock(\App\Models\User::class)->makePartial();
+        $user->shouldReceive('can')->with('agents.index')->andReturn(true);
+        $this->actingAs($user, 'web');
+
+        $response = $this->postJson(route('agent-photos.assign'), [
+            'photo_ids' => [$photo->id],
+            'booking_id' => $booking->id,
+            'booking_container_id' => $container->id,
+            'type' => 1,
+        ])->assertOk();
+
+        $this->assertTrue($response->json('status'));
+        $photo->refresh();
+        $this->assertSame((int) $booking->id, (int) $photo->booking_id);
+        $this->assertSame((int) $container->id, (int) $photo->booking_container_id);
+        $this->assertNotNull($photo->assigned_at);
+        $this->assertNotNull($photo->booking_paper_id);
+
+        $this->assertDatabaseHas('booking_papers', [
+            'id' => $photo->booking_paper_id,
+            'booking_id' => $booking->id,
+            'booking_container_id' => $container->id,
+            'agent_id' => 1,
+            'type' => 1,
+        ]);
+        $this->assertDatabaseHas('images', [
+            'imageable_id' => $photo->booking_paper_id,
+            'imageable_type' => \App\Models\BookingPaper::class,
+        ]);
+    }
+
+    public function test_search_bookings_finds_by_booking_number_and_container_no(): void
+    {
+        if (! Schema::hasTable('bookings')) {
+            Schema::create('bookings', function (Blueprint $table) {
+                $table->id();
+                $table->string('booking_number')->nullable();
+                $table->timestamps();
+            });
+            Schema::create('booking_containers', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('booking_id');
+                $table->string('container_no')->nullable();
+                $table->string('sail_of_number')->nullable();
+                $table->timestamps();
+            });
+        }
+
+        $booking = \App\Models\Booking::create(['booking_number' => 'SPECIAL-BK-77']);
+        \App\Models\BookingContainer::create(['booking_id' => $booking->id, 'container_no' => 'CONT-TARGET-99']);
+
+        $user = \Mockery::mock(\App\Models\User::class)->makePartial();
+        $user->shouldReceive('can')->with('agents.index')->andReturn(true);
+        $this->actingAs($user, 'web');
+
+        // Search by booking number
+        $res1 = $this->getJson(route('agent-photos.search-bookings', ['q' => 'SPECIAL-BK']))->assertOk();
+        $this->assertCount(1, $res1->json());
+        $this->assertSame((int) $booking->id, (int) $res1->json('0.id'));
+
+        // Search by container number
+        $res2 = $this->getJson(route('agent-photos.search-bookings', ['q' => 'TARGET-99']))->assertOk();
+        $this->assertCount(1, $res2->json());
+        $this->assertSame((int) $booking->id, (int) $res2->json('0.id'));
+        $this->assertTrue($res2->json('0.containers.0.is_match'));
+    }
+
+    public function test_dashboard_filters_by_unassigned_and_assigned_status(): void
+    {
+        $unassigned = AgentPhoto::create(['agent_id' => 1, 'path' => 'u.jpg', 'original_name' => 'u.jpg']);
+        $assigned = AgentPhoto::create([
+            'agent_id' => 1,
+            'path' => 'a.jpg',
+            'original_name' => 'a.jpg',
+            'booking_id' => 999,
+            'assigned_at' => now(),
+        ]);
+
+        $reqUnassigned = Request::create('/dashboard/agent-photos', 'GET', ['status' => 'unassigned']);
+        $viewUnassigned = app(\App\Http\Controllers\Admin\AgentPhotoController::class)->index($reqUnassigned);
+        $this->assertSame(1, $viewUnassigned->getData()['photos']->total());
+        $this->assertSame($unassigned->id, $viewUnassigned->getData()['photos']->first()->id);
+
+        $reqAssigned = Request::create('/dashboard/agent-photos', 'GET', ['status' => 'assigned']);
+        $viewAssigned = app(\App\Http\Controllers\Admin\AgentPhotoController::class)->index($reqAssigned);
+        $this->assertSame(1, $viewAssigned->getData()['photos']->total());
+        $this->assertSame($assigned->id, $viewAssigned->getData()['photos']->first()->id);
+    }
 }
+
