@@ -359,6 +359,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::resource('agents', AgentController::class);
     Route::get('agent-photos', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'index'])
         ->middleware('permission:agents.index')->name('agent-photos.index');
+    Route::get('agent-photos/search-bookings', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'searchBookings'])
+        ->middleware('permission:agents.index')->name('agent-photos.search-bookings');
+    Route::post('agent-photos/assign', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'assign'])
+        ->middleware('permission:agents.index')->name('agent-photos.assign');
+    Route::post('agent-photos/bulk-destroy', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'bulkDestroy'])
+        ->middleware('permission:agents.index')->name('agent-photos.bulk-destroy');
     Route::get('agent-photos/{photo}/image', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'image'])
         ->middleware('permission:agents.index')->name('agent-photos.image');
     Route::delete('agent-photos/{photo}', [\App\Http\Controllers\Admin\AgentPhotoController::class, 'destroy'])
