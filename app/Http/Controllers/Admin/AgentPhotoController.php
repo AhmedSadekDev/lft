@@ -51,13 +51,33 @@ class AgentPhotoController extends Controller
         $assignedCount = AgentPhoto::assigned()->count();
         $totalCount = AgentPhoto::count();
 
+        $bookings = collect();
+        if (\Illuminate\Support\Facades\Schema::hasTable('bookings')) {
+            $bookingRelations = [];
+            if (\Illuminate\Support\Facades\Schema::hasTable('booking_containers')) {
+                $bookingRelations[] = 'bookingContainers:id,booking_id,container_no,sail_of_number';
+            }
+            if (\Illuminate\Support\Facades\Schema::hasTable('factories')) {
+                $bookingRelations[] = 'factory:id,name';
+            }
+            if (\Illuminate\Support\Facades\Schema::hasTable('companies')) {
+                $bookingRelations[] = 'company:id,name';
+            }
+
+            $bookings = Booking::with($bookingRelations)
+                ->latest('id')
+                ->take(150)
+                ->get();
+        }
+
         return view('admin.agent-photos.index', compact(
             'photos',
             'agents',
             'status',
             'unassignedCount',
             'assignedCount',
-            'totalCount'
+            'totalCount',
+            'bookings'
         ));
     }
 

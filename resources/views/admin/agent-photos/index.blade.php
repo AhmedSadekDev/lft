@@ -289,6 +289,8 @@
                                             <!-- زر التسكين -->
                                             <button type="button" 
                                                     class="btn btn-sm {{ $isAssigned ? 'btn-light-warning' : 'btn-success' }} single-assign-btn" 
+                                                    data-toggle="modal"
+                                                    data-target="#assignModal"
                                                     data-photo-id="{{ $photo->id }}"
                                                     data-photo-url="{{ route('agent-photos.image', $photo) }}"
                                                     data-photo-name="{{ $photo->original_name }}"
@@ -298,21 +300,14 @@
                                                 <i class="fas fa-folder-plus"></i> {{ $isAssigned ? 'إعادة تسكين' : 'تسكين' }}
                                             </button>
 
-                                            <div class="d-flex align-items-center">
-                                                <!-- عرض كامل -->
-                                                <a class="btn btn-sm btn-light-primary mr-1" href="{{ route('agent-photos.image', $photo) }}" target="_blank" rel="noopener" title="عرض الصورة كاملة">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-
-                                                <!-- زر الحذف -->
-                                                <form method="POST" action="{{ route('agent-photos.destroy', $photo) }}" onsubmit="return confirm('هل أنت متأكد من حذف هذه الصورة نهائيًا؟');" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-light-danger" title="حذف الصورة">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
+                                            <!-- زر الحذف -->
+                                            <form method="POST" action="{{ route('agent-photos.destroy', $photo) }}" onsubmit="return confirm('هل أنت متأكد من حذف هذه الصورة نهائيًا؟');" class="d-inline ml-2">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-light-danger" title="حذف الصورة">
+                                                    <i class="fas fa-trash-alt"></i> حذف
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -364,7 +359,7 @@
                     <!-- حاوية الصور المختارة للتسكين -->
                     <div class="mb-4">
                         <label class="font-weight-bold">الصور المحددة للتسكين:</label>
-                        <div id="assignSelectedPhotosPreviews" class="d-flex flex-wrap gap-2 p-2 border rounded bg-light" style="max-height: 120px; overflow-y: auto;">
+                        <div id="assignSelectedPhotosPreviews" class="d-flex flex-wrap gap-2 p-2 border rounded bg-light" style="min-height: 80px; max-height: 140px; overflow-y: auto;">
                             <!-- يتم ملؤها ديناميكيًا بواسطة JS -->
                         </div>
                         <div id="assignPhotoIdsInputs">
@@ -372,35 +367,36 @@
                         </div>
                     </div>
 
-                    <!-- البحث عن الحجز أو الحاوية -->
+                    <!-- قائمة اختيار الطلب أو الحجز -->
                     <div class="form-group mb-4">
-                        <label for="bookingSearchInput" class="font-weight-bold">
-                            ابحث برقم الحجز أو رقم الحاوية أو اسم المصنع/الشركة: <span class="text-danger">*</span>
+                        <label for="bookingSelect" class="font-weight-bold">
+                            اختر الطلب / الحجز: <span class="text-danger">*</span>
                         </label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            </div>
-                            <input type="text" id="bookingSearchInput" class="form-control" placeholder="اكتب رقم الحجز (مثال: BK-1020) أو رقم الحاوية (مثال: MSCU1234567)..." autocomplete="off">
-                            <div class="input-group-append" id="searchLoadingSpinner" style="display: none;">
-                                <span class="input-group-text"><i class="fas fa-spinner fa-spin text-primary"></i></span>
-                            </div>
-                        </div>
-                        <small class="form-text text-muted">اكتب للبحث الفوري، ثم اختر الحجز المناسب من القائمة أدناه.</small>
-
-                        <!-- نتائج البحث -->
-                        <div id="searchResultsList" class="search-results-box" style="display: none;"></div>
+                        <select name="booking_id" id="bookingSelect" class="form-control selectpicker" data-live-search="true" title="اختر الطلب من القائمة أو ابحث برقم الحجز أو الحاوية..." required>
+                            <option value="">-- اختر الطلب / الحجز --</option>
+                            @foreach($bookings ?? [] as $b)
+                                @php
+                                    $client = $b->factory?->name ?: ($b->company?->name ?: '');
+                                    $containersData = $b->bookingContainers->map(fn($c) => [
+                                        'id' => $c->id,
+                                        'no' => $c->container_no ?: ('حاوية #' . $c->id),
+                                        'sail' => $c->sail_of_number
+                                    ])->values();
+                                @endphp
+                                <option value="{{ $b->id }}"
+                                        data-booking-number="{{ $b->booking_number ?: ('#' . $b->id) }}"
+                                        data-client="{{ $client }}"
+                                        data-containers='@json($containersData)'>
+                                    حجز {{ $b->booking_number ?: ('#' . $b->id) }}
+                                    @if($client) - {{ $client }} @endif
+                                    @if($b->bookingContainers->isNotEmpty())
+                                        (حاويات: {{ $b->bookingContainers->pluck('container_no')->filter()->implode(', ') }})
+                                    @endif
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="form-text text-muted">قائمة بجميع الطلبات الحالية، مع إمكانية البحث السريع برقم الحجز أو الحاوية أو العميل.</small>
                     </div>
-
-                    <!-- الحجز المختار -->
-                    <div id="selectedBookingBox" class="alert alert-custom alert-light-success fade show mb-4" role="alert" style="display: none;">
-                        <div class="alert-icon"><i class="fas fa-check-circle text-success"></i></div>
-                        <div class="alert-text">
-                            <strong id="selectedBookingTitle">الحجز المختار: </strong>
-                            <div id="selectedBookingDetails" class="text-muted font-size-sm mt-1"></div>
-                        </div>
-                    </div>
-                    <input type="hidden" name="booking_id" id="selectedBookingId" value="" required>
 
                     <!-- اختيار الحاوية التابعة للحجز -->
                     <div class="form-group mb-4" id="containerSelectionGroup" style="display: none;">
@@ -443,260 +439,202 @@
     <div id="bulkDeleteInputs"></div>
 </form>
 
-@endsection
-
-@section('scripts')
 <script>
-    $(document).ready(function() {
-        const searchUrl = "{{ route('agent-photos.search-bookings') }}";
-        let searchTimeout = null;
-        let currentSelectedPhotos = [];
-
-        // تحديث شريط العمليات الجماعية بناءً على التحديد
-        function updateBulkToolbar() {
-            const checkedBoxes = $('.photo-checkbox:checked');
-            const count = checkedBoxes.length;
-
-            if (count > 0) {
-                $('#bulkToolbar').slideDown(200);
-                $('#selectedCountBadge').text(`تم تحديد ${count} صورة`);
-            } else {
-                $('#bulkToolbar').slideUp(200);
-                $('#selectAllCheckbox').prop('checked', false);
-            }
-
-            $('.photo-card').removeClass('is-selected');
-            checkedBoxes.each(function() {
-                $(`#card-photo-${$(this).val()}`).addClass('is-selected');
-            });
-        }
-
-        // تحديد / إلغاء تحديد الكل
-        $('#selectAllCheckbox').on('change', function() {
-            const isChecked = $(this).is(':checked');
-            $('.photo-checkbox').prop('checked', isChecked);
-            updateBulkToolbar();
-        });
-
-        // تغيير حالة مربع اختيار فردي
-        $(document).on('change', '.photo-checkbox', function() {
-            updateBulkToolbar();
-        });
-
-        // فتح نافذة التسكين لصورة مفردة
-        $('.single-assign-btn').on('click', function(e) {
-            e.preventDefault();
-            const photoId = $(this).data('photo-id');
-            const photoUrl = $(this).data('photo-url');
-            const photoName = $(this).data('photo-name');
-
-            openAssignModal([{
-                id: photoId,
-                url: photoUrl,
-                name: photoName
-            }]);
-        });
-
-        // فتح نافذة التسكين للمحدد جماعيًا
-        $('#bulkAssignBtn').on('click', function() {
-            const selected = [];
-            $('.photo-checkbox:checked').each(function() {
-                selected.push({
-                    id: $(this).val(),
-                    url: $(this).data('photo-url'),
-                    name: $(this).data('photo-name')
-                });
-            });
-
-            if (selected.length === 0) {
-                alert('يرجى تحديد صورة واحدة على الأقل أولاً.');
+    (function() {
+        function initAgentPhotosPage() {
+            if (typeof jQuery === 'undefined') {
+                setTimeout(initAgentPhotosPage, 100);
                 return;
             }
 
-            openAssignModal(selected);
-        });
+            var $ = jQuery;
+            var searchUrl = "{{ route('agent-photos.search-bookings') }}";
+            var searchTimeout = null;
 
-        // تنفيذ الحذف الجماعي
-        $('#bulkDeleteBtn').on('click', function() {
-            const selectedIds = [];
-            $('.photo-checkbox:checked').each(function() {
-                selectedIds.push($(this).val());
-            });
+            // تحديث شريط العمليات الجماعية بناءً على التحديد
+            function updateBulkToolbar() {
+                var checkedBoxes = $('.photo-checkbox:checked');
+                var count = checkedBoxes.length;
 
-            if (selectedIds.length === 0) {
-                alert('يرجى تحديد صورة واحدة على الأقل أولاً.');
-                return;
-            }
-
-            if (!confirm(`هل أنت متأكد من حذف ${selectedIds.length} صور محددة نهائيًا؟`)) {
-                return;
-            }
-
-            const inputsContainer = $('#bulkDeleteInputs');
-            inputsContainer.empty();
-            selectedIds.forEach(id => {
-                inputsContainer.append(`<input type="hidden" name="photo_ids[]" value="${id}">`);
-            });
-
-            $('#bulkDeleteForm').submit();
-        });
-
-        // دالة تهيئة وفتح مودال التسكين
-        function openAssignModal(photos) {
-            currentSelectedPhotos = photos;
-
-            // معاينة الصور
-            const previewsContainer = $('#assignSelectedPhotosPreviews');
-            const hiddenInputsContainer = $('#assignPhotoIdsInputs');
-            previewsContainer.empty();
-            hiddenInputsContainer.empty();
-
-            photos.forEach(p => {
-                previewsContainer.append(`
-                    <div class="d-inline-flex flex-column align-items-center m-1 p-1 border bg-white rounded" style="width: 80px;" title="${p.name}">
-                        <img src="${p.url}" style="height: 50px; width: 70px; object-fit: cover;" class="rounded mb-1">
-                        <span class="font-size-xs text-truncate text-muted text-center" style="max-width: 70px;">${p.name}</span>
-                    </div>
-                `);
-                hiddenInputsContainer.append(`<input type="hidden" name="photo_ids[]" value="${p.id}">`);
-            });
-
-            // إعادة ضبط حقول البحث
-            $('#bookingSearchInput').val('');
-            $('#searchResultsList').hide().empty();
-            $('#selectedBookingBox').hide();
-            $('#selectedBookingId').val('');
-            $('#containerSelectionGroup').hide();
-            $('#selectedContainerId').html('<option value="">كامل الحجز (عام - بدون تحديد حاوية معينة)</option>');
-            $('#confirmAssignBtn').prop('disabled', true);
-            $('#paperTypeSelect').val('1');
-
-            $('#assignModalLabel').html(`
-                <i class="fas fa-folder-plus text-primary mr-2"></i> تسكين ${photos.length} ${photos.length === 1 ? 'صورة' : 'صور'} في حجز أو حاوية
-            `);
-
-            $('#assignModal').modal('show');
-            setTimeout(() => $('#bookingSearchInput').focus(), 400);
-        }
-
-        // البحث اللحظي عند الكتابة
-        $('#bookingSearchInput').on('input', function() {
-            const query = $(this).val().trim();
-            clearTimeout(searchTimeout);
-
-            if (query.length < 1) {
-                $('#searchResultsList').hide().empty();
-                $('#searchLoadingSpinner').hide();
-                return;
-            }
-
-            $('#searchLoadingSpinner').show();
-            searchTimeout = setTimeout(function() {
-                $.ajax({
-                    url: searchUrl,
-                    type: 'GET',
-                    data: { q: query },
-                    dataType: 'json',
-                    success: function(results) {
-                        $('#searchLoadingSpinner').hide();
-                        renderSearchResults(results, query);
-                    },
-                    error: function() {
-                        $('#searchLoadingSpinner').hide();
-                    }
-                });
-            }, 300);
-        });
-
-        // عرض نتائج البحث في القائمة
-        function renderSearchResults(results, query) {
-            const container = $('#searchResultsList');
-            container.empty();
-
-            if (!results || results.length === 0) {
-                container.html(`
-                    <div class="p-3 text-center text-muted">
-                        <i class="fas fa-info-circle mr-1"></i> لا توجد حجوزات أو حاويات مطابقة للبحث "${query}".
-                    </div>
-                `).show();
-                return;
-            }
-
-            results.forEach(booking => {
-                let containersHtml = '';
-                if (booking.containers && booking.containers.length > 0) {
-                    containersHtml = '<div class="mt-1 d-flex flex-wrap gap-1">';
-                    booking.containers.forEach(c => {
-                        const matchBadge = c.is_match ? 'badge-primary' : 'badge-light-dark';
-                        containersHtml += `
-                            <span class="badge ${matchBadge} font-size-xs mr-1 mb-1">
-                                <i class="fas fa-box"></i> ${c.container_no}
-                            </span>
-                        `;
-                    });
-                    containersHtml += '</div>';
+                if (count > 0) {
+                    $('#bulkToolbar').slideDown(200);
+                    $('#selectedCountBadge').text('تم تحديد ' + count + ' صورة');
+                } else {
+                    $('#bulkToolbar').slideUp(200);
+                    $('#selectAllCheckbox').prop('checked', false);
                 }
 
-                const item = $(`
-                    <div class="search-result-item" data-booking='${JSON.stringify(booking)}'>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <strong class="text-primary font-size-md">
-                                    <i class="fas fa-receipt mr-1"></i> حجز: ${booking.booking_number}
-                                </strong>
-                                <span class="text-muted font-size-sm ml-2">#ID: ${booking.id}</span>
-                            </div>
-                            <span class="badge badge-light-info font-size-xs">${booking.client_name}</span>
-                        </div>
-                        ${containersHtml}
-                    </div>
-                `);
-
-                item.on('click', function() {
-                    selectBooking(booking);
+                $('.photo-card').removeClass('is-selected');
+                checkedBoxes.each(function() {
+                    $('#card-photo-' + $(this).val()).addClass('is-selected');
                 });
+            }
 
-                container.append(item);
+            // تحديد / إلغاء تحديد الكل
+            $(document).on('change', '#selectAllCheckbox', function() {
+                var isChecked = $(this).is(':checked');
+                $('.photo-checkbox').prop('checked', isChecked);
+                updateBulkToolbar();
             });
 
-            container.show();
-        }
+            // تغيير حالة مربع اختيار فردي
+            $(document).on('change', '.photo-checkbox', function() {
+                updateBulkToolbar();
+            });
 
-        // اختيار حجز من النتائج
-        function selectBooking(booking) {
-            $('#selectedBookingId').val(booking.id);
-            $('#selectedBookingTitle').html(`الحجز المختار: <span class="text-primary">${booking.booking_number}</span>`);
-            $('#selectedBookingDetails').html(`
-                <span><i class="fas fa-building mr-1"></i> العميل/المصنع: <strong>${booking.client_name}</strong></span>
-                <span class="ml-3"><i class="fas fa-cubes mr-1"></i> عدد الحاويات: <strong>${booking.containers ? booking.containers.length : 0}</strong></span>
-            `);
-            $('#selectedBookingBox').slideDown(150);
-            $('#searchResultsList').hide();
-            $('#confirmAssignBtn').prop('disabled', false);
+            // دالة ملء بيانات المودال
+            function populateAssignModal(photos) {
+                var previewsContainer = $('#assignSelectedPhotosPreviews');
+                var hiddenInputsContainer = $('#assignPhotoIdsInputs');
+                previewsContainer.empty();
+                hiddenInputsContainer.empty();
 
-            // ملء الحاويات المتاحة للحجز المختار
-            const containerSelect = $('#selectedContainerId');
-            containerSelect.empty();
-            containerSelect.append('<option value="">كامل الحجز (عام - بدون تحديد حاوية معينة)</option>');
+                if (!photos || !photos.length) return;
 
-            let preselectContainerId = '';
-            if (booking.containers && booking.containers.length > 0) {
-                booking.containers.forEach(c => {
-                    const isMatched = c.is_match;
-                    if (isMatched && !preselectContainerId) {
-                        preselectContainerId = c.id;
-                    }
-                    containerSelect.append(`
-                        <option value="${c.id}" ${isMatched ? 'selected' : ''}>
-                            حاوية: ${c.container_no} ${c.sail_of_number ? '(سيل: ' + c.sail_of_number + ')' : ''}
-                        </option>
-                    `);
+                photos.forEach(function(p) {
+                    previewsContainer.append(
+                        '<div class="d-inline-flex flex-column align-items-center m-1 p-1 border bg-white rounded shadow-sm" style="width: 90px;">' +
+                            '<img src="' + p.url + '" style="height: 55px; width: 80px; object-fit: cover;" class="rounded mb-1">' +
+                            '<span class="font-size-xs text-truncate text-muted text-center" style="max-width: 80px;" title="' + p.name + '">' + p.name + '</span>' +
+                        '</div>'
+                    );
+                    hiddenInputsContainer.append('<input type="hidden" name="photo_ids[]" value="' + p.id + '">');
                 });
-                $('#containerSelectionGroup').slideDown(150);
-            } else {
+
+                $('#bookingSelect').val('');
+                if ($.fn.selectpicker) {
+                    $('#bookingSelect').selectpicker('refresh');
+                }
                 $('#containerSelectionGroup').hide();
+                $('#selectedContainerId').html('<option value="">كامل الحجز (عام - بدون تحديد حاوية معينة)</option>');
+                $('#confirmAssignBtn').prop('disabled', true);
+                $('#paperTypeSelect').val('1');
+
+                $('#assignModalLabel').html(
+                    '<i class="fas fa-folder-plus text-primary mr-2"></i> تسكين ' + photos.length + (photos.length === 1 ? ' صورة' : ' صور') + ' في حجز أو حاوية'
+                );
             }
+
+            // عند فتح المودال عبر data-toggle
+            $('#assignModal').on('show.bs.modal', function(e) {
+                var $target = $(e.relatedTarget);
+                if (!$target || !$target.length) return;
+                var $btn = $target.hasClass('single-assign-btn') ? $target : $target.closest('.single-assign-btn');
+                if ($btn.length) {
+                    var photoId = $btn.data('photo-id');
+                    var photoUrl = $btn.data('photo-url');
+                    var photoName = $btn.data('photo-name');
+                    if (photoId) {
+                        populateAssignModal([{
+                            id: photoId,
+                            url: photoUrl,
+                            name: photoName
+                        }]);
+                    }
+                }
+            });
+
+            // فتح نافذة التسكين لصورة مفردة عبر النقر المباشر
+            $(document).on('click', '.single-assign-btn', function() {
+                var photoId = $(this).data('photo-id');
+                var photoUrl = $(this).data('photo-url');
+                var photoName = $(this).data('photo-name');
+
+                populateAssignModal([{
+                    id: photoId,
+                    url: photoUrl,
+                    name: photoName
+                }]);
+            });
+
+            // فتح نافذة التسكين للمحدد جماعيًا
+            $(document).on('click', '#bulkAssignBtn', function() {
+                var selected = [];
+                $('.photo-checkbox:checked').each(function() {
+                    selected.push({
+                        id: $(this).val(),
+                        url: $(this).data('photo-url'),
+                        name: $(this).data('photo-name')
+                    });
+                });
+
+                if (selected.length === 0) {
+                    alert('يرجى تحديد صورة واحدة على الأقل أولاً.');
+                    return;
+                }
+
+                populateAssignModal(selected);
+                $('#assignModal').modal('show');
+            });
+
+            // تفاعل تغيير الطلب / الحجز من القائمة
+            $(document).on('change', '#bookingSelect', function() {
+                var bookingId = $(this).val();
+                if (!bookingId) {
+                    $('#containerSelectionGroup').hide();
+                    $('#confirmAssignBtn').prop('disabled', true);
+                    return;
+                }
+
+                $('#confirmAssignBtn').prop('disabled', false);
+
+                var $opt = $(this).find('option:selected');
+                var rawContainers = $opt.attr('data-containers');
+                var containers = [];
+                try {
+                    containers = JSON.parse(rawContainers || '[]');
+                } catch(e) {
+                    containers = [];
+                }
+
+                var $containerSelect = $('#selectedContainerId');
+                $containerSelect.empty();
+                $containerSelect.append('<option value="">كامل الحجز (عام - بدون تحديد حاوية معينة)</option>');
+
+                if (containers && containers.length > 0) {
+                    containers.forEach(function(c) {
+                        $containerSelect.append(
+                            '<option value="' + c.id + '">حاوية: ' + c.no + (c.sail ? ' (سيل: ' + c.sail + ')' : '') + '</option>'
+                        );
+                    });
+                    $('#containerSelectionGroup').slideDown(150);
+                } else {
+                    $('#containerSelectionGroup').hide();
+                }
+            });
+
+            // تنفيذ الحذف الجماعي
+            $(document).on('click', '#bulkDeleteBtn', function() {
+                var selectedIds = [];
+                $('.photo-checkbox:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length === 0) {
+                    alert('يرجى تحديد صورة واحدة على الأقل أولاً.');
+                    return;
+                }
+
+                if (!confirm('هل أنت متأكد من حذف ' + selectedIds.length + ' صور محددة نهائيًا؟')) {
+                    return;
+                }
+
+                var inputsContainer = $('#bulkDeleteInputs');
+                inputsContainer.empty();
+                selectedIds.forEach(function(id) {
+                    inputsContainer.append('<input type="hidden" name="photo_ids[]" value="' + id + '">');
+                });
+
+                $('#bulkDeleteForm').submit();
+            });
         }
-    });
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAgentPhotosPage);
+        } else {
+            initAgentPhotosPage();
+        }
+    })();
 </script>
 @endsection
+
