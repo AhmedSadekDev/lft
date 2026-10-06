@@ -1,0 +1,23 @@
+{
+  "status": "BLOCKED",
+  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed.",
+  "resources": [
+    {
+      "resource": "companies",
+      "default": "id desc",
+      "whitelist_added": false,
+      "invalid_field": "QueryException",
+      "invalid_direction": "InvalidArgumentException",
+      "evidence": "sort-contract-preflight.json"
+    },
+    {
+      "resource": "private_companies",
+      "default": "id desc",
+      "whitelist_added": false,
+      "invalid_field": "QueryException",
+      "invalid_direction": "InvalidArgumentException",
+      "evidence": "sort-contract-preflight.json"
+    }
+  ],
+  "security_note": "Laravel quotes orderBy identifiers and validates direction. Missing resource whitelist is not proof of raw SQL injection."
+}

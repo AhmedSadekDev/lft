@@ -1,0 +1,28 @@
+{
+  "status": "PARTIAL",
+  "profiles": [
+    {
+      "resource": "companies",
+      "parameter": "search",
+      "activation": "Request::filled('search')",
+      "contains": [
+        "name",
+        "email",
+        "phone",
+        "tax_no"
+      ],
+      "semantics": "Contains LIKE; percent and underscore remain SQL wildcards; unchanged"
+    },
+    {
+      "resource": "private_companies",
+      "parameter": "search",
+      "activation": "Request::filled('search')",
+      "contains": [
+        "name",
+        "tax_no",
+        "commercial_register"
+      ],
+      "semantics": "Contains LIKE; percent and underscore remain SQL wildcards; unchanged"
+    }
+  ]
+}

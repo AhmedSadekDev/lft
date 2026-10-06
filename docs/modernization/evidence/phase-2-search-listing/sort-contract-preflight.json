@@ -1,0 +1,62 @@
+{
+  "database": "leader",
+  "mode": "START TRANSACTION READ ONLY",
+  "tests": [
+    {
+      "table": "companies",
+      "sort_by": "id",
+      "sort_dir": "desc",
+      "sql": "select * from `companies` order by `id` desc limit 20",
+      "outcome": "success",
+      "count": 20
+    },
+    {
+      "table": "companies",
+      "sort_by": "phase2_unknown_sort",
+      "sort_dir": "desc",
+      "sql": "select * from `companies` order by `phase2_unknown_sort` desc limit 20",
+      "outcome": "exception",
+      "exception": "Illuminate\\Database\\QueryException",
+      "message": "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'phase2_unknown_sort' in 'order clause' (SQL: select * from `companies` order by `phase2_unknown_sort` desc limit 20)"
+    },
+    {
+      "table": "companies",
+      "sort_by": "id",
+      "sort_dir": "phase2_invalid_direction",
+      "outcome": "exception",
+      "exception": "InvalidArgumentException",
+      "message": "Order direction must be \"asc\" or \"desc\"."
+    },
+    {
+      "table": "private_companies",
+      "sort_by": "id",
+      "sort_dir": "desc",
+      "sql": "select * from `private_companies` order by `id` desc limit 20",
+      "outcome": "success",
+      "count": 4
+    },
+    {
+      "table": "private_companies",
+      "sort_by": "phase2_unknown_sort",
+      "sort_dir": "desc",
+      "sql": "select * from `private_companies` order by `phase2_unknown_sort` desc limit 20",
+      "outcome": "exception",
+      "exception": "Illuminate\\Database\\QueryException",
+      "message": "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'phase2_unknown_sort' in 'order clause' (SQL: select * from `private_companies` order by `phase2_unknown_sort` desc limit 20)"
+    },
+    {
+      "table": "private_companies",
+      "sort_by": "id",
+      "sort_dir": "phase2_invalid_direction",
+      "outcome": "exception",
+      "exception": "InvalidArgumentException",
+      "message": "Order direction must be \"asc\" or \"desc\"."
+    }
+  ],
+  "missing_tables": [
+    "yards",
+    "users",
+    "vaults",
+    "vault_transactions"
+  ]
+}

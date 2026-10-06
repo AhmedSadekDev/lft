@@ -1,0 +1,84 @@
+{
+  "status": "PARTIAL",
+  "fully_inventoried_resources": 0,
+  "partially_reviewed_resources": 2,
+  "resources": [
+    {
+      "resource": "companies",
+      "controller": "App\\Http\\Controllers\\Admin\\CompanyController@index",
+      "route": "companies.index (resource registration routes/web.php:192)",
+      "model": "Company",
+      "search_parameter": "search",
+      "search_activation": "Request::filled('search')",
+      "contains": [
+        "name",
+        "email",
+        "phone",
+        "tax_no"
+      ],
+      "filters": [],
+      "sort_parameters": [
+        "sort_by",
+        "sort_dir"
+      ],
+      "default_order": "id desc",
+      "allowed_sort_fields": "No explicit whitelist; values passed to orderBy",
+      "pagination": {
+        "type": "LengthAwarePaginator",
+        "per_page": 20
+      },
+      "relationships": [
+        "bookings.invoice.invoicePayments"
+      ],
+      "aggregates": "Financial accessors in view not fully audited; no changes permitted",
+      "authorization": "permission:companies.index; route-group scope not fully audited",
+      "indexes": "NOT_AUDITED",
+      "consumers": [
+        "admin.companies.index"
+      ],
+      "classification": [
+        "SQL/non-sargable",
+        "contract-sensitive",
+        "financial-sensitive"
+      ],
+      "inventory_complete": false
+    },
+    {
+      "resource": "private_companies",
+      "controller": "App\\Http\\Controllers\\Admin\\PrivateCompanyController@index",
+      "route": "private-companies.index (resource registration routes/web.php:199)",
+      "model": "PrivateCompany",
+      "search_parameter": "search",
+      "search_activation": "Request::filled('search')",
+      "contains": [
+        "name",
+        "tax_no",
+        "commercial_register"
+      ],
+      "filters": [],
+      "sort_parameters": [
+        "sort_by",
+        "sort_dir"
+      ],
+      "default_order": "id desc",
+      "allowed_sort_fields": "No explicit whitelist; values passed to orderBy",
+      "pagination": {
+        "type": "LengthAwarePaginator",
+        "per_page": 20
+      },
+      "relationships": [],
+      "aggregates": [],
+      "authorization": "No controller permission middleware; route-group scope not fully audited",
+      "indexes": "NOT_AUDITED",
+      "consumers": [
+        "admin.private-companies.index"
+      ],
+      "classification": [
+        "SQL/non-sargable",
+        "contract-sensitive"
+      ],
+      "inventory_complete": false
+    }
+  ],
+  "remaining": "All minimum resources in section 11 require complete inventory; execution stopped on contract conflict."
+}

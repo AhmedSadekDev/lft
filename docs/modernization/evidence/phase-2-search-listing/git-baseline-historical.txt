@@ -1,0 +1,38 @@
+captured_at: 2026-10-04 00:59:43 +03:00
+branch: devlop_test
+head: 3d53beee01076a1def1fc9db091545188b46f9f5
+--- git status --short (tracked + untracked, excluding storage/framework):
+ M app/Http/Controllers/Admin/BookingContainerAgents.php
+ M app/Http/Controllers/Admin/BranchController.php
+ M app/Http/Controllers/Admin/CompanyTransportationController.php
+ M app/Http/Controllers/Admin/EmployeeController.php
+ M app/Http/Controllers/Admin/ServiceController.php
+ M app/Http/Controllers/Api/BookingController.php
+ M app/Http/Controllers/Api/Superagent/AgentController.php
+ M app/Http/Resources/Api/Agent/NotificationResource.php
+ M app/Http/Resources/Api/Superagent/NotificationResource.php
+ M app/Models/Agent.php
+ M app/Models/Branch.php
+ M app/Models/Employee.php
+ M docs/modernization/evidence/phase-0.5/id-integrity.json
+ M docs/modernization/evidence/phase-0.5/migration-comparison.json
+ M docs/modernization/evidence/phase-0.5/schema-columns.json
+ M docs/modernization/evidence/phase-0.5/schema-foreign-keys.json
+ M docs/modernization/evidence/phase-0.5/schema-indexes.json
+ M docs/modernization/evidence/phase-0.5/schema-tables.json
+ M docs/modernization/evidence/phase-0.5/sql-overlap.json
+ M docs/modernization/phase-0-audit.md
+ M docs/modernization/phase-0.5-schema-fingerprint.md
+ M resources/views/admin/bookingsagents/index.blade.php
+?? docs/modernization/evidence/phase-0.5-baseline/
+?? docs/modernization/evidence/phase-0.5-remediation/
+?? docs/modernization/evidence/phase-0.5-source-remediation/
+?? docs/modernization/evidence/phase-0.5/foreign-key-orphans.json
+?? docs/modernization/evidence/phase-0.5/historical-indexes.json
+?? docs/modernization/evidence/phase-1-performance/
+?? docs/modernization/phase-0.5-clone-dryrun-report.md
+?? docs/modernization/phase-0.5-remediation-manifest.md
+?? docs/modernization/phase-0.5-source-remediation-report.md
+?? docs/modernization/phase-1-performance-indexes.sql
+?? docs/modernization/phase-1-performance-report.md
+--- storage/framework entries (session/cache churn, pre-existing): 238

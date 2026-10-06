@@ -1,0 +1,3 @@
+-- Phase 2 BLOCKED before optimization/index analysis.
+-- No indexes proposed, approved, applied, or rejected.
+-- No executable DDL. Existing Phase 1 indexes were not altered.

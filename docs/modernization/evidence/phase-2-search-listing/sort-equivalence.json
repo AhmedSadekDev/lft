@@ -1,0 +1,8 @@
+{
+  "status": "BLOCKED",
+  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed.",
+  "comparisons_performed": 0,
+  "preflight_cases": 6,
+  "evidence": "sort-contract-preflight.json",
+  "limitation": "Query builder reproduction, not full HTTP response or before/after comparison"
+}

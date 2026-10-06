@@ -1,0 +1,25 @@
+{
+  "status": "PARTIAL",
+  "resources": [
+    {
+      "resource": "companies",
+      "type": "LengthAwarePaginator",
+      "per_page": 20,
+      "changed": false
+    },
+    {
+      "resource": "private_companies",
+      "type": "LengthAwarePaginator",
+      "per_page": 20,
+      "changed": false
+    }
+  ],
+  "field_all": {
+    "status": "DEFERRED",
+    "source": "app/Http/Controllers/Api/Superagent/BookingContainerController.php:19",
+    "implementation": "Four get operations; Eloquent merges; unique id; excludes missing booking; sorts containers desc; groups booking_id; sorts bookings desc; manual LengthAwarePaginator",
+    "per_page": 100,
+    "invariant": "Each stage query retains withoutInvoicedBooking()",
+    "reason": "Missing yards and no complete equivalence proof; leave for Phase 3"
+  }
+}
