@@ -1,0 +1,961 @@
+{
+    "mode": "baseline",
+    "cases": [
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "823b11ac196ecc5d93a493ff19307ef3d72a9f49377d298de716864e1bc77753",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2026-09-01",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 465,
+                "sha256": "cb09f596fedd983422d810d6aaa70ce5d2e09145a235bf353aadff6dca816509",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "2026-09-30",
+            "result": {
+                "outcome": "success",
+                "rows": 468,
+                "sha256": "b593a931c1edb81d08b1ecda7a9b8623a9a74afbf84dbf553a1fded9c36a3fc9",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-30"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2024-02-29",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "823b11ac196ecc5d93a493ff19307ef3d72a9f49377d298de716864e1bc77753",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-29"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "2024-02-29",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-29"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2026-04-24",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "823b11ac196ecc5d93a493ff19307ef3d72a9f49377d298de716864e1bc77753",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-04-24"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "2026-04-24",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-04-24"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2026-10-30",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-10-30"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "2026-10-30",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "823b11ac196ecc5d93a493ff19307ef3d72a9f49377d298de716864e1bc77753",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-10-30"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2026-09-01",
+            "to": "2026-09-30",
+            "result": {
+                "outcome": "success",
+                "rows": 459,
+                "sha256": "f3bbd0e7336f1f1f8aece0d7c6833b061248cdf4babe404ac223506a86a58c76",
+                "sql": "select * from `bookings` where `created_at` between ? and ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 00:00:00",
+                    "2026-09-30 23:59:59"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2026-09-30",
+            "to": "2026-09-01",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where `created_at` between ? and ? order by `id` asc",
+                "bindings": [
+                    "2026-09-30 00:00:00",
+                    "2026-09-01 23:59:59"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "9999-12-31",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "9999-12-31"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "9999-12-31",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "823b11ac196ecc5d93a493ff19307ef3d72a9f49377d298de716864e1bc77753",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "9999-12-31"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2026-9-1",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 465,
+                "sha256": "cb09f596fedd983422d810d6aaa70ce5d2e09145a235bf353aadff6dca816509",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-9-1"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "2026-9-1",
+            "result": {
+                "outcome": "success",
+                "rows": 29,
+                "sha256": "87b20b6549adb4c0259e4dab650954350a0b5a9c48b5f6b24aaf4a0e2a81c6c0",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-9-1"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "invalid",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "invalid"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "invalid",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "invalid"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2024-02-30",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-30"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "2024-02-30",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-30"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "2026-09-01 12:30:00",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 445,
+                "sha256": "7b13c2bf68af00f48a2e0235ab900ba0862237b7179b8dccc3738d891eb572ac",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 12:30:00"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "2026-09-01 12:30:00",
+            "result": {
+                "outcome": "success",
+                "rows": 29,
+                "sha256": "87b20b6549adb4c0259e4dab650954350a0b5a9c48b5f6b24aaf4a0e2a81c6c0",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 12:30:00"
+                ]
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": "0",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "823b11ac196ecc5d93a493ff19307ef3d72a9f49377d298de716864e1bc77753",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        },
+        {
+            "zone": "+00:00",
+            "from": null,
+            "to": "0",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "823b11ac196ecc5d93a493ff19307ef3d72a9f49377d298de716864e1bc77753",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b03ed0b62f6f3e25826420dbced3b5e58932b7b60e6e2b8386bff944eea3a651",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2026-09-01",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 465,
+                "sha256": "7c319e4ff8ab0a0b80d78e6dc73c5e3b340cee0a2ef8064ec4d59ec6f2f04779",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "2026-09-30",
+            "result": {
+                "outcome": "success",
+                "rows": 467,
+                "sha256": "0a6732fe6025476f9c1dc21c7c6d5aad8954ac3002e7203f38350362fa901618",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-30"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2024-02-29",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b03ed0b62f6f3e25826420dbced3b5e58932b7b60e6e2b8386bff944eea3a651",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-29"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "2024-02-29",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-29"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2026-04-24",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b03ed0b62f6f3e25826420dbced3b5e58932b7b60e6e2b8386bff944eea3a651",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-04-24"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "2026-04-24",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-04-24"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2026-10-30",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-10-30"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "2026-10-30",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b03ed0b62f6f3e25826420dbced3b5e58932b7b60e6e2b8386bff944eea3a651",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-10-30"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2026-09-01",
+            "to": "2026-09-30",
+            "result": {
+                "outcome": "success",
+                "rows": 458,
+                "sha256": "39721968c0f42344fad4a4428d39bf0350c5ef3e3ac0d273ced704f2c855b5a4",
+                "sql": "select * from `bookings` where `created_at` between ? and ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 00:00:00",
+                    "2026-09-30 23:59:59"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2026-09-30",
+            "to": "2026-09-01",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where `created_at` between ? and ? order by `id` asc",
+                "bindings": [
+                    "2026-09-30 00:00:00",
+                    "2026-09-01 23:59:59"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "9999-12-31",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "9999-12-31"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "9999-12-31",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b03ed0b62f6f3e25826420dbced3b5e58932b7b60e6e2b8386bff944eea3a651",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "9999-12-31"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2026-9-1",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 465,
+                "sha256": "7c319e4ff8ab0a0b80d78e6dc73c5e3b340cee0a2ef8064ec4d59ec6f2f04779",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-9-1"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "2026-9-1",
+            "result": {
+                "outcome": "success",
+                "rows": 27,
+                "sha256": "0a2aedacbdabf3f6a38b2221706844755ecd5477920bac3336bb8642a982d9c1",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-9-1"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "invalid",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "invalid"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "invalid",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "invalid"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2024-02-30",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-30"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "2024-02-30",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-30"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "2026-09-01 12:30:00",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 447,
+                "sha256": "822c985e5911c74fdda88aa9c8c902125526695dfb9831f3d7fa317df98bc23b",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 12:30:00"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "2026-09-01 12:30:00",
+            "result": {
+                "outcome": "success",
+                "rows": 27,
+                "sha256": "0a2aedacbdabf3f6a38b2221706844755ecd5477920bac3336bb8642a982d9c1",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 12:30:00"
+                ]
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": "0",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b03ed0b62f6f3e25826420dbced3b5e58932b7b60e6e2b8386bff944eea3a651",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        },
+        {
+            "zone": "+03:00",
+            "from": null,
+            "to": "0",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b03ed0b62f6f3e25826420dbced3b5e58932b7b60e6e2b8386bff944eea3a651",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b35d3feb40f81f57428c095e1d590b55d60f549de85474d4e5adb560fff5ab4f",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2026-09-01",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 465,
+                "sha256": "be9f50ff1f90d4781977a6e7cab88117b7813cb02a384ff5acfb956107047331",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "2026-09-30",
+            "result": {
+                "outcome": "success",
+                "rows": 468,
+                "sha256": "0dd392541068fa86948ddff3464f52397e2e1f5f379b33ea9e7b0f2b9fa41712",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-30"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2024-02-29",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b35d3feb40f81f57428c095e1d590b55d60f549de85474d4e5adb560fff5ab4f",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-29"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "2024-02-29",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-29"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2026-04-24",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b35d3feb40f81f57428c095e1d590b55d60f549de85474d4e5adb560fff5ab4f",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-04-24"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "2026-04-24",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-04-24"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2026-10-30",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-10-30"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "2026-10-30",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b35d3feb40f81f57428c095e1d590b55d60f549de85474d4e5adb560fff5ab4f",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-10-30"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2026-09-01",
+            "to": "2026-09-30",
+            "result": {
+                "outcome": "success",
+                "rows": 459,
+                "sha256": "74037c1c86334ea9a59cdbcc3509f6cf67cd18389c1b61e17af175496fc4fbba",
+                "sql": "select * from `bookings` where `created_at` between ? and ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 00:00:00",
+                    "2026-09-30 23:59:59"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2026-09-30",
+            "to": "2026-09-01",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where `created_at` between ? and ? order by `id` asc",
+                "bindings": [
+                    "2026-09-30 00:00:00",
+                    "2026-09-01 23:59:59"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "9999-12-31",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "9999-12-31"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "9999-12-31",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b35d3feb40f81f57428c095e1d590b55d60f549de85474d4e5adb560fff5ab4f",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "9999-12-31"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2026-9-1",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 465,
+                "sha256": "be9f50ff1f90d4781977a6e7cab88117b7813cb02a384ff5acfb956107047331",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-9-1"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "2026-9-1",
+            "result": {
+                "outcome": "success",
+                "rows": 29,
+                "sha256": "ae19b0e06d62a94de7e723d55bf8093ec9b5c4435000d370fb772e8eb06d6652",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-9-1"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "invalid",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "invalid"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "invalid",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "invalid"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2024-02-30",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-30"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "2024-02-30",
+            "result": {
+                "outcome": "success",
+                "rows": 0,
+                "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2024-02-30"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "2026-09-01 12:30:00",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 445,
+                "sha256": "dc8dea91dd3dbdb29c52776cc676455f21224f5cb2417c5e35163ca10045dfea",
+                "sql": "select * from `bookings` where date(`created_at`) >= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 12:30:00"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "2026-09-01 12:30:00",
+            "result": {
+                "outcome": "success",
+                "rows": 29,
+                "sha256": "ae19b0e06d62a94de7e723d55bf8093ec9b5c4435000d370fb772e8eb06d6652",
+                "sql": "select * from `bookings` where date(`created_at`) <= ? order by `id` asc",
+                "bindings": [
+                    "2026-09-01 12:30:00"
+                ]
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": "0",
+            "to": null,
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b35d3feb40f81f57428c095e1d590b55d60f549de85474d4e5adb560fff5ab4f",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        },
+        {
+            "zone": "-05:00",
+            "from": null,
+            "to": "0",
+            "result": {
+                "outcome": "success",
+                "rows": 474,
+                "sha256": "b35d3feb40f81f57428c095e1d590b55d60f549de85474d4e5adb560fff5ab4f",
+                "sql": "select * from `bookings` order by `id` asc",
+                "bindings": []
+            }
+        }
+    ],
+    "original_timezone": "SYSTEM",
+    "method": "Real booking rows; session timezone only, restored afterwards. No business writes or temporary tables."
+}

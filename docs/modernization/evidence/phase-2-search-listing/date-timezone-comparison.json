@@ -1,0 +1,489 @@
+{
+  "comparisons": 69,
+  "mismatches": 0,
+  "cases": [
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2026-09-01",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "2026-09-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2024-02-29",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "2024-02-29",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2026-04-24",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "2026-04-24",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2026-10-30",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "2026-10-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2026-09-01",
+      "to": "2026-09-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2026-09-30",
+      "to": "2026-09-01",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "9999-12-31",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "9999-12-31",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2026-9-1",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "2026-9-1",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "invalid",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "invalid",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2024-02-30",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "2024-02-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "2026-09-01 12:30:00",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "2026-09-01 12:30:00",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": "0",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+00:00",
+      "from": null,
+      "to": "0",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2026-09-01",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "2026-09-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2024-02-29",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "2024-02-29",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2026-04-24",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "2026-04-24",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2026-10-30",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "2026-10-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2026-09-01",
+      "to": "2026-09-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2026-09-30",
+      "to": "2026-09-01",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "9999-12-31",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "9999-12-31",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2026-9-1",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "2026-9-1",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "invalid",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "invalid",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2024-02-30",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "2024-02-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "2026-09-01 12:30:00",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "2026-09-01 12:30:00",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": "0",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "+03:00",
+      "from": null,
+      "to": "0",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2026-09-01",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "2026-09-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2024-02-29",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "2024-02-29",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2026-04-24",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "2026-04-24",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2026-10-30",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "2026-10-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2026-09-01",
+      "to": "2026-09-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2026-09-30",
+      "to": "2026-09-01",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "9999-12-31",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "9999-12-31",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2026-9-1",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "2026-9-1",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "invalid",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "invalid",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2024-02-30",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "2024-02-30",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "2026-09-01 12:30:00",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "2026-09-01 12:30:00",
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": "0",
+      "to": null,
+      "equal": true,
+      "outcome": "success"
+    },
+    {
+      "zone": "-05:00",
+      "from": null,
+      "to": "0",
+      "equal": true,
+      "outcome": "success"
+    }
+  ]
+}

@@ -54,4 +54,31 @@ class PrivateCompany extends Model
             $this->attributes['logo'] = $value;
         }
     }
+
+    /** Preserve the listing's contains and SQL wildcard semantics. */
+    public function scopeSearchListing($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('tax_no', 'like', "%{$search}%")
+                ->orWhere('commercial_register', 'like', "%{$search}%");
+        });
+    }
+
+    /** Explicit legacy-column allowlist; invalid input resets the entire order. */
+    public function scopeSortListing($query, $column = 'id', $direction = 'desc')
+    {
+        $allowed = [
+            'id', 'name', 'tax_no', 'commercial_register', 'logo', 'phone1', 'phone2', 'tel_fax',
+            'email', 'address', 'created_at', 'updated_at',
+        ];
+        $direction = is_string($direction) ? strtolower($direction) : null;
+        if (!is_string($column) || !in_array($column, $allowed, true)
+            || !in_array($direction, ['asc', 'desc'], true)) {
+            $column = 'id';
+            $direction = 'desc';
+        }
+
+        return $query->orderBy($column, $direction);
+    }
 }

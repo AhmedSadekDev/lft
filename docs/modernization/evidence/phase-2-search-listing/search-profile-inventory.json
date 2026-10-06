@@ -1,28 +1,60 @@
 {
-  "status": "PARTIAL",
+  "status": "COMPLETED",
+  "phase_wide_inventory": "resource-inventory.json (66 listing methods inventoried)",
   "profiles": [
     {
       "resource": "companies",
-      "parameter": "search",
-      "activation": "Request::filled('search')",
+      "model": "Company",
       "contains": [
         "name",
         "email",
         "phone",
         "tax_no"
       ],
-      "semantics": "Contains LIKE; percent and underscore remain SQL wildcards; unchanged"
+      "per_page": 20,
+      "parameter": "search",
+      "activation": "Request::filled('search')",
+      "scope": "searchListing",
+      "semantics": "Contains LIKE; SQL wildcards unchanged"
     },
     {
       "resource": "private_companies",
-      "parameter": "search",
-      "activation": "Request::filled('search')",
+      "model": "PrivateCompany",
       "contains": [
         "name",
         "tax_no",
         "commercial_register"
       ],
-      "semantics": "Contains LIKE; percent and underscore remain SQL wildcards; unchanged"
+      "per_page": 20,
+      "parameter": "search",
+      "activation": "Request::filled('search')",
+      "scope": "searchListing",
+      "semantics": "Contains LIKE; SQL wildcards unchanged"
+    },
+    {
+      "resource": "cars",
+      "model": "Car",
+      "contains": [
+        "car_number"
+      ],
+      "per_page": 15,
+      "parameter": "search",
+      "activation": "Request::filled('search')",
+      "scope": "searchListing",
+      "semantics": "Contains LIKE; SQL wildcards unchanged"
+    },
+    {
+      "resource": "drivers",
+      "model": "Driver",
+      "contains": [
+        "name",
+        "phone"
+      ],
+      "per_page": 15,
+      "parameter": "search",
+      "activation": "Request::filled('search')",
+      "scope": "searchListing",
+      "semantics": "Contains LIKE; SQL wildcards unchanged"
     }
   ]
 }

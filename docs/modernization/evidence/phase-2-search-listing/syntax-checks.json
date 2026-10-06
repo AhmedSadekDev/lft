@@ -1,0 +1,62 @@
+[
+  {
+    "file": "app/Http/Controllers/Admin/CarController.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Http/Controllers/Admin/CarController.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "app/Http/Controllers/Admin/CompanyController.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Http/Controllers/Admin/CompanyController.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "app/Http/Controllers/Admin/DriverController.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Http/Controllers/Admin/DriverController.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "app/Http/Controllers/Admin/PrivateCompanyController.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Http/Controllers/Admin/PrivateCompanyController.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "app/Models/Booking.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Models/Booking.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "app/Models/Car.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Models/Car.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "app/Models/Company.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Models/Company.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "app/Models/Driver.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Models/Driver.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "app/Models/PrivateCompany.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in app/Models/PrivateCompany.php\n",
+    "stderr": ""
+  },
+  {
+    "file": "tests/Unit/ListingProfilesTest.php",
+    "code": 0,
+    "stdout": "No syntax errors detected in tests/Unit/ListingProfilesTest.php\n",
+    "stderr": ""
+  }
+]

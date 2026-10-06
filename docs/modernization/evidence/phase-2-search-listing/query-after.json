@@ -1,4 +1,6 @@
 {
-  "status": "BLOCKED",
-  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed."
+  "status": "MEASURED_AT_QUERY_LEVEL",
+  "source": "query-verification-result.json",
+  "case_field": "after",
+  "endpoint_benchmarks": 0
 }

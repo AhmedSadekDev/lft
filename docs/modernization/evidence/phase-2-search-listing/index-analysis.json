@@ -1,4 +1,22 @@
 {
-  "status": "BLOCKED",
-  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed."
+  "status": "PARTIAL_ANALYSIS_NO_DDL",
+  "applied": [],
+  "candidates": [
+    {
+      "index": "B-tree on contains-search fields",
+      "decision": "REJECTED for accelerating leading-wildcard predicates",
+      "reason": "Contains semantics preserved"
+    },
+    {
+      "index": "bookings(created_at)",
+      "decision": "DEFERRED",
+      "reason": "Current ordered query uses PRIMARY on a small table; representative endpoint evidence needed"
+    },
+    {
+      "index": "additional sort columns",
+      "decision": "DEFERRED",
+      "reason": "Preserve valid legacy sorts; no unmeasured index proliferation"
+    }
+  ],
+  "existing_indexes_source": "query-verification-result.json"
 }

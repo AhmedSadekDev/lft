@@ -349,12 +349,32 @@ class Booking extends Model
             if ($dateFrom && $dateTo) {
                 $query->whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59']);
             } elseif ($dateFrom) {
-                $query->whereDate('created_at', '>=', $dateFrom);
+                if ($this->isListingDate($dateFrom)) {
+                    $query->where('created_at', '>=', $dateFrom . ' 00:00:00');
+                } else {
+                    $query->whereDate('created_at', '>=', $dateFrom);
+                }
             } elseif ($dateTo) {
-                $query->whereDate('created_at', '<=', $dateTo);
+                if ($this->isListingDate($dateTo) && $dateTo !== '9999-12-31') {
+                    $nextDay = (new \DateTimeImmutable($dateTo))->modify('+1 day')->format('Y-m-d');
+                    $query->where('created_at', '<', $nextDay . ' 00:00:00');
+                } else {
+                    $query->whereDate('created_at', '<=', $dateTo);
+                }
             }
         });
     }
+
+    /** Only normalize real ISO calendar dates; preserve legacy coercion otherwise. */
+    private function isListingDate(string $date): bool
+    {
+        if (!preg_match('/^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}$/D', $date)) {
+            return false;
+        }
+
+        return checkdate((int) substr($date, 5, 2), (int) substr($date, 8, 2), (int) substr($date, 0, 4));
+    }
+
     public function scopeFilterSearch(Builder $query, ?string $search)
     {
         $query->when($search, function (Builder $query) use ($search) {

@@ -1,4 +1,56 @@
 {
-  "status": "BLOCKED",
-  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed."
+  "status": "QUERY_LEVEL_PASS_ONLY",
+  "count": 8,
+  "mismatches": 0,
+  "cases": [
+    {
+      "name": "bookings/dates/2026-09-01/null",
+      "equal": true,
+      "total_before": 465,
+      "total_after": 465
+    },
+    {
+      "name": "bookings/dates/null/2026-09-30",
+      "equal": true,
+      "total_before": 467,
+      "total_after": 467
+    },
+    {
+      "name": "bookings/dates/2024-02-29/null",
+      "equal": true,
+      "total_before": 474,
+      "total_after": 474
+    },
+    {
+      "name": "bookings/dates/null/2024-02-29",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "bookings/dates/2026-09-01/2026-09-30",
+      "equal": true,
+      "total_before": 458,
+      "total_after": 458
+    },
+    {
+      "name": "bookings/dates/null/null",
+      "equal": true,
+      "total_before": 474,
+      "total_after": 474
+    },
+    {
+      "name": "bookings/dates/null/9999-12-31",
+      "equal": true,
+      "total_before": 474,
+      "total_after": 474
+    },
+    {
+      "name": "bookings/dates/2026-09-30/2026-09-01",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    }
+  ],
+  "source": "query-verification-result.json"
 }

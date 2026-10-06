@@ -1,0 +1,487 @@
+{
+    "mode": "baseline",
+    "kind": "dashboard-denials",
+    "actors": {
+        "api": {
+            "model": "App\\Models\\Company",
+            "id": 6
+        },
+        "employees": {
+            "model": "App\\Models\\Employee",
+            "id": 8
+        },
+        "superagent": {
+            "model": "App\\Models\\Superagent",
+            "id": 3
+        },
+        "agent": {
+            "model": "App\\Models\\Agent",
+            "id": 25
+        }
+    },
+    "cases": [
+        {
+            "name": "companies/api",
+            "method": "GET",
+            "uri": "/dashboard/companies",
+            "guard": "api",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 32.3858,
+                    "peak_delta_bytes": 1697656,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "companies/employees",
+            "method": "GET",
+            "uri": "/dashboard/companies",
+            "guard": "employees",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.1054,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "companies/superagent",
+            "method": "GET",
+            "uri": "/dashboard/companies",
+            "guard": "superagent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.5875,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "companies/agent",
+            "method": "GET",
+            "uri": "/dashboard/companies",
+            "guard": "agent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.6748,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "private-companies/api",
+            "method": "GET",
+            "uri": "/dashboard/private-companies",
+            "guard": "api",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 2.5493,
+                    "peak_delta_bytes": 79960,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "private-companies/employees",
+            "method": "GET",
+            "uri": "/dashboard/private-companies",
+            "guard": "employees",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 0.8948,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "private-companies/superagent",
+            "method": "GET",
+            "uri": "/dashboard/private-companies",
+            "guard": "superagent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 0.8561,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "private-companies/agent",
+            "method": "GET",
+            "uri": "/dashboard/private-companies",
+            "guard": "agent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.0435,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "cars/api",
+            "method": "GET",
+            "uri": "/dashboard/cars",
+            "guard": "api",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 5.0153,
+                    "peak_delta_bytes": 236576,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "cars/employees",
+            "method": "GET",
+            "uri": "/dashboard/cars",
+            "guard": "employees",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.0509,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "cars/superagent",
+            "method": "GET",
+            "uri": "/dashboard/cars",
+            "guard": "superagent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 0.9833,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "cars/agent",
+            "method": "GET",
+            "uri": "/dashboard/cars",
+            "guard": "agent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.0224,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "drivers/api",
+            "method": "GET",
+            "uri": "/dashboard/drivers",
+            "guard": "api",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.383,
+                    "peak_delta_bytes": 74312,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "drivers/employees",
+            "method": "GET",
+            "uri": "/dashboard/drivers",
+            "guard": "employees",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.0024,
+                    "peak_delta_bytes": 72400,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "drivers/superagent",
+            "method": "GET",
+            "uri": "/dashboard/drivers",
+            "guard": "superagent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 0.9736,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "drivers/agent",
+            "method": "GET",
+            "uri": "/dashboard/drivers",
+            "guard": "agent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 0.9791,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "bookings/api",
+            "method": "GET",
+            "uri": "/dashboard/bookings",
+            "guard": "api",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 2.2683,
+                    "peak_delta_bytes": 263384,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "bookings/employees",
+            "method": "GET",
+            "uri": "/dashboard/bookings",
+            "guard": "employees",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.2404,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "bookings/superagent",
+            "method": "GET",
+            "uri": "/dashboard/bookings",
+            "guard": "superagent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 2.9974,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        },
+        {
+            "name": "bookings/agent",
+            "method": "GET",
+            "uri": "/dashboard/bookings",
+            "guard": "agent",
+            "runs": [
+                {
+                    "status": 401,
+                    "queries": 0,
+                    "latency_ms": 1.4309,
+                    "peak_delta_bytes": 62640,
+                    "payload_bytes": 30,
+                    "sha256": "8031180d4d982a471ca97ef5a04e8d013d003c5c19e80d0a5f45401c4463ec27",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [],
+            "plans": [],
+            "json_top_keys": [
+                "message"
+            ],
+            "data_count": null
+        }
+    ],
+    "normalizations": [],
+    "auth_method": "Signed transient JWT from existing row; guards reset before kernel handle. No setUser, replacement account or middleware bypass.",
+    "isolation": "Server-enforced session READ ONLY; real middleware; array cache/session; rollback; no termination hooks"
+}

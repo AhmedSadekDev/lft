@@ -1,48 +1,17 @@
 {
-  "status": "PARTIAL",
-  "environment": "PHP 8.3.26; MySQL 8.4.3; leader, READ ONLY transaction; Laravel query builder without application boot",
-  "tests_passed": 6,
-  "tests_failed": 0,
-  "assertions": 6,
-  "skipped": 0,
-  "suite_run": false,
-  "suite_reason": "Stopped at contract conflict before implementation",
-  "cases": [
-    {
-      "table": "companies",
-      "sort_by": "id",
-      "sort_dir": "desc",
-      "passed": true
-    },
-    {
-      "table": "companies",
-      "sort_by": "phase2_unknown_sort",
-      "sort_dir": "desc",
-      "passed": true
-    },
-    {
-      "table": "companies",
-      "sort_by": "id",
-      "sort_dir": "phase2_invalid_direction",
-      "passed": true
-    },
-    {
-      "table": "private_companies",
-      "sort_by": "id",
-      "sort_dir": "desc",
-      "passed": true
-    },
-    {
-      "table": "private_companies",
-      "sort_by": "phase2_unknown_sort",
-      "sort_dir": "desc",
-      "passed": true
-    },
-    {
-      "table": "private_companies",
-      "sort_by": "id",
-      "sort_dir": "phase2_invalid_direction",
-      "passed": true
-    }
-  ]
+  "dedicated": {
+    "passed": 3,
+    "assertions": 84,
+    "failed": 0
+  },
+  "real_query_comparisons": 126,
+  "query_mismatches": 0,
+  "regression": {
+    "tests": 134,
+    "assertions": 667,
+    "failures": 25,
+    "errors": 10,
+    "baseline_same_failures": true
+  },
+  "phase_complete": true
 }

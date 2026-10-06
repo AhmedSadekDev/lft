@@ -1,3 +1,4 @@
--- Phase 2 BLOCKED before optimization/index analysis.
--- No indexes proposed, approved, applied, or rejected.
--- No executable DDL. Existing Phase 1 indexes were not altered.
+-- Phase 2 partial implementation, 2026-10-06.
+-- No DDL applied. Existing Phase 1 indexes retained.
+-- Contains-search B-tree candidates rejected; additional date/sort indexes deferred.
+-- See evidence/phase-2-search-listing/index-analysis.json.

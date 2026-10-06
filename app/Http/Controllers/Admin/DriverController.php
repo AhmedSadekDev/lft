@@ -29,11 +29,7 @@ class DriverController extends Controller
 
         // تطبيق البحث إذا كان موجود
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('phone', 'like', '%' . $search . '%');
-            });
+            $query->searchListing($request->search);
         }
 
         $drivers = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();

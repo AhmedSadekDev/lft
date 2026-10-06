@@ -1,18 +1,10 @@
 {
-  "status": "PARTIAL",
-  "scope": "Statements issued by this execution only",
-  "business_dml_issued": 0,
-  "migration_commands_executed": 0,
-  "index_ddl_issued": 0,
-  "non_index_schema_changes": 0,
-  "connections": "One identity-only SELECT probe plus two executions of sort-contract-preflight.php, each in START TRANSACTION READ ONLY / ROLLBACK",
-  "application_booted": false,
-  "binlog_audit": "NOT_PERFORMED; no claim about concurrent server activity",
-  "kmi_1": "Untouched by this execution",
-  "missing_tables": [
-    "yards",
-    "users",
-    "vaults",
-    "vault_transactions"
-  ]
+  "status": "CURRENT_EXECUTION",
+  "database": "leader",
+  "business_dml": 0,
+  "migrations": 0,
+  "index_ddl": 0,
+  "non_index_ddl": 0,
+  "real_data_probe": "START TRANSACTION READ ONLY; ROLLBACK",
+  "concurrent_writers_audited": false
 }

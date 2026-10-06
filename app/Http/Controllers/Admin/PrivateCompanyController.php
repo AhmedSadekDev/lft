@@ -21,18 +21,11 @@ class PrivateCompanyController extends Controller
 
         // Search functionality
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('tax_no', 'like', "%{$search}%")
-                  ->orWhere('commercial_register', 'like', "%{$search}%");
-            });
+            $query->searchListing($request->search);
         }
 
         // Sort by
-        $sortBy = $request->get('sort_by', 'id');
-        $sortDir = $request->get('sort_dir', 'desc');
-        $query->orderBy($sortBy, $sortDir);
+        $query->sortListing($request->get('sort_by', 'id'), $request->get('sort_dir', 'desc'));
 
         $privateCompanies = $query->paginate(20);
 

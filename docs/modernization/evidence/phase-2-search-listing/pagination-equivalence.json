@@ -1,4 +1,584 @@
 {
-  "status": "BLOCKED",
-  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed."
+  "status": "QUERY_LEVEL_PASS_ONLY",
+  "count": 96,
+  "mismatches": 0,
+  "cases": [
+    {
+      "name": "companies/search/f4dbdf21/page/1",
+      "equal": true,
+      "total_before": 42,
+      "total_after": 42
+    },
+    {
+      "name": "companies/search/f4dbdf21/page/2",
+      "equal": true,
+      "total_before": 42,
+      "total_after": 42
+    },
+    {
+      "name": "companies/search/f4dbdf21/page/999",
+      "equal": true,
+      "total_before": 42,
+      "total_after": 42
+    },
+    {
+      "name": "companies/search/e9ee6104/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/e9ee6104/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/e9ee6104/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/99063bca/page/1",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/99063bca/page/2",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/99063bca/page/999",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/29d6a3e8/page/1",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/29d6a3e8/page/2",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/29d6a3e8/page/999",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/68633e05/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/68633e05/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/68633e05/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/c943612e/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/c943612e/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/c943612e/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "companies/search/00000000/page/1",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/00000000/page/2",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/00000000/page/999",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/search/64e9616b/page/1",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "companies/search/64e9616b/page/2",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "companies/search/64e9616b/page/999",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/f4dbdf21/page/1",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/f4dbdf21/page/2",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/f4dbdf21/page/999",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/e9ee6104/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/e9ee6104/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/e9ee6104/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/99063bca/page/1",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/99063bca/page/2",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/99063bca/page/999",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/29d6a3e8/page/1",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/29d6a3e8/page/2",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/29d6a3e8/page/999",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/68633e05/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/68633e05/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/68633e05/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/c943612e/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/c943612e/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/c943612e/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "private_companies/search/00000000/page/1",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/00000000/page/2",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/00000000/page/999",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/search/78e3633d/page/1",
+      "equal": true,
+      "total_before": 3,
+      "total_after": 3
+    },
+    {
+      "name": "private_companies/search/78e3633d/page/2",
+      "equal": true,
+      "total_before": 3,
+      "total_after": 3
+    },
+    {
+      "name": "private_companies/search/78e3633d/page/999",
+      "equal": true,
+      "total_before": 3,
+      "total_after": 3
+    },
+    {
+      "name": "cars/search/f4dbdf21/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/f4dbdf21/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/f4dbdf21/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/e9ee6104/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/e9ee6104/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/e9ee6104/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/99063bca/page/1",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/99063bca/page/2",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/99063bca/page/999",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/29d6a3e8/page/1",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/29d6a3e8/page/2",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/29d6a3e8/page/999",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/68633e05/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/68633e05/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/68633e05/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/c943612e/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/c943612e/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/c943612e/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "cars/search/00000000/page/1",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/00000000/page/2",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/00000000/page/999",
+      "equal": true,
+      "total_before": 167,
+      "total_after": 167
+    },
+    {
+      "name": "cars/search/c3e0e562/page/1",
+      "equal": true,
+      "total_before": 1,
+      "total_after": 1
+    },
+    {
+      "name": "cars/search/c3e0e562/page/2",
+      "equal": true,
+      "total_before": 1,
+      "total_after": 1
+    },
+    {
+      "name": "cars/search/c3e0e562/page/999",
+      "equal": true,
+      "total_before": 1,
+      "total_after": 1
+    },
+    {
+      "name": "drivers/search/f4dbdf21/page/1",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/f4dbdf21/page/2",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/f4dbdf21/page/999",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/e9ee6104/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/e9ee6104/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/e9ee6104/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/99063bca/page/1",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/99063bca/page/2",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/99063bca/page/999",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/29d6a3e8/page/1",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/29d6a3e8/page/2",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/29d6a3e8/page/999",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/68633e05/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/68633e05/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/68633e05/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/c943612e/page/1",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/c943612e/page/2",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/c943612e/page/999",
+      "equal": true,
+      "total_before": 0,
+      "total_after": 0
+    },
+    {
+      "name": "drivers/search/00000000/page/1",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/00000000/page/2",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/00000000/page/999",
+      "equal": true,
+      "total_before": 305,
+      "total_after": 305
+    },
+    {
+      "name": "drivers/search/87c76bbc/page/1",
+      "equal": true,
+      "total_before": 2,
+      "total_after": 2
+    },
+    {
+      "name": "drivers/search/87c76bbc/page/2",
+      "equal": true,
+      "total_before": 2,
+      "total_after": 2
+    },
+    {
+      "name": "drivers/search/87c76bbc/page/999",
+      "equal": true,
+      "total_before": 2,
+      "total_after": 2
+    }
+  ],
+  "source": "query-verification-result.json"
 }

@@ -36,19 +36,11 @@ class CompanyController extends Controller
 
         // Search functionality
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('tax_no', 'like', "%{$search}%");
-            });
+            $query->searchListing($request->search);
         }
 
         // Sort by
-        $sortBy = $request->get('sort_by', 'id');
-        $sortDir = $request->get('sort_dir', 'desc');
-        $query->orderBy($sortBy, $sortDir);
+        $query->sortListing($request->get('sort_by', 'id'), $request->get('sort_dir', 'desc'));
 
         $companies = $query->with(['bookings.invoice.invoicePayments'])->paginate(20);
 

@@ -1,0 +1,837 @@
+{
+    "mode": "baseline",
+    "kind": "api",
+    "actors": {
+        "api": {
+            "model": "App\\Models\\Company",
+            "id": 6
+        },
+        "employees": {
+            "model": "App\\Models\\Employee",
+            "id": 8
+        },
+        "superagent": {
+            "model": "App\\Models\\Superagent",
+            "id": 3
+        },
+        "agent": {
+            "model": "App\\Models\\Agent",
+            "id": 25
+        }
+    },
+    "cases": [
+        {
+            "name": "company_bookings",
+            "method": "GET",
+            "uri": "/api/profile/bookings",
+            "guard": "api",
+            "runs": [
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 214.8167,
+                    "peak_delta_bytes": 3922040,
+                    "rows_examined_raw_delta": 1162,
+                    "counter_overhead": 210,
+                    "rows_examined": 952,
+                    "payload_bytes": 90844,
+                    "sha256": "f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 158.3854,
+                    "peak_delta_bytes": 1856544,
+                    "rows_examined_raw_delta": 1162,
+                    "counter_overhead": 210,
+                    "rows_examined": 952,
+                    "payload_bytes": 90844,
+                    "sha256": "f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 120.1368,
+                    "peak_delta_bytes": 1823616,
+                    "rows_examined_raw_delta": 1162,
+                    "counter_overhead": 210,
+                    "rows_examined": 952,
+                    "payload_bytes": 90844,
+                    "sha256": "f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 193.1769,
+                    "peak_delta_bytes": 1824256,
+                    "rows_examined_raw_delta": 1162,
+                    "counter_overhead": 210,
+                    "rows_examined": 952,
+                    "payload_bytes": 90844,
+                    "sha256": "f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 156.9357,
+                    "peak_delta_bytes": 1823456,
+                    "rows_examined_raw_delta": 1162,
+                    "counter_overhead": 210,
+                    "rows_examined": 952,
+                    "payload_bytes": 90844,
+                    "sha256": "f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 201.952,
+                    "peak_delta_bytes": 1823456,
+                    "rows_examined_raw_delta": 1162,
+                    "counter_overhead": 210,
+                    "rows_examined": 952,
+                    "payload_bytes": 90844,
+                    "sha256": "f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [
+                {
+                    "sql": "select * from `companies` where `id` = ? limit 1",
+                    "bindings": [
+                        "6"
+                    ],
+                    "ms": 1.87
+                },
+                {
+                    "sql": "select * from `bookings` where `bookings`.`company_id` = ? and `bookings`.`company_id` is not null",
+                    "bindings": [
+                        6
+                    ],
+                    "ms": 30.84
+                },
+                {
+                    "sql": "select * from `booking_containers` where `booking_containers`.`booking_id` in (2, 8, 9, 10, 13, 23, 24, 25, 27, 28, 29, 35, 39, 43, 52, 53, 54, 55, 62, 66, 67, 81, 82, 83, 84, 85, 86, 90, 92, 96, 97, 99, 101, 103, 104, 105, 114, 115, 116, 119, 133, 134, 135, 136, 137, 138, 139, 140, 142, 146, 152, 155, 156, 163, 166, 167, 168, 169, 170, 171, 172, 173, 174, 188, 189, 190, 191, 192, 193, 198, 199, 200, 217, 219, 221, 222, 223, 224, 225, 226, 227, 228, 232, 242, 246, 250, 253, 254, 255, 257, 258, 264, 265, 266, 268, 278, 279, 280, 281, 282, 284, 285, 286, 287, 289, 290, 301, 302, 303, 310, 311, 312, 313, 318, 319, 320, 321, 323, 340, 347, 353, 354, 355, 356, 359, 360, 366, 367, 371, 373, 375, 376, 377, 382, 388, 397, 398, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 428, 429, 430, 438, 440, 442, 443, 444, 447, 451, 453, 460, 463, 465, 467, 473, 474, 475, 480, 482, 483, 485, 486, 487, 492, 494, 496, 500, 501, 502, 503, 505, 506, 509)",
+                    "bindings": [],
+                    "ms": 16.56
+                },
+                {
+                    "sql": "select * from `containers` where `containers`.`id` in (1, 2, 3, 5)",
+                    "bindings": [],
+                    "ms": 1.17
+                },
+                {
+                    "sql": "select * from `branches` where `branches`.`id` in (1, 2, 10, 11, 21, 23, 29, 30, 32, 33, 37, 39, 41, 46, 49, 56, 60, 65, 68, 69, 73, 74, 87, 95, 96, 99, 102, 120, 123, 127, 132, 133, 134, 135, 136, 138, 139, 141, 142, 144, 145, 146, 149, 153, 154)",
+                    "bindings": [],
+                    "ms": 3.05
+                },
+                {
+                    "sql": "select * from `booking_movements` where `booking_movements`.`booking_id` in (2, 8, 9, 10, 13, 23, 24, 25, 27, 28, 29, 35, 39, 43, 52, 53, 54, 55, 62, 66, 67, 81, 82, 83, 84, 85, 86, 90, 92, 96, 97, 99, 101, 103, 104, 105, 114, 115, 116, 119, 133, 134, 135, 136, 137, 138, 139, 140, 142, 146, 152, 155, 156, 163, 166, 167, 168, 169, 170, 171, 172, 173, 174, 188, 189, 190, 191, 192, 193, 198, 199, 200, 217, 219, 221, 222, 223, 224, 225, 226, 227, 228, 232, 242, 246, 250, 253, 254, 255, 257, 258, 264, 265, 266, 268, 278, 279, 280, 281, 282, 284, 285, 286, 287, 289, 290, 301, 302, 303, 310, 311, 312, 313, 318, 319, 320, 321, 323, 340, 347, 353, 354, 355, 356, 359, 360, 366, 367, 371, 373, 375, 376, 377, 382, 388, 397, 398, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 428, 429, 430, 438, 440, 442, 443, 444, 447, 451, 453, 460, 463, 465, 467, 473, 474, 475, 480, 482, 483, 485, 486, 487, 492, 494, 496, 500, 501, 502, 503, 505, 506, 509)",
+                    "bindings": [],
+                    "ms": 2.22
+                },
+                {
+                    "sql": "select * from `employees` where `employees`.`id` in (5, 20, 21, 22, 23, 24, 26, 27, 28, 29, 33, 34, 37, 44, 45, 46, 47, 54, 56, 61, 62)",
+                    "bindings": [],
+                    "ms": 1.02
+                },
+                {
+                    "sql": "select * from `shipping_agents` where `shipping_agents`.`id` in (1, 3, 6, 7, 9, 10, 11)",
+                    "bindings": [],
+                    "ms": 0.9
+                }
+            ],
+            "plans": [
+                {
+                    "sql": "select * from `companies` where `id` = ? limit 1",
+                    "bindings": [
+                        "6"
+                    ],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "companies",
+                            "partitions": null,
+                            "type": "const",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": "const",
+                            "rows": 1,
+                            "filtered": 100,
+                            "Extra": null
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `bookings` where `bookings`.`company_id` = ? and `bookings`.`company_id` is not null",
+                    "bindings": [
+                        6
+                    ],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "bookings",
+                            "partitions": null,
+                            "type": "ref",
+                            "possible_keys": "fk_bookings_company_id",
+                            "key": "fk_bookings_company_id",
+                            "key_len": "9",
+                            "ref": "const",
+                            "rows": 183,
+                            "filtered": 100,
+                            "Extra": null
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `booking_containers` where `booking_containers`.`booking_id` in (2, 8, 9, 10, 13, 23, 24, 25, 27, 28, 29, 35, 39, 43, 52, 53, 54, 55, 62, 66, 67, 81, 82, 83, 84, 85, 86, 90, 92, 96, 97, 99, 101, 103, 104, 105, 114, 115, 116, 119, 133, 134, 135, 136, 137, 138, 139, 140, 142, 146, 152, 155, 156, 163, 166, 167, 168, 169, 170, 171, 172, 173, 174, 188, 189, 190, 191, 192, 193, 198, 199, 200, 217, 219, 221, 222, 223, 224, 225, 226, 227, 228, 232, 242, 246, 250, 253, 254, 255, 257, 258, 264, 265, 266, 268, 278, 279, 280, 281, 282, 284, 285, 286, 287, 289, 290, 301, 302, 303, 310, 311, 312, 313, 318, 319, 320, 321, 323, 340, 347, 353, 354, 355, 356, 359, 360, 366, 367, 371, 373, 375, 376, 377, 382, 388, 397, 398, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 428, 429, 430, 438, 440, 442, 443, 444, 447, 451, 453, 460, 463, 465, 467, 473, 474, 475, 480, 482, 483, 485, 486, 487, 492, 494, 496, 500, 501, 502, 503, 505, 506, 509)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "booking_containers",
+                            "partitions": null,
+                            "type": "ALL",
+                            "possible_keys": "fk_booking_containers_booking_id",
+                            "key": null,
+                            "key_len": null,
+                            "ref": null,
+                            "rows": 691,
+                            "filtered": 36.32416534423828,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `containers` where `containers`.`id` in (1, 2, 3, 5)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "containers",
+                            "partitions": null,
+                            "type": "range",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": null,
+                            "rows": 4,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `branches` where `branches`.`id` in (1, 2, 10, 11, 21, 23, 29, 30, 32, 33, 37, 39, 41, 46, 49, 56, 60, 65, 68, 69, 73, 74, 87, 95, 96, 99, 102, 120, 123, 127, 132, 133, 134, 135, 136, 138, 139, 141, 142, 144, 145, 146, 149, 153, 154)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "branches",
+                            "partitions": null,
+                            "type": "range",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": null,
+                            "rows": 45,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `booking_movements` where `booking_movements`.`booking_id` in (2, 8, 9, 10, 13, 23, 24, 25, 27, 28, 29, 35, 39, 43, 52, 53, 54, 55, 62, 66, 67, 81, 82, 83, 84, 85, 86, 90, 92, 96, 97, 99, 101, 103, 104, 105, 114, 115, 116, 119, 133, 134, 135, 136, 137, 138, 139, 140, 142, 146, 152, 155, 156, 163, 166, 167, 168, 169, 170, 171, 172, 173, 174, 188, 189, 190, 191, 192, 193, 198, 199, 200, 217, 219, 221, 222, 223, 224, 225, 226, 227, 228, 232, 242, 246, 250, 253, 254, 255, 257, 258, 264, 265, 266, 268, 278, 279, 280, 281, 282, 284, 285, 286, 287, 289, 290, 301, 302, 303, 310, 311, 312, 313, 318, 319, 320, 321, 323, 340, 347, 353, 354, 355, 356, 359, 360, 366, 367, 371, 373, 375, 376, 377, 382, 388, 397, 398, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 428, 429, 430, 438, 440, 442, 443, 444, 447, 451, 453, 460, 463, 465, 467, 473, 474, 475, 480, 482, 483, 485, 486, 487, 492, 494, 496, 500, 501, 502, 503, 505, 506, 509)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "booking_movements",
+                            "partitions": null,
+                            "type": "ALL",
+                            "possible_keys": "fk_booking_movements_booking_id",
+                            "key": null,
+                            "key_len": null,
+                            "ref": null,
+                            "rows": 1,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `employees` where `employees`.`id` in (5, 20, 21, 22, 23, 24, 26, 27, 28, 29, 33, 34, 37, 44, 45, 46, 47, 54, 56, 61, 62)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "employees",
+                            "partitions": null,
+                            "type": "range",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": null,
+                            "rows": 21,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `shipping_agents` where `shipping_agents`.`id` in (1, 3, 6, 7, 9, 10, 11)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "shipping_agents",
+                            "partitions": null,
+                            "type": "range",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": null,
+                            "rows": 7,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                }
+            ],
+            "json_top_keys": [
+                "status",
+                "errNum",
+                "message",
+                "data"
+            ],
+            "data_count": 183
+        },
+        {
+            "name": "employee_bookings",
+            "method": "GET",
+            "uri": "/api/profile/bookings",
+            "guard": "employees",
+            "runs": [
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 142.5043,
+                    "peak_delta_bytes": 1015728,
+                    "rows_examined_raw_delta": 1027,
+                    "counter_overhead": 210,
+                    "rows_examined": 817,
+                    "payload_bytes": 54940,
+                    "sha256": "56c38762075651986c915f5adafbe29d7ae30d4e7ed54dcbf1d1546144580015",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 133.4793,
+                    "peak_delta_bytes": 1014448,
+                    "rows_examined_raw_delta": 1027,
+                    "counter_overhead": 210,
+                    "rows_examined": 817,
+                    "payload_bytes": 54940,
+                    "sha256": "56c38762075651986c915f5adafbe29d7ae30d4e7ed54dcbf1d1546144580015",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 115.5307,
+                    "peak_delta_bytes": 1014128,
+                    "rows_examined_raw_delta": 1027,
+                    "counter_overhead": 210,
+                    "rows_examined": 817,
+                    "payload_bytes": 54940,
+                    "sha256": "56c38762075651986c915f5adafbe29d7ae30d4e7ed54dcbf1d1546144580015",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 102.2707,
+                    "peak_delta_bytes": 1014128,
+                    "rows_examined_raw_delta": 1027,
+                    "counter_overhead": 210,
+                    "rows_examined": 817,
+                    "payload_bytes": 54940,
+                    "sha256": "56c38762075651986c915f5adafbe29d7ae30d4e7ed54dcbf1d1546144580015",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 119.9907,
+                    "peak_delta_bytes": 1014128,
+                    "rows_examined_raw_delta": 1027,
+                    "counter_overhead": 210,
+                    "rows_examined": 817,
+                    "payload_bytes": 54940,
+                    "sha256": "56c38762075651986c915f5adafbe29d7ae30d4e7ed54dcbf1d1546144580015",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 8,
+                    "latency_ms": 126.6879,
+                    "peak_delta_bytes": 1014128,
+                    "rows_examined_raw_delta": 1027,
+                    "counter_overhead": 210,
+                    "rows_examined": 817,
+                    "payload_bytes": 54940,
+                    "sha256": "56c38762075651986c915f5adafbe29d7ae30d4e7ed54dcbf1d1546144580015",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [
+                {
+                    "sql": "select * from `employees` where `id` = ? limit 1",
+                    "bindings": [
+                        "8"
+                    ],
+                    "ms": 1.04
+                },
+                {
+                    "sql": "select * from `bookings` where `employee_id` = ?",
+                    "bindings": [
+                        8
+                    ],
+                    "ms": 3.65
+                },
+                {
+                    "sql": "select * from `booking_containers` where `booking_containers`.`booking_id` in (3, 4, 5, 6, 7, 11, 12, 20, 22, 26, 30, 31, 32, 33, 34, 46, 47, 48, 49, 91, 93, 94, 95, 100, 106, 107, 108, 109, 110, 111, 112, 113, 120, 121, 122, 123, 124, 125, 126, 128, 130, 131, 153, 159, 160, 161, 216, 230, 231, 233, 234, 240, 241, 247, 248, 259, 261, 262, 263, 267, 270, 271, 293, 297, 304, 314, 328, 329, 330, 331, 333, 334, 342, 343, 349, 350, 351, 352, 368, 369, 372, 383, 384, 385, 386, 390, 391, 392, 393, 394, 395, 402, 403, 404, 405, 406, 407, 408, 409, 426, 431, 454, 455, 456, 457, 458, 464, 470, 471, 472, 497, 499)",
+                    "bindings": [],
+                    "ms": 7.98
+                },
+                {
+                    "sql": "select * from `containers` where `containers`.`id` in (1, 2, 3, 5)",
+                    "bindings": [],
+                    "ms": 1.22
+                },
+                {
+                    "sql": "select * from `branches` where `branches`.`id` in (13, 121)",
+                    "bindings": [],
+                    "ms": 0.96
+                },
+                {
+                    "sql": "select * from `booking_movements` where `booking_movements`.`booking_id` in (3, 4, 5, 6, 7, 11, 12, 20, 22, 26, 30, 31, 32, 33, 34, 46, 47, 48, 49, 91, 93, 94, 95, 100, 106, 107, 108, 109, 110, 111, 112, 113, 120, 121, 122, 123, 124, 125, 126, 128, 130, 131, 153, 159, 160, 161, 216, 230, 231, 233, 234, 240, 241, 247, 248, 259, 261, 262, 263, 267, 270, 271, 293, 297, 304, 314, 328, 329, 330, 331, 333, 334, 342, 343, 349, 350, 351, 352, 368, 369, 372, 383, 384, 385, 386, 390, 391, 392, 393, 394, 395, 402, 403, 404, 405, 406, 407, 408, 409, 426, 431, 454, 455, 456, 457, 458, 464, 470, 471, 472, 497, 499)",
+                    "bindings": [],
+                    "ms": 1.74
+                },
+                {
+                    "sql": "select * from `employees` where `employees`.`id` in (8)",
+                    "bindings": [],
+                    "ms": 0.98
+                },
+                {
+                    "sql": "select * from `shipping_agents` where `shipping_agents`.`id` in (1, 3, 6, 9, 10, 11)",
+                    "bindings": [],
+                    "ms": 1.36
+                }
+            ],
+            "plans": [
+                {
+                    "sql": "select * from `employees` where `id` = ? limit 1",
+                    "bindings": [
+                        "8"
+                    ],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "employees",
+                            "partitions": null,
+                            "type": "const",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": "const",
+                            "rows": 1,
+                            "filtered": 100,
+                            "Extra": null
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `bookings` where `employee_id` = ?",
+                    "bindings": [
+                        8
+                    ],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "bookings",
+                            "partitions": null,
+                            "type": "ref",
+                            "possible_keys": "fk_bookings_employee_id",
+                            "key": "fk_bookings_employee_id",
+                            "key_len": "9",
+                            "ref": "const",
+                            "rows": 112,
+                            "filtered": 100,
+                            "Extra": null
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `booking_containers` where `booking_containers`.`booking_id` in (3, 4, 5, 6, 7, 11, 12, 20, 22, 26, 30, 31, 32, 33, 34, 46, 47, 48, 49, 91, 93, 94, 95, 100, 106, 107, 108, 109, 110, 111, 112, 113, 120, 121, 122, 123, 124, 125, 126, 128, 130, 131, 153, 159, 160, 161, 216, 230, 231, 233, 234, 240, 241, 247, 248, 259, 261, 262, 263, 267, 270, 271, 293, 297, 304, 314, 328, 329, 330, 331, 333, 334, 342, 343, 349, 350, 351, 352, 368, 369, 372, 383, 384, 385, 386, 390, 391, 392, 393, 394, 395, 402, 403, 404, 405, 406, 407, 408, 409, 426, 431, 454, 455, 456, 457, 458, 464, 470, 471, 472, 497, 499)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "booking_containers",
+                            "partitions": null,
+                            "type": "ALL",
+                            "possible_keys": "fk_booking_containers_booking_id",
+                            "key": null,
+                            "key_len": null,
+                            "ref": null,
+                            "rows": 691,
+                            "filtered": 20.115774154663086,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `containers` where `containers`.`id` in (1, 2, 3, 5)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "containers",
+                            "partitions": null,
+                            "type": "range",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": null,
+                            "rows": 4,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `branches` where `branches`.`id` in (13, 121)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "branches",
+                            "partitions": null,
+                            "type": "range",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": null,
+                            "rows": 2,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `booking_movements` where `booking_movements`.`booking_id` in (3, 4, 5, 6, 7, 11, 12, 20, 22, 26, 30, 31, 32, 33, 34, 46, 47, 48, 49, 91, 93, 94, 95, 100, 106, 107, 108, 109, 110, 111, 112, 113, 120, 121, 122, 123, 124, 125, 126, 128, 130, 131, 153, 159, 160, 161, 216, 230, 231, 233, 234, 240, 241, 247, 248, 259, 261, 262, 263, 267, 270, 271, 293, 297, 304, 314, 328, 329, 330, 331, 333, 334, 342, 343, 349, 350, 351, 352, 368, 369, 372, 383, 384, 385, 386, 390, 391, 392, 393, 394, 395, 402, 403, 404, 405, 406, 407, 408, 409, 426, 431, 454, 455, 456, 457, 458, 464, 470, 471, 472, 497, 499)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "booking_movements",
+                            "partitions": null,
+                            "type": "ALL",
+                            "possible_keys": "fk_booking_movements_booking_id",
+                            "key": null,
+                            "key_len": null,
+                            "ref": null,
+                            "rows": 1,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `employees` where `employees`.`id` in (8)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "employees",
+                            "partitions": null,
+                            "type": "const",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": "const",
+                            "rows": 1,
+                            "filtered": 100,
+                            "Extra": null
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `shipping_agents` where `shipping_agents`.`id` in (1, 3, 6, 9, 10, 11)",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "shipping_agents",
+                            "partitions": null,
+                            "type": "range",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": null,
+                            "rows": 6,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                }
+            ],
+            "json_top_keys": [
+                "status",
+                "errNum",
+                "message",
+                "data"
+            ],
+            "data_count": 112
+        },
+        {
+            "name": "superagent_agents",
+            "method": "POST",
+            "uri": "/api/superagent/booking/fetch_agents",
+            "guard": "superagent",
+            "runs": [
+                {
+                    "status": 200,
+                    "queries": 3,
+                    "latency_ms": 41.2825,
+                    "peak_delta_bytes": 299304,
+                    "rows_examined_raw_delta": 1808,
+                    "counter_overhead": 210,
+                    "rows_examined": 1598,
+                    "payload_bytes": 2737,
+                    "sha256": "c178ff9a9ea547db1151bc7052d60b136ec88518d4bf5d9a4e293dcc330a7542",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 3,
+                    "latency_ms": 35.1839,
+                    "peak_delta_bytes": 117384,
+                    "rows_examined_raw_delta": 1808,
+                    "counter_overhead": 210,
+                    "rows_examined": 1598,
+                    "payload_bytes": 2737,
+                    "sha256": "c178ff9a9ea547db1151bc7052d60b136ec88518d4bf5d9a4e293dcc330a7542",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 3,
+                    "latency_ms": 38.7588,
+                    "peak_delta_bytes": 117384,
+                    "rows_examined_raw_delta": 1808,
+                    "counter_overhead": 210,
+                    "rows_examined": 1598,
+                    "payload_bytes": 2737,
+                    "sha256": "c178ff9a9ea547db1151bc7052d60b136ec88518d4bf5d9a4e293dcc330a7542",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 3,
+                    "latency_ms": 49.3659,
+                    "peak_delta_bytes": 118024,
+                    "rows_examined_raw_delta": 1808,
+                    "counter_overhead": 210,
+                    "rows_examined": 1598,
+                    "payload_bytes": 2737,
+                    "sha256": "c178ff9a9ea547db1151bc7052d60b136ec88518d4bf5d9a4e293dcc330a7542",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 3,
+                    "latency_ms": 31.3471,
+                    "peak_delta_bytes": 123656,
+                    "rows_examined_raw_delta": 1808,
+                    "counter_overhead": 210,
+                    "rows_examined": 1598,
+                    "payload_bytes": 2737,
+                    "sha256": "c178ff9a9ea547db1151bc7052d60b136ec88518d4bf5d9a4e293dcc330a7542",
+                    "content_type": "application/json"
+                },
+                {
+                    "status": 200,
+                    "queries": 3,
+                    "latency_ms": 38.0969,
+                    "peak_delta_bytes": 117384,
+                    "rows_examined_raw_delta": 1808,
+                    "counter_overhead": 210,
+                    "rows_examined": 1598,
+                    "payload_bytes": 2737,
+                    "sha256": "c178ff9a9ea547db1151bc7052d60b136ec88518d4bf5d9a4e293dcc330a7542",
+                    "content_type": "application/json"
+                }
+            ],
+            "queries": [
+                {
+                    "sql": "select * from `superagents` where `id` = ? limit 1",
+                    "bindings": [
+                        "3"
+                    ],
+                    "ms": 1.11
+                },
+                {
+                    "sql": "select * from `agents` order by `id` desc",
+                    "bindings": [],
+                    "ms": 1.27
+                },
+                {
+                    "sql": "select agent_id, count(distinct booking_container_id) as aggregate from `booking_container_agents` where `agent_id` in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) and date(`created_at`) = ? group by `agent_id`",
+                    "bindings": [
+                        29,
+                        28,
+                        27,
+                        26,
+                        25,
+                        24,
+                        23,
+                        22,
+                        13,
+                        12,
+                        11,
+                        10,
+                        9,
+                        7,
+                        6,
+                        5,
+                        4,
+                        3,
+                        2,
+                        "2026-10-06"
+                    ],
+                    "ms": 27.18
+                }
+            ],
+            "plans": [
+                {
+                    "sql": "select * from `superagents` where `id` = ? limit 1",
+                    "bindings": [
+                        "3"
+                    ],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "superagents",
+                            "partitions": null,
+                            "type": "const",
+                            "possible_keys": "PRIMARY",
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": "const",
+                            "rows": 1,
+                            "filtered": 100,
+                            "Extra": null
+                        }
+                    ]
+                },
+                {
+                    "sql": "select * from `agents` order by `id` desc",
+                    "bindings": [],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "agents",
+                            "partitions": null,
+                            "type": "index",
+                            "possible_keys": null,
+                            "key": "PRIMARY",
+                            "key_len": "8",
+                            "ref": null,
+                            "rows": 19,
+                            "filtered": 100,
+                            "Extra": "Backward index scan"
+                        }
+                    ]
+                },
+                {
+                    "sql": "select agent_id, count(distinct booking_container_id) as aggregate from `booking_container_agents` where `agent_id` in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) and date(`created_at`) = ? group by `agent_id`",
+                    "bindings": [
+                        29,
+                        28,
+                        27,
+                        26,
+                        25,
+                        24,
+                        23,
+                        22,
+                        13,
+                        12,
+                        11,
+                        10,
+                        9,
+                        7,
+                        6,
+                        5,
+                        4,
+                        3,
+                        2,
+                        "2026-10-06"
+                    ],
+                    "explain": [
+                        {
+                            "id": 1,
+                            "select_type": "SIMPLE",
+                            "table": "booking_container_agents",
+                            "partitions": null,
+                            "type": "index",
+                            "possible_keys": "fk_booking_container_agents_agent_id",
+                            "key": "fk_booking_container_agents_agent_id",
+                            "key_len": "9",
+                            "ref": null,
+                            "rows": 1578,
+                            "filtered": 100,
+                            "Extra": "Using where"
+                        }
+                    ]
+                }
+            ],
+            "json_top_keys": [
+                "status",
+                "errNum",
+                "message",
+                "data"
+            ],
+            "data_count": 19
+        }
+    ],
+    "normalizations": [],
+    "auth_method": "Signed transient JWT from existing row; guards reset before kernel handle. No setUser, replacement account or middleware bypass.",
+    "isolation": "Server-enforced session READ ONLY; real middleware; array cache/session; rollback; no termination hooks"
+}

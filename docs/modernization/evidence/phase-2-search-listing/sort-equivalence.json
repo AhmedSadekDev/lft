@@ -1,8 +1,104 @@
 {
-  "status": "BLOCKED",
-  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed.",
-  "comparisons_performed": 0,
-  "preflight_cases": 6,
-  "evidence": "sort-contract-preflight.json",
-  "limitation": "Query builder reproduction, not full HTTP response or before/after comparison"
+  "status": "QUERY_LEVEL_PASS_ONLY",
+  "count": 16,
+  "mismatches": 0,
+  "cases": [
+    {
+      "name": "companies/sort/id/asc",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/sort/id/desc",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/sort/name/asc",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/sort/name/desc",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/sort/tax_no/asc",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/sort/tax_no/desc",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/sort/created_at/asc",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "companies/sort/created_at/desc",
+      "equal": true,
+      "total_before": 43,
+      "total_after": 43
+    },
+    {
+      "name": "private_companies/sort/id/asc",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/sort/id/desc",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/sort/name/asc",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/sort/name/desc",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/sort/tax_no/asc",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/sort/tax_no/desc",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/sort/created_at/asc",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    },
+    {
+      "name": "private_companies/sort/created_at/desc",
+      "equal": true,
+      "total_before": 4,
+      "total_after": 4
+    }
+  ],
+  "source": "query-verification-result.json"
 }

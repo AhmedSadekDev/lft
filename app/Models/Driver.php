@@ -15,4 +15,13 @@ class Driver extends Model
         return date('Y-m-d', strtotime($value));
     }
 
+
+    /** Preserve the listing's contains and SQL wildcard semantics. */
+    public function scopeSearchListing($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%");
+        });
+    }
 }

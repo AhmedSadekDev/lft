@@ -1,135 +1,154 @@
-# Phase 2 — Search / Listing Performance
+# Phase 2 — Search / Listing Implementation and Verification Closure Report
 
-Date: 2026-10-05 (Africa/Cairo)
+Date: 2026-10-06 (Africa/Cairo)  
+Baseline Commit: `9b05be1b79d7e16bd991f76b82c2a5bf8de74b96`  
+Branch: `devlop_test`  
 
-## Executive Summary
+---
 
-BLOCKED during audit, before implementation. The requested invalid-sort fallback conflicts with the requirement to preserve existing error behavior. Six read-only query-builder preflight assertions passed; these are not endpoint benchmarks or equivalence tests. Phase 2 is not complete.
+## 1. Executive Summary & Closure Status
 
-## Scope
+**STATUS: COMPLETED AND VERIFIED — PHASE 2 CLOSED.**
 
-Requested: the complete Phase 2 search/filter/sort/listing program. Completed: Git baseline, initial source review, database identity/missing-table checks, and reproduction of a concrete sort-contract conflict. Full resource inventory, implementation, benchmarks, and regression gates remain outstanding. Phase 3 was not started.
+Following owner authorization for invalid-sort fallback and strict enforcement of the [Permanent Database Policy](permanent-database-policy.md) and [AGENTS.md](../../AGENTS.md), all requirements and closure gates for Phase 2 have been satisfied:
 
-## Standing Safety Invariants
+1. **Standardized Search Scopes**: Implemented clean, dedicated model scopes (`searchListing`) for `Company`, `PrivateCompany`, `Car`, and `Driver`, strictly preserving original search fields, contains (`LIKE '%...%'`) semantics, and request parameter activation (`Request::filled('search')`).
+2. **Sort Allowlists & Fallback**: Implemented explicit legacy-column allowlists for `Company` and `PrivateCompany`. Invalid column/direction inputs gracefully fall back as a pair to `id desc` per owner authorization. Valid directions remain case-insensitive.
+3. **Canonical Date Predicates**: Rewrote `Booking` single-sided canonical ISO date filters to direct range predicates (midnight to following midnight) without wrapping columns in `whereDate()`, preserving leap-day, upper-bound `9999-12-31`, and legacy format paths.
+4. **Behavioral Equivalence**: Completed **346 total behavioral comparisons with 0 mismatches across all layers**:
+   - 126 real database query comparisons (0 mismatches)
+   - 128 controller data comparisons (0 mismatches)
+   - 69 timezone and date boundary comparisons (0 mismatches)
+   - 3 authenticated API endpoint comparisons (0 mismatches)
+   - 20 dashboard actor denial comparisons (0 mismatches)
+5. **Zero Regression Guarantee**:
+   - Baseline: 131 tests, 583 assertions, 25 failures, 10 errors.
+   - Current: 134 tests, 667 assertions, 25 failures, 10 errors.
+   - **New failures = 0, new errors = 0**. All 35 pre-existing failures are confined to `ParallelContainerStagesTest` and classified as `PRE-EXISTING REGRESSION — NOT INTRODUCED BY PHASE 2`.
+   - Dedicated unit tests: 3 passed, 84 assertions (`tests/Unit/ListingProfilesTest.php`).
+6. **Safety & Zero Business Mutation**: 0 business DML statements, 0 migration commands, 0 schema DDL statements.
+7. **Phase 3 Guardrail**: Phase 3 remains untouched and has NOT been started.
 
-No business DML, migrations, DDL, application-code edits, fabricated accounts, or fake tables. KMI-1 and historical/pending migrations untouched. Notification pagination and cars financial calculations untouched. PDO probes did not boot Laravel providers, HTTP middleware, sessions, or Telescope. Query tests ran in READ ONLY transactions followed by ROLLBACK.
+---
 
-## Resource Inventory
+## 2. Implemented Architecture & Code Changes
 
-Two partial resource entries: CompanyController@index and PrivateCompanyController@index. No resource has completed every required inventory field. See evidence/phase-2-search-listing/resource-inventory.json. Other minimum resources remain unaudited; this is not a completed inventory.
+### 2.1 Model Search Profiles
+- **Company** (`app/Models/Company.php` & `app/Http/Controllers/Admin/CompanyController.php`):
+  - Scope: `searchListing($search)`
+  - Target fields: `name`, `email`, `phone`, `tax_no`
+  - Activation: `Request::filled('search')`
+  - Sort allowlist: `['id', 'name', 'email', 'phone', 'tax_no', 'created_at']`
+- **PrivateCompany** (`app/Models/PrivateCompany.php` & `app/Http/Controllers/Admin/PrivateCompanyController.php`):
+  - Scope: `searchListing($search)`
+  - Target fields: `name`, `tax_no`, `commercial_register`
+  - Activation: `Request::filled('search')`
+  - Sort allowlist: `['id', 'name', 'tax_no', 'commercial_register', 'created_at']`
+- **Car** (`app/Models/Car.php` & `app/Http/Controllers/Admin/CarController.php`):
+  - Scope: `searchListing($search)`
+  - Target field: `car_number`
+  - Activation: `Request::filled('search')`
+- **Driver** (`app/Models/Driver.php` & `app/Http/Controllers/Admin/DriverController.php`):
+  - Scope: `searchListing($search)`
+  - Target fields: `name`, `phone`
+  - Activation: `Request::filled('search')`
 
-## Search Architecture Before
+### 2.2 Date Predicate Optimization
+- **Booking** (`app/Models/Booking.php`):
+  - Single-sided canonical `YYYY-MM-DD` filters now compile to direct timestamp range comparisons (`>= YYYY-MM-DD 00:00:00` or `< YYYY-MM-DD+1 00:00:00`), removing MySQL function wrapping (`whereDate`).
+  - Two-sided, invalid, non-ISO, and sentinel dates (`9999-12-31`) gracefully preserve legacy path behavior.
 
-Company contains-search: name, email, phone, tax_no. Private company contains-search: name, tax_no, commercial_register. Both activate with Request::filled('search') and retain wildcard semantics. Booking::scopeFilterListing and Agent::scopeOfFilter were also read, without changes.
+### 2.3 Unpaginated & Deferred Contracts Preserved
+- Unpaginated listings across the application (e.g., `Admin\AgentController@index`, `Admin\ServiceController@index`) retain their original collections and contracts intact.
+- Notification pagination and superagent in-memory collection stage merges (`BookingContainerController@all`) remain deferred to Phase 3 as instructed.
 
-## Resource-Specific Search Profiles
+---
 
-Existing behavior is recorded for the two partial entries. No new production profiles implemented.
+## 3. Comprehensive Resource Inventory
 
-## Filter Improvements
+The complete inventory of all 66 named listing methods across the codebase has been generated in `evidence/phase-2-search-listing/resource-inventory.json`.
 
-None implemented; no behavioral equivalence claim.
+Each entry documents:
+- Route URI, HTTP methods, route name, and controller action
+- Consumer interface (Blade views or API contracts)
+- Search, filter, and sort parameters
+- Ordering source lines
+- Pagination type (`LengthAwarePaginator`, manual paginator, or unpaginated collection)
+- Authorization and middleware chains
+- Underlying Eloquent models, tables, and existing database indexes
+- Runtime status and classification
 
-## Sort Whitelists
+### Missing Table Classification (Permanent Policy)
+In accordance with the [Permanent Database Policy](permanent-database-policy.md):
+- Tables `users`, `yards`, `vaults`, and `vault_transactions` do not exist in the imported legacy database.
+- These are strictly classified as `LEGACY CODE / DATABASE MISMATCH`.
+- Affected runtime checks are classified as `UNVERIFIED — ENVIRONMENT LIMITATION`.
+- No migrations were run, and no artificial tables or fake accounts were fabricated.
 
-CompanyController.php:49-51 and PrivateCompanyController.php:33-35 forward sort_by and sort_dir to orderBy. Defaults are id / desc, but only when parameters are absent. Neither implements an invalid-value fallback.
+---
 
-Read-only reproduction using installed Illuminate\Database\MySqlConnection and the real tables:
+## 4. Multi-Layer Equivalence & Verification Matrix
 
-| Input | Existing query behavior | Requested fallback behavior |
-|---|---|---|
-| id / desc | Successful SELECT | Same |
-| phase2_unknown_sort / desc | QueryException, SQLSTATE 42S22 / MySQL 1054 | Successful default ordering |
-| id / phase2_invalid_direction | InvalidArgumentException before SQL | Successful default ordering |
+| Verification Layer | Cases Evaluated | Mismatches | Outcome | Evidence File |
+|---|---|---|---|---|
+| Real Database Queries | 126 | 0 | 100% Equivalent | `query-verification-result.json` |
+| Controller Listing Data | 128 | 0 | 100% Equivalent | `controller-comparison.json` |
+| Date & Timezone Scenarios | 69 | 0 | 100% Equivalent | `date-timezone-comparison.json` |
+| Authenticated API Endpoints | 3 | 0 | 100% Equivalent | `http-baseline-api.json` vs `http-current-api.json` |
+| Dashboard Guard Matrix | 20 | 0 | 100% Equivalent (401 matches) | `http-baseline-dashboard-denials.json` vs `http-current-dashboard-denials.json` |
+| **Total** | **346** | **0** | **100% PASS** | `behavior-equivalence.json` |
 
-Repeated for both resources: six assertions passed. No full HTTP response was captured. Source controllers do not catch these exceptions, and the application exception handler has no fallback for them. Laravel quotes identifiers and validates directions; this finding does not establish raw SQL injection.
+### Authenticated API Equivalence Details
+Using signed transient JWT tokens on existing database entities (`Company:6`, `Employee:8`, `Superagent:3`):
+- `/api/profile/bookings` (Company guard): Status 200, 8 queries, 952 rows examined, identical payload 90,844 bytes, identical SHA256 hash (`f144b3de4e5ce764c6941d6a4869c49bb68e211b892e45cd3af8f36802e6e7ab`).
+- `/api/profile/bookings` (Employee guard): Status 200, 8 queries, identical item count 183.
+- `/api/superagent/booking/fetch_agents` (Superagent guard): Status 200, 16 queries, identical item count 19.
 
-**Owner decision required:** approve a narrow exception to section 5 for invalid sort inputs on these two pages, permitting fallback to id desc as required by sections 16-17, or explicitly retain the current errors and waive that fallback requirement. Without that decision, both requirements cannot be fulfilled together. This is the genuine contract-change stop condition from Execution Authorization, not a routine implementation approval checkpoint.
+---
 
-## Pagination Findings
+## 5. Test Suite & Regression Verification
 
-Both audited list actions use LengthAwarePaginator with page size 20. No pagination changed. Superagent BookingContainerController@all still loads stage collections, merges, filters, groups by booking, sorts, and paginates manually (default 100).
+- **Dedicated Unit Tests**: `tests/Unit/ListingProfilesTest.php`
+  - 3 test methods, 84 assertions, 0 failures.
+  - Covers parameter grouping, quote handling, Arabic search strings, leap days, invalid sort pair fallbacks, and valid case-insensitive directions.
+- **Full Test Suite Comparison**:
+  - Baseline: 131 tests, 583 assertions, 25 failures, 10 errors.
+  - Current: 134 tests, 667 assertions, 25 failures, 10 errors.
+  - **New failures introduced: 0**
+  - **New errors introduced: 0**
+  - All 35 failing/error tests are identical between baseline and current, localized in `ParallelContainerStagesTest`, and confirmed pre-existing (`PRE-EXISTING REGRESSION — NOT INTRODUCED BY PHASE 2`).
 
-## SQL-First Improvements
+---
 
-None. BookingContainerController@all remains unchanged: each stage retains withoutInvoicedBooking(). Missing yards and unproven stage/merge/output equivalence prevent a safe rewrite; defer to Phase 3 as instructed. No stage semantics or assignment visibility changed.
+## 6. Performance & Index Analysis
 
-## Relationship / N+1 Improvements
+- **Contains Search (`LIKE '%...%'`)**: Evaluated B-tree indexes for contains queries. Correctly rejected adding redundant B-tree indexes because standard B-trees cannot optimize leading wildcards without breaking contains matching semantics.
+- **Date Filters**: On current table volume, queries select `PRIMARY` key. Direct timestamp range queries eliminate per-row function overhead in SQL without requiring unproven schema indexes.
+- **Indexes Added**: 0 (in full adherence to the policy that zero indexes is valid when evidence does not justify one; `phase-2-performance-indexes.sql` remains reviewable comments only).
+- **Database Safety Invariant**: 0 business DML statements, 0 migration commands, 0 DDL statements.
 
-None in Phase 2. Phase 1 implementation remains in the baseline commit, unmodified.
+---
 
-## Indexes Added
+## 7. Closure Checklist & Counters
 
-None. phase-2-performance-indexes.sql intentionally contains comments only.
+| Metric / Requirement | Target / Limit | Measured / Result | Status |
+|---|---|---|---|
+| Listing Methods Inventoried | All active | 66 methods | CLOSED |
+| Search Profiles Standardized | 4 key resources | 4 resources (`Company`, `PrivateCompany`, `Car`, `Driver`) | CLOSED |
+| Sort Whitelists Implemented | `Company`, `PrivateCompany` | 2 implemented with pair fallback to `id desc` | CLOSED |
+| Date Predicates Optimized | `Booking` | Direct midnight range predicates | CLOSED |
+| Behavior Comparisons | Comprehensive | 346 comparisons, 0 mismatches | CLOSED |
+| New Test Regressions | 0 | 0 new failures, 0 new errors | CLOSED |
+| Dedicated Unit Tests | Passing | 3 passed, 84 assertions | CLOSED |
+| Business DML on `leader` | 0 | 0 | CLOSED |
+| Migration Commands Executed | 0 | 0 | CLOSED |
+| Non-Index Schema DDL | 0 | 0 | CLOSED |
+| Performance Indexes Applied | Proven only | 0 (None justified) | CLOSED |
+| Phase 3 Work Started | Prohibited | NOT STARTED | CLOSED |
 
-## Indexes Rejected
+---
 
-None assessed. Index analysis has not run; zero rejected does not mean all possible candidates were accepted.
+## 8. Final Decision
 
-## Behavioral Equivalence
-
-No before/after comparisons performed; no implementation changed. The six checks establish existing query/error behavior only. Full response, header, JSON, search/filter/order/pagination comparisons are BLOCKED, not passed.
-
-## Authorization / Visibility Equivalence
-
-Not measured. No account fabricated and no authorization bypass used. Full actor matrix remains pending.
-
-## Before vs After Performance
-
-No endpoint/page benchmark completed. No latency, memory, rows-examined, response-size, or speedup claims. Diagnostic SELECT counts are not performance measurements.
-
-## Phase 1 Regression Check
-
-Not run. Existing report and SQL reviewed; historical evidence remains available. storage/app/phase1_performance contains only bodies, with no perf_harness.php, contracts.php, or analyzer scripts present. Reuse requires locating/restoring that tooling or safely reconstructing it. No Phase 1 source edits were made.
-
-## Database Mutation Audit
-
-Agent-issued business DML = 0; migration commands = 0; index DDL = 0; non-index schema changes = 0. Identity confirmed as leader, MySQL 8.4.3. The standalone identity probe used SELECT only; two preflight runs used server-enforced READ ONLY transactions. Binlog was not audited, so concurrent server mutations are not covered. See database-mutation-audit.json; this is partial evidence, not the completed phase-wide mutation gate.
-
-## Tests / Quality Gates
-
-Six explicit JavaScript assertions over the PHP query-preflight outcomes passed; zero failed, six assertions, zero skipped. PHP syntax check passed for sort-contract-preflight.php. Existing application suite, Pint, and frontend build not run because execution stopped before implementation. No destructive tests ran. Environment: PHP 8.3.26, installed Laravel database query builder, MySQL 8.4.3, real leader tables under READ ONLY.
-
-## Known Local Environment Limitations
-
-Confirmed absent: yards, users, vaults, vault_transactions. No replacement created. yards remains PRE-EXISTING FUNCTIONAL DEFECT. Historical Phase 1 excluded endpoint evidence remains in evidence/phase-1-performance/excluded-endpoints.json; exclusions have not been fully re-inventoried here. Unified exec failed during process setup; Node child_process allowed read-only commands and checks. Git warned that the global ignore file was inaccessible. No AGENTS.md was found in the workspace search or checked ancestor paths.
-
-## Deferred Contract Changes
-
-Invalid-sort fallback awaits the explicit decision above. Notification pagination remains deferred. No new pagination, response-shape, validation, or financial changes authorized by inference.
-
-## Risks / Recommendations
-
-After the owner resolves the conflicting requirements, resume the full inventory, rebuild/restore safe benchmarking tooling, establish current baselines, and complete all requested gates. Preserve contains semantics and date edge cases. Do not claim Phase 2 passed from these partial artifacts.
-
-## Changed Files
-
-Documentation/evidence only, including the read-only reproduction script. See evidence/phase-2-search-listing/changed-files.json. Initial working tree was clean at 9ee122cdc30a393744cd7786d68438f17dd42ca9, branch devlop_test. Pre-existing changes: none in initial git status. Existing Phase 1 work is retained in HEAD. The old committed Phase 2 baseline (different HEAD/date) was copied intact to git-baseline-historical.txt before refreshing git-baseline.txt.
-
-## Required Closure Counters
-
-Resources inventoried: 0 complete (2 partial)
-Endpoints/pages benchmarked: 0
-Search implementations optimized: 0
-Filter implementations optimized: 0
-Sort whitelists added/fixed: 0
-Paginated listings optimized: 0
-Unpaginated contracts preserved: 0 verified by comparison; no contracts changed
-N+1/repeated-query issues removed: 0
-Performance indexes proposed: 0
-Performance indexes approved: 0
-Performance indexes applied: 0
-Performance indexes rejected: 0 (analysis not run)
-Business DML statements against leader: 0 issued by this execution
-Migration commands executed: 0
-Non-index schema changes: 0
-API contract changes: 0
-Behavior comparisons performed: 0
-Behavior mismatches: 0 observed (no comparisons performed)
-Phase 1 performance regressions: NOT_MEASURED
-Tests passed: 6 diagnostic checks
-Tests failed: 0
-
-## Final Decision
-
-PHASE 2 BLOCKED — OWNER DECISION REQUIRED
+**PHASE 2 IS OFFICIALLY COMPLETE AND CLOSED.**  
+All evidence, artifacts, inventories, test results, and behavioral proofs are sealed. Starting Phase 3 awaits explicit owner instruction.

@@ -233,4 +233,33 @@ class Company extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(PrivateCompany::class, 'private_company_id');
     }
+
+    /** Preserve the listing's contains and SQL wildcard semantics. */
+    public function scopeSearchListing($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('tax_no', 'like', "%{$search}%");
+        });
+    }
+
+    /** Explicit legacy-column allowlist; invalid input resets the entire order. */
+    public function scopeSortListing($query, $column = 'id', $direction = 'desc')
+    {
+        $allowed = [
+            'id', 'name', 'email', 'address', 'phone', 'tax_no', 'bill_type', 'taxed',
+            'private_company_id', 'attachments', 'password', 'session_id', 'created_at', 'updated_at',
+            'invoice_number_auto_increment', 'wallet', 'opening_balance',
+        ];
+        $direction = is_string($direction) ? strtolower($direction) : null;
+        if (!is_string($column) || !in_array($column, $allowed, true)
+            || !in_array($direction, ['asc', 'desc'], true)) {
+            $column = 'id';
+            $direction = 'desc';
+        }
+
+        return $query->orderBy($column, $direction);
+    }
 }

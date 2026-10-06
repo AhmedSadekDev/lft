@@ -1,0 +1,5508 @@
+{
+    "mode": "baseline",
+    "level": "QUERY VERIFIED \u2014 actual controller/view-data, no middleware or view rendering; not authenticated endpoint verification",
+    "cases": [
+        {
+            "name": "companies/0",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 566.5708,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/1",
+            "input": {
+                "search": "0"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "00d8c9ae24b62d195a6af629362f0b7840a8cd3b271348f6de1165b8956fb92a",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 42,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 20.2141,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/2",
+            "input": {
+                "search": "\u0634\u0631\u0643\u0629"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "a36c77c7e8e46fb43e55525b9899c4b00ef76a7b65bf14944649e39a36dd055b",
+                "bytes": 192,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": []
+                },
+                "latency_ms": 3.4562,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "companies/3",
+            "input": {
+                "search": "%"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 20.9704,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/4",
+            "input": {
+                "search": "_"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 17.3462,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/5",
+            "input": {
+                "search": "'"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "a36c77c7e8e46fb43e55525b9899c4b00ef76a7b65bf14944649e39a36dd055b",
+                "bytes": 192,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": []
+                },
+                "latency_ms": 2.965,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "companies/6",
+            "input": {
+                "search": "phase2_no_match_9137"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "a36c77c7e8e46fb43e55525b9899c4b00ef76a7b65bf14944649e39a36dd055b",
+                "bytes": 192,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": []
+                },
+                "latency_ms": 2.6227,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "companies/7",
+            "input": {
+                "search": ""
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 10.3041,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/8",
+            "input": {
+                "search": "   "
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 15.501,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/9",
+            "input": {
+                "search": "\u0627\u0644\u0646"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "43e16565381664340ed8fa2da9af63878b3f153d0d6bd7964b407e1462814794",
+                "bytes": 79155,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        44,
+                        32,
+                        31,
+                        5
+                    ]
+                },
+                "latency_ms": 17.3002,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/10",
+            "input": {
+                "page": 2
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "2c4f24911998b807e7009a66e6bede9cc50341d5a9ffb7e5e8c95d370d5cb171",
+                "bytes": 398993,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 2,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        27,
+                        26,
+                        25,
+                        24,
+                        23,
+                        22,
+                        21,
+                        20,
+                        19,
+                        18,
+                        17,
+                        16,
+                        15,
+                        14,
+                        13,
+                        12,
+                        11,
+                        10,
+                        9,
+                        8
+                    ]
+                },
+                "latency_ms": 36.7449,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/11",
+            "input": {
+                "page": 999
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "986e0717b10fcb06e30f9aef2479d50b234e05469dc0bf32858b60d670cf326f",
+                "bytes": 195,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 999,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": []
+                },
+                "latency_ms": 3.0584,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "companies/12",
+            "input": {
+                "search": "%",
+                "page": 2
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "2c4f24911998b807e7009a66e6bede9cc50341d5a9ffb7e5e8c95d370d5cb171",
+                "bytes": 398993,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 2,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        27,
+                        26,
+                        25,
+                        24,
+                        23,
+                        22,
+                        21,
+                        20,
+                        19,
+                        18,
+                        17,
+                        16,
+                        15,
+                        14,
+                        13,
+                        12,
+                        11,
+                        10,
+                        9,
+                        8
+                    ]
+                },
+                "latency_ms": 37.9556,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/13",
+            "input": {
+                "sort_by": "id",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 55.7259,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/14",
+            "input": {
+                "sort_by": "id",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 15.4134,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/15",
+            "input": {
+                "sort_by": "name",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "537bf0209e9c20d65167f63aab69da6ab5f01d2a01733e9f5cdf1470a4d6dce3",
+                "bytes": 213710,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        12,
+                        43,
+                        10,
+                        23,
+                        20,
+                        21,
+                        5,
+                        31,
+                        32,
+                        44,
+                        9,
+                        7,
+                        40,
+                        22,
+                        16,
+                        45,
+                        25,
+                        33,
+                        28,
+                        38
+                    ]
+                },
+                "latency_ms": 22.3894,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/16",
+            "input": {
+                "sort_by": "name",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "9131db2cae450ec082a5b88cc9bdd49111cf0d146136055d942bf9aaffca6969",
+                "bytes": 149650,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        36,
+                        19,
+                        30,
+                        24,
+                        48,
+                        46,
+                        37,
+                        15,
+                        13,
+                        27,
+                        11,
+                        35,
+                        41,
+                        26,
+                        14,
+                        47,
+                        17,
+                        49,
+                        34,
+                        29
+                    ]
+                },
+                "latency_ms": 20.2593,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/17",
+            "input": {
+                "sort_by": "email",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "7739323e1d42fe42448ad6fea6e36ee4c93ebd4ae861bc1043e3ebb3eb24fbef",
+                "bytes": 344628,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        41,
+                        49,
+                        47,
+                        48,
+                        44,
+                        45,
+                        43,
+                        46,
+                        9,
+                        7,
+                        40,
+                        22,
+                        23,
+                        27,
+                        33,
+                        26,
+                        20,
+                        8,
+                        18,
+                        19
+                    ]
+                },
+                "latency_ms": 34.5665,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/18",
+            "input": {
+                "sort_by": "email",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "17c0e0a2656f236bea679acf61dd63995d40001e1931d6cd48502976cdb030b7",
+                "bytes": 541689,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        36,
+                        35,
+                        25,
+                        38,
+                        28,
+                        21,
+                        6,
+                        17,
+                        5,
+                        32,
+                        31,
+                        30,
+                        24,
+                        37,
+                        12,
+                        11,
+                        16,
+                        15,
+                        14,
+                        13
+                    ]
+                },
+                "latency_ms": 41.5122,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/19",
+            "input": {
+                "sort_by": "address",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "ccdd8be41796ca7d9e60f698cfef52488c52b7807c81a9577b1176b07eee1fc1",
+                "bytes": 582175,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        24,
+                        18,
+                        22,
+                        38,
+                        27,
+                        36,
+                        33,
+                        6,
+                        25,
+                        19,
+                        26,
+                        10,
+                        37,
+                        16,
+                        5,
+                        32,
+                        31,
+                        29,
+                        43,
+                        14
+                    ]
+                },
+                "latency_ms": 51.3935,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/20",
+            "input": {
+                "sort_by": "address",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "7c58150c70e724bb94f86c9ba7ff51bca6b08d3e879c1354bb71ec4c478cc715",
+                "bytes": 310143,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        35,
+                        28,
+                        40,
+                        23,
+                        30,
+                        9,
+                        20,
+                        21,
+                        47,
+                        34,
+                        41,
+                        49,
+                        13,
+                        44,
+                        46,
+                        48,
+                        45,
+                        11,
+                        8,
+                        15
+                    ]
+                },
+                "latency_ms": 28.8653,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/21",
+            "input": {
+                "sort_by": "phone",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "56cafdbd3b2fc6c2cb0e7d609996b5185f03dfeec47306bb5f4d3135f4714f66",
+                "bytes": 211775,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        33,
+                        34,
+                        29,
+                        18,
+                        21,
+                        15,
+                        9,
+                        27,
+                        5,
+                        32,
+                        31,
+                        19,
+                        40,
+                        24,
+                        36,
+                        35,
+                        20,
+                        30,
+                        43,
+                        10
+                    ]
+                },
+                "latency_ms": 24.1821,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/22",
+            "input": {
+                "sort_by": "phone",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "2da5c9a81f608be4e88d38034b792c30d731bf44fa127c478eb7b4e246a5ed73",
+                "bytes": 712242,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        11,
+                        14,
+                        12,
+                        6,
+                        13,
+                        46,
+                        23,
+                        44,
+                        48,
+                        8,
+                        41,
+                        17,
+                        47,
+                        22,
+                        16,
+                        28,
+                        38,
+                        25,
+                        7,
+                        45
+                    ]
+                },
+                "latency_ms": 47.7237,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/23",
+            "input": {
+                "sort_by": "tax_no",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "658916be46dadd1a26446eafdc9e9227c15478558bf260063b1b37df6db91083",
+                "bytes": 141118,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        10,
+                        27,
+                        33,
+                        34,
+                        43,
+                        45,
+                        37,
+                        41,
+                        44,
+                        9,
+                        14,
+                        48,
+                        12,
+                        13,
+                        49,
+                        16,
+                        47,
+                        25,
+                        46,
+                        11
+                    ]
+                },
+                "latency_ms": 17.7818,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/24",
+            "input": {
+                "sort_by": "tax_no",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "728d735ebe3147f7cd8c68e4257f67e87b443566aa73e60f18ceb78e7bc689e2",
+                "bytes": 767447,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        40,
+                        26,
+                        36,
+                        38,
+                        30,
+                        32,
+                        18,
+                        24,
+                        35,
+                        19,
+                        28,
+                        20,
+                        6,
+                        8,
+                        5,
+                        29,
+                        7,
+                        21,
+                        23,
+                        15
+                    ]
+                },
+                "latency_ms": 74.4334,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/25",
+            "input": {
+                "sort_by": "bill_type",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "433674c7bea551a5eec8077dcd81dde25a97d41571c63927a9ea3e80b88a7527",
+                "bytes": 182034,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        22,
+                        25,
+                        24,
+                        26,
+                        9,
+                        27,
+                        33,
+                        34,
+                        37,
+                        40,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20
+                    ]
+                },
+                "latency_ms": 19.7962,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/26",
+            "input": {
+                "sort_by": "bill_type",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "ef23c71f5ac60317a142b88a2ec8ea957b0795ff9313806b8ee8e0800ee9952b",
+                "bytes": 828399,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        45,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        46,
+                        23,
+                        47
+                    ]
+                },
+                "latency_ms": 46.5847,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/27",
+            "input": {
+                "sort_by": "taxed",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "6d70375ec1b80a14121cab25460281bf27e384cfb9060118f6d3acb8df670c56",
+                "bytes": 183485,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        10,
+                        26,
+                        22,
+                        25,
+                        9,
+                        49,
+                        11,
+                        12,
+                        13,
+                        14,
+                        24,
+                        16,
+                        27,
+                        33,
+                        34,
+                        37,
+                        40,
+                        43,
+                        19,
+                        20
+                    ]
+                },
+                "latency_ms": 16.0363,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/28",
+            "input": {
+                "sort_by": "taxed",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "304e15e4132bd1e246eae56bf562048b6538a29ebd10e4e051b77433e17429f2",
+                "bytes": 759639,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        32,
+                        15,
+                        35,
+                        36,
+                        44,
+                        38,
+                        41,
+                        45,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        46,
+                        23,
+                        47
+                    ]
+                },
+                "latency_ms": 39.0583,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/29",
+            "input": {
+                "sort_by": "private_company_id",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "9f5e0dca8ce59b06f9cbf6da99a38e96c062dd14b7542407060d795130e0cef8",
+                "bytes": 149056,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        10,
+                        27,
+                        22,
+                        25,
+                        9,
+                        49,
+                        11,
+                        12,
+                        13,
+                        14,
+                        24,
+                        16,
+                        26,
+                        33,
+                        34,
+                        37,
+                        40,
+                        41,
+                        43,
+                        45
+                    ]
+                },
+                "latency_ms": 14.8767,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/30",
+            "input": {
+                "sort_by": "private_company_id",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "93ef4e0464725de5c0441bf2fb3224a9c65ff97f83900d3dc6f4e75ef3bd72bf",
+                "bytes": 772530,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        6,
+                        5,
+                        7,
+                        8,
+                        38,
+                        15,
+                        31,
+                        28,
+                        29,
+                        30,
+                        32,
+                        35,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        36,
+                        23,
+                        44
+                    ]
+                },
+                "latency_ms": 35.8333,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/31",
+            "input": {
+                "sort_by": "attachments",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 38.6724,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/32",
+            "input": {
+                "sort_by": "attachments",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 35.8311,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/33",
+            "input": {
+                "sort_by": "password",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 38.5343,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/34",
+            "input": {
+                "sort_by": "password",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 36.67,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/35",
+            "input": {
+                "sort_by": "session_id",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "eea27d5976f4438a7a867baa8daab4b53b3be10ee0d14130b1f7b5c5454d8175",
+                "bytes": 782423,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        6,
+                        9,
+                        10,
+                        11,
+                        7,
+                        8,
+                        12,
+                        5,
+                        19,
+                        40,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24,
+                        25,
+                        26,
+                        27,
+                        28,
+                        29
+                    ]
+                },
+                "latency_ms": 32.5395,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/36",
+            "input": {
+                "sort_by": "session_id",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e3619b3d8234f0f9aeabc4ad3524b29ac70e9c62c0a768c46bf3fa0bb252d4a1",
+                "bytes": 134087,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        17,
+                        18,
+                        15,
+                        14,
+                        16,
+                        13,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        38,
+                        37,
+                        36,
+                        34,
+                        35,
+                        33
+                    ]
+                },
+                "latency_ms": 12.9216,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/37",
+            "input": {
+                "sort_by": "created_at",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 35.0289,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/38",
+            "input": {
+                "sort_by": "created_at",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 11.5467,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/39",
+            "input": {
+                "sort_by": "updated_at",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "459fffbab7fb6922d645346d3dc1b7feefa852f463313b43d37018493796f1d4",
+                "bytes": 735337,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        11,
+                        12,
+                        13,
+                        14,
+                        16,
+                        20,
+                        21,
+                        7,
+                        22,
+                        6,
+                        15,
+                        23,
+                        24,
+                        25,
+                        26,
+                        17,
+                        10,
+                        18,
+                        8,
+                        27
+                    ]
+                },
+                "latency_ms": 37.148,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/40",
+            "input": {
+                "sort_by": "updated_at",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "d84a5d04b4692dd22ff8c90cfdde83fb284f14f23507946cd29c77a37bf04579",
+                "bytes": 141819,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        9,
+                        49,
+                        48,
+                        47,
+                        46,
+                        44,
+                        45,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        5,
+                        30
+                    ]
+                },
+                "latency_ms": 12.7489,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/41",
+            "input": {
+                "sort_by": "invoice_number_auto_increment",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 44.2308,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/42",
+            "input": {
+                "sort_by": "invoice_number_auto_increment",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 43.6877,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/43",
+            "input": {
+                "sort_by": "wallet",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 36.7183,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/44",
+            "input": {
+                "sort_by": "wallet",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "4491cc19444ee325c1146bdfe55c70d020426e97a948c4bd97f44b38657ec759",
+                "bytes": 846408,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 40.4166,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/45",
+            "input": {
+                "sort_by": "opening_balance",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "841a43238e45b23ed930f0ff732a86c9d7353d4240a997d0d7890bee26bffa47",
+                "bytes": 510069,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        15,
+                        6,
+                        7,
+                        41,
+                        43,
+                        26,
+                        11,
+                        12,
+                        13,
+                        14,
+                        45,
+                        16,
+                        46,
+                        47,
+                        48,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                },
+                "latency_ms": 28.8983,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/46",
+            "input": {
+                "sort_by": "opening_balance",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "42eb862cc17045172742efb9181deb1a7c75c5e34ad569c1d781cb026ccbfe17",
+                "bytes": 408481,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        19,
+                        8,
+                        33,
+                        10,
+                        18,
+                        34,
+                        5,
+                        36,
+                        35,
+                        17,
+                        31,
+                        28,
+                        30,
+                        37,
+                        9,
+                        32,
+                        27,
+                        38,
+                        40,
+                        29
+                    ]
+                },
+                "latency_ms": 24.6831,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/approved-fallback/0",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 11.8746,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/approved-fallback/1",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 12.773,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "companies/approved-fallback/2",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.companies.index",
+                "data_keys": [
+                    "companies"
+                ],
+                "sha256": "e89d679fe8736d728d7f05e7afef5ce02514f1cc2fc84b2423dfb8bae1f79337",
+                "bytes": 75417,
+                "pagination": {
+                    "companies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 43,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "companies": [
+                        49,
+                        48,
+                        47,
+                        46,
+                        45,
+                        44,
+                        43,
+                        41,
+                        40,
+                        38,
+                        37,
+                        36,
+                        35,
+                        34,
+                        33,
+                        32,
+                        31,
+                        30,
+                        29,
+                        28
+                    ]
+                },
+                "latency_ms": 9.449,
+                "query_count": 5
+            }
+        },
+        {
+            "name": "private-companies/0",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 5.0419,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/1",
+            "input": {
+                "search": "0"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 3.3899,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/2",
+            "input": {
+                "search": "\u0634\u0631\u0643\u0629"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "a6ee6e62f90bc5a91b67e8aa18514a88566ba02ae6fd3d79db47ac1689970100",
+                "bytes": 207,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": []
+                },
+                "latency_ms": 0.8802,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "private-companies/3",
+            "input": {
+                "search": "%"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 1.5228,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/4",
+            "input": {
+                "search": "_"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 1.5384,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/5",
+            "input": {
+                "search": "'"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "a6ee6e62f90bc5a91b67e8aa18514a88566ba02ae6fd3d79db47ac1689970100",
+                "bytes": 207,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": []
+                },
+                "latency_ms": 0.9381,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "private-companies/6",
+            "input": {
+                "search": "phase2_no_match_9137"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "a6ee6e62f90bc5a91b67e8aa18514a88566ba02ae6fd3d79db47ac1689970100",
+                "bytes": 207,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": []
+                },
+                "latency_ms": 0.8216,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "private-companies/7",
+            "input": {
+                "search": ""
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 3.2701,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/8",
+            "input": {
+                "search": "   "
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 4.44,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/9",
+            "input": {
+                "search": "\u0644\u064a\u062f"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "5aeba17ac6f56396e67eede4cc6a49b483b33b1f124bc58c8c900ebe9de42a05",
+                "bytes": 2103,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 3,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 1.529,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/10",
+            "input": {
+                "page": 2
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "fd265249ca267c6dcbca4bfa7c5aab9b222b46e1127c2075484912918f256748",
+                "bytes": 207,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 2,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": []
+                },
+                "latency_ms": 2.6312,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/11",
+            "input": {
+                "page": 999
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "0a34e6e9c9babdfd46fbc464ab738a4b49240ba2f21332ab79d54d23279a649d",
+                "bytes": 209,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 999,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": []
+                },
+                "latency_ms": 3.027,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/12",
+            "input": {
+                "search": "%",
+                "page": 2
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "fd265249ca267c6dcbca4bfa7c5aab9b222b46e1127c2075484912918f256748",
+                "bytes": 207,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 2,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": []
+                },
+                "latency_ms": 1.2761,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/13",
+            "input": {
+                "sort_by": "id",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "8073c5f2ede61b77f6fa36deb16b8c539296b64032d6ebb87542df88d61ed4ea",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ]
+                },
+                "latency_ms": 3.2775,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/14",
+            "input": {
+                "sort_by": "id",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 3.5324,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/15",
+            "input": {
+                "sort_by": "name",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "dab9f52b0bb7bcd1baee8a972006c0fdccf87a62ef9bcda2472a572ce8b6c000",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        4,
+                        1,
+                        2
+                    ]
+                },
+                "latency_ms": 3.7105,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/16",
+            "input": {
+                "sort_by": "name",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "d6636d5627ef1048bf1e5a2c8a643c603c8d741b0b7f0966454de7b97df1e891",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        2,
+                        1,
+                        4,
+                        3
+                    ]
+                },
+                "latency_ms": 2.9339,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/17",
+            "input": {
+                "sort_by": "tax_no",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "04c9e41221f48cd310bb859f7d60a5e7cbf1c2c9bbca4f1fc7eea757168de895",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        1,
+                        2,
+                        4
+                    ]
+                },
+                "latency_ms": 3.3635,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/18",
+            "input": {
+                "sort_by": "tax_no",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "a55d4949084d936828350fa00cb5020f3ffc5dc8dc1f8f6fcaafc16668f10620",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        2,
+                        1,
+                        3
+                    ]
+                },
+                "latency_ms": 4.7787,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/19",
+            "input": {
+                "sort_by": "commercial_register",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "76b2579ecd93dc8aa162a65f9b74fc3f315eff497ba9540d12645ebe44e933bf",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        2,
+                        4,
+                        1
+                    ]
+                },
+                "latency_ms": 3.8024,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/20",
+            "input": {
+                "sort_by": "commercial_register",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "7c5ffa2ebbac7774b69ef450437481e3a67c58a3f58f3ec570cce66c1f1b57c9",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        4,
+                        2,
+                        3
+                    ]
+                },
+                "latency_ms": 2.7621,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/21",
+            "input": {
+                "sort_by": "logo",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "32001fc0379b5a8db81830406f41d93afa08767f1ff53007706b4083ed142ccc",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        4,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 3.0717,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/22",
+            "input": {
+                "sort_by": "logo",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "d85bfce4e1f72f4d48c20ad34ec48e3dc8ba78c0d0a3ae549d7f6b8ef6cdf042",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        2,
+                        4,
+                        3
+                    ]
+                },
+                "latency_ms": 3.1123,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/23",
+            "input": {
+                "sort_by": "phone1",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "04c9e41221f48cd310bb859f7d60a5e7cbf1c2c9bbca4f1fc7eea757168de895",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        1,
+                        2,
+                        4
+                    ]
+                },
+                "latency_ms": 3.0836,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/24",
+            "input": {
+                "sort_by": "phone1",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "d85bfce4e1f72f4d48c20ad34ec48e3dc8ba78c0d0a3ae549d7f6b8ef6cdf042",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        2,
+                        4,
+                        3
+                    ]
+                },
+                "latency_ms": 3.062,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/25",
+            "input": {
+                "sort_by": "phone2",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "04c9e41221f48cd310bb859f7d60a5e7cbf1c2c9bbca4f1fc7eea757168de895",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        1,
+                        2,
+                        4
+                    ]
+                },
+                "latency_ms": 2.7427,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/26",
+            "input": {
+                "sort_by": "phone2",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "d85bfce4e1f72f4d48c20ad34ec48e3dc8ba78c0d0a3ae549d7f6b8ef6cdf042",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        2,
+                        4,
+                        3
+                    ]
+                },
+                "latency_ms": 3.24,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/27",
+            "input": {
+                "sort_by": "tel_fax",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "04c9e41221f48cd310bb859f7d60a5e7cbf1c2c9bbca4f1fc7eea757168de895",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        1,
+                        2,
+                        4
+                    ]
+                },
+                "latency_ms": 3.0549,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/28",
+            "input": {
+                "sort_by": "tel_fax",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "d85bfce4e1f72f4d48c20ad34ec48e3dc8ba78c0d0a3ae549d7f6b8ef6cdf042",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        2,
+                        4,
+                        3
+                    ]
+                },
+                "latency_ms": 3.4172,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/29",
+            "input": {
+                "sort_by": "email",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "04c9e41221f48cd310bb859f7d60a5e7cbf1c2c9bbca4f1fc7eea757168de895",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        1,
+                        2,
+                        4
+                    ]
+                },
+                "latency_ms": 3.4317,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/30",
+            "input": {
+                "sort_by": "email",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "d85bfce4e1f72f4d48c20ad34ec48e3dc8ba78c0d0a3ae549d7f6b8ef6cdf042",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        2,
+                        4,
+                        3
+                    ]
+                },
+                "latency_ms": 5.097,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/31",
+            "input": {
+                "sort_by": "address",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "04c9e41221f48cd310bb859f7d60a5e7cbf1c2c9bbca4f1fc7eea757168de895",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        1,
+                        2,
+                        4
+                    ]
+                },
+                "latency_ms": 4.1463,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/32",
+            "input": {
+                "sort_by": "address",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "d85bfce4e1f72f4d48c20ad34ec48e3dc8ba78c0d0a3ae549d7f6b8ef6cdf042",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        2,
+                        4,
+                        3
+                    ]
+                },
+                "latency_ms": 5.5629,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/33",
+            "input": {
+                "sort_by": "created_at",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "8073c5f2ede61b77f6fa36deb16b8c539296b64032d6ebb87542df88d61ed4ea",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ]
+                },
+                "latency_ms": 4.4196,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/34",
+            "input": {
+                "sort_by": "created_at",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 2.7947,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/35",
+            "input": {
+                "sort_by": "updated_at",
+                "sort_dir": "asc"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "04c9e41221f48cd310bb859f7d60a5e7cbf1c2c9bbca4f1fc7eea757168de895",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        3,
+                        1,
+                        2,
+                        4
+                    ]
+                },
+                "latency_ms": 3.271,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/36",
+            "input": {
+                "sort_by": "updated_at",
+                "sort_dir": "DESC"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "a55d4949084d936828350fa00cb5020f3ffc5dc8dc1f8f6fcaafc16668f10620",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        2,
+                        1,
+                        3
+                    ]
+                },
+                "latency_ms": 3.2091,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/approved-fallback/0",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 3.4048,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/approved-fallback/1",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 4.4001,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "private-companies/approved-fallback/2",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.private-companies.index",
+                "data_keys": [
+                    "privateCompanies"
+                ],
+                "sha256": "c094d916667e73b59d4720b0edd3f13bce83844074dc7b53c6133e5b5af02636",
+                "bytes": 2441,
+                "pagination": {
+                    "privateCompanies": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 4,
+                        "per_page": 20,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/private-companies?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "privateCompanies": [
+                        4,
+                        3,
+                        2,
+                        1
+                    ]
+                },
+                "latency_ms": 2.7275,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "cars/0",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "3522af07f93cd85b4ab8f0fe2b92fef004cb417eb1fccb20013794510418ac69",
+                "bytes": 12291,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 167,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 12,
+                        "url1": "http://localhost/dashboard/cars?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": [
+                        179,
+                        177,
+                        176,
+                        175,
+                        174,
+                        173,
+                        172,
+                        171,
+                        170,
+                        169,
+                        168,
+                        167,
+                        166,
+                        165,
+                        164
+                    ]
+                },
+                "latency_ms": 224.8945,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "cars/1",
+            "input": {
+                "search": "0"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "332fea5f7cd180d199a099412d08cfa9fcacb58934770acd8b7092502d44c734",
+                "bytes": 191,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/cars?search=0&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": []
+                },
+                "latency_ms": 3.0089,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "cars/2",
+            "input": {
+                "search": "\u0634\u0631\u0643\u0629"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "932baccf5d9f65e59b70677253fa69957a467e68437bd2b766dd03171aa0dd06",
+                "bytes": 214,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/cars?search=%D8%B4%D8%B1%D9%83%D8%A9&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": []
+                },
+                "latency_ms": 2.8138,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "cars/3",
+            "input": {
+                "search": "%"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "843463e3eac8db09d062e8d0692cbdb919cd7d650d6d873c06849d223482776f",
+                "bytes": 12302,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 167,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 12,
+                        "url1": "http://localhost/dashboard/cars?search=%25&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": [
+                        179,
+                        177,
+                        176,
+                        175,
+                        174,
+                        173,
+                        172,
+                        171,
+                        170,
+                        169,
+                        168,
+                        167,
+                        166,
+                        165,
+                        164
+                    ]
+                },
+                "latency_ms": 16.8085,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "cars/4",
+            "input": {
+                "search": "_"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "504fe3702720f76fccf4921f2b83816f7c3e82fc7bbc818ff8d80e1f50d52dd5",
+                "bytes": 12300,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 167,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 12,
+                        "url1": "http://localhost/dashboard/cars?search=_&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": [
+                        179,
+                        177,
+                        176,
+                        175,
+                        174,
+                        173,
+                        172,
+                        171,
+                        170,
+                        169,
+                        168,
+                        167,
+                        166,
+                        165,
+                        164
+                    ]
+                },
+                "latency_ms": 14.3146,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "cars/5",
+            "input": {
+                "search": "'"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "39c5dc147534781b02ed0a1e4e58cc19c96db343b7b129bda1793876038153ff",
+                "bytes": 193,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/cars?search=%27&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": []
+                },
+                "latency_ms": 1.4753,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "cars/6",
+            "input": {
+                "search": "phase2_no_match_9137"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "a435e2c5999def91e98813963ebd00fbdf47f363638504ccf550aa5cb15ec481",
+                "bytes": 210,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/cars?search=phase2_no_match_9137&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": []
+                },
+                "latency_ms": 1.0088,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "cars/7",
+            "input": {
+                "search": ""
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "f3de89d95998141ed19530fa7489375c73040b10beec5bd6f7499ffdb048bf8f",
+                "bytes": 12299,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 167,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 12,
+                        "url1": "http://localhost/dashboard/cars?search=&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": [
+                        179,
+                        177,
+                        176,
+                        175,
+                        174,
+                        173,
+                        172,
+                        171,
+                        170,
+                        169,
+                        168,
+                        167,
+                        166,
+                        165,
+                        164
+                    ]
+                },
+                "latency_ms": 11.7794,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "cars/8",
+            "input": {
+                "search": "   "
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "c77d535798a68a2bfe69202dbd521aac2ae01401ef69488d25db81b4c1f496ef",
+                "bytes": 12308,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 167,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 12,
+                        "url1": "http://localhost/dashboard/cars?search=%20%20%20&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": [
+                        179,
+                        177,
+                        176,
+                        175,
+                        174,
+                        173,
+                        172,
+                        171,
+                        170,
+                        169,
+                        168,
+                        167,
+                        166,
+                        165,
+                        164
+                    ]
+                },
+                "latency_ms": 13.6118,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "cars/9",
+            "input": {
+                "search": "357"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "f62a54b9262e0c98e0d018a50f5d626c85feba0cfcdd12f91632e24f27e3fe55",
+                "bytes": 4713,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 1,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/cars?search=357&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": [
+                        1
+                    ]
+                },
+                "latency_ms": 36.0991,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "cars/10",
+            "input": {
+                "page": 2
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "0845e2d95889335d1ea175f35715607e08e7ecfa1778ed03a6cab3bc3a79715b",
+                "bytes": 7224,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 167,
+                        "per_page": 15,
+                        "current_page": 2,
+                        "last_page": 12,
+                        "url1": "http://localhost/dashboard/cars?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": [
+                        163,
+                        162,
+                        161,
+                        160,
+                        159,
+                        158,
+                        157,
+                        156,
+                        155,
+                        154,
+                        153,
+                        152,
+                        151,
+                        150,
+                        149
+                    ]
+                },
+                "latency_ms": 17.0308,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "cars/11",
+            "input": {
+                "page": 999
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "62c5c0c48e9ba154762116a0a86a9474cd23af9a935d272005ab567c30f95b00",
+                "bytes": 187,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 167,
+                        "per_page": 15,
+                        "current_page": 999,
+                        "last_page": 12,
+                        "url1": "http://localhost/dashboard/cars?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": []
+                },
+                "latency_ms": 3.3082,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "cars/12",
+            "input": {
+                "search": "%",
+                "page": 2
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.cars.index",
+                "data_keys": [
+                    "cars"
+                ],
+                "sha256": "0e1da27fc85097da5b0fdcc658e2a5eebe8a4ce7f70cf6f51c2b14651018206d",
+                "bytes": 7235,
+                "pagination": {
+                    "cars": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 167,
+                        "per_page": 15,
+                        "current_page": 2,
+                        "last_page": 12,
+                        "url1": "http://localhost/dashboard/cars?search=%25&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "cars": [
+                        163,
+                        162,
+                        161,
+                        160,
+                        159,
+                        158,
+                        157,
+                        156,
+                        155,
+                        154,
+                        153,
+                        152,
+                        151,
+                        150,
+                        149
+                    ]
+                },
+                "latency_ms": 10.8042,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "drivers/0",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "77484c35a08165931a75bf10b63df16037d72c7065df6d27269382062332f639",
+                "bytes": 3653,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        306,
+                        305,
+                        304,
+                        303,
+                        302,
+                        301,
+                        300,
+                        299,
+                        298,
+                        297,
+                        296,
+                        295,
+                        294,
+                        293,
+                        292
+                    ]
+                },
+                "latency_ms": 7.129,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/1",
+            "input": {
+                "search": "0"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "a7d1d2a523f4a2578b2212a928d4a405ef97f70b6de68f5d2aa353ab9b99c965",
+                "bytes": 3662,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?search=0&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        306,
+                        305,
+                        304,
+                        303,
+                        302,
+                        301,
+                        300,
+                        299,
+                        298,
+                        297,
+                        296,
+                        295,
+                        294,
+                        293,
+                        292
+                    ]
+                },
+                "latency_ms": 3.3273,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/2",
+            "input": {
+                "search": "\u0634\u0631\u0643\u0629"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "58ee538f7fc7dd4c7ebc8dd390b000b5958cf2d4cc00b5f281b76304681f6918",
+                "bytes": 220,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/drivers?search=%D8%B4%D8%B1%D9%83%D8%A9&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": []
+                },
+                "latency_ms": 1.6945,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "drivers/3",
+            "input": {
+                "search": "%"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "f740692a96595553e016115670029c38791c83474e39a41cde818ca76a0ee933",
+                "bytes": 3664,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?search=%25&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        306,
+                        305,
+                        304,
+                        303,
+                        302,
+                        301,
+                        300,
+                        299,
+                        298,
+                        297,
+                        296,
+                        295,
+                        294,
+                        293,
+                        292
+                    ]
+                },
+                "latency_ms": 2.701,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/4",
+            "input": {
+                "search": "_"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "6ce771eefa232ce866d7033e92a24a58a92e040fa1e1656bffac7a14ab4a0202",
+                "bytes": 3662,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?search=_&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        306,
+                        305,
+                        304,
+                        303,
+                        302,
+                        301,
+                        300,
+                        299,
+                        298,
+                        297,
+                        296,
+                        295,
+                        294,
+                        293,
+                        292
+                    ]
+                },
+                "latency_ms": 2.1975,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/5",
+            "input": {
+                "search": "'"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "c98a31fe9fa219ca0595aaaffefb2c42ff1679173e434d8c955ac095ca2dc63f",
+                "bytes": 199,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/drivers?search=%27&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": []
+                },
+                "latency_ms": 2.6052,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "drivers/6",
+            "input": {
+                "search": "phase2_no_match_9137"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "af75ff70880fd2ea43c3f331c7ae097379c3c8cc10183fb89bb7f6c9d7d21bff",
+                "bytes": 216,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/drivers?search=phase2_no_match_9137&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": []
+                },
+                "latency_ms": 1.6775,
+                "query_count": 1
+            }
+        },
+        {
+            "name": "drivers/7",
+            "input": {
+                "search": ""
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "0886c08470eea84b4fa03ffe47662706df64ad158e855c443137741b197fbcab",
+                "bytes": 3661,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?search=&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        306,
+                        305,
+                        304,
+                        303,
+                        302,
+                        301,
+                        300,
+                        299,
+                        298,
+                        297,
+                        296,
+                        295,
+                        294,
+                        293,
+                        292
+                    ]
+                },
+                "latency_ms": 3.8855,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/8",
+            "input": {
+                "search": "   "
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "e315a83c353104d17765e06813eec7d98897d8cf5effd39d9e5f290ac2a6f16d",
+                "bytes": 3670,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?search=%20%20%20&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        306,
+                        305,
+                        304,
+                        303,
+                        302,
+                        301,
+                        300,
+                        299,
+                        298,
+                        297,
+                        296,
+                        295,
+                        294,
+                        293,
+                        292
+                    ]
+                },
+                "latency_ms": 2.1035,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/9",
+            "input": {
+                "search": "\u062a\u0627\u0645"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "6413bac0f051dd5d43ae238b5e879b8e3b34f5e950534eaf0415a3f29833675f",
+                "bytes": 779,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 2,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/drivers?search=%D8%AA%D8%A7%D9%85&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        117,
+                        1
+                    ]
+                },
+                "latency_ms": 2.4797,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/10",
+            "input": {
+                "page": 2
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "767732e5a37126dc109ff40e0eae21f2e11d65e3663d070426d534fe9ff49e2b",
+                "bytes": 3630,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 2,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        291,
+                        290,
+                        289,
+                        288,
+                        287,
+                        286,
+                        285,
+                        284,
+                        283,
+                        282,
+                        281,
+                        280,
+                        279,
+                        278,
+                        277
+                    ]
+                },
+                "latency_ms": 2.4224,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/11",
+            "input": {
+                "page": 999
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "ba53290321ab9066d934eca0ac53db103858c7e7604ea9ad4cc6d37332aab322",
+                "bytes": 193,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 999,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": []
+                },
+                "latency_ms": 3.6994,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "drivers/12",
+            "input": {
+                "search": "%",
+                "page": 2
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.drivers.index",
+                "data_keys": [
+                    "drivers"
+                ],
+                "sha256": "d45bca9e67d48ebcd3f77cb12103b5093f2a042628b43861a027becc4ed39c87",
+                "bytes": 3641,
+                "pagination": {
+                    "drivers": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 305,
+                        "per_page": 15,
+                        "current_page": 2,
+                        "last_page": 21,
+                        "url1": "http://localhost/dashboard/drivers?search=%25&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "drivers": [
+                        291,
+                        290,
+                        289,
+                        288,
+                        287,
+                        286,
+                        285,
+                        284,
+                        283,
+                        282,
+                        281,
+                        280,
+                        279,
+                        278,
+                        277
+                    ]
+                },
+                "latency_ms": 2.8575,
+                "query_count": 2
+            }
+        },
+        {
+            "name": "bookings/0",
+            "input": [],
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "3bd17b4d7d423c38bcc72203ff982719460dd5851aa827b191a1434e9af91975",
+                "bytes": 97349,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 474,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 32,
+                        "url1": "http://localhost/dashboard/bookings?page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": [
+                        509,
+                        508,
+                        507,
+                        506,
+                        505,
+                        504,
+                        503,
+                        502,
+                        501,
+                        500,
+                        499,
+                        498,
+                        497,
+                        496,
+                        495
+                    ]
+                },
+                "latency_ms": 75.4923,
+                "query_count": 13
+            }
+        },
+        {
+            "name": "bookings/1",
+            "input": {
+                "date_from": "2026-09-01"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "1162bca46ef4fe39d14e3adcb2d260e0789a4f767a2a9fbee27599e16bab6016",
+                "bytes": 97370,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 465,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 31,
+                        "url1": "http://localhost/dashboard/bookings?date_from=2026-09-01&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": [
+                        509,
+                        508,
+                        507,
+                        506,
+                        505,
+                        504,
+                        503,
+                        502,
+                        501,
+                        500,
+                        499,
+                        498,
+                        497,
+                        496,
+                        495
+                    ]
+                },
+                "latency_ms": 26.3481,
+                "query_count": 13
+            }
+        },
+        {
+            "name": "bookings/2",
+            "input": {
+                "date_to": "2026-09-30"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "4e81835def937fc987cb13ed3e52b6bc1e201b8b17bfc4fec46b3ec505a0d4f6",
+                "bytes": 88992,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 467,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 32,
+                        "url1": "http://localhost/dashboard/bookings?date_to=2026-09-30&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": [
+                        502,
+                        501,
+                        500,
+                        499,
+                        498,
+                        497,
+                        496,
+                        495,
+                        494,
+                        493,
+                        492,
+                        491,
+                        490,
+                        489,
+                        488
+                    ]
+                },
+                "latency_ms": 25.7183,
+                "query_count": 13
+            }
+        },
+        {
+            "name": "bookings/3",
+            "input": {
+                "date_from": "2024-02-29"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "890b35fbda18e66c07e034d403dc0b4982258c98ffa2010075c69379ee281381",
+                "bytes": 97370,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 474,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 32,
+                        "url1": "http://localhost/dashboard/bookings?date_from=2024-02-29&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": [
+                        509,
+                        508,
+                        507,
+                        506,
+                        505,
+                        504,
+                        503,
+                        502,
+                        501,
+                        500,
+                        499,
+                        498,
+                        497,
+                        496,
+                        495
+                    ]
+                },
+                "latency_ms": 31.5095,
+                "query_count": 13
+            }
+        },
+        {
+            "name": "bookings/4",
+            "input": {
+                "date_to": "2024-02-29"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "8b9ade86a1fb397a4ac8018ff416f16c2064362eb50622b23e3c21ae1e829d0b",
+                "bytes": 44748,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/bookings?date_to=2024-02-29&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": []
+                },
+                "latency_ms": 16.4292,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "bookings/5",
+            "input": {
+                "date_from": "2026-09-01",
+                "date_to": "2026-09-30"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "a39cefeaa992ff3ab71dbe5b6b1abd9d21cda41592041f5cf608f68efec4a3cb",
+                "bytes": 89013,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 458,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 31,
+                        "url1": "http://localhost/dashboard/bookings?date_from=2026-09-01&date_to=2026-09-30&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": [
+                        502,
+                        501,
+                        500,
+                        499,
+                        498,
+                        497,
+                        496,
+                        495,
+                        494,
+                        493,
+                        492,
+                        491,
+                        490,
+                        489,
+                        488
+                    ]
+                },
+                "latency_ms": 29.5305,
+                "query_count": 13
+            }
+        },
+        {
+            "name": "bookings/6",
+            "input": {
+                "date_from": "2026-09-30",
+                "date_to": "2026-09-01"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "97b43cc3f8ddfb60bec81a62406e35acf62d5d39413a3407392226a498c59d9f",
+                "bytes": 44769,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/bookings?date_from=2026-09-30&date_to=2026-09-01&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": []
+                },
+                "latency_ms": 14.6377,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "bookings/7",
+            "input": {
+                "date_to": "9999-12-31"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "2e4e437254104279eb44fd786045bc0bdb48fd2eadd9b1d102258cc0c2f68f35",
+                "bytes": 97368,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 474,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 32,
+                        "url1": "http://localhost/dashboard/bookings?date_to=9999-12-31&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": [
+                        509,
+                        508,
+                        507,
+                        506,
+                        505,
+                        504,
+                        503,
+                        502,
+                        501,
+                        500,
+                        499,
+                        498,
+                        497,
+                        496,
+                        495
+                    ]
+                },
+                "latency_ms": 28.4224,
+                "query_count": 13
+            }
+        },
+        {
+            "name": "bookings/8",
+            "input": {
+                "date_to": "2026-9-1"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "f28387e930097553727148156bc0947d6aa336d1e20f87fc3feb09c0e41c538b",
+                "bytes": 125919,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 27,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 2,
+                        "url1": "http://localhost/dashboard/bookings?date_to=2026-9-1&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": [
+                        27,
+                        26,
+                        25,
+                        24,
+                        23,
+                        22,
+                        21,
+                        20,
+                        19,
+                        18,
+                        17,
+                        16,
+                        15,
+                        14,
+                        13
+                    ]
+                },
+                "latency_ms": 27.8247,
+                "query_count": 13
+            }
+        },
+        {
+            "name": "bookings/9",
+            "input": {
+                "date_to": "invalid"
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "266f09757fd8350d39d4bc36a0b306e86f32dc7ce29d819da87a95038e885c44",
+                "bytes": 44745,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 0,
+                        "per_page": 15,
+                        "current_page": 1,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/bookings?date_to=invalid&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": []
+                },
+                "latency_ms": 15.5658,
+                "query_count": 8
+            }
+        },
+        {
+            "name": "bookings/10",
+            "input": {
+                "date_from": "2026-09-01",
+                "company": 6,
+                "stage": "loading",
+                "page": 2,
+                "per_page": 15
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "39466c1472b6bf26af24d1c28b8accb121b7e6a250fcab15b98a5d4a69c1c3e6",
+                "bytes": 44797,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 12,
+                        "per_page": 15,
+                        "current_page": 2,
+                        "last_page": 1,
+                        "url1": "http://localhost/dashboard/bookings?date_from=2026-09-01&company=6&stage=loading&per_page=15&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": []
+                },
+                "latency_ms": 17.5286,
+                "query_count": 9
+            }
+        },
+        {
+            "name": "bookings/11",
+            "input": {
+                "date_to": "2026-09-30",
+                "invoice_status": "1",
+                "per_page": 100
+            },
+            "result": {
+                "outcome": "success",
+                "view": "admin.bookings.index",
+                "data_keys": [
+                    "bookings",
+                    "companies",
+                    "stageCounts",
+                    "currentStage"
+                ],
+                "sha256": "4d5275927ce92a9fe0e8c2c344fdbf2621b6da7c5f4bddae4f511bb3cc7154c3",
+                "bytes": 677132,
+                "pagination": {
+                    "bookings": {
+                        "kind": "Illuminate\\Pagination\\LengthAwarePaginator",
+                        "total": 224,
+                        "per_page": 100,
+                        "current_page": 1,
+                        "last_page": 3,
+                        "url1": "http://localhost/dashboard/bookings?date_to=2026-09-30&invoice_status=1&per_page=100&page=1"
+                    }
+                },
+                "ordered_ids": {
+                    "bookings": [
+                        309,
+                        308,
+                        287,
+                        264,
+                        263,
+                        262,
+                        261,
+                        259,
+                        257,
+                        256,
+                        255,
+                        254,
+                        251,
+                        250,
+                        249,
+                        248,
+                        247,
+                        246,
+                        243,
+                        242,
+                        241,
+                        240,
+                        239,
+                        237,
+                        235,
+                        234,
+                        233,
+                        231,
+                        229,
+                        227,
+                        226,
+                        225,
+                        223,
+                        222,
+                        221,
+                        220,
+                        219,
+                        218,
+                        216,
+                        215,
+                        214,
+                        213,
+                        212,
+                        211,
+                        210,
+                        200,
+                        199,
+                        198,
+                        194,
+                        193,
+                        192,
+                        191,
+                        190,
+                        189,
+                        188,
+                        187,
+                        186,
+                        185,
+                        184,
+                        183,
+                        182,
+                        175,
+                        174,
+                        173,
+                        172,
+                        171,
+                        170,
+                        169,
+                        168,
+                        167,
+                        166,
+                        165,
+                        163,
+                        162,
+                        161,
+                        160,
+                        159,
+                        158,
+                        157,
+                        156,
+                        155,
+                        154,
+                        153,
+                        152,
+                        150,
+                        149,
+                        148,
+                        147,
+                        146,
+                        145,
+                        144,
+                        143,
+                        142,
+                        140,
+                        139,
+                        138,
+                        137,
+                        136,
+                        135,
+                        134
+                    ]
+                },
+                "latency_ms": 72.1683,
+                "query_count": 13
+            }
+        }
+    ],
+    "normalizations": []
+}

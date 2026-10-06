@@ -1,0 +1,53 @@
+{
+  "baseline_commit": "9b05be1b79d7e16bd991f76b82c2a5bf8de74b96",
+  "baseline": {
+    "tests": 131,
+    "assertions": 583,
+    "failures": 25,
+    "errors": 10
+  },
+  "after": {
+    "tests": 134,
+    "assertions": 667,
+    "failures": 25,
+    "errors": 10
+  },
+  "identical_failure_names": true,
+  "failures": [
+    "1) Tests\\Feature\\ParallelContainerStagesTest::test_multiple_unloading_receipts_remain_visible_with_their_images_after_approval",
+    "2) Tests\\Feature\\ParallelContainerStagesTest::test_dashboard_can_return_one_container_step_by_step_to_specification",
+    "3) Tests\\Feature\\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set \"loading\" (1)",
+    "4) Tests\\Feature\\ParallelContainerStagesTest::test_approved_loading_rewind_restores_loading_visibility_even_if_loading_flag_was_cleared",
+    "5) Tests\\Feature\\ParallelContainerStagesTest::test_invoice_hides_all_phases_from_every_assigned_agent",
+    "6) Tests\\Feature\\ParallelContainerStagesTest::test_two_agents_keep_independent_assignments_and_late_receipts",
+    "7) Tests\\Feature\\ParallelContainerStagesTest::test_same_agent_can_work_both_phases_without_duplicate_containers",
+    "8) Tests\\Feature\\ParallelContainerStagesTest::test_close_checks_the_reviewed_version_and_rejects_late_writes",
+    "9) Tests\\Feature\\ParallelContainerStagesTest::test_assignment_api_serializes_the_selected_phase_after_three_days",
+    "10) Tests\\Feature\\ParallelContainerStagesTest::test_rewind_is_rejected_once_the_next_agent_is_assigned",
+    "1) Tests\\Feature\\ParallelContainerStagesTest::test_superagent_done_actions_advance_all_stages_without_an_agent",
+    "2) Tests\\Feature\\ParallelContainerStagesTest::test_superagent_done_actions_cannot_skip_specification",
+    "3) Tests\\Feature\\ParallelContainerStagesTest::test_dashboard_previous_stage_endpoint_validates_and_returns_only_the_selected_container",
+    "4) Tests\\Feature\\ParallelContainerStagesTest::test_dashboard_rewind_allows_return_with_expenses_and_reopens_closed_receipts",
+    "5) Tests\\Feature\\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set \"specification\" (0)",
+    "6) Tests\\Feature\\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set \"loading\" (1)",
+    "7) Tests\\Feature\\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set \"unloading\" (2)",
+    "8) Tests\\Feature\\ParallelContainerStagesTest::test_superagent_missions_group_containers_before_paginating_bookings",
+    "9) Tests\\Feature\\ParallelContainerStagesTest::test_superagent_waiting_done_stays_one_after_waiting",
+    "10) Tests\\Feature\\ParallelContainerStagesTest::test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set \"specification\" (0)",
+    "11) Tests\\Feature\\ParallelContainerStagesTest::test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set \"unloading\" (2)",
+    "12) Tests\\Feature\\ParallelContainerStagesTest::test_legacy_assignments_have_consistent_visibility_and_permissions with data set \"specification\" (0)",
+    "13) Tests\\Feature\\ParallelContainerStagesTest::test_legacy_assignments_have_consistent_visibility_and_permissions with data set \"unloading\" (2)",
+    "14) Tests\\Feature\\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set \"specification\" (0)",
+    "15) Tests\\Feature\\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set \"loading\" (1)",
+    "16) Tests\\Feature\\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set \"unloading\" (2)",
+    "17) Tests\\Feature\\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set \"specification\" (0)",
+    "18) Tests\\Feature\\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set \"unloading\" (2)",
+    "19) Tests\\Feature\\ParallelContainerStagesTest::test_waiting_assignment_appears_only_after_move_to_loading",
+    "20) Tests\\Feature\\ParallelContainerStagesTest::test_waiting_toggle_cannot_hide_completed_loading",
+    "21) Tests\\Feature\\ParallelContainerStagesTest::test_superagent_can_close_loading_receipts_without_moving_to_unloading",
+    "22) Tests\\Feature\\ParallelContainerStagesTest::test_loading_receipts_cannot_close_while_waiting_for_loading",
+    "23) Tests\\Feature\\ParallelContainerStagesTest::test_loading_approval_keeps_container_visible_for_unloading_assignment with data set \"open receipts\" (false)",
+    "24) Tests\\Feature\\ParallelContainerStagesTest::test_loading_approval_keeps_container_visible_for_unloading_assignment with data set \"closed receipts\" (true)",
+    "25) Tests\\Feature\\ParallelContainerStagesTest::test_old_completed_stage_without_timestamp_is_not_completed_again"
+  ]
+}

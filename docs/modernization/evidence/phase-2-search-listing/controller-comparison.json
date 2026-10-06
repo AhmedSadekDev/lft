@@ -1,0 +1,1031 @@
+{
+  "level": "QUERY VERIFIED — actual controller/view-data, no middleware or view rendering; not authenticated endpoint verification",
+  "comparisons": 128,
+  "mismatches": 0,
+  "cases": [
+    {
+      "name": "companies/0",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/1",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/2",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "companies/3",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/4",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/5",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "companies/6",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "companies/7",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/8",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/9",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/10",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/11",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "companies/12",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/13",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/14",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/15",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/16",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/17",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/18",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/19",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/20",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/21",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/22",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/23",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/24",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/25",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/26",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/27",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/28",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/29",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/30",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/31",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/32",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/33",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/34",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/35",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/36",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/37",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/38",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/39",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/40",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/41",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/42",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/43",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/44",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/45",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/46",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/approved-fallback/0",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/approved-fallback/1",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "companies/approved-fallback/2",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 5,
+      "queries_after": 5
+    },
+    {
+      "name": "private-companies/0",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/1",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/2",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "private-companies/3",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/4",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/5",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "private-companies/6",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "private-companies/7",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/8",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/9",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/10",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/11",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/12",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/13",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/14",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/15",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/16",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/17",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/18",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/19",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/20",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/21",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/22",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/23",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/24",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/25",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/26",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/27",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/28",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/29",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/30",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/31",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/32",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/33",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/34",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/35",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/36",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/approved-fallback/0",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/approved-fallback/1",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "private-companies/approved-fallback/2",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "cars/0",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "cars/1",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "cars/2",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "cars/3",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "cars/4",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "cars/5",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "cars/6",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "cars/7",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "cars/8",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "cars/9",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "cars/10",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "cars/11",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "cars/12",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "drivers/0",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/1",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/2",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "drivers/3",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/4",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/5",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "drivers/6",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 1,
+      "queries_after": 1
+    },
+    {
+      "name": "drivers/7",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/8",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/9",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/10",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/11",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "drivers/12",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 2,
+      "queries_after": 2
+    },
+    {
+      "name": "bookings/0",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 13,
+      "queries_after": 13
+    },
+    {
+      "name": "bookings/1",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 13,
+      "queries_after": 13
+    },
+    {
+      "name": "bookings/2",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 13,
+      "queries_after": 13
+    },
+    {
+      "name": "bookings/3",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 13,
+      "queries_after": 13
+    },
+    {
+      "name": "bookings/4",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "bookings/5",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 13,
+      "queries_after": 13
+    },
+    {
+      "name": "bookings/6",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "bookings/7",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 13,
+      "queries_after": 13
+    },
+    {
+      "name": "bookings/8",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 13,
+      "queries_after": 13
+    },
+    {
+      "name": "bookings/9",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 8,
+      "queries_after": 8
+    },
+    {
+      "name": "bookings/10",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 9,
+      "queries_after": 9
+    },
+    {
+      "name": "bookings/11",
+      "equal": true,
+      "before": "success",
+      "after": "success",
+      "queries_before": 13,
+      "queries_after": 13
+    }
+  ]
+}

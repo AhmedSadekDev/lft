@@ -1,0 +1,5 @@
+{
+  "code": 0,
+  "stdout": "PHPUnit 9.6.25 by Sebastian Bergmann and contributors.\n\n...                                                                 3 / 3 (100%)\r\n\r\nTime: 00:00.179, Memory: 12.00 MB\r\n\r\nOK (3 tests, 84 assertions)\r\n",
+  "stderr": ""
+}

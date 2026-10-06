@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="" tests="131" assertions="583" errors="10" warnings="0" failures="25" skipped="0" time="15.167765">
+    <testsuite name="Unit" tests="22" assertions="22" errors="0" warnings="0" failures="0" skipped="0" time="0.051842">
+      <testsuite name="Tests\Unit\ExampleTest" file="D:\laragon\www\leader\leader\tests\Unit\ExampleTest.php" tests="1" assertions="1" errors="0" warnings="0" failures="0" skipped="0" time="0.009899">
+        <testcase name="test_that_true_is_true" class="Tests\Unit\ExampleTest" classname="Tests.Unit.ExampleTest" file="D:\laragon\www\leader\leader\tests\Unit\ExampleTest.php" line="14" assertions="1" time="0.009899"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" tests="21" assertions="21" errors="0" warnings="0" failures="0" skipped="0" time="0.041943">
+        <testsuite name="Tests\Unit\InvoicePrintVisibilityTest::test_only_explicit_print_destinations_are_used" tests="21" assertions="21" errors="0" warnings="0" failures="0" skipped="0" time="0.041943">
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #0" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.039590"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #1" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000191"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #2" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000144"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #3" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000116"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #4" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000145"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #5" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000139"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #6" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000104"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #7" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000089"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #8" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000096"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #9" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000114"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #10" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000101"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #11" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000104"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #12" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000101"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #13" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000098"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #14" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000092"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #15" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000094"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #16" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000187"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #17" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000097"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #18" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000104"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #19" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000107"/>
+          <testcase name="test_only_explicit_print_destinations_are_used with data set #20" class="Tests\Unit\InvoicePrintVisibilityTest" classname="Tests.Unit.InvoicePrintVisibilityTest" file="D:\laragon\www\leader\leader\tests\Unit\InvoicePrintVisibilityTest.php" line="15" assertions="1" time="0.000130"/>
+        </testsuite>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="109" assertions="561" errors="10" warnings="0" failures="25" skipped="0" time="15.115923">
+      <testsuite name="Tests\Feature\AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" tests="14" assertions="74" errors="0" warnings="0" failures="0" skipped="0" time="1.509814">
+        <testcase name="test_uploads_multiple_images_without_booking_or_wallet_changes" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="36" assertions="11" time="0.712125"/>
+        <testcase name="test_agent_only_lists_and_views_their_own_images" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="51" assertions="5" time="0.065008"/>
+        <testcase name="test_rejects_non_images_and_oversized_images_without_saving_any_files" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="61" assertions="4" time="0.061520"/>
+        <testcase name="test_upload_failure_rolls_back_records_and_cleans_files" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="73" assertions="4" time="0.073442"/>
+        <testcase name="test_dashboard_filters_photos_by_agent_and_date" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="92" assertions="3" time="0.068071"/>
+        <testcase name="test_dashboard_routes_require_existing_agent_view_permission" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="105" assertions="12" time="0.037793"/>
+        <testcase name="test_dashboard_image_requires_permission_and_streams_the_saved_file" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="121" assertions="3" time="0.099920"/>
+        <testcase name="test_dashboard_can_delete_a_photo_and_its_saved_file" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="137" assertions="3" time="0.048931"/>
+        <testcase name="test_dashboard_accepts_an_end_date_without_a_start_date" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="151" assertions="1" time="0.039923"/>
+        <testcase name="test_unauthenticated_users_cannot_upload_or_list_images" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="158" assertions="2" time="0.040482"/>
+        <testcase name="test_bulk_destroy_deletes_multiple_photos_and_files" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="164" assertions="7" time="0.063108"/>
+        <testcase name="test_assign_photo_copies_to_public_storage_and_creates_booking_paper" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="187" assertions="8" time="0.068912"/>
+        <testcase name="test_search_bookings_finds_by_booking_number_and_container_no" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="255" assertions="7" time="0.077511"/>
+        <testcase name="test_dashboard_filters_by_unassigned_and_assigned_status" class="Tests\Feature\AgentPhotosTest" classname="Tests.Feature.AgentPhotosTest" file="D:\laragon\www\leader\leader\tests\Feature\AgentPhotosTest.php" line="291" assertions="4" time="0.053069"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" tests="17" assertions="84" errors="0" warnings="0" failures="0" skipped="0" time="1.673519">
+        <testsuite name="Tests\Feature\BookingContainerExportTest::test_export_matches_filtered_listing" tests="16" assertions="64" errors="0" warnings="0" failures="0" skipped="0" time="1.156799">
+          <testcase name="test_export_matches_filtered_listing with data set &quot;all&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.075335"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;stage&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.042811"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;legacy status&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.045012"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;stage overrides status&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.052859"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;waiting&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.062260"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;invoiced&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.073269"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;date range&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.061133"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;date from&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.054137"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;date to&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.048667"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;company&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.046276"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;tax&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.046167"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;without invoice&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.055886"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;with invoice&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.096506"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;container search&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.141105"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;invoice search&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.134606"/>
+          <testcase name="test_export_matches_filtered_listing with data set &quot;combined&quot;" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="83" assertions="4" time="0.120768"/>
+        </testsuite>
+        <testcase name="test_export_handles_missing_container_and_includes_employee_and_notes_in_xlsx" class="Tests\Feature\BookingContainerExportTest" classname="Tests.Feature.BookingContainerExportTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingContainerExportTest.php" line="134" assertions="20" time="0.516720"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\BookingUpdatePermissionTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingUpdatePermissionTest.php" tests="6" assertions="18" errors="0" warnings="0" failures="0" skipped="0" time="0.623361">
+        <testsuite name="Tests\Feature\BookingUpdatePermissionTest::test_edit_and_save_use_the_existing_update_permission" tests="6" assertions="18" errors="0" warnings="0" failures="0" skipped="0" time="0.623361">
+          <testcase name="test_edit_and_save_use_the_existing_update_permission with data set &quot;edit allowed&quot;" class="Tests\Feature\BookingUpdatePermissionTest" classname="Tests.Feature.BookingUpdatePermissionTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingUpdatePermissionTest.php" line="15" assertions="3" time="0.131899"/>
+          <testcase name="test_edit_and_save_use_the_existing_update_permission with data set &quot;save allowed&quot;" class="Tests\Feature\BookingUpdatePermissionTest" classname="Tests.Feature.BookingUpdatePermissionTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingUpdatePermissionTest.php" line="15" assertions="3" time="0.094734"/>
+          <testcase name="test_edit_and_save_use_the_existing_update_permission with data set &quot;edit denied&quot;" class="Tests\Feature\BookingUpdatePermissionTest" classname="Tests.Feature.BookingUpdatePermissionTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingUpdatePermissionTest.php" line="15" assertions="3" time="0.104200"/>
+          <testcase name="test_edit_and_save_use_the_existing_update_permission with data set &quot;save denied&quot;" class="Tests\Feature\BookingUpdatePermissionTest" classname="Tests.Feature.BookingUpdatePermissionTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingUpdatePermissionTest.php" line="15" assertions="3" time="0.092328"/>
+          <testcase name="test_edit_and_save_use_the_existing_update_permission with data set &quot;previous stage allowed&quot;" class="Tests\Feature\BookingUpdatePermissionTest" classname="Tests.Feature.BookingUpdatePermissionTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingUpdatePermissionTest.php" line="15" assertions="3" time="0.105976"/>
+          <testcase name="test_edit_and_save_use_the_existing_update_permission with data set &quot;previous stage denied&quot;" class="Tests\Feature\BookingUpdatePermissionTest" classname="Tests.Feature.BookingUpdatePermissionTest" file="D:\laragon\www\leader\leader\tests\Feature\BookingUpdatePermissionTest.php" line="15" assertions="3" time="0.094225"/>
+        </testsuite>
+      </testsuite>
+      <testsuite name="Tests\Feature\ExampleTest" file="D:\laragon\www\leader\leader\tests\Feature\ExampleTest.php" tests="1" assertions="2" errors="0" warnings="0" failures="0" skipped="0" time="0.117525">
+        <testcase name="test_the_homepage_redirects_to_the_main_route" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" file="D:\laragon\www\leader\leader\tests\Feature\ExampleTest.php" line="15" assertions="2" time="0.117525"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" tests="64" assertions="351" errors="10" warnings="0" failures="25" skipped="0" time="10.290712">
+        <testcase name="test_superagent_done_actions_advance_all_stages_without_an_agent" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="149" assertions="4" time="0.188877">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_superagent_done_actions_advance_all_stages_without_an_agent
+Failed asserting that null is not null.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:171</failure>
+        </testcase>
+        <testcase name="test_superagent_done_actions_cannot_skip_specification" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="200" assertions="1" time="0.162229">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_superagent_done_actions_cannot_skip_specification
+Expected response status code [409] but received 500.
+Failed asserting that 409 is identical to 500.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:123
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:211</failure>
+        </testcase>
+        <testcase name="test_general_expense_cannot_drop_booking_or_stage_context_and_debit_wallet" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="221" assertions="12" time="0.186034"/>
+        <testcase name="test_multiple_unloading_receipts_remain_visible_with_their_images_after_approval" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="238" assertions="0" time="0.136381">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_multiple_unloading_receipts_remain_visible_with_their_images_after_approval
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:242</error>
+        </testcase>
+        <testcase name="test_dashboard_can_return_one_container_step_by_step_to_specification" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="265" assertions="0" time="0.139316">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_dashboard_can_return_one_container_step_by_step_to_specification
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:270</error>
+        </testcase>
+        <testcase name="test_direct_rewind_cannot_bypass_invoice_protection" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="310" assertions="4" time="0.130975"/>
+        <testcase name="test_dashboard_rewind_rejects_stale_requests_and_invoiced_bookings" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="329" assertions="4" time="0.125709"/>
+        <testcase name="test_dashboard_previous_stage_endpoint_validates_and_returns_only_the_selected_container" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="339" assertions="4" time="0.168503">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_dashboard_previous_stage_endpoint_validates_and_returns_only_the_selected_container
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:349</failure>
+        </testcase>
+        <testcase name="test_dashboard_rewind_allows_return_with_expenses_and_reopens_closed_receipts" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="353" assertions="1" time="0.147017">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_dashboard_rewind_allows_return_with_expenses_and_reopens_closed_receipts
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:358</failure>
+        </testcase>
+        <testsuite name="Tests\Feature\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval" tests="3" assertions="10" errors="0" warnings="0" failures="3" skipped="0" time="0.512440">
+          <testcase name="test_superagent_done_flag_tracks_completion_before_approval with data set &quot;specification&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="381" assertions="2" time="0.151177">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set "specification" (0)
+Failed asserting that null is identical to 0.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:397</failure>
+          </testcase>
+          <testcase name="test_superagent_done_flag_tracks_completion_before_approval with data set &quot;loading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="381" assertions="6" time="0.222105">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set "loading" (1)
+Failed asserting that 0 is identical to 1.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:402</failure>
+          </testcase>
+          <testcase name="test_superagent_done_flag_tracks_completion_before_approval with data set &quot;unloading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="381" assertions="2" time="0.139158">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set "unloading" (2)
+Failed asserting that null is identical to 0.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:397</failure>
+          </testcase>
+        </testsuite>
+        <testcase name="test_superagent_missions_group_containers_before_paginating_bookings" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="430" assertions="12" time="0.193042">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_superagent_missions_group_containers_before_paginating_bookings
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+-'waiting'
++'loading'
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:454</failure>
+        </testcase>
+        <testcase name="test_superagent_waiting_done_stays_one_after_waiting" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="472" assertions="2" time="0.139359">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_superagent_waiting_done_stays_one_after_waiting
+Failed asserting that null is identical to 1.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:482</failure>
+        </testcase>
+        <testcase name="test_details_show_container_700_loaded_while_booking_425_is_incomplete" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="501" assertions="70" time="0.342245"/>
+        <testsuite name="Tests\Feature\ParallelContainerStagesTest::test_assignments_without_grouping_relations_remain_visible_in_every_stage" tests="3" assertions="12" errors="0" warnings="0" failures="2" skipped="0" time="0.453161">
+          <testcase name="test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set &quot;specification&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="566" assertions="1" time="0.137781">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set "specification" (0)
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:568</failure>
+          </testcase>
+          <testcase name="test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set &quot;loading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="566" assertions="10" time="0.175364"/>
+          <testcase name="test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set &quot;unloading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="566" assertions="1" time="0.140015">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set "unloading" (2)
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:568</failure>
+          </testcase>
+        </testsuite>
+        <testsuite name="Tests\Feature\ParallelContainerStagesTest::test_legacy_assignments_have_consistent_visibility_and_permissions" tests="3" assertions="6" errors="0" warnings="0" failures="2" skipped="0" time="0.445812">
+          <testcase name="test_legacy_assignments_have_consistent_visibility_and_permissions with data set &quot;specification&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="582" assertions="1" time="0.133370">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_legacy_assignments_have_consistent_visibility_and_permissions with data set "specification" (0)
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:584</failure>
+          </testcase>
+          <testcase name="test_legacy_assignments_have_consistent_visibility_and_permissions with data set &quot;loading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="582" assertions="4" time="0.158725"/>
+          <testcase name="test_legacy_assignments_have_consistent_visibility_and_permissions with data set &quot;unloading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="582" assertions="1" time="0.153718">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_legacy_assignments_have_consistent_visibility_and_permissions with data set "unloading" (2)
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:584</failure>
+          </testcase>
+        </testsuite>
+        <testsuite name="Tests\Feature\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments" tests="3" assertions="7" errors="0" warnings="0" failures="3" skipped="0" time="0.427558">
+          <testcase name="test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set &quot;specification&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="594" assertions="1" time="0.140179">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set "specification" (0)
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:596</failure>
+          </testcase>
+          <testcase name="test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set &quot;loading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="594" assertions="5" time="0.156733">
+            <failure type="PHPUnit\Framework\AssertionFailedError">Tests\Feature\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set "loading" (1)
+Expected a rejected operation
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:730
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:603</failure>
+          </testcase>
+          <testcase name="test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set &quot;unloading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="594" assertions="1" time="0.130646">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set "unloading" (2)
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:596</failure>
+          </testcase>
+        </testsuite>
+        <testsuite name="Tests\Feature\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled" tests="3" assertions="3" errors="1" warnings="0" failures="2" skipped="0" time="0.406228">
+          <testcase name="test_rewound_stages_reappear_with_completion_enabled with data set &quot;specification&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="608" assertions="1" time="0.138554">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set "specification" (0)
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:610</failure>
+          </testcase>
+          <testcase name="test_rewound_stages_reappear_with_completion_enabled with data set &quot;loading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="608" assertions="1" time="0.132773">
+            <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set "loading" (1)
+Symfony\Component\HttpKernel\Exception\HttpException: حالة الرجوع غير صحيحة
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:232
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:229
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:616</error>
+          </testcase>
+          <testcase name="test_rewound_stages_reappear_with_completion_enabled with data set &quot;unloading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="608" assertions="1" time="0.134900">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set "unloading" (2)
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:610</failure>
+          </testcase>
+        </testsuite>
+        <testcase name="test_approved_loading_rewind_restores_loading_visibility_even_if_loading_flag_was_cleared" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="623" assertions="1" time="0.138039">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_approved_loading_rewind_restores_loading_visibility_even_if_loading_flag_was_cleared
+Symfony\Component\HttpKernel\Exception\HttpException: حالة الرجوع غير صحيحة
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:232
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:229
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:628</error>
+        </testcase>
+        <testcase name="test_waiting_assignment_appears_only_after_move_to_loading" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="634" assertions="3" time="0.167525">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_waiting_assignment_appears_only_after_move_to_loading
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &amp;0 ()
++Array &amp;0 (
++    0 =&gt; Array &amp;1 (
++        'id' =&gt; 1
++        'title' =&gt; 'Yard'
++        'booking_containers' =&gt; Array &amp;2 (
++            0 =&gt; Array &amp;3 (
++                'id' =&gt; 1
++                'company_name' =&gt; ''
++                'factory_name' =&gt; ''
++                'container_type' =&gt; null
++                'branch' =&gt; null
++                'sail_of_number' =&gt; null
++                'container_number' =&gt; null
++                'arrival_date' =&gt; null
++                'booking_number' =&gt; 'B-1'
++                'container_size' =&gt; ''
++                'shipping_agent' =&gt; 'Shipping'
++                'yard_title' =&gt; 'Yard'
++                'yard_id' =&gt; 1
++                'booking_id' =&gt; 1
++                'stage_type' =&gt; 'loading'
++                'stage_status' =&gt; 'pending'
++                'is_completed' =&gt; false
++                'is_approved' =&gt; false
++                'is_in_loading' =&gt; 1
++                'moved_to_loading_at' =&gt; null
++                'status_color' =&gt; 'red'
++                'card_header_color' =&gt; 'red'
++                'can_upload_receipts' =&gt; true
++                'can_complete_stage' =&gt; true
++                'operational_stage' =&gt; 'loading'
++                'type_id' =&gt; 1
++                'receipts_closed' =&gt; false
++                'receipts_version' =&gt; 1
++                'specification_approved_at' =&gt; null
++                'loading_approved_at' =&gt; null
++                'unloading_approved_at' =&gt; null
++                'notes' =&gt; Array &amp;4 ()
++                'specification_latter' =&gt; ''
++                'container_image' =&gt; ''
++                'loading_answer' =&gt; ''
++                'container_with_sail_image' =&gt; ''
++                'unloading_image' =&gt; ''
++            )
++        )
++    )
++)
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:639</failure>
+        </testcase>
+        <testcase name="test_invoice_hides_all_phases_from_every_assigned_agent" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="645" assertions="0" time="0.126743">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_invoice_hides_all_phases_from_every_assigned_agent
+Symfony\Component\HttpKernel\Exception\HttpException: المرحلة معتمدة بالفعل؛ اختر المرحلة الحالية للإسناد أو أرسل الطلب بدون type_id.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:65
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:83
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:649</error>
+        </testcase>
+        <testcase name="test_invoice_blocks_stale_agent_writes_and_persisted_expense_and_policy_references" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="675" assertions="43" time="0.278532"/>
+        <testcase name="test_booking_search_cannot_restore_an_invoiced_or_unassigned_order" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="715" assertions="2" time="0.155857"/>
+        <testcase name="test_two_agents_keep_independent_assignments_and_late_receipts" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="736" assertions="0" time="0.134934">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_two_agents_keep_independent_assignments_and_late_receipts
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:741</error>
+        </testcase>
+        <testcase name="test_same_agent_can_work_both_phases_without_duplicate_containers" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="756" assertions="0" time="0.134329">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_same_agent_can_work_both_phases_without_duplicate_containers
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:760</error>
+        </testcase>
+        <testcase name="test_close_checks_the_reviewed_version_and_rejects_late_writes" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="769" assertions="0" time="0.131297">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_close_checks_the_reviewed_version_and_rejects_late_writes
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:773</error>
+        </testcase>
+        <testcase name="test_retries_are_idempotent_even_after_closure" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="786" assertions="4" time="0.144390"/>
+        <testcase name="test_stale_edits_and_deletes_do_not_overwrite_or_refund_twice" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="797" assertions="6" time="0.172173"/>
+        <testcase name="test_unassigned_agent_and_premature_unloading_are_rejected" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="812" assertions="5" time="0.146143"/>
+        <testcase name="test_failed_image_write_rolls_back_receipt_and_wallet" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="822" assertions="4" time="0.186853"/>
+        <testcase name="test_assignment_api_serializes_the_selected_phase_after_three_days" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="837" assertions="0" time="0.126657">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_assignment_api_serializes_the_selected_phase_after_three_days
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:841</error>
+        </testcase>
+        <testcase name="test_expense_api_requires_retry_key_and_version_and_preserves_context" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="855" assertions="12" time="0.264002"/>
+        <testcase name="test_waiting_toggle_cannot_hide_completed_loading" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="872" assertions="1" time="0.132122">
+          <failure type="PHPUnit\Framework\AssertionFailedError">Tests\Feature\ParallelContainerStagesTest::test_waiting_toggle_cannot_hide_completed_loading
+Expected a rejected operation
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:730
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:875</failure>
+        </testcase>
+        <testcase name="test_rewind_is_rejected_once_the_next_agent_is_assigned" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="879" assertions="0" time="0.131444">
+          <error type="Symfony\Component\HttpKernel\Exception\HttpException">Tests\Feature\ParallelContainerStagesTest::test_rewind_is_rejected_once_the_next_agent_is_assigned
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:883</error>
+        </testcase>
+        <testcase name="test_review_snapshot_starts_at_version_one" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="888" assertions="1" time="0.147867"/>
+        <testcase name="test_superagent_closes_only_the_reviewed_phase" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="896" assertions="6" time="0.180334"/>
+        <testcase name="test_superagent_can_close_loading_receipts_without_moving_to_unloading" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="911" assertions="13" time="0.207793">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_superagent_can_close_loading_receipts_without_moving_to_unloading
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:934</failure>
+        </testcase>
+        <testcase name="test_loading_receipts_cannot_close_while_waiting_for_loading" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="937" assertions="1" time="0.139126">
+          <failure type="PHPUnit\Framework\AssertionFailedError">Tests\Feature\ParallelContainerStagesTest::test_loading_receipts_cannot_close_while_waiting_for_loading
+Expected a rejected operation
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:730
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:940</failure>
+        </testcase>
+        <testsuite name="Tests\Feature\ParallelContainerStagesTest::test_loading_approval_keeps_container_visible_for_unloading_assignment" tests="2" assertions="8" errors="0" warnings="0" failures="2" skipped="0" time="0.352668">
+          <testcase name="test_loading_approval_keeps_container_visible_for_unloading_assignment with data set &quot;open receipts&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="945" assertions="4" time="0.174825">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_loading_approval_keeps_container_visible_for_unloading_assignment with data set "open receipts" (false)
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &amp;0 ()
++Array &amp;0 (
++    0 =&gt; Array &amp;1 (
++        'id' =&gt; 1
++        'booking_id' =&gt; 1
++        'booking_container_id' =&gt; 1
++        'booking_number' =&gt; 'B-1'
++        'is_today' =&gt; 1
++        'is_specification_done' =&gt; 1
++        'is_waiting_done' =&gt; 1
++        'is_loading_done' =&gt; 0
++        'is_unloading_done' =&gt; 0
++        'booking_containers' =&gt; Array &amp;2 (
++            0 =&gt; Array &amp;3 (
++                'id' =&gt; 1
++                'is_specification_done' =&gt; 1
++                'is_waiting_done' =&gt; 1
++                'is_loading_done' =&gt; 0
++                'is_unloading_done' =&gt; 0
++                'company_name' =&gt; ''
++                'factory_name' =&gt; ''
++                'container_type' =&gt; ''
++                'branch' =&gt; ''
++                'sail_of_number' =&gt; null
++                'container_number' =&gt; null
++                'arrival_date' =&gt; null
++                'booking_number' =&gt; 'B-1'
++                'certificate_number' =&gt; ''
++                'container_size' =&gt; ''
++                'shipping_agent' =&gt; ''
++                'date' =&gt; '2026-10-06'
++                'office_policy' =&gt; ''
++                'exit_date' =&gt; ''
++                'yard_title' =&gt; 'Yard'
++                'yard_id' =&gt; 1
++                'notes' =&gt; Array &amp;4 ()
++                'is_today' =&gt; 0
++                'booking_id' =&gt; 1
++                'responsible_agents' =&gt; Array &amp;5 (
++                    0 =&gt; Array &amp;6 (
++                        'id' =&gt; 1
++                        'name' =&gt; ''
++                        'image' =&gt; 'https://cloudymenue.cloudy-digital.com/storage/agents'
++                        'number_of_bookings' =&gt; 1
++                    )
++                )
++                'specification_latter' =&gt; ''
++                'container_image' =&gt; ''
++                'loading_answer' =&gt; ''
++                'container_with_sail_image' =&gt; ''
++                'unloading_image' =&gt; ''
++            )
++        )
++        'specification_containers' =&gt; Array &amp;7 ()
++        'waiting_containers' =&gt; Array &amp;8 ()
++        'loading_containers' =&gt; Array &amp;9 (
++            0 =&gt; Array &amp;10 (
++                'id' =&gt; 1
++                'is_specification_done' =&gt; 1
++                'is_waiting_done' =&gt; 1
++                'is_loading_done' =&gt; 0
++                'is_unloading_done' =&gt; 0
++                'company_name' =&gt; ''
++                'factory_name' =&gt; ''
++                'container_type' =&gt; ''
++                'branch' =&gt; ''
++                'sail_of_number' =&gt; null
++                'container_number' =&gt; null
++                'arrival_date' =&gt; null
++                'booking_number' =&gt; 'B-1'
++                'certificate_number' =&gt; ''
++                'container_size' =&gt; ''
++                'shipping_agent' =&gt; ''
++                'date' =&gt; '2026-10-06'
++                'office_policy' =&gt; ''
++                'exit_date' =&gt; ''
++                'yard_title' =&gt; 'Yard'
++                'yard_id' =&gt; 1
++                'notes' =&gt; Array &amp;11 ()
++                'is_today' =&gt; 0
++                'booking_id' =&gt; 1
++                'responsible_agents' =&gt; Array &amp;12 (
++                    0 =&gt; Array &amp;13 (
++                        'id' =&gt; 1
++                        'name' =&gt; ''
++                        'image' =&gt; 'https://cloudymenue.cloudy-digital.com/storage/agents'
++                        'number_of_bookings' =&gt; 1
++                    )
++                )
++                'specification_latter' =&gt; ''
++                'container_image' =&gt; ''
++                'loading_answer' =&gt; ''
++                'container_with_sail_image' =&gt; ''
++                'unloading_image' =&gt; ''
++            )
++        )
++        'unloading_containers' =&gt; Array &amp;14 ()
++    )
++)
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:962</failure>
+          </testcase>
+          <testcase name="test_loading_approval_keeps_container_visible_for_unloading_assignment with data set &quot;closed receipts&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="945" assertions="4" time="0.177843">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_loading_approval_keeps_container_visible_for_unloading_assignment with data set "closed receipts" (true)
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &amp;0 ()
++Array &amp;0 (
++    0 =&gt; Array &amp;1 (
++        'id' =&gt; 1
++        'booking_id' =&gt; 1
++        'booking_container_id' =&gt; 1
++        'booking_number' =&gt; 'B-1'
++        'is_today' =&gt; 1
++        'is_specification_done' =&gt; 1
++        'is_waiting_done' =&gt; 1
++        'is_loading_done' =&gt; 0
++        'is_unloading_done' =&gt; 0
++        'booking_containers' =&gt; Array &amp;2 (
++            0 =&gt; Array &amp;3 (
++                'id' =&gt; 1
++                'is_specification_done' =&gt; 1
++                'is_waiting_done' =&gt; 1
++                'is_loading_done' =&gt; 0
++                'is_unloading_done' =&gt; 0
++                'company_name' =&gt; ''
++                'factory_name' =&gt; ''
++                'container_type' =&gt; ''
++                'branch' =&gt; ''
++                'sail_of_number' =&gt; null
++                'container_number' =&gt; null
++                'arrival_date' =&gt; null
++                'booking_number' =&gt; 'B-1'
++                'certificate_number' =&gt; ''
++                'container_size' =&gt; ''
++                'shipping_agent' =&gt; ''
++                'date' =&gt; '2026-10-06'
++                'office_policy' =&gt; ''
++                'exit_date' =&gt; ''
++                'yard_title' =&gt; 'Yard'
++                'yard_id' =&gt; 1
++                'notes' =&gt; Array &amp;4 ()
++                'is_today' =&gt; 0
++                'booking_id' =&gt; 1
++                'responsible_agents' =&gt; Array &amp;5 (
++                    0 =&gt; Array &amp;6 (
++                        'id' =&gt; 1
++                        'name' =&gt; ''
++                        'image' =&gt; 'https://cloudymenue.cloudy-digital.com/storage/agents'
++                        'number_of_bookings' =&gt; 1
++                    )
++                )
++                'specification_latter' =&gt; ''
++                'container_image' =&gt; ''
++                'loading_answer' =&gt; ''
++                'container_with_sail_image' =&gt; ''
++                'unloading_image' =&gt; ''
++            )
++        )
++        'specification_containers' =&gt; Array &amp;7 ()
++        'waiting_containers' =&gt; Array &amp;8 ()
++        'loading_containers' =&gt; Array &amp;9 (
++            0 =&gt; Array &amp;10 (
++                'id' =&gt; 1
++                'is_specification_done' =&gt; 1
++                'is_waiting_done' =&gt; 1
++                'is_loading_done' =&gt; 0
++                'is_unloading_done' =&gt; 0
++                'company_name' =&gt; ''
++                'factory_name' =&gt; ''
++                'container_type' =&gt; ''
++                'branch' =&gt; ''
++                'sail_of_number' =&gt; null
++                'container_number' =&gt; null
++                'arrival_date' =&gt; null
++                'booking_number' =&gt; 'B-1'
++                'certificate_number' =&gt; ''
++                'container_size' =&gt; ''
++                'shipping_agent' =&gt; ''
++                'date' =&gt; '2026-10-06'
++                'office_policy' =&gt; ''
++                'exit_date' =&gt; ''
++                'yard_title' =&gt; 'Yard'
++                'yard_id' =&gt; 1
++                'notes' =&gt; Array &amp;11 ()
++                'is_today' =&gt; 0
++                'booking_id' =&gt; 1
++                'responsible_agents' =&gt; Array &amp;12 (
++                    0 =&gt; Array &amp;13 (
++                        'id' =&gt; 1
++                        'name' =&gt; ''
++                        'image' =&gt; 'https://cloudymenue.cloudy-digital.com/storage/agents'
++                        'number_of_bookings' =&gt; 1
++                    )
++                )
++                'specification_latter' =&gt; ''
++                'container_image' =&gt; ''
++                'loading_answer' =&gt; ''
++                'container_with_sail_image' =&gt; ''
++                'unloading_image' =&gt; ''
++            )
++        )
++        'unloading_containers' =&gt; Array &amp;14 ()
++    )
++)
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:962</failure>
+          </testcase>
+        </testsuite>
+        <testcase name="test_approved_expenses_cannot_be_edited_by_the_agent" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="987" assertions="2" time="0.142560"/>
+        <testcase name="test_migration_preserves_legacy_rows_without_inventing_past_assignments" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="995" assertions="3" time="0.247923"/>
+        <testsuite name="Tests\Feature\ParallelContainerStagesTest::test_migration_preserves_each_existing_state" tests="8" assertions="64" errors="0" warnings="0" failures="0" skipped="0" time="1.306778">
+          <testcase name="test_migration_preserves_each_existing_state with data set &quot;specification in progress&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1024" assertions="8" time="0.151640"/>
+          <testcase name="test_migration_preserves_each_existing_state with data set &quot;specification awaiting approval&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1024" assertions="8" time="0.154262"/>
+          <testcase name="test_migration_preserves_each_existing_state with data set &quot;waiting for loading&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1024" assertions="8" time="0.156312"/>
+          <testcase name="test_migration_preserves_each_existing_state with data set &quot;loading in progress&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1024" assertions="8" time="0.177363"/>
+          <testcase name="test_migration_preserves_each_existing_state with data set &quot;loading awaiting approval&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1024" assertions="8" time="0.158915"/>
+          <testcase name="test_migration_preserves_each_existing_state with data set &quot;unloading in progress&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1024" assertions="8" time="0.162339"/>
+          <testcase name="test_migration_preserves_each_existing_state with data set &quot;unloading awaiting approval&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1024" assertions="8" time="0.171843"/>
+          <testcase name="test_migration_preserves_each_existing_state with data set &quot;fully approved&quot;" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1024" assertions="8" time="0.174104"/>
+        </testsuite>
+        <testcase name="test_existing_stage_is_created_once_when_receipts_are_reviewed" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1044" assertions="7" time="0.133210"/>
+        <testcase name="test_old_completed_stage_without_timestamp_is_not_completed_again" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1061" assertions="1" time="0.140142">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ParallelContainerStagesTest::test_old_completed_stage_without_timestamp_is_not_completed_again
+Failed asserting that true is false.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:1064</failure>
+        </testcase>
+        <testcase name="test_insufficient_balance_rolls_back_every_database_write" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1068" assertions="4" time="0.127632"/>
+        <testcase name="test_admin_cannot_change_a_receipt_after_stage_closure" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1076" assertions="4" time="0.147426"/>
+        <testcase name="test_used_migration_cannot_discard_receipt_history" class="Tests\Feature\ParallelContainerStagesTest" classname="Tests.Feature.ParallelContainerStagesTest" file="D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php" line="1088" assertions="4" time="0.141328"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ProfileTest" file="D:\laragon\www\leader\leader\tests\Feature\ProfileTest.php" tests="7" assertions="32" errors="0" warnings="0" failures="0" skipped="0" time="0.900992">
+        <testcase name="test_guests_cannot_access_or_update_profile" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" file="D:\laragon\www\leader\leader\tests\Feature\ProfileTest.php" line="36" assertions="6" time="0.113870"/>
+        <testcase name="test_profile_updates_only_authenticated_user_and_allowed_fields" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" file="D:\laragon\www\leader\leader\tests\Feature\ProfileTest.php" line="43" assertions="6" time="0.154834"/>
+        <testcase name="test_duplicate_email_is_rejected" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" file="D:\laragon\www\leader\leader\tests\Feature\ProfileTest.php" line="56" assertions="3" time="0.132149"/>
+        <testcase name="test_password_change_is_hashed_and_keeps_user_authenticated" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" file="D:\laragon\www\leader\leader\tests\Feature\ProfileTest.php" line="66" assertions="8" time="0.129610"/>
+        <testsuite name="Tests\Feature\ProfileTest::test_invalid_password_changes_are_rejected" tests="3" assertions="9" errors="0" warnings="0" failures="0" skipped="0" time="0.370528">
+          <testcase name="test_invalid_password_changes_are_rejected with data set #0" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" file="D:\laragon\www\leader\leader\tests\Feature\ProfileTest.php" line="79" assertions="3" time="0.118067"/>
+          <testcase name="test_invalid_password_changes_are_rejected with data set #1" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" file="D:\laragon\www\leader\leader\tests\Feature\ProfileTest.php" line="79" assertions="3" time="0.123592"/>
+          <testcase name="test_invalid_password_changes_are_rejected with data set #2" class="Tests\Feature\ProfileTest" classname="Tests.Feature.ProfileTest" file="D:\laragon\www\leader\leader\tests\Feature\ProfileTest.php" line="79" assertions="3" time="0.128869"/>
+        </testsuite>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

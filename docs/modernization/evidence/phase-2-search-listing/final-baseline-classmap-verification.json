@@ -1,0 +1,47 @@
+[
+  {
+    "file": "app/Http/Controllers/Admin/CarController.php",
+    "identical_to_baseline": true,
+    "sha256": "8507ca4beb9450e19927b73ba7a31831934351042bad73942a2a2159001485a6"
+  },
+  {
+    "file": "app/Http/Controllers/Admin/CompanyController.php",
+    "identical_to_baseline": true,
+    "sha256": "043d4925bc79ff4fe0a5009a9151fd4d1524888c33cd1c35342a7061efdc2e63"
+  },
+  {
+    "file": "app/Http/Controllers/Admin/DriverController.php",
+    "identical_to_baseline": true,
+    "sha256": "934076a85a51e897c68462c461c75146234183e82ab62d935d2c2e2a5d187b81"
+  },
+  {
+    "file": "app/Http/Controllers/Admin/PrivateCompanyController.php",
+    "identical_to_baseline": true,
+    "sha256": "adf08db73b7790e13913a4cc03e405b92b615d3435ac03bc7d8e2887f2becd8f"
+  },
+  {
+    "file": "app/Models/Booking.php",
+    "identical_to_baseline": true,
+    "sha256": "d6cd1843170029d70dacd947577d3f872bc4392643a55f2d276c396f6a011d78"
+  },
+  {
+    "file": "app/Models/Car.php",
+    "identical_to_baseline": true,
+    "sha256": "26f19ffa13c8dedbe20e31e6247ef6257be9619930083046a9cb685bd5d40a38"
+  },
+  {
+    "file": "app/Models/Company.php",
+    "identical_to_baseline": true,
+    "sha256": "57e24a421a1836c8499c97a562a9f9753592a8e3ff3b8a6fe6f292aef733322f"
+  },
+  {
+    "file": "app/Models/Driver.php",
+    "identical_to_baseline": true,
+    "sha256": "7b90a40fb5973c8cce5d3ecc09b98472b8df766e0c7701ccc70605f89cc75581"
+  },
+  {
+    "file": "app/Models/PrivateCompany.php",
+    "identical_to_baseline": true,
+    "sha256": "35ebe33389d3943f65b7b739a68c294e82595d3524b7e637f976f1328e0a054c"
+  }
+]

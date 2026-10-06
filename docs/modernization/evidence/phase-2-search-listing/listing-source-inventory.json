@@ -1,0 +1,869 @@
+{
+    "resources": [
+        {
+            "source": "app/Http/Controllers/Admin/AccountController.php",
+            "method": "index",
+            "line": 49,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "        if ($request->filled('search')) {\r",
+                "            $companies->where('name', 'like', '%' . $request->search . '%');\r",
+                "        $companies = $companies->orderBy('name')->paginate(20);\r"
+            ],
+            "body_sha256": "af904ae1dc0afe9601ebb81137fe4eddd4895fc07b39e4383b71455587069c9c",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/AgentCarTranferController.php",
+            "method": "index",
+            "line": 19,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $itemsQuery->where('created_at', '>=', $request->from);",
+                "            $itemsQuery->where('created_at', '<=', $request->to);",
+                "        $items = $itemsQuery->where('agent_id', $agent->id)->latest()->get();"
+            ],
+            "body_sha256": "774f69d91f8a2a0c3c0d8dd4dec2656f6749223481f99c3aa7890054cdeebe49",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/AgentController.php",
+            "method": "index",
+            "line": 27,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'agents' => Agent::all(),"
+            ],
+            "body_sha256": "765cd99dae1ea4e39b781727bd6b7e63ae24b6901ec78b290a69ca07414bb85b",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/AgentPhotoController.php",
+            "method": "index",
+            "line": 18,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "            ->when($data['agent_id'] ?? null, fn ($q, $id) => $q->where('agent_id', $id))\r",
+                "            ->when($data['from'] ?? null, fn ($q, $date) => $q->whereDate('created_at', '>=', $date))\r",
+                "            ->when($data['to'] ?? null, fn ($q, $date) => $q->whereDate('created_at', '<=', $date))\r",
+                "            ->paginate(24)\r",
+                "        $agents = Agent::orderBy('name')->get(['id', 'name']);\r",
+                "                ->get();\r"
+            ],
+            "body_sha256": "1145cf0d1cea4cbc9a487054c16fd10b76c1a7064c08e4ed926500c7ba494e29",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/BankController.php",
+            "method": "index",
+            "line": 25,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "b09fdc380836bb4954939226667020cd1a45211e5cd1ce5d838e45a7a1783890",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/BankTransactionController.php",
+            "method": "index",
+            "line": 31,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $banktransactions->whereDate('created_at', '>=', $request->date_from);\r",
+                "            $banktransactions->whereDate('created_at', '<=', $request->date_to);\r",
+                "        $banktransactions = $banktransactions->where('bank_id', $id)->get();\r"
+            ],
+            "body_sha256": "d1c3cfd2c3c7c643763f9cd37cb6d5c4311592f245d2259ac9b756b039c81c40",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/Booking/BookingInvoiceController.php",
+            "method": "index",
+            "line": 20,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "83a9200442d99d601b426ce38e7953117965644cb80ddc06ac36c69ff7539972",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/BookingContainerAgents.php",
+            "method": "index",
+            "line": 12,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "        $containers = BookingContainer::withCount('agents')->get();\r"
+            ],
+            "body_sha256": "f6e67ac21ecbb0fff89615c6afe1401162bd5a15a90254e4b0707f80e2740447",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/BookingController.php",
+            "method": "index",
+            "line": 44,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "            ->with(['company', 'factory', 'invoice', 'bookingContainers']);\r",
+                "        $query->filterListing($request);",
+                "        // Calculate counts for each stage tab based on the current filtered query\r",
+                "            'assigned'  => (clone $query)->filterStage('assigned')->count(),\r",
+                "            'waiting'   => (clone $query)->filterStage('waiting')->count(),\r",
+                "            'loading'   => (clone $query)->filterStage('loading')->count(),\r",
+                "            'unloading' => (clone $query)->filterStage('unloading')->count(),\r",
+                "            'invoiced'  => (clone $query)->filterStage('invoiced')->count(),\r",
+                "        // Stage filter\r",
+                "        $currentStage = $request->get('stage', $request->get('status', 'all'));\r",
+                "            $query->filterStage($currentStage);\r",
+                "        // Per page filter\r",
+                "        $perPage = $request->get('per_page', 15);\r",
+                "        $bookings = $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();\r",
+                "        $companies = Company::query()->get();\r"
+            ],
+            "body_sha256": "dd90776cc77c0782b1bdf1caf8961b439506cc2efcddf3cbbce2c236b27d1567",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/BookingMovementController.php",
+            "method": "index",
+            "line": 16,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "c4a5a1b670da319fda7b852c13b7cc17f45e90cc1059e64eb4e851b3159074ea",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/BookingTransportationController.php",
+            "method": "index",
+            "line": 16,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "c4a5a1b670da319fda7b852c13b7cc17f45e90cc1059e64eb4e851b3159074ea",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/BranchController.php",
+            "method": "index",
+            "line": 27,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'branches' => Branch::with('factory')->get(),\r"
+            ],
+            "body_sha256": "52025f768ccb94bf9c46e9d9b12b08d2b545e1daf82b6fd3247c3490998baf1b",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/CarController.php",
+            "method": "index",
+            "line": 26,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "        $query = Car::with(['deliveryPolicies' => fn ($q) => $q->with(['money_transfer', 'settled_money_transfer', 'extraExpenses', 'payingCars']), 'payingcars']);",
+                "        if ($request->filled('search')) {",
+                "            $query->searchListing($request->search);",
+                "        $cars = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();"
+            ],
+            "body_sha256": "3b1b289f8ca2babf093f8dbff2c9811cff57093a9a4275412275cd6328a8456b",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/CarPayingController.php",
+            "method": "index",
+            "line": 22,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $paymentsQuery->whereDate('created_at', '>=', $request->date_from);\r",
+                "            $paymentsQuery->whereDate('created_at', '<=', $request->date_to);\r",
+                "        // Execute the query to get the filtered payments\r",
+                "        $payments = $paymentsQuery->get();\r"
+            ],
+            "body_sha256": "d3511f00b2c249caa3f1481a9f822680dd361498f3fafdfcbd887cc3ee82cb9c",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ChooseUsController.php",
+            "method": "index",
+            "line": 17,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'chooses' => ChooseUs::all(),\r"
+            ],
+            "body_sha256": "4633cd953398f074f3cd28db164cbd7bd098d33f28db940c2eb5c9721c5b88df",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/CitiesAndRegionsController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'cities' => CitiesAndRegions::all(),\r"
+            ],
+            "body_sha256": "307639c9dc1f1316f789b1c57e598880c428056acd815ba10b4797bf5dc68e88",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/CompanyController.php",
+            "method": "index",
+            "line": 33,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "        // Search functionality\r",
+                "        if ($request->filled('search')) {\r",
+                "            $query->searchListing($request->search);\r",
+                "        // Sort by\r",
+                "        $query->sortListing($request->get('sort_by', 'id'), $request->get('sort_dir', 'desc'));",
+                "        $companies = $query->with(['bookings.invoice.invoicePayments'])->paginate(20);\r"
+            ],
+            "body_sha256": "03f1d075abd23043d0361567c3e5734ed986ff951b09c945263da12378f43964",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/companyInvoiceController.php",
+            "method": "index",
+            "line": 16,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $invoices->whereDate('created_at', '>=', $request->from);\r",
+                "            $invoices->whereDate('created_at', '<=', $request->to);\r",
+                "        $invoices = $invoices->where('company_id', $id)->get();\r"
+            ],
+            "body_sha256": "9d4861e9911749891d369e5971933253f38c22d45a7c78132e3116e0970b91e6",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/CompanyServicesController.php",
+            "method": "index",
+            "line": 20,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "dfbf030781591fab83a9af0350dbd5f10a6d9db89179750444372a20d30b7c2b",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/CompanyTransportationController.php",
+            "method": "index",
+            "line": 27,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "                'transportations'   => CompanyTransportation::with(['company', 'container', 'Departure', 'Loading', 'Aging'])->where('company_id', $request->company_id)->get(),\r",
+                "                'transportations'   => CompanyTransportation::with(['company', 'container', 'Departure', 'Loading', 'Aging'])->get(),\r"
+            ],
+            "body_sha256": "a7df65632baa14fc18f5f2497e1a8622b847ada35198578d5896af5f2856645a",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ContactUsController.php",
+            "method": "index",
+            "line": 23,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'contacts' => ContactUs::all(),\r"
+            ],
+            "body_sha256": "823a5798c051e71f557b927d4e7e65c6dadce47d27dc7df9584e527945ba652d",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ContainerController.php",
+            "method": "index",
+            "line": 30,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "        if ($request->filled('search')) {",
+                "            $search = $request->search;",
+                "            $query->where(function($q) use ($search) {",
+                "                $q->where('type', 'like', '%' . $search . '%')",
+                "                    ->orWhere('size', 'like', '%' . $search . '%');",
+                "        $containers = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();"
+            ],
+            "body_sha256": "f218d3f9d02943864d0f69821f259e91323adc3cbc00bbc71a7c1680bf289104",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/DriverController.php",
+            "method": "index",
+            "line": 26,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "        if ($request->filled('search')) {",
+                "            $query->searchListing($request->search);",
+                "        $drivers = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();"
+            ],
+            "body_sha256": "36104f79e40ae41145399d9bb54ede6508e123c0eafaca03761719d818165d6f",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/EmployeeController.php",
+            "method": "index",
+            "line": 29,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'employees' => Employee::with('company')->get(),\r"
+            ],
+            "body_sha256": "00bb11ea6cbd9dab1138dac8dfcd8d4ea22197b0a3253de1b086f208a12efc44",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/FactoryController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'factories' => Factory::all(),\r"
+            ],
+            "body_sha256": "01adfdd4436036ce05a93dadc033e1d0d15357a41d3dd44d43549910a7dc7c18",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/InvoicesController.php",
+            "method": "index",
+            "line": 27,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $bookings->whereDate('created_at', '>=', $request->date_from);\r",
+                "            $bookings->whereDate('created_at', '<=', $request->date_to);\r",
+                "            $bookings->where('company_id', $request->id ?? $id);\r",
+                "        $bookings = $bookings->whereHas('invoice')->get();\r",
+                "        $companies = Company::where('taxed', 1)->get();\r",
+                "        $banks = Bank::all();\r"
+            ],
+            "body_sha256": "669e5a2ccc6909d1153ba8646d01aad0a5e3696c4eaf450b7c0a1ba2a8ed6cb6",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/MoneyTransferController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'financial_custody_agents' => MoneyTransfer::where(function($query) {\r",
+                "                $query->where('transfered_type', 'App\\Models\\Agent')\r",
+                "                      ->orWhere('transferer_type', 'App\\Models\\Agent');\r",
+                "            })->orderBy('created_at', 'desc')->get(),\r"
+            ],
+            "body_sha256": "701bdb33cc3e429ff85f8f59184498b522dc094132df700f0ccd65985f0e8f2d",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/OurServiceController.php",
+            "method": "index",
+            "line": 23,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'services' => OurService::all(),\r"
+            ],
+            "body_sha256": "838321c9e81217bc6809a2d9ca60c60ae194a74ede51c33a49a7cff5719dce04",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/PermissionController.php",
+            "method": "index",
+            "line": 20,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "        $roles = Role::all();\r"
+            ],
+            "body_sha256": "72c3126e7f104cef3e85755d47b5a531338637b16333ea8b41ca9471096f4f87",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/PrivateCompanyController.php",
+            "method": "index",
+            "line": 18,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "        // Search functionality\r",
+                "        if ($request->filled('search')) {\r",
+                "            $query->searchListing($request->search);\r",
+                "        // Sort by\r",
+                "        $query->sortListing($request->get('sort_by', 'id'), $request->get('sort_dir', 'desc'));",
+                "        $privateCompanies = $query->paginate(20);\r"
+            ],
+            "body_sha256": "1cd63c6d92c45a9e1b39465e222ac6afa245db13caebb93eba9141e4148dfd37",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ReceiptController.php",
+            "method": "index",
+            "line": 45,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "            ->with(['supplier', 'booking', 'bookingService.service.serviceCategory', 'bookingService.agent', 'bookingService.creator'])",
+                "            ->when($request->filled('payment_source'), fn ($q) => $q->where('payment_source', $request->payment_source))",
+                "            ->when($request->filled('supplier_id'), fn ($q) => $q->where('supplier_id', $request->supplier_id))",
+                "            ->orderByDesc('id')",
+                "            ->paginate(20);",
+                "        $suppliers = Supplier::orderBy('name')->get(['id', 'name']);"
+            ],
+            "body_sha256": "308bf92678e91fef4c11220666c74517757998fbdb5de4c7033b1a64e924f0ee",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ReviewController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'reviews' => Review::all(),\r"
+            ],
+            "body_sha256": "05291ec7309b36ea606e30ad5426b378e5c68af106508251baaf47acca971b1c",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/RolesController.php",
+            "method": "index",
+            "line": 30,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "        $roles = Role::orderBy('id','DESC')->paginate(5);\r",
+                "            ->with('i', ($request->input('page', 1) - 1) * 5);\r"
+            ],
+            "body_sha256": "1fb5643913ba19c5f6d97dcad81eddd6442d756d624152158ad4fce59b628943",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ServiceCategoryController.php",
+            "method": "index",
+            "line": 25,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'serviceCategories' => ServiceCategory::all(),\r"
+            ],
+            "body_sha256": "b037a7e6e166f323419fdfc44da911099c055409b93706f09dd929026c1b92f4",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ServiceController.php",
+            "method": "index",
+            "line": 28,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'services'          => Service::with('serviceCategory')->get(),\r"
+            ],
+            "body_sha256": "6a64ccad2757e2eef811920167acf44a44f77710259e1ab425209c8770d8dfdb",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/SettingController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "54fef447743f932234d68208007ceafdd912d7125fce857c32316178d12636e6",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ShipmentController.php",
+            "method": "index",
+            "line": 28,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $shipments->whereDate('created_at', '>=', $request->date_from);\r",
+                "            $shipments->whereDate('created_at', '<=', $request->date_to);\r",
+                "        $shipments = $shipments->where('car_id', $id)->get();\r",
+                "            $bookingContainerIds = $bookingContainers->pluck('id')->sort()->values()->toJson();\r"
+            ],
+            "body_sha256": "0cd58211b3d511289dfbdee7a93d11832ed9fb2804131ea2709d274ab8cd0832",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/ShippingAgentController.php",
+            "method": "index",
+            "line": 23,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'shippingAgents' => shippingAgent::all(),\r"
+            ],
+            "body_sha256": "b4f5d83cd654685b6607218c3515b76d3f80cd5afbe3749f7958c99b7a6afcb5",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/SponserController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'sponsers' => Sponser::all(),\r"
+            ],
+            "body_sha256": "bb68f1a98947f35d11bd8a1aeeb3d55c5d7b05838824030aabdc66d34581950a",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/StaticPageController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'staticPages' => StaticPage::all(),\r"
+            ],
+            "body_sha256": "79ac0320a3a3414de43013354f241df202682fe165c461187daef1973fb808be",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/SuperagentController.php",
+            "method": "index",
+            "line": 33,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'superagents' => superagent::all(),\r"
+            ],
+            "body_sha256": "2a9e1fae9c44964b14ed4b53d528f36f7e89f4b2e281e9cb40d8acf1fcc99734",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/SuperagentMoneyTransferController.php",
+            "method": "index",
+            "line": 16,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'financial_custody_superagents'     => MoneyTransfer::where('transfered_type', 'App\\Models\\Superagent')->get(),"
+            ],
+            "body_sha256": "08370408c84dac2daca6c8fc5dfa6ad965e4ba47ca27c3365beadbfb8f5e1b52",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/SuperagentTransactionController.php",
+            "method": "index",
+            "line": 19,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $superagentTransactionsQuery->where('created_at', '>=', $request->from);",
+                "            $superagentTransactionsQuery->where('created_at', '<=', $request->to);",
+                "        $superagentTransactions = $superagentTransactionsQuery->where('superagent_id', $id)->latest()->get();"
+            ],
+            "body_sha256": "631487fe0a2abafb3a01692402a7c27a3187244fff1d715588f7f186e5f746d6",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/SupplierController.php",
+            "method": "index",
+            "line": 52,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "            ->search($request->search)",
+                "            ->orderBy('name')",
+                "            ->paginate(20);"
+            ],
+            "body_sha256": "f7ffb173a7b6a6d59e41197254b02c2f7b564253e4e418162206f5746f1c45d3",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/UserController.php",
+            "method": "index",
+            "line": 18,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $users = User::doesntHave('roles')->get();\r",
+                "            $users = User::role($request->role)->get();\r"
+            ],
+            "body_sha256": "8587e56050395e8f9ca1d862a3764e89981962c7a6d04bad61d25e9a70072d25",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/VaultController.php",
+            "method": "index",
+            "line": 25,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "b4cdfb5439f86bb2a385792934ae332468b172e8950fd7b37787e75bc02a5479",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/VaultTransactionController.php",
+            "method": "index",
+            "line": 15,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $vaulttransactionsQuery->where('created_at', '>=', $request->from);",
+                "            $vaulttransactionsQuery->where('created_at', '<=', $request->to);",
+                "        $vaulttransactions = $vaulttransactionsQuery->where('type', 0)->latest()->get();"
+            ],
+            "body_sha256": "3d8da043c71d0971c10322c789d71df6b05bdea735d71a190d7d53597e5aa001",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Admin/YardController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'yards' => Yard::all(),\r"
+            ],
+            "body_sha256": "31f83c827e726aa9c278a596a7bcf7eb19ec743c23c8bb3dad20b3b50594eec1",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Agent/AgentPhotoController.php",
+            "method": "index",
+            "line": 26,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "        $photos = AgentPhoto::where('agent_id', auth('agent')->id())\r",
+                "            ->latest('id')->paginate($data['per_page'] ?? 24);\r"
+            ],
+            "body_sha256": "98a0e36ef74e040a9d64c4eae30ad7024458484e1b4409efba75305e79a34424",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Agent/CityController.php",
+            "method": "index",
+            "line": 14,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "        $cities = CitiesAndRegions::all()->map(function($city) {"
+            ],
+            "body_sha256": "4bdd4f606b6eb2ea62cde9bb6d430bfed5c88eb4681252394ebaf177ccf54fdb",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Agent/WalletController.php",
+            "method": "index",
+            "line": 18,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "e09415bc60efd0f0c2437d1d901162bd03c4bf585fee3dda1ebf97478c542175",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Desktop/Orders/CompanyController.php",
+            "method": "all",
+            "line": 10,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "b428006d7e1548bb3d6b68d0695d463b9cac3ad76f112f329326abd9e5b36b46",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Desktop/Orders/OrderController.php",
+            "method": "all",
+            "line": 38,
+            "pagination": "existing paginate; inspect source for parameters",
+            "search_filter_sort_lines": [
+                "            'search' => $request->search,\r",
+                "            if ($request->filled('search')) {\r",
+                "                $bookings->whereHas('bookingContainers', function ($container) use ($request) {\r",
+                "                    $container->where('container_no', 'like', '%' . $request->search . '%');\r",
+                "                    ->orWhere('employee_name', 'like', '%' . $request->search . '%')\r",
+                "                    ->orWhereHas('invoice', function ($invoice) use ($request) {\r",
+                "                        $invoice->where('invoice_number', 'like', '%' . $request->search . '%');\r",
+                "                $bookings->orderBy('is_submitted', 'ASC')->paginate($request->limit)\r"
+            ],
+            "body_sha256": "cabd885df42d7bf6924a834f85dd4b3bcfd55a56decdd5474a93b13280c8274d",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Desktop/Orders/OrderController.php",
+            "method": "invoices",
+            "line": 90,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            'request' => $request->except(['password']),\r",
+                "                $invoice = Invoice::where('booking_id', $id)->first();\r"
+            ],
+            "body_sha256": "292155919a9020c5b3bb4342580a7a45506163e6133f82555b95aa824b10707d",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Superagent/AgentController.php",
+            "method": "expenses",
+            "line": 551,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "        $xpenses = AgentExpense::where('booking_container_id', $request->booking_container_id)->where('type_id', $request->type_id)->get()->map(function ($ex) {\r",
+                "        $papers = BookingPaper::where('booking_container_id', $request->booking_container_id)\r",
+                "            ->whereIn('type', $types)\r",
+                "            ->get()\r"
+            ],
+            "body_sha256": "5900f3c45593d614908041c89304eadc72744a4ccfe724e1d935ef82075e5e2a",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Superagent/BookingContainerController.php",
+            "method": "all",
+            "line": 19,
+            "pagination": "manual paginator",
+            "search_filter_sort_lines": [
+                "            $perPage = (int) $request->get('per_page', default: 100);\r",
+                "            $page    = (int) $request->get('page', 1);\r",
+                "            $stageType = $request->get('stage_type'); // \u0641\u0644\u062a\u0631 \u062d\u0633\u0628 \u0646\u0648\u0639 \u0627\u0644\u0645\u0631\u062d\u0644\u0629\r",
+                "                    ->where(function ($q) {\r",
+                "                        $q->where('status', 0)\r",
+                "                          ->orWhere(function($q2) {\r",
+                "                              $q2->where('status', 1)\r",
+                "                                 ->where('superagent_specification_approved', 0);\r",
+                "                    ->get();\r",
+                "                    ->where('superagent_specification_approved', 1)\r",
+                "                    ->where('is_in_loading', 0)\r",
+                "                    ->where('superagent_loading_approved', 0)\r",
+                "                    ->where('superagent_unloading_approved', 0)\r",
+                "                    ->get();\r",
+                "                    ->where('superagent_specification_approved', 1)\r",
+                "                    ->where('is_in_loading', 1)\r",
+                "                    ->where('superagent_loading_approved', 0)\r",
+                "                    ->where('superagent_unloading_approved', 0)\r",
+                "                    ->get();\r",
+                "                    ->where('superagent_specification_approved', 1)\r",
+                "                    ->where('superagent_loading_approved', 1)\r",
+                "                    ->where('superagent_unloading_approved', 0)\r",
+                "                    ->get();\r",
+                "                ->filter(fn ($container) => $container->booking !== null)",
+                "                ->sortByDesc('id')",
+                "                ->sortByDesc('id')"
+            ],
+            "body_sha256": "155568d6ea1cb4f7b101f880e1169adda0cbe3121ee856e2a5af4577affd83c1",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Superagent/BookingContainerController.php",
+            "method": "specification",
+            "line": 199,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $bookings = $this->paginateBookingsForStage($request, 'specification');\r"
+            ],
+            "body_sha256": "414db19c14b0b22d85628763ee668daa02e2436a3d0e8cfabe97034dce0857b5",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Superagent/BookingContainerController.php",
+            "method": "waiting",
+            "line": 215,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $bookings = $this->paginateBookingsForStage($request, 'waiting');\r"
+            ],
+            "body_sha256": "846d1e4499e0da79b933db5edbe94598713904487d059476ed8fc62909f7d83f",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Superagent/BookingContainerController.php",
+            "method": "loading",
+            "line": 285,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $bookings = $this->paginateBookingsForStage($request, 'loading');\r"
+            ],
+            "body_sha256": "5f752aead56ec51c927795c41e6b4fac5b054424bd91eec3189be1eeda1b86c4",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Superagent/BookingContainerController.php",
+            "method": "unloading",
+            "line": 297,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            $bookings = $this->paginateBookingsForStage($request, 'unloading');\r"
+            ],
+            "body_sha256": "d37449f7833fa4db5fa88bf0f45bdd5a2475a14427eb2ce0b175308bae75b04a",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Superagent/ShippingAgentController.php",
+            "method": "all",
+            "line": 23,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [
+                "            ->wherePivot('created_at', '>=', now()->startOfDay())\r",
+                "            ->wherePivot('created_at', '<=', now()->endOfDay())\r",
+                "            ->get();\r",
+                "            ->whereHas('bookingContainers', function ($query) use ($superagent_booking_containers) {\r",
+                "                $query->where(function ($q) {\r",
+                "                        $q->where('booking_containers.status', 0)\r",
+                "                          ->orWhere(function($q2) {\r",
+                "                              $q2->where('booking_containers.status', 1)\r",
+                "                                 ->where('booking_containers.superagent_specification_approved', 0);\r",
+                "                    ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());\r",
+                "            ->orderBy('id', 'desc')\r",
+                "        $spec_shipping_agents = ShippingAgent::whereIn('id', $spec_shipping_agent_ids)->get();\r",
+                "                ->whereHas('bookingContainers', function ($q) use ($superagent_booking_containers) {\r",
+                "                    $q->where(function ($qq) {\r",
+                "                            $qq->where('booking_containers.status', 0)\r",
+                "                               ->orWhere(function($q2) {\r",
+                "                                   $q2->where('booking_containers.status', 1)\r",
+                "                                      ->where('booking_containers.superagent_specification_approved', 0);\r",
+                "                      ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());\r",
+                "                ->get();\r",
+                "        $waiting_yards = Yard::whereHas('bookingContainers', function ($qc) use ($superagent_booking_containers) {\r",
+                "                   ->where('booking_containers.superagent_loading_approved', 0)\r",
+                "                   ->where('booking_containers.superagent_specification_approved', 1)\r",
+                "                   ->where('booking_containers.is_in_loading', 0)\r",
+                "                   ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());\r",
+                "            ->orderBy('id', 'desc')\r",
+                "            ->get();\r",
+                "                ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])\r",
+                "                ->where('superagent_loading_approved', 0)\r",
+                "                ->where('superagent_specification_approved', 1)\r",
+                "                ->where('is_in_loading', 0)\r",
+                "                ->get();\r",
+                "        $yards = Yard::whereHas('bookingContainers', function ($qc) use ($superagent_booking_containers) {\r",
+                "                   ->where('booking_containers.superagent_loading_approved', 0)\r",
+                "                   ->where('booking_containers.superagent_specification_approved', 1)\r",
+                "                   ->where('booking_containers.is_in_loading', 1)\r",
+                "                   ->whereIn('booking_containers.id', $superagent_booking_containers->pluck('id')->toArray());\r",
+                "            ->orderBy('id', 'desc')\r",
+                "            ->get();\r",
+                "                ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])\r",
+                "                ->where('superagent_loading_approved', 0)\r",
+                "                ->where('superagent_specification_approved', 1)\r",
+                "                ->where('is_in_loading', 1)\r",
+                "                ->get();\r",
+                "            ->whereHas('bookingContainers', function ($qc) {\r",
+                "                $qc->where('booking_containers.superagent_loading_approved', 1)\r",
+                "                   ->where('booking_containers.superagent_specification_approved', 1)\r",
+                "                   ->where('booking_containers.superagent_unloading_approved', 0);\r",
+                "            ->orderBy('id', 'desc')\r",
+                "        $unload_shipping_agents = ShippingAgent::whereIn('id', $unload_shipping_agent_ids)->get();\r",
+                "                ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'notes', 'agents'])\r",
+                "                ->where('superagent_loading_approved', 1)\r",
+                "                ->where('superagent_specification_approved', 1)\r",
+                "                ->where('superagent_unloading_approved', 0)\r",
+                "                ->get();\r"
+            ],
+            "body_sha256": "1b8fe70fef9466ec59d3e36b55803f7b0741c1bbd330dca4c596d7d4c43c0648",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/Api/Superagent/WalletController.php",
+            "method": "index",
+            "line": 17,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "ce5a1e83378516c46667f2d3209ccd6344d2702bf7def1e425c67ddacc3a087b",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/BookingContaBookingContrainerExtraCostsController.php",
+            "method": "index",
+            "line": 14,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "5413dbbcc611fb25dc5652883078be038785eec4d4b84ff33c4f6cf51f08eaa5",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/FireBasePushNotification.php",
+            "method": "index",
+            "line": 146,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "4fee60a39434ba6b410521f660b984b913542b58a016c06f6c860f43c64289a3",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/HomeController.php",
+            "method": "index",
+            "line": 24,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "a2ba7877aa2d4e123cde9b26236831ee18a0439f30c82dc11fc90a6044eca29f",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        },
+        {
+            "source": "app/Http/Controllers/InvoicePaymentController.php",
+            "method": "index",
+            "line": 17,
+            "pagination": "no paginator call in method",
+            "search_filter_sort_lines": [],
+            "body_sha256": "d9ebc2b593db7af91d7f87e616ebfe483b5bf5ef635e390853b5f08588965d99",
+            "verification": "SOURCE INVENTORY ONLY; not endpoint equivalence evidence"
+        }
+    ],
+    "count": 66
+}

@@ -1,5 +1,6 @@
 {
-  "status": "PARTIAL",
+  "status": "COMPLETED",
+  "phase_wide_inventory": "resource-inventory.json",
   "resources": [
     {
       "resource": "companies",
@@ -11,6 +12,26 @@
       "resource": "private_companies",
       "type": "LengthAwarePaginator",
       "per_page": 20,
+      "changed": false
+    },
+    {
+      "resource": "cars",
+      "type": "LengthAwarePaginator",
+      "per_page": 15,
+      "changed": false
+    },
+    {
+      "resource": "drivers",
+      "type": "LengthAwarePaginator",
+      "per_page": 15,
+      "changed": false
+    },
+    {
+      "resource": "bookings",
+      "type": "LengthAwarePaginator",
+      "default": 15,
+      "min": 15,
+      "max": 100,
       "changed": false
     }
   ],

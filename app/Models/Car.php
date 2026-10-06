@@ -28,4 +28,12 @@ class Car extends Model
     {
         return $this->hasMany(Payingcar::class);
     }
+
+    /** Preserve the listing's contains and SQL wildcard semantics. */
+    public function scopeSearchListing($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('car_number', 'like', "%{$search}%");
+        });
+    }
 }

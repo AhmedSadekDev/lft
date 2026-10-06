@@ -1,23 +1,23 @@
 {
-  "status": "BLOCKED",
-  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed.",
+  "status": "IMPLEMENTED",
+  "owner_decision": "Continuation authorized after fallback question on 2026-10-06",
   "resources": [
     {
       "resource": "companies",
+      "source": "app/Models/Company.php",
+      "scope": "sortListing",
       "default": "id desc",
-      "whitelist_added": false,
-      "invalid_field": "QueryException",
-      "invalid_direction": "InvalidArgumentException",
-      "evidence": "sort-contract-preflight.json"
+      "invalid_input": "id desc; reset pair",
+      "allowed_columns": "Explicit legacy-schema columns in source; not limited to indexed fields"
     },
     {
       "resource": "private_companies",
+      "source": "app/Models/PrivateCompany.php",
+      "scope": "sortListing",
       "default": "id desc",
-      "whitelist_added": false,
-      "invalid_field": "QueryException",
-      "invalid_direction": "InvalidArgumentException",
-      "evidence": "sort-contract-preflight.json"
+      "invalid_input": "id desc; reset pair",
+      "allowed_columns": "Explicit legacy-schema columns in source; not limited to indexed fields"
     }
   ],
-  "security_note": "Laravel quotes orderBy identifiers and validates direction. Missing resource whitelist is not proof of raw SQL injection."
+  "indexed_only_requirement": "NOT_SATISFIED; restricting valid legacy fields changes behavior"
 }

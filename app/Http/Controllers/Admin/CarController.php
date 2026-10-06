@@ -29,8 +29,7 @@ class CarController extends Controller
 
         // تطبيق البحث إذا كان موجود
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('car_number', 'like', '%' . $search . '%');
+            $query->searchListing($request->search);
         }
 
         $cars = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();

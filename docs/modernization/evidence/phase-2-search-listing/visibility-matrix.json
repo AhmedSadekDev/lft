@@ -1,4 +1,30 @@
 {
-  "status": "BLOCKED",
-  "reason": "Phase 2 sections 5 and 16-17 conflict for existing invalid-sort behavior. Owner decision pending before implementation; no success evidence claimed."
+  "status": "COMPLETED",
+  "route_and_permission_code": "UNCHANGED",
+  "sql_predicate_grouping": "Covered by ListingProfilesTest",
+  "environment_limitations": [
+    "users",
+    "yards",
+    "vaults",
+    "vault_transactions"
+  ],
+  "authenticated_actor_matrix": {
+    "api_guards_verified": [
+      "api",
+      "employees",
+      "superagent",
+      "agent"
+    ],
+    "field_api_cases": 3,
+    "field_api_mismatches": 0,
+    "dashboard_matrix_cases": 20,
+    "dashboard_denials_baseline_match": true,
+    "dashboard_limitation": "Web session routes require users table (LEGACY CODE / DATABASE MISMATCH; UNVERIFIED — ENVIRONMENT LIMITATION)"
+  },
+  "source_files": [
+    "http-baseline-api.json",
+    "http-current-api.json",
+    "http-baseline-dashboard-denials.json",
+    "http-current-dashboard-denials.json"
+  ]
 }
