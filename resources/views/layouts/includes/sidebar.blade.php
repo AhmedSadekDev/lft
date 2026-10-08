@@ -2,16 +2,17 @@
 <div class="d-flex flex-row flex-column-fluid page">
     <!--begin::Aside-->
     <!--begin::Aside-->
-    <div class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside">
+    <div class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside" aria-label="التنقل الرئيسي">
         <!--begin::Brand-->
         <div class="brand flex-column-auto" id="kt_brand">
             <!--begin::Logo-->
             <a href="{{ route('main') }}" class="brand-logo">
-                <img alt="Logo" src="{{ asset('assets/media/logo.png') }}" />
+                <img alt="Leader for Trans" src="{{ asset('assets/media/logo.png') }}" />
+                <span class="lft-brand-name" dir="ltr">LEADER<span><small>TRANSPORT & LOGISTICS</small></span></span>
             </a>
             <!--end::Logo-->
             <!--begin::Toggle-->
-            <button class="brand-toggle btn btn-sm px-0" id="kt_aside_toggle">
+            <button class="brand-toggle btn btn-sm px-0" id="kt_aside_toggle" type="button" aria-label="طي قائمة التنقل">
                 <span class="svg-icon svg-icon svg-icon-xl">
                     <!--begin::Svg Icon | path:assets/media/svg/icons/Navigation/Angle-double-left.svg-->
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
@@ -41,6 +42,7 @@
                 data-menu-dropdown-timeout="500">
                 <!--begin::Menu Nav-->
                 <ul class="menu-nav pt-0">
+                    <li class="lft-nav-label" role="presentation">مساحة العمل</li>
                     <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
                         <a href="{{ route('main') }}" class="menu-link">
                             <span class="svg-icon menu-icon">
@@ -775,34 +777,26 @@
         <div id="kt_header" class="header header-fixed">
             <!--begin::Container-->
             <div class="container-fluid d-flex align-items-stretch justify-content-between">
-                <!--begin::Header Menu Wrapper-->
-                <div class="header-menu-wrapper header-menu-wrapper-left" id="kt_header_menu_wrapper">
-                    <!--begin::Header Menu-->
-                    <div id="kt_header_menu" class="header-menu header-menu-mobile header-menu-layout-default">
-                        <!--begin::Header Nav-->
-                        <ul class="menu-nav">
-                        </ul>
-                        <!--end::Header Nav-->
-                    </div>
-                    <!--end::Header Menu-->
+                <div class="lft-topbar-heading">
+                    <small>Leader for Trans / مساحة الإدارة</small>
+                    <strong>@yield('admin-page-title', 'لوحة التحكم')</strong>
                 </div>
-                <!--end::Header Menu Wrapper-->
                 <!--begin::Topbar-->
                 <div class="topbar">
                     <!--begin::User-->
                     <div class="dropdown">
-                        <div class="topbar-item" data-toggle="dropdown" data-offset="10px,0px">
-                            <div class="btn btn-icon btn-icon-mobile w-auto btn-clean d-flex align-items-center btn-lg px-2"
+                        <button type="button" class="topbar-item btn p-0 border-0" data-toggle="dropdown" data-offset="10px,0px" aria-haspopup="true" aria-expanded="false" aria-label="خيارات الحساب">
+                            <span class="btn btn-icon btn-icon-mobile w-auto btn-clean d-flex align-items-center btn-lg px-2"
                                 id="kt_quick_user_toggle">
                                 <span
-                                    class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">Hi,</span>
+                                    class="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">مرحباً،</span>
                                 <span
                                     class="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">{{ auth()->user()->name }}</span>
                                 <span class="symbol symbol-lg-35 symbol-25 symbol-light-success">
-                                    <span class="symbol-label font-size-h5 font-weight-bold">A</span>
+                                    <span class="symbol-label font-size-h5 font-weight-bold">{{ mb_substr(auth()->user()->name, 0, 1) }}</span>
                                 </span>
-                            </div>
-                        </div>
+                            </span>
+                        </button>
                         <div class="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-right">
                             <ul class="navi navi-hover py-4">
                                 <li class="navi-item">
@@ -834,9 +828,9 @@
         <!--end::Header-->
 
         <!--begin::Content-->
-        <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+        <main class="content d-flex flex-column flex-column-fluid" id="kt_content" tabindex="-1">
             @yield('content')
-        </div>
+        </main>
         <!--end::Content-->
 
         <!--begin::Footer-->
@@ -845,7 +839,7 @@
             <div class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
                 <!--begin::Copyright-->
                 <div class="text-dark order-2 order-md-1">
-                    <span class="text-muted font-weight-bold mr-2">2023©</span>
+                    <span class="text-muted font-weight-bold mr-2">{{ date('Y') }} ©</span>
                     <a href="{{ route('main') }}" class="text-dark-75 text-hover-primary">LeaderForTrans</a>
                 </div>
                 <!--end::Copyright-->
@@ -862,17 +856,4 @@
 
 </div>
 
-
-<script>
-    var url = window.location;
-    // for treeview
-    $('ul.menu-subnav .menu-item a').filter(function() {
-        return this.href == url;
-    }).parentsUntil(".menu-parent-menu > .menu-item a").addClass('active menu-item-open');
-</script>
-
-<style>
-    .aside-menu .menu-nav {
-        margin-top: 2rem;
-    }
-</style>
+

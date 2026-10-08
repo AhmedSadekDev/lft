@@ -18,39 +18,28 @@
     @endphp
 
     @if($hasDashboardAccess)
-        <!-- Hero Welcome Header -->
-        <div class="card db-hero-card mb-8">
-            <div class="card-body p-6 p-lg-8">
+        <section class="card db-hero-card mb-8" aria-label="ملخص الإدارة">
+            <div class="card-body">
                 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
-                    <div class="d-flex align-items-center mb-4 mb-md-0">
-                        <div class="mr-4 d-flex align-items-center justify-content-center text-white font-weight-bold font-size-h3 bg-primary" 
-                             style="width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 12px rgba(54, 153, 255, 0.4); flex-shrink: 0;">
-                            {{ mb_substr($user->name ?? 'A', 0, 1) }}
-                        </div>
-                        <div>
-                            <h2 class="font-weight-bolder mb-1" style="color: #000000 !important; font-size: 1.6rem;">
-                                أهلاً بك، {{ $user->name ?? 'المستخدم' }} 👋
-                            </h2>
-                            <p class="mb-0 font-size-lg" style="color: #000000 !important;">
-                                إليك نظرة عامة ومؤشرات أداء النظام حتى اليوم
-                            </p>
-                        </div>
+                    <div>
+                        <span class="lft-eyebrow">LEADER FOR TRANS</span>
+                        <h2 class="mb-2">أهلاً بك، {{ $user->name }}</h2>
+                        <p class="mb-0">حركة التشغيل والحسابات، في مكان واحد.</p>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <div class="px-4 py-3 rounded-xl d-flex align-items-center" 
-                             style="background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px);">
-                            <i class="far fa-calendar-alt mr-3 fa-lg" style="color: #ffffff !important;"></i>
-                            <div class="text-right">
-                                <span class="d-block font-weight-bolder font-size-sm" style="color: #ffffff !important;">
-                                    {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
-                                </span>
-                                <span class="d-block font-size-xs" style="color: rgba(255, 255, 255, 0.7) !important;">التاريخ الحالي</span>
-                            </div>
+                    <div class="mt-4 mt-md-0">
+                        <time datetime="{{ now()->toDateString() }}">{{ now()->translatedFormat('l، d F Y') }}</time>
+                        <div class="d-flex flex-wrap mt-3">
+                            @if($user->hasPermissionTo('bookings.index'))
+                                <a class="btn btn-primary" href="{{ route('bookings.index') }}">إدارة الحجوزات <i class="fas fa-arrow-left ml-2" aria-hidden="true"></i></a>
+                            @endif
+                            @if($user->hasPermissionTo('bookings.create'))
+                                <a class="btn btn-secondary" href="{{ route('bookings.create') }}"><i class="fas fa-plus" aria-hidden="true"></i> حجز جديد</a>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- إحصائيات سريعة رئيسية -->
         <div class="row mb-6">
@@ -358,7 +347,7 @@
                         </h3>
                     </div>
                     <div class="card-body p-5">
-                        <canvas id="bookingsChart" height="130"></canvas>
+                        <x-admin.chart-panel id="bookingsChart" title="نمو الحجوزات خلال آخر ستة أشهر" :labels="$bookingsChart['labels']" :series="['عدد الحجوزات' => $bookingsChart['data']]" />
                     </div>
                 </div>
             </div>
@@ -373,7 +362,7 @@
                         </h3>
                     </div>
                     <div class="card-body p-5">
-                        <canvas id="financialChart" height="130"></canvas>
+                        <x-admin.chart-panel id="financialChart" title="المصروفات والواردات خلال آخر ستة أشهر" :labels="$financialChart['labels']" :series="['المصروفات' => $financialChart['expenses'], 'الواردات' => $financialChart['income']]" />
                     </div>
                 </div>
             </div>
@@ -478,190 +467,15 @@
 </div>
 @endsection
 
-@push('css')
-<style>
-    /* Dashboard Styling System */
-    .db-hero-card {
-        background: linear-gradient(135deg, #1b1b29 0%, #28293d 100%) !important;
-        background-color: #1b1b29 !important;
-        border: none !important;
-        border-radius: 16px !important;
-        color: #ffffff !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
-        position: relative;
-        overflow: hidden;
-    }
-    .db-hero-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(54, 153, 255, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-    .db-hero-card h2,
-    .db-hero-card h3,
-    .db-hero-card h4,
-    .db-hero-card h5,
-    .db-hero-card span,
-    .db-hero-card p,
-    .db-hero-card i {
-        color: #ffffff !important;
-    }
-
-    .db-stat-card {
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        border-radius: 16px;
-        background: #ffffff;
-        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-        position: relative;
-        overflow: hidden;
-    }
-    .db-stat-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08) !important;
-    }
-
-    .db-stat-card .card-accent-bar {
-        height: 4px;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    .bg-accent-primary { background: linear-gradient(90deg, #3699FF 0%, #0062FF 100%); }
-    .bg-accent-info { background: linear-gradient(90deg, #1BC5BD 0%, #0BB7AF 100%); }
-    .bg-accent-success { background: linear-gradient(90deg, #28C76F 0%, #48DA89 100%); }
-    .bg-accent-warning { background: linear-gradient(90deg, #FF9F43 0%, #FFB800 100%); }
-    .bg-accent-danger { background: linear-gradient(90deg, #EA5455 0%, #F07067 100%); }
-    .bg-accent-purple { background: linear-gradient(90deg, #7367F0 0%, #9E95F5 100%); }
-
-    .db-icon-box {
-        width: 58px;
-        height: 58px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        transition: transform 0.3s ease;
-    }
-    .db-stat-card:hover .db-icon-box {
-        transform: scale(1.08) rotate(-3deg);
-    }
-
-    .icon-box-primary { background: rgba(54, 153, 255, 0.12); color: #3699FF; }
-    .icon-box-info { background: rgba(27, 197, 189, 0.12); color: #1BC5BD; }
-    .icon-box-success { background: rgba(40, 199, 111, 0.12); color: #28C76F; }
-    .icon-box-warning { background: rgba(255, 159, 67, 0.12); color: #FF9F43; }
-    .icon-box-danger { background: rgba(234, 84, 85, 0.12); color: #EA5455; }
-    .icon-box-purple { background: rgba(115, 103, 240, 0.12); color: #7367F0; }
-
-    .db-metric-value {
-        font-size: 1.95rem;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-        color: #181C32;
-    }
-
-    .db-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        background: #F3F6F9;
-        color: #5E6278;
-    }
-
-    .db-financial-box {
-        border-radius: 14px;
-        padding: 1.25rem;
-        transition: all 0.2s ease;
-    }
-    .db-financial-box.expenses {
-        background: rgba(234, 84, 85, 0.06);
-        border: 1px dashed rgba(234, 84, 85, 0.2);
-    }
-    .db-financial-box.income {
-        background: rgba(40, 199, 111, 0.06);
-        border: 1px dashed rgba(40, 199, 111, 0.2);
-    }
-
-    /* Restricted Access Empty State */
-    .db-restricted-card {
-        background: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        padding: 3.5rem 2rem;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-    .db-restricted-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 6px;
-        background: linear-gradient(90deg, #FF9F43 0%, #EA5455 50%, #7367F0 100%);
-    }
-    .db-lock-halo {
-        width: 90px;
-        height: 90px;
-        border-radius: 50%;
-        background: rgba(234, 84, 85, 0.08);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem auto;
-        color: #EA5455;
-        font-size: 2.6rem;
-        position: relative;
-        animation: pulse-ring 2.5s infinite;
-    }
-    @keyframes pulse-ring {
-        0% { box-shadow: 0 0 0 0 rgba(234, 84, 85, 0.2); }
-        70% { box-shadow: 0 0 0 18px rgba(234, 84, 85, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(234, 84, 85, 0); }
-    }
-
-    .db-shortcut-card {
-        background: #F9FAFB;
-        border: 1px solid #E5E7EB;
-        border-radius: 12px;
-        padding: 0.9rem;
-        transition: all 0.25s ease;
-        text-decoration: none !important;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: #374151;
-    }
-    .db-shortcut-card:hover {
-        background: #ffffff;
-        border-color: #3699FF;
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(54, 153, 255, 0.12);
-        color: #3699FF;
-    }
-</style>
-@endpush
-
 @push('js')
 @if($hasDashboardAccess)
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Chart Config - Common styling
-        Chart.defaults.font.family = 'inherit';
+        if (typeof Chart === 'undefined') return; // Exact values remain available in the accessible data tables.
+        Chart.defaults.font.family = 'regular, Tahoma, sans-serif';
+        Chart.defaults.animation = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? false : { duration: 300 };
 
         // 1. Line Chart - Bookings
         const bookingsElem = document.getElementById('bookingsChart');
@@ -670,8 +484,8 @@
             
             // Gradient fill
             const blueGradient = bookingsCtx.createLinearGradient(0, 0, 0, 300);
-            blueGradient.addColorStop(0, 'rgba(54, 153, 255, 0.35)');
-            blueGradient.addColorStop(1, 'rgba(54, 153, 255, 0.0)');
+            blueGradient.addColorStop(0, 'rgba(8, 127, 140, 0.35)');
+            blueGradient.addColorStop(1, 'rgba(8, 127, 140, 0.0)');
 
             new Chart(bookingsCtx, {
                 type: 'line',
@@ -680,13 +494,13 @@
                     datasets: [{
                         label: 'عدد الحجوزات',
                         data: @json($bookingsChart['data']),
-                        borderColor: '#3699FF',
+                        borderColor: '#087f8c',
                         backgroundColor: blueGradient,
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4,
                         pointRadius: 4,
-                        pointBackgroundColor: '#3699FF',
+                        pointBackgroundColor: '#087f8c',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2,
                         pointHoverRadius: 7
@@ -694,7 +508,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false },
                         tooltip: {
@@ -709,12 +523,12 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#B5B5C3', font: { weight: '600' } }
+                            ticks: { color: '#617489', font: { weight: '600' } }
                         },
                         y: {
                             beginAtZero: true,
                             grid: { color: 'rgba(0, 0, 0, 0.04)' },
-                            ticks: { stepSize: 1, color: '#B5B5C3' }
+                            ticks: { stepSize: 1, color: '#617489' }
                         }
                     }
                 }
@@ -734,16 +548,16 @@
                         {
                             label: 'المصروفات',
                             data: @json($financialChart['expenses']),
-                            backgroundColor: 'rgba(234, 84, 85, 0.85)',
-                            borderColor: '#EA5455',
+                            backgroundColor: 'rgba(189, 56, 72, 0.85)',
+                            borderColor: '#bd3848',
                             borderWidth: 1,
                             borderRadius: 6,
                         },
                         {
                             label: 'الواردات',
                             data: @json($financialChart['income']),
-                            backgroundColor: 'rgba(40, 199, 111, 0.85)',
-                            borderColor: '#28C76F',
+                            backgroundColor: 'rgba(19, 118, 83, 0.85)',
+                            borderColor: '#137653',
                             borderWidth: 1,
                             borderRadius: 6,
                         }
@@ -751,7 +565,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: true,
@@ -782,13 +596,13 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#B5B5C3', font: { weight: '600' } }
+                            ticks: { color: '#617489', font: { weight: '600' } }
                         },
                         y: {
                             beginAtZero: true,
                             grid: { color: 'rgba(0, 0, 0, 0.04)' },
                             ticks: {
-                                color: '#B5B5C3',
+                                color: '#617489',
                                 callback: function(value) {
                                     return new Intl.NumberFormat('ar-EG', {
                                         style: 'currency',

@@ -1,0 +1,112 @@
+[
+  {
+    "uri": "/dashboard/drivers",
+    "status": 200,
+    "bytes": 107841,
+    "queries": 7,
+    "sql": [
+      "select * from `permissions`",
+      "select `roles`.*, `role_has_permissions`.`permission_id` as `pivot_permission_id`, `role_has_permissions`.`role_id` as `pivot_role_id` from `roles` inner join `role_has_permissions` on `roles`.`id` = `role_has_permissions`.`role_id` where `role_has_permissions`.`permission_id` in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129)",
+      "select `permissions`.*, `model_has_permissions`.`model_id` as `pivot_model_id`, `model_has_permissions`.`permission_id` as `pivot_permission_id`, `model_has_permissions`.`model_type` as `pivot_model_type` from `permissions` inner join `model_has_permissions` on `permissions`.`id` = `model_has_permissions`.`permission_id` where `model_has_permissions`.`model_id` = ? and `model_has_permissions`.`model_type` = ?",
+      "select `roles`.*, `model_has_roles`.`model_id` as `pivot_model_id`, `model_has_roles`.`role_id` as `pivot_role_id`, `model_has_roles`.`model_type` as `pivot_model_type` from `roles` inner join `model_has_roles` on `roles`.`id` = `model_has_roles`.`role_id` where `model_has_roles`.`model_id` in (1) and `model_has_roles`.`model_type` = ?",
+      "select count(*) as aggregate from `drivers`",
+      "select * from `drivers` order by `id` desc limit 15 offset 0",
+      "select * from `roles`"
+    ],
+    "error": null
+  },
+  {
+    "uri": "/dashboard",
+    "status": 500,
+    "bytes": 6609,
+    "queries": 7,
+    "sql": [
+      "select \r\n            COUNT(*) as total_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as today_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as week_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as month_count\r\n         from `bookings` limit 1",
+      "select \r\n            COUNT(*) as total_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as today_count\r\n         from `booking_containers` limit 1",
+      "select count(*) as aggregate from `agents`",
+      "select count(*) as aggregate from `superagents`",
+      "select count(*) as aggregate from `companies`",
+      "select count(*) as aggregate from `cars`",
+      "select count(*) as aggregate from `drivers`"
+    ],
+    "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.vaults' doesn't exist (SQL: select * from `vaults` limit 1)"
+  },
+  {
+    "uri": "/dashboard/bookings",
+    "status": 200,
+    "bytes": 176066,
+    "queries": 11,
+    "sql": [
+      "select `permissions`.*, `model_has_permissions`.`model_id` as `pivot_model_id`, `model_has_permissions`.`permission_id` as `pivot_permission_id`, `model_has_permissions`.`model_type` as `pivot_model_type` from `permissions` inner join `model_has_permissions` on `permissions`.`id` = `model_has_permissions`.`permission_id` where `model_has_permissions`.`model_id` = ? and `model_has_permissions`.`model_type` = ?",
+      "select `roles`.*, `model_has_roles`.`model_id` as `pivot_model_id`, `model_has_roles`.`role_id` as `pivot_role_id`, `model_has_roles`.`model_type` as `pivot_model_type` from `roles` inner join `model_has_roles` on `roles`.`id` = `model_has_roles`.`role_id` where `model_has_roles`.`model_id` in (1) and `model_has_roles`.`model_type` = ?",
+      "select \r\n                COUNT(*) as count_all,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND (`status` = 0 OR (`status` = 1 AND `superagent_specification_approved` = 0))\r\n                ) THEN 1 END) as count_assigned,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND `superagent_specification_approved` = 1 \r\n                      AND `is_in_loading` = 0 \r\n                      AND `superagent_loading_approved` = 0\r\n                ) THEN 1 END) as count_waiting,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND `superagent_specification_approved` = 1 \r\n                      AND `is_in_loading` = 1 \r\n                      AND `superagent_loading_approved` = 0\r\n                ) THEN 1 END) as count_loading,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND `superagent_loading_approved` = 1 \r\n                      AND `superagent_unloading_approved` = 0\r\n                ) THEN 1 END) as count_unloading,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `invoices` \r\n                    WHERE `invoices`.`booking_id` = `bookings`.`id`\r\n                ) OR EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND `superagent_unloading_approved` = 1\r\n                ) THEN 1 END) as count_invoiced\r\n             from `bookings` limit 1",
+      "select count(*) as aggregate from `bookings`",
+      "select * from `bookings` order by `id` desc limit 15 offset 0",
+      "select * from `companies` where `companies`.`id` in (5, 6, 7, 8, 21, 23)",
+      "select * from `factories` where `factories`.`id` in (4, 5, 8, 10, 17, 20, 28, 33, 51, 74, 126, 150)",
+      "select * from `invoices` where `invoices`.`booking_id` in (495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509)",
+      "select * from `booking_containers` where `booking_containers`.`booking_id` in (495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509)",
+      "select * from `companies`",
+      "select * from `roles`"
+    ],
+    "error": null
+  },
+  {
+    "uri": "/dashboard/drivers/create",
+    "status": 200,
+    "bytes": 64262,
+    "queries": 3,
+    "sql": [
+      "select `permissions`.*, `model_has_permissions`.`model_id` as `pivot_model_id`, `model_has_permissions`.`permission_id` as `pivot_permission_id`, `model_has_permissions`.`model_type` as `pivot_model_type` from `permissions` inner join `model_has_permissions` on `permissions`.`id` = `model_has_permissions`.`permission_id` where `model_has_permissions`.`model_id` = ? and `model_has_permissions`.`model_type` = ?",
+      "select `roles`.*, `model_has_roles`.`model_id` as `pivot_model_id`, `model_has_roles`.`role_id` as `pivot_role_id`, `model_has_roles`.`model_type` as `pivot_model_type` from `roles` inner join `model_has_roles` on `roles`.`id` = `model_has_roles`.`role_id` where `model_has_roles`.`model_id` in (1) and `model_has_roles`.`model_type` = ?",
+      "select * from `roles`"
+    ],
+    "error": null
+  },
+  {
+    "uri": "/dashboard/services",
+    "status": 200,
+    "bytes": 105332,
+    "queries": 7,
+    "sql": [
+      "select * from `permissions`",
+      "select `roles`.*, `role_has_permissions`.`permission_id` as `pivot_permission_id`, `role_has_permissions`.`role_id` as `pivot_role_id` from `roles` inner join `role_has_permissions` on `roles`.`id` = `role_has_permissions`.`role_id` where `role_has_permissions`.`permission_id` in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129)",
+      "select `permissions`.*, `model_has_permissions`.`model_id` as `pivot_model_id`, `model_has_permissions`.`permission_id` as `pivot_permission_id`, `model_has_permissions`.`model_type` as `pivot_model_type` from `permissions` inner join `model_has_permissions` on `permissions`.`id` = `model_has_permissions`.`permission_id` where `model_has_permissions`.`model_id` = ? and `model_has_permissions`.`model_type` = ?",
+      "select `roles`.*, `model_has_roles`.`model_id` as `pivot_model_id`, `model_has_roles`.`role_id` as `pivot_role_id`, `model_has_roles`.`model_type` as `pivot_model_type` from `roles` inner join `model_has_roles` on `roles`.`id` = `model_has_roles`.`role_id` where `model_has_roles`.`model_id` in (1) and `model_has_roles`.`model_type` = ?",
+      "select * from `services`",
+      "select * from `service_categories` where `service_categories`.`id` in (1, 2, 3, 4)",
+      "select * from `roles`"
+    ],
+    "error": null
+  },
+  {
+    "uri": "/dashboard/accounts",
+    "status": 200,
+    "bytes": 86777,
+    "queries": 7,
+    "sql": [
+      "select * from `permissions`",
+      "select `roles`.*, `role_has_permissions`.`permission_id` as `pivot_permission_id`, `role_has_permissions`.`role_id` as `pivot_role_id` from `roles` inner join `role_has_permissions` on `roles`.`id` = `role_has_permissions`.`role_id` where `role_has_permissions`.`permission_id` in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129)",
+      "select `permissions`.*, `model_has_permissions`.`model_id` as `pivot_model_id`, `model_has_permissions`.`permission_id` as `pivot_permission_id`, `model_has_permissions`.`model_type` as `pivot_model_type` from `permissions` inner join `model_has_permissions` on `permissions`.`id` = `model_has_permissions`.`permission_id` where `model_has_permissions`.`model_id` = ? and `model_has_permissions`.`model_type` = ?",
+      "select `roles`.*, `model_has_roles`.`model_id` as `pivot_model_id`, `model_has_roles`.`role_id` as `pivot_role_id`, `model_has_roles`.`model_type` as `pivot_model_type` from `roles` inner join `model_has_roles` on `roles`.`id` = `model_has_roles`.`role_id` where `model_has_roles`.`model_id` in (1) and `model_has_roles`.`model_type` = ?",
+      "select count(*) as aggregate from `companies`",
+      "select * from `companies` order by `name` asc limit 20 offset 0",
+      "select * from `roles`"
+    ],
+    "error": null
+  },
+  {
+    "uri": "/dashboard/private-companies",
+    "status": 200,
+    "bytes": 78141,
+    "queries": 5,
+    "sql": [
+      "select count(*) as aggregate from `private_companies`",
+      "select * from `private_companies` order by `id` desc limit 20 offset 0",
+      "select `permissions`.*, `model_has_permissions`.`model_id` as `pivot_model_id`, `model_has_permissions`.`permission_id` as `pivot_permission_id`, `model_has_permissions`.`model_type` as `pivot_model_type` from `permissions` inner join `model_has_permissions` on `permissions`.`id` = `model_has_permissions`.`permission_id` where `model_has_permissions`.`model_id` = ? and `model_has_permissions`.`model_type` = ?",
+      "select `roles`.*, `model_has_roles`.`model_id` as `pivot_model_id`, `model_has_roles`.`role_id` as `pivot_role_id`, `model_has_roles`.`model_type` as `pivot_model_type` from `roles` inner join `model_has_roles` on `roles`.`id` = `model_has_roles`.`role_id` where `model_has_roles`.`model_id` in (1) and `model_has_roles`.`model_type` = ?",
+      "select * from `roles`"
+    ],
+    "error": null
+  }
+]

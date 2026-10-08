@@ -1,0 +1,966 @@
+[
+  {
+    "p": "resources/views/admin/yards/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/vaulttransactions/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({",
+      "Swal.fire({",
+      "function exportToExcel"
+    ]
+  },
+  {
+    "p": "resources/views/admin/vaults/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/users/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "$(docement).ready(function() {\r",
+      "$('.dataTables_paginate').addClass('d-none');\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/transportations/modals/import.blade.php",
+    "handlers": [
+      "$(document).ready( function () {\r",
+      "$(document).on('click', '#import_excel_btn', function (e) {\r",
+      "$('#import_excel').val();\r",
+      "Swal.fire(\"Cancelled\", \"Please Choose Excel File!\", \"warning\");\r",
+      "$('#submit_import_form').submit();\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/transportations/index.blade.php",
+    "handlers": [
+      "$(document).ready(function() {\r",
+      "$('#transportationsTable').length) {\r",
+      "DataTable('#transportationsTable')) {\r",
+      "$('#transportationsTable').DataTable().destroy();\r",
+      "$('#transportationsTable').DataTable({\r",
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/agent-photos/index.blade.php",
+    "handlers": [
+      "function initAgentPhotosPage",
+      "function updateBulkToolbar",
+      "$('.photo-checkbox:checked');\r",
+      "$('#bulkToolbar').slideDown(200);\r",
+      "$('#selectedCountBadge').text('تم تحديد ' + count + ' صورة');\r",
+      "$('#bulkToolbar').slideUp(200);\r",
+      "$('#selectAllCheckbox').prop('checked', false);\r",
+      "$('.photo-card').removeClass('is-selected');\r",
+      "$('#card-photo-' + $(this).val()).addClass('is-selected');\r",
+      "$(document).on('change', '#selectAllCheckbox', function() {\r",
+      "$(this).is(':checked');\r",
+      "$('.photo-checkbox').prop('checked', isChecked);\r",
+      "$(document).on('change', '.photo-checkbox', function() {\r",
+      "function populateAssignModal",
+      "$('#assignSelectedPhotosPreviews');\r",
+      "$('#assignPhotoIdsInputs');\r",
+      "$('#bookingSelect').val('');\r",
+      "$('#bookingSelect').selectpicker('refresh');\r",
+      "$('#containerSelectionGroup').hide();\r",
+      "$('#selectedContainerId').html('<option value=\"\">كامل الحجز (عام - بدون تحديد حاوية معينة)</option>');\r",
+      "$('#confirmAssignBtn').prop('disabled', true);\r",
+      "$('#paperTypeSelect').val('1');\r",
+      "$('#assignModalLabel').html(\r",
+      "$('#assignModal').on('show.bs.modal', function(e) {\r",
+      "$(e.relatedTarget);\r",
+      "$(document).on('click', '.single-assign-btn', function() {\r",
+      "$(this).data('photo-id');\r",
+      "$(this).data('photo-url');\r",
+      "$(this).data('photo-name');\r",
+      "$(document).on('click', '#bulkAssignBtn', function() {\r",
+      "$('.photo-checkbox:checked').each(function() {\r",
+      "$(this).val(),\r",
+      "$(this).data('photo-url'),\r",
+      "$(this).data('photo-name')\r",
+      "$('#assignModal').modal('show');\r",
+      "$(document).on('change', '#bookingSelect', function() {\r",
+      "$(this).val();\r",
+      "$('#containerSelectionGroup').hide();\r",
+      "$('#confirmAssignBtn').prop('disabled', true);\r",
+      "$('#confirmAssignBtn').prop('disabled', false);\r",
+      "$(this).find('option:selected');\r",
+      "$('#selectedContainerId');\r",
+      "$('#containerSelectionGroup').slideDown(150);\r",
+      "$('#containerSelectionGroup').hide();\r",
+      "$(document).on('click', '#bulkDeleteBtn', function() {\r",
+      "$('.photo-checkbox:checked').each(function() {\r",
+      "$(this).val());\r",
+      "$('#bulkDeleteInputs');\r",
+      "$('#bulkDeleteForm').submit();\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/private-companies/index.blade.php",
+    "handlers": [
+      "$(document).on('click', '.delete-btn', function() {\r",
+      "$(this).data('id');\r",
+      "$(this).data('url');\r",
+      "Swal.fire({\r",
+      "Swal.fire(\r",
+      "Swal.fire(\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/suppliers/payment.blade.php",
+    "handlers": [
+      "function toggleAgentSource"
+    ]
+  },
+  {
+    "p": "resources/views/admin/suppliers/index.blade.php",
+    "handlers": [
+      "function DeleteSupplier"
+    ]
+  },
+  {
+    "p": "resources/views/admin/shippingAgents/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/reviews/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/companies/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "function openFile",
+      "$('#attachment_preview').html(`<embed src=\"${attach}\"  frameborder=\"0\" width=\"100%\" height=\"400px\">`)\r",
+      "$('#attachmentModal').modal('show');\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/accounts/statement.blade.php",
+    "handlers": [
+      "function printCompanyStatementReceipt",
+      "$(document).ready(function() {\r",
+      "$('.table').each(function() {\r",
+      "DataTable(this)) {\r",
+      "$(this).DataTable().destroy();\r",
+      "$(document).on('shown.bs.modal', '[id^=\"transactionDetailsModal\"]', function (e) {\r",
+      "$(e.target);\r",
+      "$(document).on('click', '.js-print-company-statement-receipt', function () {\r",
+      "$(this).data('iframe-index');\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/companies/form.blade.php",
+    "handlers": [
+      "$(document).ready(function() {\r",
+      "function togglePrivateCompanySelect",
+      "$('#add_vat_input').val();\r",
+      "$('#private_company_wrapper').slideDown();\r",
+      "$('#private_company_wrapper').slideUp();\r",
+      "$('#private_company_input').val('');\r",
+      "$('#add_vat_input').on('change', function() {\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/accounts/payment.blade.php",
+    "handlers": [
+      "$(document).ready(function() {\r",
+      "$('#select_all').on('change', function() {\r",
+      "$('.invoice-checkbox').prop('checked', $(this).prop('checked'));\r",
+      "$('.invoice-checkbox').on('change', function() {\r",
+      "$('#select_all').prop('checked', $('.invoice-checkbox:checked').length === $('.invoice-checkbox').length);\r",
+      "function updateSelectedTotal",
+      "$('.invoice-checkbox:checked').each(function() {\r",
+      "$(this).data('remaining')) || 0;\r",
+      "$(this).val());\r",
+      "$('#selected_total').text(total.toFixed(2));\r",
+      "$('#selected_count').text('(' + count + ' فاتورة)');\r",
+      "$('#invoice_ids_input').val(selectedIds.join(','));\r",
+      "$('#amount_input').val(total > 0 ? total.toFixed(2) : '');\r",
+      "$('#payment_type').on('change', function() {\r",
+      "$(this).val();\r",
+      "$('#bank_transfer_field').hide();\r",
+      "$('#check_fields').hide();\r",
+      "$('#bank_id').removeAttr('required');\r",
+      "$('#check_bank_name').removeAttr('required');\r",
+      "$('#check_number').removeAttr('required');\r",
+      "$('#check_value').removeAttr('required');\r",
+      "$('#check_due_date').removeAttr('required');\r",
+      "$('#bank_transfer_field').show();\r",
+      "$('#bank_id').attr('required', 'required');\r",
+      "$('#bank_transfer_field').show();\r",
+      "$('#check_fields').show();\r",
+      "$('#bank_id').attr('required', 'required');\r",
+      "$('#check_bank_name').attr('required', 'required');\r",
+      "$('#check_number').attr('required', 'required');\r",
+      "$('#check_value').attr('required', 'required');\r",
+      "$('#check_due_date').attr('required', 'required');\r",
+      "$('#payment_type').trigger('change');\r",
+      "function togglePaymentTarget",
+      "$('input[name=\"payment_target\"]:checked').val();\r",
+      "$('#invoices_section').hide();\r",
+      "$('#opening_balance_section').show();\r",
+      "$('#amount_hint').text('الرصيد الافتتاحي: ' + openingBalance.toLocaleString('ar-EG', {minimumFractionDigits: 2, ",
+      "$('#amount_input').attr('max', openingBalance);\r",
+      "$('#amount_hint').text('لا يوجد رصيد افتتاحي');\r",
+      "$('#amount_input').removeAttr('max');\r",
+      "$('#invoice_ids_input').val('');\r",
+      "$('.invoice-checkbox').prop('checked', false);\r",
+      "$('#invoices_section').show();\r",
+      "$('#opening_balance_section').hide();\r",
+      "$('#amount_hint').text('الرصيد المستحق: ' + currentBalance.toLocaleString('ar-EG', {minimumFractionDigits: 2, ma",
+      "$('#amount_input').removeAttr('max'); // إزالة الحد الأقصى للسماح بأي مبلغ\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/accounts/car-payment.blade.php",
+    "handlers": [
+      "$(document).ready(function() {\r",
+      "$('#carPaymentPageReceiptIframe');\r",
+      "$(document).on('click', '.js-print-car-payment-page-receipt', function () {\r",
+      "$('#select_all').on('change', function() {\r",
+      "$('.shipment-checkbox').prop('checked', this.checked);\r",
+      "$('.shipment-checkbox').on('change', function() {\r",
+      "$('.shipment-checkbox').length;\r",
+      "$('.shipment-checkbox:checked').length;\r",
+      "$('#select_all').prop('checked', totalCheckboxes === checkedCheckboxes);\r",
+      "function updateSelectedTotal",
+      "$('.shipment-checkbox:checked').each(function() {\r",
+      "$(this).data('remaining')) || 0;\r",
+      "$(this).val());\r",
+      "$('#selected_total').text(total.toLocaleString('ar-EG', {minimumFractionDigits: 2, maximumFractionDigits: 2}));\r",
+      "$('#selected_count').text('(' + count + ' نقلة)');\r",
+      "$('#shipment_ids_input').val(selectedIds.join(','));\r",
+      "$('#amount_input').val(parseFloat(total.toFixed(2)));\r",
+      "$('#amount_hint').text('أقصى مبلغ يمكن سداده من النقلات المحددة: ' + total.toLocaleString('ar-EG', {minimumFract",
+      "$('#amount_input').val('');\r",
+      "$('#amount_hint').text('اختر نقلاتاً لعرض أقصى مبلغ يمكن سداده منها.');\r",
+      "$('form').on('submit', function(e) {\r",
+      "$('#shipment_ids_input').val();\r",
+      "Swal.fire({\r",
+      "$('.shipment-checkbox:checked').each(function() {\r",
+      "$(this).data('remaining')) || 0;\r",
+      "$('#amount_input').val());\r",
+      "Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل مبلغاً صحيحاً (0.01 على الأقل)' });\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/permissions/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/cities/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/shipments/payments.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/superagent_transactions/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({",
+      "Swal.fire({",
+      "function exportToExcel"
+    ]
+  },
+  {
+    "p": "resources/views/admin/shipments/index.blade.php",
+    "handlers": [
+      "$(document).on('click', '.edit-btn', function() {\r",
+      "$('#cost').val($(this).data('cost'));\r",
+      "$('#editForm').attr('action', $(this).data('url'));\r",
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/factories/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/chooseUs/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/payments/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/reports/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "function exportToExcel"
+    ]
+  },
+  {
+    "p": "resources/views/admin/reports/general_expenses.blade.php",
+    "handlers": [
+      "function changePerPage"
+    ]
+  },
+  {
+    "p": "resources/views/admin/settings/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/superagents/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/cars/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/extra_expenses/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/ourServices/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/extra_expenses/create.blade.php",
+    "handlers": [
+      "$(document).ready(function() {\r",
+      "$('#myForm').on('submit', function(e) {\r",
+      "$('#booking_container_id').val();\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/receipts/index.blade.php",
+    "handlers": [
+      "function DeleteReceipt"
+    ]
+  },
+  {
+    "p": "resources/views/admin/branches/index.blade.php",
+    "handlers": [
+      "function DeleteBranch",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/staticPages/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/invoices/pdf.blade.php",
+    "handlers": [
+      "function printDiv"
+    ]
+  },
+  {
+    "p": "resources/views/admin/invoices/index.blade.php",
+    "handlers": [
+      "$('#invoiceIdInput').val('{{ $invoice->id }}')\">\r",
+      "$(document).on('click', '.create-btn', function() {\r",
+      "$('#invoiceIdInput').val($(this).data('invoice_id'));\r",
+      "$(document).on('click', '[data-target=\"#updateModal\"]', function(e) {\r",
+      "$(this).data('url');\r",
+      "$(this).data('id');\r",
+      "$(this).data('value');\r",
+      "$(this).data('bank_id') || null;\r",
+      "$('#updatePaymentForm').attr('action', url);\r",
+      "$('#update_value').val(value);\r",
+      "$('#update_bank_id').val(bankId);\r",
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/receipts/form.blade.php",
+    "handlers": [
+      "function toggleSupplierFields",
+      "function loadServices",
+      "$('#service_id').empty();\r",
+      "$('#service_id').append(`<option value=\"to_be_disabled\">{{ __('admin.choose_service') }}</option>`);\r",
+      "$('#service_id').append(`<option value=\"${i}\" ${selected}>${v}</option>`);\r",
+      "$('#booking_id').on('changed.bs.select change', function () {\r",
+      "$(this).find('option:selected');\r",
+      "$(this).val()) {\r",
+      "$('#booking_number').val(number);\r",
+      "$('#service_type_id').on('change', function () {\r",
+      "$(this).val());\r",
+      "$(document).ready(function () {\r",
+      "$('#service_type_id').val();\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/branches/form.blade.php",
+    "handlers": [
+      "$(function($) {\r",
+      "$( \"select.first-disabled option:first-child\" ).attr(\"disabled\", \"disabled\");\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/employees/index.blade.php",
+    "handlers": [
+      "$(document).ready(function() {\r",
+      "$('#table').DataTable({\r",
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/employees/form.blade.php",
+    "handlers": [
+      "$(function($) {\r",
+      "$( \"select.first-disabled option:first-child\" ).attr(\"disabled\", \"disabled\");\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/services/modals/import.blade.php",
+    "handlers": [
+      "$(document).ready( function () {\r",
+      "$(document).on('click', '#import_excel_btn', function (e) {\r",
+      "$('#import_excel').val();\r",
+      "Swal.fire(\"Cancelled\", \"Please Choose Excel File!\", \"warning\");\r",
+      "$('#submit_import_form').submit();\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/services/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/invoicepayments/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "$(document).on('click', '.edit-btn', function()\r",
+      "$(this).data('url');\r",
+      "$(this).data('value');\r",
+      "$('#updateValueINput').val(value);\r",
+      "$('#updateForm').attr('action', url);\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookingsagents/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/drivers/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({",
+      "Swal.fire({"
+    ]
+  },
+  {
+    "p": "resources/views/admin/serviceCategories/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/sponsers/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/financial_custody_superagents/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/banks/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/containers/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({",
+      "Swal.fire({"
+    ]
+  },
+  {
+    "p": "resources/views/admin/financial_custody_agents/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/banktransactions/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/banktransactions/edit.blade.php",
+    "handlers": [
+      "$(document).on('change', '#typeSelect', function() {\r",
+      "$(this).val();\r",
+      "$('.bankSelectDiv').removeClass('d-none');\r",
+      "$('.bankSelectDiv').addClass('d-none');\r",
+      "$('.companySelectDiv').removeClass('d-none');\r",
+      "$('.companySelectDiv').addClass('d-none');\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/banktransactions/create.blade.php",
+    "handlers": [
+      "$(document).on('change', '#typeSelect', function() {\r",
+      "$(this).val();\r",
+      "$('.bankSelectDiv').removeClass('d-none');\r",
+      "$('.bankSelectDiv').addClass('d-none');\r",
+      "$('.companySelectDiv').removeClass('d-none');\r",
+      "$('.companySelectDiv').addClass('d-none');\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/contactUs/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/agents/reports/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/agents/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/form.blade.php",
+    "handlers": [
+      "$('#company_id').on('change', function() { loadEmployees($(this).val()); });",
+      "function loadEmployees",
+      "$('#company_id').val();",
+      "$('#employee_id');",
+      "function companyEmployee",
+      "$(document).ready(function () {",
+      "$(\".containers-div\").length; // Track index for new containers",
+      "$(document).on(\"click\", \".add-container-btn\", function (e) {",
+      "$(\".containers-div\").last();",
+      "$(this).attr(\"name\");",
+      "$(this).attr(\"id\");",
+      "$(this).attr(\"name\", newName);",
+      "$(this).attr(\"id\", newId);",
+      "$(this).is(\"input\")) {",
+      "$(this).val(\"\");",
+      "$(document).on(\"click\", \".delete-container\", function () {",
+      "$(\".containers-div\").length > 1) {",
+      "$(this).closest(\".containers-div\").remove();",
+      "$(function() {",
+      "$('#permit_end_date_input').attr('min', maxDate);",
+      "$('#discharge_date_input').attr('min', maxDate);",
+      "$('.arrival_date_input').attr('min', maxDate);",
+      "$('.Inbound_inputs').hide();",
+      "$('#employee_id').val('{{ $booking->employee_id }}');",
+      "$('#employee_id').val('{{ old('employee_id') }}');",
+      "$('#type_of_action_input').on('change', function() {",
+      "$(this).val();",
+      "function thirdStep",
+      "$('.Inbound_inputs').hide();",
+      "$('#action_section').html(html);",
+      "$('.Inbound_inputs').show();",
+      "$('#action_section').html(html);",
+      "$('.Inbound_inputs').hide();",
+      "$('#action_section').html(html);",
+      "function branches",
+      "$('#row_' + index).find('select#branches_' + index).append(",
+      "$('#row_'+ index).find('select#branches_' + index), jQuery('#row_'+ index).find('tr td:eq(4)'));",
+      "$('#row_' + index).find('select#branches_' + index).append(",
+      "function remove",
+      "$('#row_' + index).remove();"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/create.blade.php",
+    "handlers": [
+      "$(document).ready(function () {",
+      "$(document).on('change', '#factory_id', function () {",
+      "$(this).val();",
+      "$('#branch_id').html(options);",
+      "$('#company_id').on('change', function () {",
+      "$(this).val();",
+      "$('#employee_id').empty().append('<option value=\"\">{{ __('admin.select') }}</option>');",
+      "$('#employee_id').append(`<option value=\"${id}\">${name}</option>`);",
+      "$('#permit_end_date_input, #discharge_date_input, .arrival_date_input').attr('min', today);"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/container_policies.blade.php",
+    "handlers": [
+      "function deleteDeliveryPolicy",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/index.blade.php",
+    "handlers": [
+      "$('select[name=\"company\"], select[name=\"tax_status\"], select[name=\"invoice_status\"]').on('change', function() {",
+      "$('#filterForm').submit();",
+      "$('.search-input-group .form-control').on('input', function() {",
+      "$(this).val() === '') {",
+      "function Delete",
+      "Swal.fire({",
+      "Swal.fire({",
+      "Swal.fire({",
+      "function changePerPage"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/show.blade.php",
+    "handlers": [
+      "$(document).ready(function() {\r",
+      "$('#deliveryPoliciesTable').length) {\r",
+      "DataTable('#deliveryPoliciesTable')) {\r",
+      "$('#deliveryPoliciesTable').DataTable().destroy();\r",
+      "$('#deliveryPoliciesTable').DataTable({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/agents/expenses/index.blade.php",
+    "handlers": [
+      "function DeleteExpense",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/thirdStep/clearance.blade.php",
+    "handlers": [
+      "function clearance_branches",
+      "$('#factory_input').val();\r",
+      "$('#branch_input').empty();\r",
+      "$('#branch_input').append(`<option value=${i}>${v}</option>`);\r",
+      "$('#branch_input option[value='+branch_id+']').attr('selected','selected');\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/thirdStep/inbound.blade.php",
+    "handlers": [
+      "function inbound_submit_form",
+      "$('form#inbound_submit_form').serialize();\r",
+      "$('#factory_name_input').val();\r",
+      "$('#container_type_input option:selected').text();\r",
+      "$('#container_type_input option:selected').val();\r",
+      "$('#containers_number_input').val();\r",
+      "$('#tableRows tr').length;\r",
+      "$(\"#tableRows tr\").last().attr('data-id');\r",
+      "$('#tableRows').append(`tr id=\"row_${counter}\" data-id=\"${counter}\">\r",
+      "$(\".arrival_date_input\").val(tomorrow);\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/thirdStep/outbound.blade.php",
+    "handlers": [
+      "function outbound_submit_form",
+      "$('form#outbound_submit_form').serialize();\r",
+      "$('#factory_name_input').val();\r",
+      "$('#container_type_input option:selected').text();\r",
+      "$('#container_type_input option:selected').val();\r",
+      "$('#containers_number_input').val();\r",
+      "$('#tableRows tr').length;\r",
+      "$(\"#tableRows tr\").last().attr('data-id');\r",
+      "$('#tableRows').append(`<tr id=\"row_${counter}\" data-id=\"${counter}\">\r",
+      "$(\".arrival_date_input\").val(tomorrow);\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/agents_car_tranfer/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({",
+      "Swal.fire({",
+      "function exportToExcel"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/booking-containers/expenses.blade.php",
+    "handlers": [
+      "function DeleteExpense",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/companyInvoice/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/bookings/booking-invoices/show.blade.php",
+    "handlers": [
+      "function printInvoiceMode"
+    ]
+  },
+  {
+    "p": "resources/views/admin/components/booking-services/table.blade.php",
+    "handlers": [
+      "function serviceDelete",
+      "Swal.fire({\r",
+      "$('#service_' + id).remove();\r",
+      "Swal.fire({\r",
+      "Swal.fire({\r",
+      "function agentExpenseDelete",
+      "Swal.fire({\r",
+      "$('#agent_expense_' + id).remove();\r",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/components/booking-services/form.blade.php",
+    "handlers": [
+      "$(document).ready(function() {",
+      "$('#service_type_id').val();",
+      "$('#service_type_id').on('change', function() {",
+      "$(this).val();",
+      "function loadServices",
+      "$('#service_id').empty();",
+      "$('#service_id').append(",
+      "$('#service_id').append(`<option value=\"${i}\" ${selected}>${v}</option>`);",
+      "$('#service_id').on('change', updatePrice);",
+      "function updatePrice",
+      "$('#service_id option:selected').val();",
+      "$('#price').val(company_prices[service_id]);",
+      "function togglePaymentFields",
+      "$('#payment_type').val();",
+      "$('#vault_field').hide();",
+      "$('#bank_field').hide();",
+      "$('#agent_field').hide();",
+      "$('#supplier_field').hide();",
+      "$('#supplier_invoice_field').hide();",
+      "$('#vault_field').show();",
+      "$('#bank_field').show();",
+      "$('#agent_field').show();",
+      "$('#supplier_field').show();",
+      "$('#supplier_invoice_field').show();",
+      "$(document).ready(function() {"
+    ]
+  },
+  {
+    "p": "resources/views/admin/companyServices/form.blade.php",
+    "handlers": [
+      "$('#input_service_categories').on('change', function(){\r",
+      "$(this).val();\r",
+      "$('#input_service').empty();\r",
+      "$('#input_service').append(`<option value=\"\">{{ __('admin.choose_service') }}</option>`);\r",
+      "$('#input_service').append(`<option value=\"${i}\">${v}</option>`);\r",
+      "$('#input_service option[value='+service_id+']').attr('selected','selected');\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/companyServices/index.blade.php",
+    "handlers": [
+      "function Delete",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/components/booking-containers/table.blade.php",
+    "handlers": [
+      "function containerPreviousStage",
+      "Swal.fire({",
+      "Swal.fire({",
+      "function containerDelete",
+      "Swal.fire({\r",
+      "$('#transportation_' + id).remove();\r",
+      "Swal.fire({\r",
+      "Swal.fire({\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/components/booking-containers/form.blade.php",
+    "handlers": [
+      "function bookingContainerNormalizeId",
+      "function bookingContainerIdsMatch",
+      "function updatePrice",
+      "$('#container_id').val());\r",
+      "$('#departure_id').val();\r",
+      "$('#loading_id').val();\r",
+      "$('#aging_id').val();\r",
+      "$('#price').val(matchedPrice);\r",
+      "$(function () {\r",
+      "$('#container_id, #departure_id, #loading_id, #aging_id').on('change', updatePrice);\r",
+      "$('#price').val();\r",
+      "$('#factory_id').on('change', updateBranches);\r",
+      "function updateBranches",
+      "$('#factory_id option:selected').val();\r",
+      "$('#branch_id option').remove();\r",
+      "$('#branch_id').append(\r",
+      "$('#branch_id').append(`<option value='${branch}'>${available_branches[branch]}</option>`);\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/components/booking-agent-expenses/form.blade.php",
+    "handlers": [
+      "$(document).ready(function() {\r",
+      "$('#service_type_id').val();\r",
+      "$('#service_type_id').on('change', function() {\r",
+      "$(this).val();\r",
+      "function loadServices",
+      "$('#service_id').empty();\r",
+      "$('#service_id').append(\r",
+      "$('#service_id').append(`<option value=\"${i}\" ${selected}>${v}</option>`);\r",
+      "$('#service_id').on('change', function() {\r",
+      "$('#service_id option:selected').val();\r",
+      "$('#value').val(company_prices[service_id]);\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/components/booking-invoices/totals-form.blade.php",
+    "handlers": [
+      "function getInvoiceTotalAfterTax",
+      "$('#value_added_tax').val()) || 0;\r",
+      "$('#sales_tax').val()) || 0;\r",
+      "function updateInvoiceAndBillableAmounts",
+      "$('#value_added_tax').val()) || 0;\r",
+      "$('#sales_tax').val()) || 0;\r",
+      "$('#invoice_total_after_tax').text(invoiceTotalAfterTax.toLocaleString('en-US', { minimumFractionDigits: 2 }));\r",
+      "$('#required_to_be_paid').text(billableAmount.toLocaleString('en-US', { minimumFractionDigits: 2 }));\r",
+      "$('#discount').val()) || 0;\r",
+      "$('#required_to_be_paid_after_discount').text(billableAfterDiscount.toLocaleString('en-US', { minimumFractionDig",
+      "$('#taxAmount').val(taxAmount.toFixed(2));\r",
+      "function updateTaxPercentagesBasedOnAmount",
+      "$('#taxAmount').val()) || 0;\r",
+      "$('#value_added_tax').val(valueAddedTax);\r",
+      "$('#sales_tax').val(0);\r",
+      "$('#value_added_tax').on('input', updateInvoiceAndBillableAmounts);\r",
+      "$('#sales_tax').on('input', updateInvoiceAndBillableAmounts);\r",
+      "$('#discount').on('input', updateInvoiceAndBillableAmounts);\r",
+      "$('#taxAmount').on('input', updateTaxPercentagesBasedOnAmount);\r"
+    ]
+  },
+  {
+    "p": "resources/views/admin/companyServices/modals/import.blade.php",
+    "handlers": [
+      "$(document).ready( function () {\r",
+      "$(document).on('click', '#import_excel_btn', function (e) {\r",
+      "$('#import_excel').val();\r",
+      "Swal.fire(\"Cancelled\", \"Please Choose Excel File!\", \"warning\");\r",
+      "$('#submit_import_form').submit();\r"
+    ]
+  }
+]

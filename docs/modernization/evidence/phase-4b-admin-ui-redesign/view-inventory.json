@@ -1,0 +1,3409 @@
+[
+  {
+    "file": "resources/views/admin/yards/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/yards/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($yard, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/yards/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.yards.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/yards/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.yards.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/vaulttransactions/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('vaultransactions.index') }}\" method=\"get\">"
+    ],
+    "ids": [
+      "filterModal",
+      "filterModalLabel",
+      "monthInput",
+      "yearInput",
+      "vaultTransactionsTable"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/vaulttransactions/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"POST\" action=\"{{ route('vaultransactions.update', $item->"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/vaults/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('vaults.index') }}\" method=\"get\">"
+    ],
+    "ids": [
+      "exampleModal",
+      "exampleModalLabel",
+      "dateFrom",
+      "dateTo",
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/vaults/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype' => 'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($vault, [\r"
+    ],
+    "ids": [
+      "amount"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/vaults/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.vaults.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/vaults/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.vaults.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/users/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/users/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('users.update', $user->"
+    ],
+    "ids": [
+      "nameInput",
+      "emailInput",
+      "phoneInput",
+      "passwordInput",
+      "roleSelect",
+      "addressInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/users/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('users.store') }}\" method=\"post\">"
+    ],
+    "ids": [
+      "nameInput",
+      "emailInput",
+      "phoneInput",
+      "passwordInput",
+      "roleSelect",
+      "addressInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/transportations/modals/import.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "<form style=\"display:flex;align-items :center ; gap :20px\" action=\"{{ $import_route }}\"\r\n                      method=\"POST\" enctype=\"multipart/form-data\" id=\"submit_import_form\">"
+    ],
+    "ids": [
+      "import_excels",
+      "exampleModalLabel",
+      "submit_import_form",
+      "import_excel",
+      "import_excel_btn"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/transportations/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb",
+      "admin.transportations.modals.import"
+    ],
+    "forms": [],
+    "ids": [
+      "imports",
+      "transportationsTable"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/transportations/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($companyTransportation, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/transportations/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.transportations.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/transportations/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.transportations.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agent-photos/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"GET\" action=\"{{ route('agent-photos.index') }}\" class=\"photos-filters mb-6\">",
+      "<form method=\"POST\" action=\"{{ route('agent-photos.destroy', $photo) }}\" onsubmit=\"return confirm('هل أنت متأكد من حذف هذه الصورة نهائيًا؟');\" class=\"d-inline ml-2\">",
+      "<form id=\"assignForm\" method=\"POST\" action=\"{{ route('agent-photos.assign') }}\">",
+      "<form id=\"bulkDeleteForm\" method=\"POST\" action=\"{{ route('agent-photos.bulk-destroy') }}\" style=\"display: none;\">"
+    ],
+    "ids": [
+      "photo-agent",
+      "photo-from",
+      "photo-to",
+      "bulkToolbar",
+      "selectAllCheckbox",
+      "selectedCountBadge",
+      "bulkAssignBtn",
+      "bulkDeleteBtn",
+      "card-photo-{{ $photo->id }}",
+      "chk-{{ $photo->id }}",
+      "{{ $photo->id }}",
+      "{{ $photo->id }}",
+      "assignModal",
+      "assignForm",
+      "assignModalLabel",
+      "assignSelectedPhotosPreviews",
+      "assignPhotoIdsInputs",
+      "bookingSelect",
+      "containerSelectionGroup",
+      "selectedContainerId",
+      "paperTypeSelect",
+      "confirmAssignBtn",
+      "bulkDeleteForm",
+      "bulkDeleteInputs"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/private-companies/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"GET\" action=\"{{ route('private-companies.index') }}\" class=\"d-flex align-items-center mr-4\">"
+    ],
+    "ids": [
+      "table",
+      "{{ $privateCompany->id }}"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/private-companies/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype' => 'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($privateCompany, [\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/private-companies/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.private-companies.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/private-companies/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.private-companies.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/suppliers/statement.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"GET\" action=\"{{ route('suppliers.statement', $supplier) }}\">"
+    ],
+    "ids": [
+      "supplierFilterModal"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/suppliers/payment.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"POST\" action=\"{{ route('suppliers.payment.process', $supplier) }}\" id=\"supplierPaymentForm\">"
+    ],
+    "ids": [
+      "supplierPaymentForm",
+      "source_type",
+      "agent_source_wrap",
+      "source_id"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/suppliers/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"GET\" action=\"{{ route('suppliers.index') }}\" class=\"mb-4\">"
+    ],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/suppliers/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method]) !!}\r",
+      "Form::model($supplier, ['url' => [$action], 'method' => $method]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/suppliers/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.suppliers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/suppliers/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.suppliers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/shippingAgents/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companies/show.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/reviews/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/shippingAgents/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($shippingAgent, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/companies/reset.blade.php",
+    "layout": "'layouts.app'",
+    "includes": [],
+    "forms": [
+      "<form method=\"POST\" action=\"{{ route('companies.update_password') }}\">"
+    ],
+    "ids": [
+      "password",
+      "password-confirm"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "public account recovery"
+  },
+  {
+    "file": "resources/views/admin/shippingAgents/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.shippingAgents.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companies/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"GET\" action=\"{{ route('companies.index') }}\" class=\"d-flex align-items-center mr-4\">"
+    ],
+    "ids": [
+      "table",
+      "attachmentModal",
+      "attachment_preview"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/statement.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"POST\"\r\n                                                  action=\"{{ route('accounts.payment.group.destroy', ['companyId' =>",
+      "<form method=\"GET\" action=\"{{ route('accounts.statement',$company->"
+    ],
+    "ids": [
+      "transactionDetailsModal{{ $index }}",
+      "companyPaymentReceiptIframe{{ $index }}",
+      "filterModal"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/shippingAgents/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.shippingAgents.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companies/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype' => 'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($company, [\r"
+    ],
+    "ids": [
+      "private_company_wrapper",
+      "default_type"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/accounts/statement-pdf.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/companies/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.companies.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/profit-loss-report.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('accounts.profit-loss') }}\" method=\"get\">"
+    ],
+    "ids": [
+      "filterModal"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companies/createcompanyInvoices.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [],
+    "forms": [
+      "Form::open([\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/profit-loss-report-pdf.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/companies/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.companies.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/payment.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('accounts.payment.process', $company->"
+    ],
+    "ids": [
+      "invoices_section",
+      "select_all",
+      "selected_total",
+      "selected_count",
+      "opening_balance_section",
+      "invoice_ids_input",
+      "payment_type_invoices",
+      "payment_type_opening_balance",
+      "amount_input",
+      "amount_hint",
+      "payment_type",
+      "bank_transfer_field",
+      "bank_id",
+      "check_fields",
+      "check_bank_name",
+      "check_number",
+      "check_value",
+      "check_due_date"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companies/companyInvoices.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('filtercompanyInvoices') }}\" method=\"get\">",
+      "<form id=\"submit-form1\" class=\"was-validated\" action=\"{{ route('filtercompanyInvoices') }}\"\r\n                            method=\"get\">"
+    ],
+    "ids": [
+      "exampleModal",
+      "exampleModalLabel",
+      "dateFrom",
+      "dateTo",
+      "table",
+      "exampleModalDefault",
+      "exampleModalLabel",
+      "submit-form1",
+      "validationTextarea",
+      "validationTextarea"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('accounts.index') }}\" method=\"get\" class=\"mb-4\">"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/financial-position-report.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('accounts.financial-position') }}\" method=\"get\">"
+    ],
+    "ids": [
+      "filterModal"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/financial-position-report-pdf.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/accounts/company-payment-receipt.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/accounts/checks.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"GET\" action=\"{{ route('accounts.checks.index') }}\" class=\"d-flex\">",
+      "<form action=\"{{ route('accounts.checks.mark-paid', $check->"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/cars-financial-position-report.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('accounts.cars.financial-position') }}\" method=\"get\" class=\"d-flex align-items-center\">"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/car-statement.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('accounts.car.statement', $car->"
+    ],
+    "ids": [
+      "filterModal",
+      "carPaymentDetailsModal{{ $index }}"
+    ],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/car-statement-pdf.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/accounts/car-payment.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('accounts.car.payment.process', $car->"
+    ],
+    "ids": [
+      "carPaymentPageReceiptIframe",
+      "select_all",
+      "selected_total",
+      "selected_count",
+      "shipment_ids_input",
+      "amount_input",
+      "amount_hint"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/accounts/car-payment-pdf.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/permissions/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/permissions/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('permissions.update', $role->"
+    ],
+    "ids": [
+      "permission{{ $permission->id }}"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/permissions/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('permissions.store') }}\" method=\"post\">"
+    ],
+    "ids": [
+      "permission{{ $permission->id }}"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/cities/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/cities/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($city, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/cities/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.cities.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/cities/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.cities.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/reviews/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($review, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/reviews/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.reviews.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/reviews/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.reviews.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/shipments/payments.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('shipments.index', $car->"
+    ],
+    "ids": [
+      "exampleModal",
+      "exampleModalLabel",
+      "dateFrom",
+      "dateTo",
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/superagent_transactions/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('superagent_transactions.index', $superagent->"
+    ],
+    "ids": [
+      "filterModal",
+      "filterModalLabel",
+      "monthInput",
+      "yearInput",
+      "superagentTransactionsTable"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/shipments/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('shipments.index', $car->",
+      "<form action=\"{{ route('shipments.export') }}\" method=\"get\">",
+      "<form id=\"editForm\" method=\"POST\" enctype=\"multipart/form-data\">"
+    ],
+    "ids": [
+      "exampleModal",
+      "exampleModalLabel",
+      "dateFrom",
+      "dateTo",
+      "filterModalExport",
+      "exampleModalLabel",
+      "dateFrom",
+      "dateTo",
+      "editModal",
+      "editModalLabel",
+      "editForm",
+      "cost",
+      "table",
+      "{{ $shipment->id }}"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/superagent_transactions/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('shipments.update', $shipment->"
+    ],
+    "ids": [
+      "nameInput",
+      "valueInput",
+      "dateInput",
+      "additionInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/shipments/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('shipments.update', $shipment->"
+    ],
+    "ids": [
+      "nameInput",
+      "valueInput",
+      "valueInput",
+      "dateInput",
+      "additionInput",
+      "additionInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/superagent_transactions/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('superagent_transactions.store', request()->"
+    ],
+    "ids": [
+      "superagentSelect",
+      "nameInput",
+      "valueInput",
+      "imageInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/shipments/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('shipments.store') }}\" method=\"post\" enctype='multipart/form-data'>"
+    ],
+    "ids": [
+      "nameInput",
+      "valueInput",
+      "valueInput",
+      "dateInput",
+      "additionInput",
+      "additionInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/factories/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/factories/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($factory, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/factories/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.factories.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/factories/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.factories.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/chooseUs/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/chooseUs/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($choose, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/chooseUs/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.chooseUs.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/chooseUs/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.chooseUs.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/payments/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form\r\n                                    action=\"{{ route('car_payments.index', ['id' =>"
+    ],
+    "ids": [
+      "exampleModal",
+      "exampleModalLabel",
+      "dateFrom",
+      "dateTo",
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/payments/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('shipments.update', $shipment->"
+    ],
+    "ids": [
+      "nameInput",
+      "valueInput",
+      "valueInput",
+      "dateInput",
+      "additionInput",
+      "additionInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/payments/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('car_payments.store') }}\" method=\"post\" enctype='multipart/form-data'>"
+    ],
+    "ids": [
+      "valueInput",
+      "additionInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/reports/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('reports.daily_reports') }}\" method=\"get\">"
+    ],
+    "ids": [
+      "filterModal",
+      "filterModalLabel",
+      "monthInput",
+      "yearInput",
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/reports/general_expenses.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('reports.general_expenses') }}\" method=\"get\">",
+      "<form action=\"{{ route('reports.general_expenses') }}\" method=\"get\" class=\"mb-4\">"
+    ],
+    "ids": [
+      "filterModal",
+      "filterModalLabel",
+      "fromInput",
+      "toInput",
+      "perPageSelect",
+      "expensesTable"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/settings/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/settings/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($setting, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/settings/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.settings.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/settings/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.settings.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/superagents/reset.blade.php",
+    "layout": "'layouts.app'",
+    "includes": [],
+    "forms": [
+      "<form method=\"POST\" action=\"{{ route('superagents.update_password') }}\">"
+    ],
+    "ids": [
+      "password",
+      "password-confirm"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "public account recovery"
+  },
+  {
+    "file": "resources/views/admin/superagents/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/superagents/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($superagent, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/superagents/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.superagents.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/superagents/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.superagents.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/cars/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('cars.index') }}\" method=\"get\" class=\"mb-4\">"
+    ],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/cars/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($car, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/cars/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.cars.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/cars/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.cars.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/extra_expenses/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/ourServices/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/extra_expenses/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [],
+    "forms": [
+      "<form action=\"{{ route('booking_contrainer_extra_costs_update', $expense->"
+    ],
+    "ids": [
+      "name",
+      "value",
+      "booking_container_id",
+      "car_id",
+      "driver_id"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/ourServices/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($service, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/extra_expenses/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [],
+    "forms": [
+      "<form id=\"myForm\" action=\"{{ route('booking_contrainer_extra_costs_store') }}\" method=\"post\">"
+    ],
+    "ids": [
+      "myForm",
+      "name",
+      "value",
+      "booking_container_id",
+      "car_id",
+      "driver_id"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/ourServices/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.ourServices.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/ourServices/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.ourServices.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/receipts/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"GET\" class=\"mb-4 row\">"
+    ],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/branches/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/staticPages/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/services/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.services.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/invoices/pdf.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [
+      "printableArea",
+      "printableAreaAttachments"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/invoices/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('bokkings.invoices', request()->",
+      "<form action=\"{{ route('invoice_payments.store') }}\" method=\"POST\" enctype=\"multipart/form-data\">",
+      "<form id=\"updatePaymentForm\" method=\"POST\" enctype=\"multipart/form-data\">"
+    ],
+    "ids": [
+      "exampleModal",
+      "exampleModalLabel",
+      "idSelect",
+      "dateFrom",
+      "dateTo",
+      "invoices-table",
+      "payments-table",
+      "{{ $payment->id }}",
+      "createModal",
+      "createModalLabel",
+      "invoiceIdInput",
+      "bank_id",
+      "value",
+      "image",
+      "updateModal",
+      "updateModalLabel",
+      "updatePaymentForm",
+      "update_bank_id",
+      "update_value",
+      "update_image"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/receipts/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'id' => 'receiptForm', 'files' => true, 'enctype' => 'multipart/form-data']) !!}\r",
+      "Form::model($receipt, ['url' => [$action], 'method' => $method, 'id' => 'receiptForm', 'files' => true, 'enctype' => 'multipart/form-data']) !!}\r"
+    ],
+    "ids": [
+      "booking_id",
+      "input_receipt_image"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/receipts/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.receipts.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/receipts/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.receipts.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/branches/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($branch, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/branches/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.branches.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/branches/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.branches.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/employees/reset.blade.php",
+    "layout": "'layouts.app'",
+    "includes": [],
+    "forms": [
+      "<form method=\"POST\" action=\"{{ route('employees.update_password') }}\">"
+    ],
+    "ids": [
+      "password",
+      "password-confirm"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "public account recovery"
+  },
+  {
+    "file": "resources/views/admin/employees/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/employees/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($employee, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/employees/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.employees.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/employees/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.employees.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/staticPages/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($staticPage, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/staticPages/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.staticPages.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/staticPages/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.staticPages.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/services/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.services.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/services/modals/import.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "<form style=\"display:flex;align-items :center ; gap :20px\" action=\"{{ $import_route }}\"\r\n                      method=\"POST\" enctype=\"multipart/form-data\" id=\"submit_import_form\">"
+    ],
+    "ids": [
+      "import_excels",
+      "exampleModalLabel",
+      "submit_import_form",
+      "import_excel",
+      "import_excel_btn"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/services/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb",
+      "admin.services.modals.import"
+    ],
+    "forms": [],
+    "ids": [
+      "imports",
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/services/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($service, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/invoicepayments/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('invoice_payments.store') }}\" method=\"POST\" enctype=\"multipart/form-data\">",
+      "<form id=\"updateForm\" method=\"POST\" enctype=\"multipart/form-data\">"
+    ],
+    "ids": [
+      "table",
+      "{{ $payment->id }}",
+      "createModal",
+      "createModalLabel",
+      "value",
+      "image",
+      "updateModal",
+      "updateModalLabel",
+      "updateForm",
+      "updateValueINput",
+      "image"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/invoicepayments/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($car, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/invoicepayments/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.cars.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/invoicepayments/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.cars.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "bookingsChart",
+      "financialChart"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookingsagents/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookingsagents/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [],
+    "forms": [
+      "Form::model($container, ['url' => route('booking_containers_agents.update', $container->id), 'method' => 'POST', 'enctype' => 'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [
+      "agent{{ $agent->id }}"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookingsagents/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.components.booking-containers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/drivers/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('drivers.index') }}\" method=\"get\" class=\"mb-4\">"
+    ],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/drivers/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($driver, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/drivers/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.drivers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/drivers/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.drivers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/serviceCategories/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/serviceCategories/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($serviceCategory, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/serviceCategories/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.serviceCategories.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/serviceCategories/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.serviceCategories.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/sponsers/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/sponsers/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($sponser, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/sponsers/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.sponsers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/sponsers/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.sponsers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/financial_custody_superagents/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/financial_custody_superagents/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($service, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/financial_custody_superagents/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.financial_custody_superagents.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/profile/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('profile.update') }}\" method=\"POST\">",
+      "<form action=\"{{ route('profile.password') }}\" method=\"POST\">"
+    ],
+    "ids": [
+      "profile_name",
+      "profile_email",
+      "profile_phone",
+      "profile_address",
+      "current_password",
+      "password",
+      "password_confirmation"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/banks/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/banks/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.banks.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/containers/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('containers.index') }}\" method=\"get\" class=\"mb-4\">"
+    ],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/containers/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data']) !!}\r",
+      "Form::model($container, ['url' => [$action], 'method'=>$method, 'enctype'=>'multipart/form-data']) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/containers/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.containers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/containers/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.containers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/financial_custody_agents/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/financial_custody_agents/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($service, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/financial_custody_agents/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.financial_custody_agents.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/banktransactions/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('banktransactions.index', $bank->"
+    ],
+    "ids": [
+      "exampleModal",
+      "exampleModalLabel",
+      "dateFrom",
+      "dateTo",
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/banktransactions/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('banktransactions.update', $item->"
+    ],
+    "ids": [
+      "nameInput",
+      "date",
+      "valueInput",
+      "typeSelect",
+      "bankSelect",
+      "bankSelect",
+      "additionInput"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/banktransactions/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('banktransactions.store') }}\" method=\"post\" enctype=\"multipart/form-data\">"
+    ],
+    "ids": [
+      "nameInput",
+      "date",
+      "valueInput",
+      "typeSelect",
+      "companySelect",
+      "bankSelect",
+      "additionInput"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agents/reset.blade.php",
+    "layout": "'layouts.app'",
+    "includes": [],
+    "forms": [
+      "<form method=\"POST\" action=\"{{ route('agents.update_password') }}\">"
+    ],
+    "ids": [
+      "password",
+      "password-confirm"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "public account recovery"
+  },
+  {
+    "file": "resources/views/admin/banks/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype' => 'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($bank, [\r"
+    ],
+    "ids": [
+      "name",
+      "amount"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/banks/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.banks.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/container.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [
+      "container_{{ $index }}"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/bookings/company_employee.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [
+      "company_id"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/contactUs/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/_employees.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/fcm/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agents/reports/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-agent-expenses/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.components.booking-agent-expenses.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agents/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agents/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($agent, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/bookings/form.blade.php",
+    "layout": null,
+    "includes": [
+      "admin.bookings.thirdStep.outbound",
+      "admin.bookings.thirdStep.inbound",
+      "admin.bookings.thirdStep.clearance"
+    ],
+    "forms": [
+      "Form::open([",
+      "Form::model($booking, ["
+    ],
+    "ids": [
+      "company_id",
+      "permit_end_dateError",
+      "image",
+      "type",
+      "containers",
+      "branch_id",
+      "container_id",
+      "containers_count_input",
+      "containers",
+      "branch_${i}"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/bookings/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb",
+      "admin.bookings.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.bookings.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/container_policies.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/container_papers.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/notes.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form method=\"GET\" action=\"{{ route('bookings.index') }}\" id=\"filterForm\">"
+    ],
+    "ids": [
+      "filterForm",
+      "perPageSelect"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/papers.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [],
+    "forms": [
+      "<form action=\"{{ route('bookings.papers.store') }}\" method=\"POST\" enctype=\"multipart/form-data\">",
+      "<form action=\"{{ route('admin.papers.delete', $paper->"
+    ],
+    "ids": [
+      "image",
+      "type"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/show.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb",
+      "admin.components.booking-containers.table",
+      "admin.components.booking-services.table"
+    ],
+    "forms": [],
+    "ids": [
+      "deliveryPoliciesTable"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-services/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.components.booking-services.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-services/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.components.booking-services.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agents/expenses/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agents/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.agents.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agents/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.agents.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/agents_car_tranfer/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('agent_car_tranfer.store') }}\" method=\"post\" enctype=\"multipart/form-data\">"
+    ],
+    "ids": [
+      "carSelect",
+      "nameInput",
+      "valueInput",
+      "imageInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/thirdStep/clearance.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/agents_car_tranfer/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('agent_car_tranfer.update', $item->"
+    ],
+    "ids": [
+      "carSelect",
+      "nameInput",
+      "valueInput",
+      "imageInput"
+    ],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/thirdStep/inbound.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => ['javascript:void(0)'], 'method'=> null, 'id' => 'inbound_form', 'onclick' => 'inbound_submit_form()'  ]) !!}\r"
+    ],
+    "ids": [
+      "example",
+      "tableRows",
+      "row_{{ $key }}",
+      "{{ $key }}",
+      "row_{{ $i }}",
+      "{{ $i }}",
+      "row_${counter}",
+      "${counter}",
+      "branches_${counter}"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/bookings/thirdStep/outbound.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open([\r"
+    ],
+    "ids": [
+      "example",
+      "tableRows",
+      "row_{{ $key + 1 }}",
+      "{{ $key + 1 }}",
+      "row_{{ $i }}",
+      "{{ $i }}",
+      "row_${counter}",
+      "${counter}",
+      "branches_${counter}"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/agents_car_tranfer/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('agent_car_tranfer.index', $agent->"
+    ],
+    "ids": [
+      "filterModal",
+      "filterModalLabel",
+      "monthInput",
+      "yearInput",
+      "carTransfersTable"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-containers/expenses.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [],
+    "ids": [
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-containers/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.components.booking-containers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-containers/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.components.booking-containers.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companyInvoice/index.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb"
+    ],
+    "forms": [
+      "<form action=\"{{ route('companyInvoice.index', $company->"
+    ],
+    "ids": [
+      "exampleModal",
+      "exampleModalLabel",
+      "dateFrom",
+      "dateTo",
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companyInvoice/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [],
+    "forms": [
+      "Form::open([\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companyInvoice/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [],
+    "forms": [
+      "Form::open([\r"
+    ],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-invoices/show.blade.php",
+    "layout": null,
+    "includes": [
+      "admin.components.booking-invoices.printing.letterhead",
+      "admin.components.booking-invoices.printing.section-block",
+      "admin.components.booking-invoices.printing.section-block",
+      "admin.components.booking-invoices.printing.section-block",
+      "admin.components.booking-invoices.printing.letterhead",
+      "admin.components.booking-invoices.printing.section-block",
+      "admin.components.booking-invoices.printing.section-block",
+      "admin.components.booking-invoices.printing.section-block",
+      "admin.components.booking-invoices.printing.table.layout"
+    ],
+    "forms": [
+      "<form method=\"POST\"\r\n                  action=\"{{ route('booking-invoices.destroy', ['booking_invoice' =>"
+    ],
+    "ids": [
+      "printableAreaDetailedTax",
+      "printableAreaDetailedAttachments",
+      "printableAreaDetailed",
+      "printableAreaCombined"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-invoices/edit.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "admin.components.booking-invoices.listings",
+      "admin.components.booking-invoices.totals-form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/bookings/booking-invoices/create.blade.php",
+    "layout": "'layouts.admin'",
+    "includes": [
+      "layouts.includes.breadcrumb",
+      "admin.components.booking-invoices.listings",
+      "admin.components.booking-invoices.totals-form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/components/booking-services/table.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [
+      "extensions_id",
+      "serviceTableRows",
+      "service_{{ $service->id }}",
+      "agent_expense_{{ $expense->id }}",
+      "supplier_receipt_{{ $receipt->id }}"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/components/booking-services/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open([",
+      "Form::model($booking_service ?? null, ["
+    ],
+    "ids": [
+      "vault_field",
+      "bank_field",
+      "agent_field",
+      "supplier_field",
+      "supplier_invoice_field",
+      "input_receipt_image"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/companyServices/edit.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.companyServices.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companyServices/create.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "admin.companyServices.form"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/companyServices/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r",
+      "Form::model($service, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}\r"
+    ],
+    "ids": [],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/companyServices/index.blade.php",
+    "layout": "\"layouts.admin\"",
+    "includes": [
+      "layouts.includes.breadcrumb",
+      "admin.companyServices.modals.import"
+    ],
+    "forms": [],
+    "ids": [
+      "imports",
+      "table"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "shared admin screen"
+  },
+  {
+    "file": "resources/views/admin/components/booking-containers/table.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [
+      "transportation_id",
+      "transportationsTableRows",
+      "transportation_{{ $container->id }}"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/components/booking-containers/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open([\r",
+      "Form::model($booking_container, [\r"
+    ],
+    "ids": [
+      "status"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/components/booking-agent-expenses/form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::model($agentExpense, [\r"
+    ],
+    "ids": [
+      "input_receipt_image"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/totals-form.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "Form::open(['url' => $action, 'method' => $method, 'enctype' => 'multipart/form-data', 'files' => true, 'class' => 'invoice-totals-form']) !!}\r",
+      "Form::model($invoice, [\r"
+    ],
+    "ids": [
+      "taxAmount",
+      "invoice_total_after_tax",
+      "required_to_be_paid",
+      "required_to_be_paid_after_discount"
+    ],
+    "hasScripts": true,
+    "hasStyles": true,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/listings.blade.php",
+    "layout": null,
+    "includes": [
+      "admin.components.booking-containers.table",
+      "admin.components.booking-services.table",
+      "admin.components.booking-services.table"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/companyServices/modals/import.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [
+      "<form style=\"display:flex;align-items :center ; gap :20px\" action=\"{{ $import_route }}\"\r\n                      method=\"POST\" enctype=\"multipart/form-data\" id=\"submit_import_form\">"
+    ],
+    "ids": [
+      "import_excels",
+      "exampleModalLabel",
+      "submit_import_form",
+      "import_excel",
+      "import_excel_btn"
+    ],
+    "hasScripts": true,
+    "hasStyles": false,
+    "classification": "partial / empty view"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/table/service-row.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/table/layout.blade.php",
+    "layout": null,
+    "includes": [
+      "admin.components.booking-invoices.printing.table.container-row",
+      "admin.components.booking-invoices.printing.table.service-row",
+      "admin.components.booking-invoices.printing.table.grouped-receipt-row",
+      "admin.components.booking-invoices.printing.table.agent-expense-receipt-row"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/table/grouped-receipt-row.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/table/expenses-row.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/table/container-row.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/table/agent-expense-receipt-row.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/section-totals.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/section-block.blade.php",
+    "layout": null,
+    "includes": [
+      "admin.components.booking-invoices.printing.table.layout",
+      "admin.components.booking-invoices.printing.section-totals"
+    ],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/letterhead.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": true,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/invoice-totals.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/header.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/footer.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/attachment-totals.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  },
+  {
+    "file": "resources/views/admin/components/booking-invoices/printing/attachment-invoice-summary.blade.php",
+    "layout": null,
+    "includes": [],
+    "forms": [],
+    "ids": [],
+    "hasScripts": false,
+    "hasStyles": false,
+    "classification": "print / export or partial"
+  }
+]

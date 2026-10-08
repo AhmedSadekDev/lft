@@ -11,18 +11,17 @@ Purchase: https://1.envato.market/EA4JP
 Renew Support: https://1.envato.market/EA4JP
 License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project.
 -->
-<html lang="en">
+<html lang="ar" dir="@yield('admin-direction', 'rtl')">
 <!--begin::Head-->
 
 <head>
     <base href="">
     <meta charset="utf-8" />
-    <title>LeaderForTrans</title>
+    <title>@yield('admin-page-title', 'لوحة التحكم') | Leader for Trans</title>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="Metronic admin dashboard live demo. Check out all the features of the admin panel. A large number of settings, additional services and widgets." />
+    <meta name="description" content="Leader for Trans — إدارة النقل والحاويات والحسابات" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link rel="canonical" href="https://keenthemes.com/metronic" />
     <!--begin::Fonts-->
     {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />  --}}
     <!--end::Fonts-->
@@ -68,11 +67,14 @@ License: You must have a valid license purchased only from themeforest(the above
         }
     </style>
 
+    @stack('css')
+    <link href="{{ asset('assets/css/admin-ui.css') }}?v=4b" rel="stylesheet" type="text/css" />
 </head>
 <!--end::Head-->
 <!--begin::Body-->
 
-<body id="kt_body" class="header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
+<body id="kt_body" class="lft-admin header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
+    <a class="lft-skip-link" href="#kt_content">انتقل إلى المحتوى</a>
     <div class="bs-canvas-overlay bg-dark position-fixed w-100 h-100"></div>
 
     <!--begin::Wrapper-->
@@ -80,19 +82,19 @@ License: You must have a valid license purchased only from themeforest(the above
     <!--begin::Header Mobile-->
     <div id="kt_header_mobile" class="header-mobile align-items-center header-mobile-fixed">
         <!--begin::Logo-->
-        <a href="index.html">
+        <a href="{{ route('main') }}">
             <img alt="Logo" src="{{asset('assets/media/logo.png')}}" />
         </a>
         <!--end::Logo-->
         <!--begin::Toolbar-->
         <div class="d-flex align-items-center">
             <!--begin::Aside Mobile Toggle-->
-            <button class="btn p-0 burger-icon burger-icon-left" id="kt_aside_mobile_toggle">
+            <button class="btn p-0 burger-icon burger-icon-left" id="kt_aside_mobile_toggle" type="button" aria-label="فتح قائمة التنقل" aria-expanded="false">
                 <span></span>
             </button>
             <!--end::Aside Mobile Toggle-->
             <!--begin::Topbar Mobile Toggle-->
-            <button class="btn btn-hover-text-primary p-0 ml-2" id="kt_header_mobile_topbar_toggle">
+            <button class="btn btn-hover-text-primary p-0 ml-2" id="kt_header_mobile_topbar_toggle" type="button" aria-label="قائمة الحساب">
                 <span class="svg-icon svg-icon-xl">
                     <!--begin::Svg Icon | path:assets/media/svg/icons/General/User.svg-->
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">

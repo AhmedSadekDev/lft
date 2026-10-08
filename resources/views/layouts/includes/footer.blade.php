@@ -96,6 +96,7 @@
 </script>
 
 @stack('js')
+<script src="{{ asset('assets/js/admin-ui.js') }}?v=4b"></script>
 
 <!--end::Page Scripts-->
 </body>
