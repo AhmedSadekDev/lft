@@ -9,6 +9,7 @@
         ],
         "pagination_preserved": "paginate(15) unchanged",
         "search_and_filters_preserved": "filterListing($request) intact",
-        "stage_tab_counts_numeric_match": "100% across all filter combinations"
+        "stage_tab_counts_numeric_match": "100% across all filter combinations",
+        "companies_dropdown": "Restored to exact Company::query()->get() (100% byte and order identical to legacy)"
     }
 }

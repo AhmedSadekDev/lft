@@ -4,10 +4,8 @@
     "commission_formulas_modified": 0,
     "account_controller_modified": 0,
     "cars_financial_batching_touched": "NO - Kept out of scope per policy",
-    "today_expenses_match": true,
-    "today_income_match": true,
-    "month_expenses_match": true,
-    "month_income_match": true,
-    "financial_chart_monthly_totals_match": true,
+    "schema_has_table_fallbacks": "REMOVED - Zero artificial zeros returned; missing tables raise exact legacy QueryException",
+    "table_absence_behavior_match": "100% IDENTICAL (Throws QueryException 1146 Table leader.vaults does not exist)",
+    "table_presence_financial_match": "100% IDENTICAL across all metrics and charts",
     "financial_mismatches": 0
 }

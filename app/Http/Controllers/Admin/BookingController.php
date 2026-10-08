@@ -109,7 +109,7 @@ class BookingController extends Controller
 
         $bookings = $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
 
-        $companies = Company::query()->select("id", "name")->orderBy("name")->get();
+        $companies = Company::query()->get();
 
         return view('admin.bookings.index', compact('bookings', 'companies', 'stageCounts', 'currentStage'));
     }

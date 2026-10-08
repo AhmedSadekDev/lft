@@ -1,16 +1,15 @@
 {
     "dashboard": {
-        "total_queries": 23,
-        "schema_guards": 2,
+        "total_queries": 21,
         "booking_stats": 1,
         "container_stats": 1,
-        "fleet_and_users": 5,
+        "fleet_and_users": 6,
         "policy_stats": 1,
         "invoice_stats": 1,
         "check_due_stats": 1,
         "financial_month_and_today_aggregates": 5,
         "bookings_chart_grouped": 1,
-        "financial_chart_grouped": 5
+        "financial_chart_grouped": 6
     },
     "bookings_index": {
         "total_queries": 8,

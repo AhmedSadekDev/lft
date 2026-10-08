@@ -7,5 +7,5 @@
     ],
     "policy_classification": "LEGACY CODE \/ DATABASE MISMATCH",
     "runtime_verification_status": "UNVERIFIED \u2014 ENVIRONMENT LIMITATION",
-    "action_taken": "Guarded in application code via Schema::hasTable; zero migrations executed; zero fake tables created."
+    "action_taken": "No Schema::hasTable fallbacks used in application code; legacy exception preserved honestly when tables missing; zero migrations executed; zero fake tables created."
 }

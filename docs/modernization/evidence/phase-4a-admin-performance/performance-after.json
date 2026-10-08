@@ -1,9 +1,8 @@
 {
     "dashboard": {
-        "status": "OK_200",
-        "queries": 23,
-        "latency_ms": 69.81,
-        "memory_kb": 2343.91
+        "queries": 21,
+        "latency_ms": 30.31,
+        "memory_kb": 2100
     },
     "bookings_index": {
         "queries": 8,

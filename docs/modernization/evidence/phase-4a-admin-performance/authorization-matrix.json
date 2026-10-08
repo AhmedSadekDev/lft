@@ -4,7 +4,5 @@
     "bookings.create": "permission:bookings.create verified",
     "bookings.update": "permission:bookings.update verified",
     "bookings.delete": "permission:bookings.delete verified",
-    "superagent_guard": "jwt and session preserved",
-    "agent_guard": "jwt and session preserved",
     "authorization_mismatches": 0
 }

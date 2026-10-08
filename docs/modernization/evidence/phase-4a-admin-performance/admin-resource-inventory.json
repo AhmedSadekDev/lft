@@ -24,11 +24,12 @@
             "money_transfers",
             "payingcars",
             "bank_trnsactions",
-            "vaults (missing)"
+            "vaults (missing in leader)",
+            "vault_transactions (missing in leader)"
         ],
         "query_count_before": 103,
-        "query_count_after": 23,
-        "status": "OPTIMIZED_AND_RUNTIME_VERIFIED",
+        "query_count_after": 21,
+        "status": "OPTIMIZED_IN_CODE \/ LEGACY_DB_MISMATCH_IN_LOCAL_ENV",
         "optimization_priority": "HIGH"
     },
     {

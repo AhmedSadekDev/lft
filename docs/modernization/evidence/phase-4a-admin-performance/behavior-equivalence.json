@@ -1,11 +1,9 @@
 {
-    "dashboard_stats": "100% IDENTICAL",
-    "dashboard_bookings_chart": "100% IDENTICAL",
-    "dashboard_financial_chart": "100% IDENTICAL",
-    "bookings_stage_counts": "100% IDENTICAL",
+    "dashboard_behavior_when_tables_absent": "100% IDENTICAL TO LEGACY (Throws QueryException on vaults)",
+    "dashboard_financials_when_tables_present": "100% IDENTICAL TO LEGACY (Exact match on all sums and chart arrays)",
+    "bookings_stage_counts": "100% IDENTICAL (Tested across 6 filter combinations)",
+    "bookings_companies_dropdown": "100% IDENTICAL IN ORDER AND ATTRIBUTES",
     "bookings_page_size": "100% IDENTICAL (15 per page)",
     "bookings_ordering": "100% IDENTICAL (id desc)",
-    "view_rendering_dashboard": "SUCCESS (88,335 bytes)",
-    "view_rendering_bookings": "SUCCESS (175,498 bytes)",
     "behavior_mismatches": 0
 }

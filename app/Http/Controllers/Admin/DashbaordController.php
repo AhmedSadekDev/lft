@@ -27,9 +27,6 @@ class DashbaordController extends Controller
 {
     public function __invoke()
     {
-        $hasVaults = Schema::hasTable('vaults');
-        $hasVaultTx = Schema::hasTable('vault_transactions');
-
         $todayStart = now()->startOfDay()->toDateTimeString();
         $todayEnd = now()->endOfDay()->toDateTimeString();
         $weekStart = now()->startOfWeek()->toDateTimeString();
@@ -58,7 +55,7 @@ class DashbaordController extends Controller
         $total_companies = Company::count();
         $total_cars = Car::count();
         $total_drivers = Driver::count();
-        $vault_amount = $hasVaults ? (Vault::first()->amount ?? 0) : 0;
+        $vault_amount = Vault::first()->amount ?? 0;
 
         // 4. إحصائيات البوليصات (استعلام تجميعي واحد بدلاً من 2)
         $dpAgg = DeliveryPolicy::selectRaw("
@@ -129,16 +126,13 @@ class DashbaordController extends Controller
         $bti_today = (float)($btAgg[1]->today_val ?? 0);
         $bti_month = (float)($btAgg[1]->month_val ?? 0);
 
-        $vt_today = 0; $vt_month = 0; $vti_today = 0; $vti_month = 0;
-        if ($hasVaultTx) {
-            $vtAgg = VaultTransaction::where('created_at', '>=', $monthStart)
-                ->selectRaw("type, COALESCE(SUM(CASE WHEN created_at BETWEEN ? AND ? THEN amount END), 0) as today_val, COALESCE(SUM(amount), 0) as month_val", [$todayStart, $todayEnd])
-                ->groupBy('type')->get()->keyBy('type');
-            $vt_today = (float)($vtAgg[0]->today_val ?? 0);
-            $vt_month = (float)($vtAgg[0]->month_val ?? 0);
-            $vti_today = (float)($vtAgg[1]->today_val ?? 0);
-            $vti_month = (float)($vtAgg[1]->month_val ?? 0);
-        }
+        $vtAgg = VaultTransaction::where('created_at', '>=', $monthStart)
+            ->selectRaw("type, COALESCE(SUM(CASE WHEN created_at BETWEEN ? AND ? THEN amount END), 0) as today_val, COALESCE(SUM(amount), 0) as month_val", [$todayStart, $todayEnd])
+            ->groupBy('type')->get()->keyBy('type');
+        $vt_today = (float)($vtAgg[0]->today_val ?? 0);
+        $vt_month = (float)($vtAgg[0]->month_val ?? 0);
+        $vti_today = (float)($vtAgg[1]->today_val ?? 0);
+        $vti_month = (float)($vtAgg[1]->month_val ?? 0);
 
         $ipAgg = InvoicePayment::where('created_at', '>=', $monthStart)
             ->where(function($query) {
@@ -235,6 +229,14 @@ class DashbaordController extends Controller
             })
             ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, SUM(value) as val")->groupBy('ym')->pluck('val', 'ym');
 
+        $vtChart = VaultTransaction::where('created_at', '>=', $sixMonthsAgo)
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, type, SUM(amount) as val")->groupBy('ym', 'type')
+            ->get();
+        $vtChartGrouped = [];
+        foreach ($vtChart as $row) {
+            $vtChartGrouped[$row->ym][$row->type] = (float)$row->val;
+        }
+
         $fMonths = []; $fExpenses = []; $fIncome = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
@@ -246,12 +248,14 @@ class DashbaordController extends Controller
             $me += (float)($mtChartGrouped[$ym][MoneyTransfer::settle] ?? 0);
             $me += (float)($mtChartGrouped[$ym][MoneyTransfer::transferAgent] ?? 0);
             $me += (float)($pcChart[$ym] ?? 0);
+            $me += (float)($vtChartGrouped[$ym][0] ?? 0);
             $me += (float)($btChartGrouped[$ym][0] ?? 0);
             $fExpenses[] = $me;
 
             $mi = (float)($mtChartGrouped[$ym][MoneyTransfer::officeCommission] ?? 0);
             $mi += (float)($mtChartGrouped[$ym][MoneyTransfer::fromDashboard] ?? 0);
             $mi += (float)($ipChart[$ym] ?? 0);
+            $mi += (float)($vtChartGrouped[$ym][1] ?? 0);
             $mi += (float)($btChartGrouped[$ym][1] ?? 0);
             $fIncome[] = $mi;
         }
