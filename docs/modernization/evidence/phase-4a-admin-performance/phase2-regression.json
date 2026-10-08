@@ -1,0 +1,9 @@
+{
+    "status": "PASSED",
+    "search_profiles_verified": true,
+    "sort_allowlists_verified": true,
+    "date_filtering_verified": true,
+    "comparisons": 126,
+    "mismatches": 0,
+    "regressions": 0
+}

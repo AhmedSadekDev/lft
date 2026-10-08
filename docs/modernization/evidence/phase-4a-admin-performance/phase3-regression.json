@@ -1,0 +1,8 @@
+{
+    "status": "PASSED",
+    "multi_container_bookings_verified": "13\/13 100% IDENTICAL",
+    "per_page_greater_than_250": "VERIFIED (300, 500, 1000)",
+    "stage_filtering_and_isolation": "100% ACCURATE",
+    "without_invoiced_booking": "VERIFIED",
+    "regressions": 0
+}

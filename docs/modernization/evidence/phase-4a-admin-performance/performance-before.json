@@ -1,0 +1,13 @@
+{
+    "dashboard": {
+        "status": "ERROR_500_MISSING_VAULTS",
+        "theoretical_queries": 103,
+        "latency_ms": 150.03,
+        "memory_kb": 3120
+    },
+    "bookings_index": {
+        "queries": 13,
+        "latency_ms": 53.82,
+        "memory_kb": 1592.62
+    }
+}

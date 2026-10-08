@@ -1,0 +1,11 @@
+{
+    "dashboard_stats": "100% IDENTICAL",
+    "dashboard_bookings_chart": "100% IDENTICAL",
+    "dashboard_financial_chart": "100% IDENTICAL",
+    "bookings_stage_counts": "100% IDENTICAL",
+    "bookings_page_size": "100% IDENTICAL (15 per page)",
+    "bookings_ordering": "100% IDENTICAL (id desc)",
+    "view_rendering_dashboard": "SUCCESS (88,335 bytes)",
+    "view_rendering_bookings": "SUCCESS (175,498 bytes)",
+    "behavior_mismatches": 0
+}

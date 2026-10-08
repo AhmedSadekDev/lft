@@ -1,0 +1,12 @@
+{
+    "business_dml_against_leader": 0,
+    "inserts": 0,
+    "updates": 0,
+    "deletes": 0,
+    "truncates": 0,
+    "replaces": 0,
+    "migration_commands_run": 0,
+    "index_ddl_executed": 0,
+    "non_index_ddl_executed": 0,
+    "read_only_policy_compliance": "100% STRICTLY ENFORCED"
+}

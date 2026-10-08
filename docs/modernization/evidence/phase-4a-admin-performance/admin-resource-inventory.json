@@ -1,0 +1,218 @@
+[
+    {
+        "route": "\/admin",
+        "name": "home",
+        "method": "GET",
+        "controller_action": "DashbaordController@__invoke",
+        "guard": "web",
+        "middleware": [
+            "auth"
+        ],
+        "view": "admin.index",
+        "main_tables": [
+            "bookings",
+            "booking_containers",
+            "agents",
+            "superagents",
+            "companies",
+            "cars",
+            "drivers",
+            "delivery_policies",
+            "invoices",
+            "invoice_payments",
+            "agent_expenses",
+            "money_transfers",
+            "payingcars",
+            "bank_trnsactions",
+            "vaults (missing)"
+        ],
+        "query_count_before": 103,
+        "query_count_after": 23,
+        "status": "OPTIMIZED_AND_RUNTIME_VERIFIED",
+        "optimization_priority": "HIGH"
+    },
+    {
+        "route": "\/admin\/bookings",
+        "name": "bookings.index",
+        "method": "GET",
+        "controller_action": "BookingController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:bookings.index"
+        ],
+        "view": "admin.bookings.index",
+        "main_tables": [
+            "bookings",
+            "booking_containers",
+            "companies",
+            "factories",
+            "invoices"
+        ],
+        "query_count_before": 13,
+        "query_count_after": 8,
+        "status": "OPTIMIZED_AND_RUNTIME_VERIFIED",
+        "optimization_priority": "HIGH"
+    },
+    {
+        "route": "\/admin\/companies",
+        "name": "companies.index",
+        "method": "GET",
+        "controller_action": "CompanyController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:companies.index"
+        ],
+        "view": "admin.companies.index",
+        "main_tables": [
+            "companies",
+            "bookings",
+            "invoices",
+            "invoice_payments"
+        ],
+        "query_count_before": 5,
+        "query_count_after": 5,
+        "status": "INSPECTED_EFFICIENT",
+        "optimization_priority": "LOW"
+    },
+    {
+        "route": "\/admin\/cars",
+        "name": "cars.index",
+        "method": "GET",
+        "controller_action": "CarController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:cars.index"
+        ],
+        "view": "admin.cars.index",
+        "main_tables": [
+            "cars",
+            "delivery_policies",
+            "money_transfers",
+            "booking_contrainer_extra_costs",
+            "payingcars"
+        ],
+        "query_count_before": 8,
+        "query_count_after": 8,
+        "status": "INSPECTED_RETAINED",
+        "optimization_priority": "MEDIUM"
+    },
+    {
+        "route": "\/admin\/drivers",
+        "name": "drivers.index",
+        "method": "GET",
+        "controller_action": "DriverController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:drivers.index"
+        ],
+        "view": "admin.drivers.index",
+        "main_tables": [
+            "drivers"
+        ],
+        "query_count_before": 2,
+        "query_count_after": 2,
+        "status": "INSPECTED_EFFICIENT",
+        "optimization_priority": "LOW"
+    },
+    {
+        "route": "\/admin\/receipts",
+        "name": "receipts.index",
+        "method": "GET",
+        "controller_action": "ReceiptController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:receipts.index"
+        ],
+        "view": "admin.receipts.index",
+        "main_tables": [
+            "receipts",
+            "suppliers"
+        ],
+        "query_count_before": 2,
+        "query_count_after": 2,
+        "status": "INSPECTED_EFFICIENT",
+        "optimization_priority": "LOW"
+    },
+    {
+        "route": "\/admin\/moneytransfers",
+        "name": "moneytransfers.index",
+        "method": "GET",
+        "controller_action": "MoneyTransferController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:moneytransfers.index"
+        ],
+        "view": "admin.moneytransfers.index",
+        "main_tables": [
+            "money_transfers"
+        ],
+        "query_count_before": 1,
+        "query_count_after": 1,
+        "status": "INSPECTED_EFFICIENT",
+        "optimization_priority": "LOW"
+    },
+    {
+        "route": "\/admin\/containers",
+        "name": "containers.index",
+        "method": "GET",
+        "controller_action": "ContainerController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:containers.index"
+        ],
+        "view": "admin.containers.index",
+        "main_tables": [
+            "containers"
+        ],
+        "query_count_before": 2,
+        "query_count_after": 2,
+        "status": "INSPECTED_EFFICIENT",
+        "optimization_priority": "LOW"
+    },
+    {
+        "route": "\/admin\/agents",
+        "name": "agents.index",
+        "method": "GET",
+        "controller_action": "AgentController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:agents.index"
+        ],
+        "view": "admin.agents.index",
+        "main_tables": [
+            "agents"
+        ],
+        "query_count_before": 1,
+        "query_count_after": 1,
+        "status": "INSPECTED_EFFICIENT",
+        "optimization_priority": "LOW"
+    },
+    {
+        "route": "\/admin\/employees",
+        "name": "employees.index",
+        "method": "GET",
+        "controller_action": "EmployeeController@index",
+        "guard": "web",
+        "middleware": [
+            "auth",
+            "permission:employees.index"
+        ],
+        "view": "admin.employees.index",
+        "main_tables": [
+            "employees",
+            "companies"
+        ],
+        "query_count_before": 2,
+        "query_count_after": 2,
+        "status": "INSPECTED_EFFICIENT",
+        "optimization_priority": "LOW"
+    }
+]

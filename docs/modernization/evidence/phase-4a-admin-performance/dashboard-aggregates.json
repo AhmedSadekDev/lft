@@ -1,0 +1,9 @@
+{
+    "booking_stats": "COUNT(*), COUNT(today), COUNT(week), COUNT(month) unified in 1 query",
+    "container_stats": "COUNT(*), COUNT(today) unified in 1 query",
+    "policy_stats": "COUNT(*), COUNT(today) unified in 1 query",
+    "invoice_stats": "COUNT(*), COUNT(today), COUNT(month) unified in 1 query",
+    "money_transfers": "GROUP BY type unified in 1 query instead of 10 queries",
+    "bank_transactions": "GROUP BY type unified in 1 query instead of 4 queries",
+    "monthly_charts": "GROUP BY ym, type unified in 5 bulk queries instead of 72 sequential queries"
+}

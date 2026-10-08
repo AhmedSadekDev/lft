@@ -1,0 +1,8 @@
+{
+    "total_tests_run": 136,
+    "tests_passed": 101,
+    "preexisting_failures": 35,
+    "new_failures": 0,
+    "new_errors": 0,
+    "baseline_comparison": "MATCH (Baseline: 99 passed, 35 pre-existing in ParallelContainerStagesTest; Final: 101 passed, 35 pre-existing)"
+}

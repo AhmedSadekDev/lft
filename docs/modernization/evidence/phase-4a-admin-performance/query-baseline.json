@@ -1,0 +1,20 @@
+{
+    "dashboard": {
+        "total_queries": 103,
+        "booking_stats": 4,
+        "container_stats": 2,
+        "policy_stats": 2,
+        "invoice_stats": 3,
+        "financial_month_and_today_aggregates": 24,
+        "bookings_chart_loop": 6,
+        "financial_chart_loop": 72
+    },
+    "bookings_index": {
+        "total_queries": 13,
+        "stage_tab_counts": 6,
+        "paginator_count": 1,
+        "paginator_items": 1,
+        "eager_loads": 4,
+        "companies_filter_dropdown": 1
+    }
+}

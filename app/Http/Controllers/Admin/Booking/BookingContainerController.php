@@ -66,7 +66,7 @@ class BookingContainerController extends Controller
             'company_prices' => $company_prices,
             'container_types' => Container::all()->pluck('full_name', 'id'),
             'available_statuses' => BookingContainerStatusMapper::getAll('ar'),
-            'yards' => Yard::all()->pluck('title', 'id')
+            'yards' => \Illuminate\Support\Facades\Schema::hasTable('yards') ? Yard::all()->pluck('title', 'id') : collect([])
         ];
     }
 

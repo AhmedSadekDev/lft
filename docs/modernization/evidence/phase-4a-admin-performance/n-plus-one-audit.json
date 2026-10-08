@@ -1,0 +1,18 @@
+{
+    "dashboard_chart_loop": {
+        "pattern": "for ($i = 5; $i >= 0; $i--) querying AgentExpense, MoneyTransfer (x5 types), Payingcar, BankTrnsaction (x2 types), InvoicePayment",
+        "query_multiplication": "6 iterations x 12 queries = 72 queries",
+        "resolution": "Single DATE_FORMAT(created_at, \"%Y-%m\") grouped query per model; PHP maps to labels in memory.",
+        "queries_eliminated": 67
+    },
+    "bookings_stage_counts": {
+        "pattern": "6 sequential count queries on clone $query",
+        "resolution": "1 conditional aggregation query using selectRaw with CASE WHEN EXISTS",
+        "queries_eliminated": 5
+    },
+    "bookings_eager_load_leak": {
+        "pattern": "Model::first() on query with eager loads executed 4 relationship queries with dummy 0=1 bindings",
+        "resolution": "setEagerLoads([]) on aggregate query",
+        "queries_eliminated": 4
+    }
+}

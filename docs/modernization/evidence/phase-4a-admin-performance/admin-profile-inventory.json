@@ -1,0 +1,138 @@
+{
+    "Dashboard": {
+        "status": "ERROR",
+        "error_message": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'leader.vaults' doesn't exist (SQL: select * from `vaults` limit 1)",
+        "query_count": 11,
+        "execution_time_ms": 40.07,
+        "queries_before_error": [
+            "select count(*) as aggregate from `bookings`",
+            "select count(*) as aggregate from `bookings` where date(`created_at`) = ?",
+            "select count(*) as aggregate from `bookings` where `created_at` between ? and ?",
+            "select count(*) as aggregate from `bookings` where month(`created_at`) = ? and year(`created_at`) = ?",
+            "select count(*) as aggregate from `booking_containers`",
+            "select count(*) as aggregate from `booking_containers` where date(`created_at`) = ?",
+            "select count(*) as aggregate from `agents`",
+            "select count(*) as aggregate from `superagents`",
+            "select count(*) as aggregate from `companies`",
+            "select count(*) as aggregate from `cars`",
+            "select count(*) as aggregate from `drivers`"
+        ]
+    },
+    "Bookings": {
+        "status": "OK",
+        "query_count": 13,
+        "total_query_time_ms": 14.12,
+        "execution_time_ms": 53.82,
+        "memory_used_kb": 1592.62,
+        "queries": [
+            "select count(*) as aggregate from `bookings`",
+            "select count(*) as aggregate from `bookings` where exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and (`status` = ? or (`status` = ? and `superagent_specification_approved` = ?)))",
+            "select count(*) as aggregate from `bookings` where exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_specification_approved` = ? and `is_in_loading` = ? and `superagent_loading_approved` = ?)",
+            "select count(*) as aggregate from `bookings` where exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_specification_approved` = ? and `is_in_loading` = ? and `superagent_loading_approved` = ?)",
+            "select count(*) as aggregate from `bookings` where exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_loading_approved` = ? and `superagent_unloading_approved` = ?)",
+            "select count(*) as aggregate from `bookings` where (exists (select * from `invoices` where `bookings`.`id` = `invoices`.`booking_id`) or exists (select * from `booking_containers` where `bookings`.`id` = `booking_containers`.`booking_id` and `superagent_unloading_approved` = ?))",
+            "select count(*) as aggregate from `bookings`",
+            "select * from `bookings` order by `id` desc limit 15 offset 0",
+            "select * from `companies` where `companies`.`id` in (5, 6, 7, 8, 21, 23)",
+            "select * from `factories` where `factories`.`id` in (4, 5, 8, 10, 17, 20, 28, 33, 51, 74, 126, 150)",
+            "select * from `invoices` where `invoices`.`booking_id` in (495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509)",
+            "select * from `booking_containers` where `booking_containers`.`booking_id` in (495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509)",
+            "select * from `companies`"
+        ]
+    },
+    "Companies": {
+        "status": "OK",
+        "query_count": 5,
+        "total_query_time_ms": 5.65,
+        "execution_time_ms": 13.81,
+        "memory_used_kb": 98.55,
+        "queries": [
+            "select count(*) as aggregate from `companies`",
+            "select * from `companies` order by `id` desc limit 20 offset 0",
+            "select * from `bookings` where `bookings`.`company_id` in (28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 43, 44, 45, 46, 47, 48, 49)",
+            "select * from `invoices` where `invoices`.`booking_id` in (40, 61, 89, 102, 162, 213, 220, 236, 237, 238, 243, 251, 252, 275, 316, 317, 322, 357, 378, 379, 380, 381, 387, 401, 427, 441, 448, 462, 468, 489, 490, 491, 493)",
+            "select * from `invoice_payments` where `invoice_payments`.`invoice_id` in (26, 32, 144, 157, 197, 276, 284, 289, 297, 299)"
+        ]
+    },
+    "Cars": {
+        "status": "OK",
+        "query_count": 8,
+        "total_query_time_ms": 8.14,
+        "execution_time_ms": 18.89,
+        "memory_used_kb": 74.68,
+        "queries": [
+            "select count(*) as aggregate from `cars`",
+            "select * from `cars` order by `id` desc limit 15 offset 0",
+            "select * from `delivery_policies` where `delivery_policies`.`car_id` in (164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 179)",
+            "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+            "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+            "select * from `booking_contrainer_extra_costs` where `booking_contrainer_extra_costs`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+            "select * from `payingcars` where `payingcars`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+            "select * from `payingcars` where `payingcars`.`car_id` in (164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 179)"
+        ]
+    },
+    "Drivers": {
+        "status": "OK",
+        "query_count": 2,
+        "total_query_time_ms": 1.89,
+        "execution_time_ms": 4.59,
+        "memory_used_kb": -25.57,
+        "queries": [
+            "select count(*) as aggregate from `drivers`",
+            "select * from `drivers` order by `id` desc limit 15 offset 0"
+        ]
+    },
+    "Receipts": {
+        "status": "OK",
+        "query_count": 2,
+        "total_query_time_ms": 1.76,
+        "execution_time_ms": 6.92,
+        "memory_used_kb": 132.77,
+        "queries": [
+            "select count(*) as aggregate from `receipts`",
+            "select `id`, `name` from `suppliers` order by `name` asc"
+        ]
+    },
+    "MoneyTransfers": {
+        "status": "OK",
+        "query_count": 1,
+        "total_query_time_ms": 3.84,
+        "execution_time_ms": 23.2,
+        "memory_used_kb": 1193.17,
+        "queries": [
+            "select * from `money_transfers` where (`transfered_type` = ? or `transferer_type` = ?) order by `created_at` desc"
+        ]
+    },
+    "Containers": {
+        "status": "OK",
+        "query_count": 2,
+        "total_query_time_ms": 2.39,
+        "execution_time_ms": 5.87,
+        "memory_used_kb": -934.41,
+        "queries": [
+            "select count(*) as aggregate from `containers`",
+            "select * from `containers` order by `id` desc limit 15 offset 0"
+        ]
+    },
+    "Agents": {
+        "status": "OK",
+        "query_count": 1,
+        "total_query_time_ms": 0.7,
+        "execution_time_ms": 3.12,
+        "memory_used_kb": 87.3,
+        "queries": [
+            "select * from `agents`"
+        ]
+    },
+    "Employees": {
+        "status": "OK",
+        "query_count": 2,
+        "total_query_time_ms": 1.78,
+        "execution_time_ms": 6.87,
+        "memory_used_kb": 267.02,
+        "queries": [
+            "select * from `employees`",
+            "select * from `companies` where `companies`.`id` in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 28, 30, 34, 36, 41, 43, 44, 45, 47, 48, 49)"
+        ]
+    }
+}

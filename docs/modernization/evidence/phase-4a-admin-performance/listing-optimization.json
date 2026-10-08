@@ -1,0 +1,14 @@
+{
+    "bookings_index": {
+        "stage_counts_optimized": true,
+        "eager_loads_preserved": [
+            "company",
+            "factory",
+            "invoice",
+            "bookingContainers"
+        ],
+        "pagination_preserved": "paginate(15) unchanged",
+        "search_and_filters_preserved": "filterListing($request) intact",
+        "stage_tab_counts_numeric_match": "100% across all filter combinations"
+    }
+}

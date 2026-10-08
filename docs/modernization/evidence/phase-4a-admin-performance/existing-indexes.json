@@ -1,0 +1,15 @@
+{
+    "bookings": [
+        "PRIMARY",
+        "fk_bookings_company_id",
+        "fk_bookings_employee_id",
+        "fk_bookings_shipping_agent_id",
+        "fk_bookings_factory_id",
+        "idx_bookings_booking_number"
+    ],
+    "booking_containers": [
+        "PRIMARY",
+        "fk_booking_containers_booking_id",
+        "fk_booking_containers_agent_id"
+    ]
+}

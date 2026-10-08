@@ -48,14 +48,53 @@ class BookingController extends Controller
 
         $query->filterListing($request);
 
-        // Calculate counts for each stage tab based on the current filtered query
+        // Calculate counts for each stage tab via single conditional aggregation query (Phase 4A optimization)
+        $stageRow = (clone $query)->setEagerLoads([])
+            ->selectRaw("
+                COUNT(*) as count_all,
+                COUNT(CASE WHEN EXISTS (
+                    SELECT 1 FROM `booking_containers` 
+                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
+                      AND (`status` = 0 OR (`status` = 1 AND `superagent_specification_approved` = 0))
+                ) THEN 1 END) as count_assigned,
+                COUNT(CASE WHEN EXISTS (
+                    SELECT 1 FROM `booking_containers` 
+                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
+                      AND `superagent_specification_approved` = 1 
+                      AND `is_in_loading` = 0 
+                      AND `superagent_loading_approved` = 0
+                ) THEN 1 END) as count_waiting,
+                COUNT(CASE WHEN EXISTS (
+                    SELECT 1 FROM `booking_containers` 
+                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
+                      AND `superagent_specification_approved` = 1 
+                      AND `is_in_loading` = 1 
+                      AND `superagent_loading_approved` = 0
+                ) THEN 1 END) as count_loading,
+                COUNT(CASE WHEN EXISTS (
+                    SELECT 1 FROM `booking_containers` 
+                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
+                      AND `superagent_loading_approved` = 1 
+                      AND `superagent_unloading_approved` = 0
+                ) THEN 1 END) as count_unloading,
+                COUNT(CASE WHEN EXISTS (
+                    SELECT 1 FROM `invoices` 
+                    WHERE `invoices`.`booking_id` = `bookings`.`id`
+                ) OR EXISTS (
+                    SELECT 1 FROM `booking_containers` 
+                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
+                      AND `superagent_unloading_approved` = 1
+                ) THEN 1 END) as count_invoiced
+            ")
+            ->first();
+
         $stageCounts = [
-            'all'       => (clone $query)->count(),
-            'assigned'  => (clone $query)->filterStage('assigned')->count(),
-            'waiting'   => (clone $query)->filterStage('waiting')->count(),
-            'loading'   => (clone $query)->filterStage('loading')->count(),
-            'unloading' => (clone $query)->filterStage('unloading')->count(),
-            'invoiced'  => (clone $query)->filterStage('invoiced')->count(),
+            'all'       => (int) ($stageRow->count_all ?? 0),
+            'assigned'  => (int) ($stageRow->count_assigned ?? 0),
+            'waiting'   => (int) ($stageRow->count_waiting ?? 0),
+            'loading'   => (int) ($stageRow->count_loading ?? 0),
+            'unloading' => (int) ($stageRow->count_unloading ?? 0),
+            'invoiced'  => (int) ($stageRow->count_invoiced ?? 0),
         ];
 
         // Stage filter
@@ -70,7 +109,7 @@ class BookingController extends Controller
 
         $bookings = $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
 
-        $companies = Company::query()->get();
+        $companies = Company::query()->select("id", "name")->orderBy("name")->get();
 
         return view('admin.bookings.index', compact('bookings', 'companies', 'stageCounts', 'currentStage'));
     }

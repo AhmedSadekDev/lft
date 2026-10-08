@@ -3,10 +3,13 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-require __DIR__.'/../../../../vendor/autoload.php';
-$app = require_once __DIR__.'/../../../../bootstrap/app.php';
-$kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
-$kernel->bootstrap();
+require_once __DIR__.'/../../../../vendor/autoload.php';
+
+if (!isset($app) || !($app instanceof \Illuminate\Contracts\Foundation\Application)) {
+    $app = require __DIR__.'/../../../../bootstrap/app.php';
+    $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+    $kernel->bootstrap();
+}
 
 $db = \Illuminate\Support\Facades\DB::connection();
 

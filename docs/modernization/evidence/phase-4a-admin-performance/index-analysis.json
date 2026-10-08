@@ -1,0 +1,8 @@
+{
+    "indexes_proposed": 0,
+    "indexes_approved": 0,
+    "indexes_applied": 0,
+    "indexes_rejected": 0,
+    "decision": "Zero new indexes justified. All operational tables fit in buffer pool (< 1000 rows). Target latencies achieved via SQL consolidation without schema mutations.",
+    "sql_deliverable": "docs\/modernization\/phase-4a-performance-indexes.sql (documented no-op)"
+}

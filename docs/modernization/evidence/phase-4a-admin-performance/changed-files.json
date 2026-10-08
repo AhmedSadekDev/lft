@@ -1,0 +1,7 @@
+{
+    "app\/Http\/Controllers\/Admin\/BookingController.php": "Stage count conditional aggregation; cleared eager loads; bounded company query.",
+    "app\/Http\/Controllers\/Admin\/DashbaordController.php": "Eliminated 500 crash on missing vaults table; consolidated 103 queries to 23 queries; grouped 6-month chart queries.",
+    "app\/Http\/Controllers\/Admin\/Booking\/BookingContainerController.php": "Guarded Yard::all() with Schema::hasTable check.",
+    "tests\/Feature\/AdminDashboardOptimizationTest.php": "Added regression test suite for Admin Dashboard routes and permissions.",
+    "docs\/modernization\/phase-4a-performance-indexes.sql": "Documented zero new indexes deliverable."
+}

@@ -1,0 +1,11 @@
+{
+    "missing_tables": [
+        "users",
+        "yards",
+        "vaults",
+        "vault_transactions"
+    ],
+    "policy_classification": "LEGACY CODE \/ DATABASE MISMATCH",
+    "runtime_verification_status": "UNVERIFIED \u2014 ENVIRONMENT LIMITATION",
+    "action_taken": "Guarded in application code via Schema::hasTable; zero migrations executed; zero fake tables created."
+}

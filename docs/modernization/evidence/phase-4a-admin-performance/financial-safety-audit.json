@@ -1,0 +1,13 @@
+{
+    "formulas_modified": 0,
+    "rounding_modified": 0,
+    "commission_formulas_modified": 0,
+    "account_controller_modified": 0,
+    "cars_financial_batching_touched": "NO - Kept out of scope per policy",
+    "today_expenses_match": true,
+    "today_income_match": true,
+    "month_expenses_match": true,
+    "month_income_match": true,
+    "financial_chart_monthly_totals_match": true,
+    "financial_mismatches": 0
+}

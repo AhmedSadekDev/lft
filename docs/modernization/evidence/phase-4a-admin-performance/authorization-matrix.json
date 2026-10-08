@@ -1,0 +1,10 @@
+{
+    "web_guard": "Enforced across admin routes via auth middleware",
+    "bookings.index": "permission:bookings.index verified via middleware reflection",
+    "bookings.create": "permission:bookings.create verified",
+    "bookings.update": "permission:bookings.update verified",
+    "bookings.delete": "permission:bookings.delete verified",
+    "superagent_guard": "jwt and session preserved",
+    "agent_guard": "jwt and session preserved",
+    "authorization_mismatches": 0
+}

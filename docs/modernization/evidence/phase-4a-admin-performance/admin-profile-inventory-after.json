@@ -1,0 +1,146 @@
+{
+    "Dashboard": {
+        "status": "OK",
+        "query_count": 23,
+        "total_query_time_ms": 27.3,
+        "execution_time_ms": 85.21,
+        "memory_used_kb": 2343.91,
+        "queries": [
+            "select * from information_schema.tables where table_schema = ? and table_name = ? and table_type = 'BASE TABLE'",
+            "select * from information_schema.tables where table_schema = ? and table_name = ? and table_type = 'BASE TABLE'",
+            "select \r\n            COUNT(*) as total_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as today_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as week_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as month_count\r\n         from `bookings` limit 1",
+            "select \r\n            COUNT(*) as total_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as today_count\r\n         from `booking_containers` limit 1",
+            "select count(*) as aggregate from `agents`",
+            "select count(*) as aggregate from `superagents`",
+            "select count(*) as aggregate from `companies`",
+            "select count(*) as aggregate from `cars`",
+            "select count(*) as aggregate from `drivers`",
+            "select \r\n            COUNT(*) as total_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as today_count\r\n         from `delivery_policies` limit 1",
+            "select \r\n            COUNT(*) as total_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as today_count,\r\n            COUNT(CASE WHEN created_at BETWEEN ? AND ? THEN 1 END) as month_count\r\n         from `invoices` limit 1",
+            "select count(*) as aggregate from `invoice_payments` where `payment_type` = ? and `check_paid_at` is null and `check_due_date` is not null and `check_due_date` between ? and ?",
+            "select \r\n                COALESCE(SUM(CASE WHEN created_at BETWEEN ? AND ? THEN value END), 0) as today_val,\r\n                COALESCE(SUM(value), 0) as month_val\r\n             from `agent_expenses` where `created_at` >= ? and `agent_expenses`.`voided_at` is null limit 1",
+            "select \r\n                type,\r\n                COALESCE(SUM(CASE WHEN created_at BETWEEN ? AND ? THEN value END), 0) as today_val,\r\n                COALESCE(SUM(value), 0) as month_val\r\n             from `money_transfers` where `created_at` >= ? group by `type`",
+            "select \r\n                COALESCE(SUM(CASE WHEN created_at BETWEEN ? AND ? THEN value END), 0) as today_val,\r\n                COALESCE(SUM(value), 0) as month_val\r\n             from `payingcars` where `created_at` >= ? limit 1",
+            "select \r\n                type,\r\n                COALESCE(SUM(CASE WHEN created_at BETWEEN ? AND ? THEN amount END), 0) as today_val,\r\n                COALESCE(SUM(amount), 0) as month_val\r\n             from `bank_trnsactions` where `created_at` >= ? group by `type`",
+            "select \r\n                COALESCE(SUM(CASE WHEN created_at BETWEEN ? AND ? THEN value END), 0) as today_val,\r\n                COALESCE(SUM(value), 0) as month_val\r\n             from `invoice_payments` where `created_at` >= ? and (`payment_type` != ? or (`payment_type` = ? and `check_paid_at` is not null)) limit 1",
+            "select DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as cnt from `bookings` where `created_at` >= ? group by `ym`",
+            "select DATE_FORMAT(created_at, '%Y-%m') as ym, SUM(value) as val from `agent_expenses` where `created_at` >= ? and `agent_expenses`.`voided_at` is null group by `ym`",
+            "select DATE_FORMAT(created_at, '%Y-%m') as ym, type, SUM(value) as val from `money_transfers` where `created_at` >= ? group by `ym`, `type`",
+            "select DATE_FORMAT(created_at, '%Y-%m') as ym, SUM(value) as val from `payingcars` where `created_at` >= ? group by `ym`",
+            "select DATE_FORMAT(created_at, '%Y-%m') as ym, type, SUM(amount) as val from `bank_trnsactions` where `created_at` >= ? group by `ym`, `type`",
+            "select DATE_FORMAT(created_at, '%Y-%m') as ym, SUM(value) as val from `invoice_payments` where `created_at` >= ? and (`payment_type` != ? or (`payment_type` = ? and `check_paid_at` is not null)) group by `ym`"
+        ]
+    },
+    "Bookings": {
+        "status": "OK",
+        "query_count": 8,
+        "total_query_time_ms": 38.41,
+        "execution_time_ms": 67.18,
+        "memory_used_kb": 735.78,
+        "queries": [
+            "select \r\n                COUNT(*) as count_all,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND (`status` = 0 OR (`status` = 1 AND `superagent_specification_approved` = 0))\r\n                ) THEN 1 END) as count_assigned,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND `superagent_specification_approved` = 1 \r\n                      AND `is_in_loading` = 0 \r\n                      AND `superagent_loading_approved` = 0\r\n                ) THEN 1 END) as count_waiting,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND `superagent_specification_approved` = 1 \r\n                      AND `is_in_loading` = 1 \r\n                      AND `superagent_loading_approved` = 0\r\n                ) THEN 1 END) as count_loading,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND `superagent_loading_approved` = 1 \r\n                      AND `superagent_unloading_approved` = 0\r\n                ) THEN 1 END) as count_unloading,\r\n                COUNT(CASE WHEN EXISTS (\r\n                    SELECT 1 FROM `invoices` \r\n                    WHERE `invoices`.`booking_id` = `bookings`.`id`\r\n                ) OR EXISTS (\r\n                    SELECT 1 FROM `booking_containers` \r\n                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` \r\n                      AND `superagent_unloading_approved` = 1\r\n                ) THEN 1 END) as count_invoiced\r\n             from `bookings` limit 1",
+            "select count(*) as aggregate from `bookings`",
+            "select * from `bookings` order by `id` desc limit 15 offset 0",
+            "select * from `companies` where `companies`.`id` in (5, 6, 7, 8, 21, 23)",
+            "select * from `factories` where `factories`.`id` in (4, 5, 8, 10, 17, 20, 28, 33, 51, 74, 126, 150)",
+            "select * from `invoices` where `invoices`.`booking_id` in (495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509)",
+            "select * from `booking_containers` where `booking_containers`.`booking_id` in (495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509)",
+            "select `id`, `name` from `companies` order by `name` asc"
+        ]
+    },
+    "Companies": {
+        "status": "OK",
+        "query_count": 5,
+        "total_query_time_ms": 6.49,
+        "execution_time_ms": 17.26,
+        "memory_used_kb": 72.71,
+        "queries": [
+            "select count(*) as aggregate from `companies`",
+            "select * from `companies` order by `id` desc limit 20 offset 0",
+            "select * from `bookings` where `bookings`.`company_id` in (28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 43, 44, 45, 46, 47, 48, 49)",
+            "select * from `invoices` where `invoices`.`booking_id` in (40, 61, 89, 102, 162, 213, 220, 236, 237, 238, 243, 251, 252, 275, 316, 317, 322, 357, 378, 379, 380, 381, 387, 401, 427, 441, 448, 462, 468, 489, 490, 491, 493)",
+            "select * from `invoice_payments` where `invoice_payments`.`invoice_id` in (26, 32, 144, 157, 197, 276, 284, 289, 297, 299)"
+        ]
+    },
+    "Cars": {
+        "status": "OK",
+        "query_count": 8,
+        "total_query_time_ms": 7.49,
+        "execution_time_ms": 18.78,
+        "memory_used_kb": -48.34,
+        "queries": [
+            "select count(*) as aggregate from `cars`",
+            "select * from `cars` order by `id` desc limit 15 offset 0",
+            "select * from `delivery_policies` where `delivery_policies`.`car_id` in (164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 179)",
+            "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+            "select * from `money_transfers` where `type` = ? and `money_transfers`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+            "select * from `booking_contrainer_extra_costs` where `booking_contrainer_extra_costs`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+            "select * from `payingcars` where `payingcars`.`delivery_policy_id` in (111, 131, 137, 175, 184, 187, 206, 208, 233, 234, 235, 246)",
+            "select * from `payingcars` where `payingcars`.`car_id` in (164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 179)"
+        ]
+    },
+    "Drivers": {
+        "status": "OK",
+        "query_count": 2,
+        "total_query_time_ms": 2.42,
+        "execution_time_ms": 5.75,
+        "memory_used_kb": -25.88,
+        "queries": [
+            "select count(*) as aggregate from `drivers`",
+            "select * from `drivers` order by `id` desc limit 15 offset 0"
+        ]
+    },
+    "Receipts": {
+        "status": "OK",
+        "query_count": 2,
+        "total_query_time_ms": 1.64,
+        "execution_time_ms": 7.29,
+        "memory_used_kb": 132.5,
+        "queries": [
+            "select count(*) as aggregate from `receipts`",
+            "select `id`, `name` from `suppliers` order by `name` asc"
+        ]
+    },
+    "MoneyTransfers": {
+        "status": "OK",
+        "query_count": 1,
+        "total_query_time_ms": 7.63,
+        "execution_time_ms": 38.28,
+        "memory_used_kb": 1193.13,
+        "queries": [
+            "select * from `money_transfers` where (`transfered_type` = ? or `transferer_type` = ?) order by `created_at` desc"
+        ]
+    },
+    "Containers": {
+        "status": "OK",
+        "query_count": 2,
+        "total_query_time_ms": 2.56,
+        "execution_time_ms": 7.41,
+        "memory_used_kb": -927.66,
+        "queries": [
+            "select count(*) as aggregate from `containers`",
+            "select * from `containers` order by `id` desc limit 15 offset 0"
+        ]
+    },
+    "Agents": {
+        "status": "OK",
+        "query_count": 1,
+        "total_query_time_ms": 0.85,
+        "execution_time_ms": 3.96,
+        "memory_used_kb": 87.62,
+        "queries": [
+            "select * from `agents`"
+        ]
+    },
+    "Employees": {
+        "status": "OK",
+        "query_count": 2,
+        "total_query_time_ms": 5.24,
+        "execution_time_ms": 12.52,
+        "memory_used_kb": 261.83,
+        "queries": [
+            "select * from `employees`",
+            "select * from `companies` where `companies`.`id` in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 28, 30, 34, 36, 41, 43, 44, 45, 47, 48, 49)"
+        ]
+    }
+}
