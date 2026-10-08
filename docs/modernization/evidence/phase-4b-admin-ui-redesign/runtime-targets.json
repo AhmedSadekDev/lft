@@ -1,0 +1,857 @@
+[
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard",
+    "name": "main",
+    "action": "App\\Http\\Controllers\\Admin\\DashbaordController",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/accounts",
+    "name": "accounts.index",
+    "action": "App\\Http\\Controllers\\Admin\\AccountController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:accounts.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/accounts/cars/financial-position",
+    "name": "accounts.cars.financial-position",
+    "action": "App\\Http\\Controllers\\Admin\\AccountController@carsFinancialPositionReport",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/accounts/checks",
+    "name": "accounts.checks.index",
+    "action": "App\\Http\\Controllers\\Admin\\AccountController@checksIndex",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:accounts.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/accounts/financial-position",
+    "name": "accounts.financial-position",
+    "action": "App\\Http\\Controllers\\Admin\\AccountController@financialPositionReport",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/accounts/profit-loss",
+    "name": "accounts.profit-loss",
+    "action": "App\\Http\\Controllers\\Admin\\AccountController@profitLossReport",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/agent-photos",
+    "name": "agent-photos.index",
+    "action": "App\\Http\\Controllers\\Admin\\AgentPhotoController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:agents.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/agents",
+    "name": "agents.index",
+    "action": "App\\Http\\Controllers\\Admin\\AgentController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:agents.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/agents/create",
+    "name": "agents.create",
+    "action": "App\\Http\\Controllers\\Admin\\AgentController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:agents.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/banks",
+    "name": "banks.index",
+    "action": "App\\Http\\Controllers\\Admin\\BankController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:bank.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/banks/create",
+    "name": "banks.create",
+    "action": "App\\Http\\Controllers\\Admin\\BankController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:bank.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/booking-containers-assignments",
+    "name": "booking_containers_agents.index",
+    "action": "App\\Http\\Controllers\\Admin\\BookingContainerAgents@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/bookings",
+    "name": "bookings.index",
+    "action": "App\\Http\\Controllers\\Admin\\BookingController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:bookings.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/bookings/create",
+    "name": "bookings.create",
+    "action": "App\\Http\\Controllers\\Admin\\BookingController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:bookings.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/branches",
+    "name": "branches.index",
+    "action": "App\\Http\\Controllers\\Admin\\BranchController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:branches.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/branches/create",
+    "name": "branches.create",
+    "action": "App\\Http\\Controllers\\Admin\\BranchController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:branches.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/cars",
+    "name": "cars.index",
+    "action": "App\\Http\\Controllers\\Admin\\CarController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:cars.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/cars/create",
+    "name": "cars.create",
+    "action": "App\\Http\\Controllers\\Admin\\CarController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:cars.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/chooseUs",
+    "name": "chooseUs.index",
+    "action": "App\\Http\\Controllers\\Admin\\ChooseUsController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/chooseUs/create",
+    "name": "chooseUs.create",
+    "action": "App\\Http\\Controllers\\Admin\\ChooseUsController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/citiesAndRegions",
+    "name": "citiesAndRegions.index",
+    "action": "App\\Http\\Controllers\\Admin\\CitiesAndRegionsController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:cities.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/citiesAndRegions/create",
+    "name": "citiesAndRegions.create",
+    "action": "App\\Http\\Controllers\\Admin\\CitiesAndRegionsController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:cities.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/companies",
+    "name": "companies.index",
+    "action": "App\\Http\\Controllers\\Admin\\CompanyController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:companies.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/companies/create",
+    "name": "companies.create",
+    "action": "App\\Http\\Controllers\\Admin\\CompanyController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:companies.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/companyTransportations",
+    "name": "companyTransportations.index",
+    "action": "App\\Http\\Controllers\\Admin\\CompanyTransportationController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/companyTransportations/create",
+    "name": "companyTransportations.create",
+    "action": "App\\Http\\Controllers\\Admin\\CompanyTransportationController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/contactUs",
+    "name": "contactUs.index",
+    "action": "App\\Http\\Controllers\\Admin\\ContactUsController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:contactUs.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/containers",
+    "name": "containers.index",
+    "action": "App\\Http\\Controllers\\Admin\\ContainerController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:containers.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/containers/create",
+    "name": "containers.create",
+    "action": "App\\Http\\Controllers\\Admin\\ContainerController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:containers.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/drivers",
+    "name": "drivers.index",
+    "action": "App\\Http\\Controllers\\Admin\\DriverController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:drivers.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/drivers/create",
+    "name": "drivers.create",
+    "action": "App\\Http\\Controllers\\Admin\\DriverController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:drivers.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/employees",
+    "name": "employees.index",
+    "action": "App\\Http\\Controllers\\Admin\\EmployeeController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:employees.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/employees/create",
+    "name": "employees.create",
+    "action": "App\\Http\\Controllers\\Admin\\EmployeeController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:employees.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/factories",
+    "name": "factories.index",
+    "action": "App\\Http\\Controllers\\Admin\\FactoryController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:factories.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/factories/create",
+    "name": "factories.create",
+    "action": "App\\Http\\Controllers\\Admin\\FactoryController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:factories.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/fcm/send",
+    "name": "fcm.index",
+    "action": "App\\Http\\Controllers\\FireBasePushNotification@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/financial_custody_agents",
+    "name": "financial_custody_agents.index",
+    "action": "App\\Http\\Controllers\\Admin\\MoneyTransferController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/financial_custody_agents/create",
+    "name": "financial_custody_agents.create",
+    "action": "App\\Http\\Controllers\\Admin\\MoneyTransferController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/financial_custody_superagents",
+    "name": "financial_custody_superagents.index",
+    "action": "App\\Http\\Controllers\\Admin\\SuperagentMoneyTransferController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/financial_custody_superagents/create",
+    "name": "financial_custody_superagents.create",
+    "action": "App\\Http\\Controllers\\Admin\\SuperagentMoneyTransferController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/general_expenses",
+    "name": "reports.general_expenses",
+    "action": "App\\Http\\Controllers\\Admin\\ReportController@general_expenses",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/ourServices",
+    "name": "ourServices.index",
+    "action": "App\\Http\\Controllers\\Admin\\OurServiceController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:ourServices.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/ourServices/create",
+    "name": "ourServices.create",
+    "action": "App\\Http\\Controllers\\Admin\\OurServiceController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:ourServices.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/permissions",
+    "name": "permissions.index",
+    "action": "App\\Http\\Controllers\\Admin\\PermissionController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:permissions.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/permissions/create",
+    "name": "permissions.create",
+    "action": "App\\Http\\Controllers\\Admin\\PermissionController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:permissions.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/private-companies",
+    "name": "private-companies.index",
+    "action": "App\\Http\\Controllers\\Admin\\PrivateCompanyController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/private-companies/create",
+    "name": "private-companies.create",
+    "action": "App\\Http\\Controllers\\Admin\\PrivateCompanyController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/profile",
+    "name": "profile.edit",
+    "action": "App\\Http\\Controllers\\Admin\\ProfileController@edit",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/receipts",
+    "name": "receipts.index",
+    "action": "App\\Http\\Controllers\\Admin\\ReceiptController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Closure"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/receipts/create",
+    "name": "receipts.create",
+    "action": "App\\Http\\Controllers\\Admin\\ReceiptController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Closure"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/reviews",
+    "name": "reviews.index",
+    "action": "App\\Http\\Controllers\\Admin\\ReviewController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:reviews.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/reviews/create",
+    "name": "reviews.create",
+    "action": "App\\Http\\Controllers\\Admin\\ReviewController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:reviews.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/serviceCategories",
+    "name": "serviceCategories.index",
+    "action": "App\\Http\\Controllers\\Admin\\ServiceCategoryController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:serviceCategories.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/serviceCategories/create",
+    "name": "serviceCategories.create",
+    "action": "App\\Http\\Controllers\\Admin\\ServiceCategoryController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:serviceCategories.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/services",
+    "name": "services.index",
+    "action": "App\\Http\\Controllers\\Admin\\ServiceController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:services.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/services/create",
+    "name": "services.create",
+    "action": "App\\Http\\Controllers\\Admin\\ServiceController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:services.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/shippingAgents",
+    "name": "shippingAgents.index",
+    "action": "App\\Http\\Controllers\\Admin\\ShippingAgentController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:shippingAgents.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/shippingAgents/create",
+    "name": "shippingAgents.create",
+    "action": "App\\Http\\Controllers\\Admin\\ShippingAgentController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:shippingAgents.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/sponsers",
+    "name": "sponsers.index",
+    "action": "App\\Http\\Controllers\\Admin\\SponserController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:sponsers.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/sponsers/create",
+    "name": "sponsers.create",
+    "action": "App\\Http\\Controllers\\Admin\\SponserController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:sponsers.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/staticPages",
+    "name": "staticPages.index",
+    "action": "App\\Http\\Controllers\\Admin\\StaticPageController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:staticPages.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/staticPages/create",
+    "name": "staticPages.create",
+    "action": "App\\Http\\Controllers\\Admin\\StaticPageController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:staticPages.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/superagents",
+    "name": "superagents.index",
+    "action": "App\\Http\\Controllers\\Admin\\SuperagentController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:superagents.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/superagents/create",
+    "name": "superagents.create",
+    "action": "App\\Http\\Controllers\\Admin\\SuperagentController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:superagents.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/suppliers",
+    "name": "suppliers.index",
+    "action": "App\\Http\\Controllers\\Admin\\SupplierController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Closure"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/suppliers/create",
+    "name": "suppliers.create",
+    "action": "App\\Http\\Controllers\\Admin\\SupplierController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Closure"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/users",
+    "name": "users.index",
+    "action": "App\\Http\\Controllers\\Admin\\UserController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/users/create",
+    "name": "users.create",
+    "action": "App\\Http\\Controllers\\Admin\\UserController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/vaultransactions",
+    "name": "vaultransactions.index",
+    "action": "App\\Http\\Controllers\\Admin\\VaultTransactionController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/vaults",
+    "name": "vaults.index",
+    "action": "App\\Http\\Controllers\\Admin\\VaultController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:vault.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/vaults/create",
+    "name": "vaults.create",
+    "action": "App\\Http\\Controllers\\Admin\\VaultController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:vault.create"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/yards",
+    "name": "yards.index",
+    "action": "App\\Http\\Controllers\\Admin\\YardController@index",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:yards.index"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "dashboard/yards/create",
+    "name": "yards.create",
+    "action": "App\\Http\\Controllers\\Admin\\YardController@create",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\Authenticate",
+      "Spatie\\Permission\\Middlewares\\PermissionMiddleware:yards.create"
+    ]
+  }
+]

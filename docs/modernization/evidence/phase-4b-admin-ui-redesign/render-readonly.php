@@ -4,7 +4,10 @@ if (PHP_SAPI !== 'cli') { exit(1); }
 require __DIR__.'/../../../../vendor/autoload.php';
 $app = require __DIR__.'/../../../../bootstrap/app.php';
 $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
-config(['session.driver'=>'array','cache.default'=>'array','telescope.enabled'=>false,'app.debug'=>false,'app.url'=>'http://127.0.0.1:8765']);
+if (($argv[3] ?? '') === 'baseline') {
+    $app['view']->getFinder()->setPaths([storage_path('app/phase4b-ui/baseline-views'),resource_path('views')]);
+}
+config(['permission.cache.store'=>'array','session.driver'=>'array','cache.default'=>'array','telescope.enabled'=>false,'app.debug'=>false,'app.url'=>'http://127.0.0.1:8765']);
 if (class_exists(\Laravel\Telescope\Telescope::class)) { \Laravel\Telescope\Telescope::stopRecording(); }
 $db = \Illuminate\Support\Facades\DB::connection();
 if ($db->getDatabaseName() !== 'leader') { throw new RuntimeException('Unexpected database'); }

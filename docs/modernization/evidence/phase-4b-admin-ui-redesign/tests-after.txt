@@ -1,0 +1,566 @@
+PHPUnit 9.6.25 by Sebastian Bergmann and contributors.
+
+...............................................................  63 / 136 ( 46%)
+..FF.EE..FFFFFFF.F.FF.FFFFFEFEFE..EEE....E.FE..FFFF...........F 126 / 136 ( 92%)
+..........                                                      136 / 136 (100%)
+
+Time: 00:12.669, Memory: 68.00 MB
+
+There were 10 errors:
+
+1) Tests\Feature\ParallelContainerStagesTest::test_multiple_unloading_receipts_remain_visible_with_their_images_after_approval
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:242
+
+2) Tests\Feature\ParallelContainerStagesTest::test_dashboard_can_return_one_container_step_by_step_to_specification
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:270
+
+3) Tests\Feature\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set "loading" (1)
+Symfony\Component\HttpKernel\Exception\HttpException: حالة الرجوع غير صحيحة
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:232
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:229
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:616
+
+4) Tests\Feature\ParallelContainerStagesTest::test_approved_loading_rewind_restores_loading_visibility_even_if_loading_flag_was_cleared
+Symfony\Component\HttpKernel\Exception\HttpException: حالة الرجوع غير صحيحة
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:232
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:229
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:628
+
+5) Tests\Feature\ParallelContainerStagesTest::test_invoice_hides_all_phases_from_every_assigned_agent
+Symfony\Component\HttpKernel\Exception\HttpException: المرحلة معتمدة بالفعل؛ اختر المرحلة الحالية للإسناد أو أرسل الطلب بدون type_id.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:65
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:83
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:649
+
+6) Tests\Feature\ParallelContainerStagesTest::test_two_agents_keep_independent_assignments_and_late_receipts
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:741
+
+7) Tests\Feature\ParallelContainerStagesTest::test_same_agent_can_work_both_phases_without_duplicate_containers
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:760
+
+8) Tests\Feature\ParallelContainerStagesTest::test_close_checks_the_reviewed_version_and_rejects_late_writes
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:773
+
+9) Tests\Feature\ParallelContainerStagesTest::test_assignment_api_serializes_the_selected_phase_after_three_days
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:841
+
+10) Tests\Feature\ParallelContainerStagesTest::test_rewind_is_rejected_once_the_next_agent_is_assigned
+Symfony\Component\HttpKernel\Exception\HttpException: يجب اعتماد التحميل أولاً
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1172
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:45
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:86
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:51
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:89
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\Concerns\ManagesTransactions.php:30
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Database\DatabaseManager.php:469
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php:338
+D:\laragon\www\leader\leader\app\Services\ContainerStageService.php:77
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:883
+
+--
+
+There were 25 failures:
+
+1) Tests\Feature\ParallelContainerStagesTest::test_superagent_done_actions_advance_all_stages_without_an_agent
+Failed asserting that null is not null.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:171
+
+2) Tests\Feature\ParallelContainerStagesTest::test_superagent_done_actions_cannot_skip_specification
+Expected response status code [409] but received 500.
+Failed asserting that 409 is identical to 500.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:123
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:211
+
+3) Tests\Feature\ParallelContainerStagesTest::test_dashboard_previous_stage_endpoint_validates_and_returns_only_the_selected_container
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:349
+
+4) Tests\Feature\ParallelContainerStagesTest::test_dashboard_rewind_allows_return_with_expenses_and_reopens_closed_receipts
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:358
+
+5) Tests\Feature\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set "specification" (0)
+Failed asserting that null is identical to 0.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:397
+
+6) Tests\Feature\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set "loading" (1)
+Failed asserting that 0 is identical to 1.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:402
+
+7) Tests\Feature\ParallelContainerStagesTest::test_superagent_done_flag_tracks_completion_before_approval with data set "unloading" (2)
+Failed asserting that null is identical to 0.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:397
+
+8) Tests\Feature\ParallelContainerStagesTest::test_superagent_missions_group_containers_before_paginating_bookings
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+-'waiting'
++'loading'
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:454
+
+9) Tests\Feature\ParallelContainerStagesTest::test_superagent_waiting_done_stays_one_after_waiting
+Failed asserting that null is identical to 1.
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:482
+
+10) Tests\Feature\ParallelContainerStagesTest::test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set "specification" (0)
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:568
+
+11) Tests\Feature\ParallelContainerStagesTest::test_assignments_without_grouping_relations_remain_visible_in_every_stage with data set "unloading" (2)
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:568
+
+12) Tests\Feature\ParallelContainerStagesTest::test_legacy_assignments_have_consistent_visibility_and_permissions with data set "specification" (0)
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:584
+
+13) Tests\Feature\ParallelContainerStagesTest::test_legacy_assignments_have_consistent_visibility_and_permissions with data set "unloading" (2)
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:584
+
+14) Tests\Feature\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set "specification" (0)
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:596
+
+15) Tests\Feature\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set "loading" (1)
+Expected a rejected operation
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:730
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:603
+
+16) Tests\Feature\ParallelContainerStagesTest::test_closed_or_approved_stages_cannot_accept_invisible_assignments with data set "unloading" (2)
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:596
+
+17) Tests\Feature\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set "specification" (0)
+Failed asserting that 1 is identical to 0.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:610
+
+18) Tests\Feature\ParallelContainerStagesTest::test_rewound_stages_reappear_with_completion_enabled with data set "unloading" (2)
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:559
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:610
+
+19) Tests\Feature\ParallelContainerStagesTest::test_waiting_assignment_appears_only_after_move_to_loading
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 ()
++Array &0 (
++    0 => Array &1 (
++        'id' => 1
++        'title' => 'Yard'
++        'booking_containers' => Array &2 (
++            0 => Array &3 (
++                'id' => 1
++                'company_name' => ''
++                'factory_name' => ''
++                'container_type' => null
++                'branch' => null
++                'sail_of_number' => null
++                'container_number' => null
++                'arrival_date' => null
++                'booking_number' => 'B-1'
++                'container_size' => ''
++                'shipping_agent' => 'Shipping'
++                'yard_title' => 'Yard'
++                'yard_id' => 1
++                'booking_id' => 1
++                'stage_type' => 'loading'
++                'stage_status' => 'pending'
++                'is_completed' => false
++                'is_approved' => false
++                'is_in_loading' => 1
++                'moved_to_loading_at' => null
++                'status_color' => 'red'
++                'card_header_color' => 'red'
++                'can_upload_receipts' => true
++                'can_complete_stage' => true
++                'operational_stage' => 'loading'
++                'type_id' => 1
++                'receipts_closed' => false
++                'receipts_version' => 1
++                'specification_approved_at' => null
++                'loading_approved_at' => null
++                'unloading_approved_at' => null
++                'notes' => Array &4 ()
++                'specification_latter' => ''
++                'container_image' => ''
++                'loading_answer' => ''
++                'container_with_sail_image' => ''
++                'unloading_image' => ''
++            )
++        )
++    )
++)
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:639
+
+20) Tests\Feature\ParallelContainerStagesTest::test_waiting_toggle_cannot_hide_completed_loading
+Expected a rejected operation
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:730
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:875
+
+21) Tests\Feature\ParallelContainerStagesTest::test_superagent_can_close_loading_receipts_without_moving_to_unloading
+Failed asserting that 1 is identical to 2.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:934
+
+22) Tests\Feature\ParallelContainerStagesTest::test_loading_receipts_cannot_close_while_waiting_for_loading
+Expected a rejected operation
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:730
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:940
+
+23) Tests\Feature\ParallelContainerStagesTest::test_loading_approval_keeps_container_visible_for_unloading_assignment with data set "open receipts" (false)
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 ()
++Array &0 (
++    0 => Array &1 (
++        'id' => 1
++        'booking_id' => 1
++        'booking_container_id' => 1
++        'booking_number' => 'B-1'
++        'is_today' => 1
++        'is_specification_done' => 1
++        'is_waiting_done' => 1
++        'is_loading_done' => 0
++        'is_unloading_done' => 0
++        'booking_containers' => Array &2 (
++            0 => Array &3 (
++                'id' => 1
++                'is_specification_done' => 1
++                'is_waiting_done' => 1
++                'is_loading_done' => 0
++                'is_unloading_done' => 0
++                'company_name' => ''
++                'factory_name' => ''
++                'container_type' => ''
++                'branch' => ''
++                'sail_of_number' => null
++                'container_number' => null
++                'arrival_date' => null
++                'booking_number' => 'B-1'
++                'certificate_number' => ''
++                'container_size' => ''
++                'shipping_agent' => ''
++                'date' => '2026-10-08'
++                'office_policy' => ''
++                'exit_date' => ''
++                'yard_title' => 'Yard'
++                'yard_id' => 1
++                'notes' => Array &4 ()
++                'is_today' => 0
++                'booking_id' => 1
++                'responsible_agents' => Array &5 (
++                    0 => Array &6 (
++                        'id' => 1
++                        'name' => ''
++                        'image' => 'https://cloudymenue.cloudy-digital.com/storage/agents'
++                        'number_of_bookings' => 1
++                    )
++                )
++                'specification_latter' => ''
++                'container_image' => ''
++                'loading_answer' => ''
++                'container_with_sail_image' => ''
++                'unloading_image' => ''
++            )
++        )
++        'specification_containers' => Array &7 ()
++        'waiting_containers' => Array &8 ()
++        'loading_containers' => Array &9 (
++            0 => Array &10 (
++                'id' => 1
++                'is_specification_done' => 1
++                'is_waiting_done' => 1
++                'is_loading_done' => 0
++                'is_unloading_done' => 0
++                'company_name' => ''
++                'factory_name' => ''
++                'container_type' => ''
++                'branch' => ''
++                'sail_of_number' => null
++                'container_number' => null
++                'arrival_date' => null
++                'booking_number' => 'B-1'
++                'certificate_number' => ''
++                'container_size' => ''
++                'shipping_agent' => ''
++                'date' => '2026-10-08'
++                'office_policy' => ''
++                'exit_date' => ''
++                'yard_title' => 'Yard'
++                'yard_id' => 1
++                'notes' => Array &11 ()
++                'is_today' => 0
++                'booking_id' => 1
++                'responsible_agents' => Array &12 (
++                    0 => Array &13 (
++                        'id' => 1
++                        'name' => ''
++                        'image' => 'https://cloudymenue.cloudy-digital.com/storage/agents'
++                        'number_of_bookings' => 1
++                    )
++                )
++                'specification_latter' => ''
++                'container_image' => ''
++                'loading_answer' => ''
++                'container_with_sail_image' => ''
++                'unloading_image' => ''
++            )
++        )
++        'unloading_containers' => Array &14 ()
++    )
++)
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:962
+
+24) Tests\Feature\ParallelContainerStagesTest::test_loading_approval_keeps_container_visible_for_unloading_assignment with data set "closed receipts" (true)
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &0 ()
++Array &0 (
++    0 => Array &1 (
++        'id' => 1
++        'booking_id' => 1
++        'booking_container_id' => 1
++        'booking_number' => 'B-1'
++        'is_today' => 1
++        'is_specification_done' => 1
++        'is_waiting_done' => 1
++        'is_loading_done' => 0
++        'is_unloading_done' => 0
++        'booking_containers' => Array &2 (
++            0 => Array &3 (
++                'id' => 1
++                'is_specification_done' => 1
++                'is_waiting_done' => 1
++                'is_loading_done' => 0
++                'is_unloading_done' => 0
++                'company_name' => ''
++                'factory_name' => ''
++                'container_type' => ''
++                'branch' => ''
++                'sail_of_number' => null
++                'container_number' => null
++                'arrival_date' => null
++                'booking_number' => 'B-1'
++                'certificate_number' => ''
++                'container_size' => ''
++                'shipping_agent' => ''
++                'date' => '2026-10-08'
++                'office_policy' => ''
++                'exit_date' => ''
++                'yard_title' => 'Yard'
++                'yard_id' => 1
++                'notes' => Array &4 ()
++                'is_today' => 0
++                'booking_id' => 1
++                'responsible_agents' => Array &5 (
++                    0 => Array &6 (
++                        'id' => 1
++                        'name' => ''
++                        'image' => 'https://cloudymenue.cloudy-digital.com/storage/agents'
++                        'number_of_bookings' => 1
++                    )
++                )
++                'specification_latter' => ''
++                'container_image' => ''
++                'loading_answer' => ''
++                'container_with_sail_image' => ''
++                'unloading_image' => ''
++            )
++        )
++        'specification_containers' => Array &7 ()
++        'waiting_containers' => Array &8 ()
++        'loading_containers' => Array &9 (
++            0 => Array &10 (
++                'id' => 1
++                'is_specification_done' => 1
++                'is_waiting_done' => 1
++                'is_loading_done' => 0
++                'is_unloading_done' => 0
++                'company_name' => ''
++                'factory_name' => ''
++                'container_type' => ''
++                'branch' => ''
++                'sail_of_number' => null
++                'container_number' => null
++                'arrival_date' => null
++                'booking_number' => 'B-1'
++                'certificate_number' => ''
++                'container_size' => ''
++                'shipping_agent' => ''
++                'date' => '2026-10-08'
++                'office_policy' => ''
++                'exit_date' => ''
++                'yard_title' => 'Yard'
++                'yard_id' => 1
++                'notes' => Array &11 ()
++                'is_today' => 0
++                'booking_id' => 1
++                'responsible_agents' => Array &12 (
++                    0 => Array &13 (
++                        'id' => 1
++                        'name' => ''
++                        'image' => 'https://cloudymenue.cloudy-digital.com/storage/agents'
++                        'number_of_bookings' => 1
++                    )
++                )
++                'specification_latter' => ''
++                'container_image' => ''
++                'loading_answer' => ''
++                'container_with_sail_image' => ''
++                'unloading_image' => ''
++            )
++        )
++        'unloading_containers' => Array &14 ()
++    )
++)
+
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\AssertableJsonString.php:243
+D:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Testing\TestResponse.php:664
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:962
+
+25) Tests\Feature\ParallelContainerStagesTest::test_old_completed_stage_without_timestamp_is_not_completed_again
+Failed asserting that true is false.
+
+D:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php:1064
+
+ERRORS!
+Tests: 136, Assertions: 672, Errors: 10, Failures: 25.
+

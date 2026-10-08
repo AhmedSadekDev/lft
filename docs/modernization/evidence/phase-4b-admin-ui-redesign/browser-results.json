@@ -1,0 +1,1102 @@
+[
+  {
+    "phase": "before",
+    "page": "drivers",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "drivers",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "drivers",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 470,
+      "width": 390,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "drivers/create",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "drivers/create",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "drivers/create",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "bookings",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "bookings",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "bookings",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "bookings/create",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1453,
+      "width": 1440,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "bookings/create",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 781,
+      "width": 768,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "bookings/create",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 403,
+      "width": 390,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "services",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 1,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "s is not defined"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "services",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 1,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "s is not defined"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "services",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 1,
+      "regions": 0,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "s is not defined"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "accounts",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "accounts",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "accounts",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "private-companies",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "private-companies",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "private-companies",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "employees",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 1,
+      "regions": 0,
+      "formCount": 1,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "employees",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 1,
+      "regions": 0,
+      "formCount": 1,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "employees",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 1,
+      "regions": 0,
+      "formCount": 1,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "receipts",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "Cannot set properties of undefined (setting '_DT_CellIndex')"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "receipts",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "Cannot set properties of undefined (setting '_DT_CellIndex')"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "receipts",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "Cannot set properties of undefined (setting '_DT_CellIndex')"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "profile",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 3,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "profile",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 3,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "profile",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 3,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "agent-photos",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 4,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "agent-photos",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 4,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "before",
+    "page": "agent-photos",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 4,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "drivers",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "السائقين",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "السائقين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "drivers",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "السائقين",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "السائقين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "drivers",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "السائقين",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "السائقين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": [],
+    "drawerOpen": true,
+    "drawerClosed": true,
+    "focusReturned": true
+  },
+  {
+    "phase": "after",
+    "page": "drivers/create",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "active": "السائقين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "drivers/create",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "active": "السائقين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "drivers/create",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "active": "السائقين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": [],
+    "formContract": {
+      "method": "post",
+      "action": "/dashboard/drivers",
+      "fields": [
+        {
+          "name": "_token",
+          "type": "hidden",
+          "required": false
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "phone",
+          "type": "number",
+          "required": false
+        }
+      ],
+      "labelled": false
+    }
+  },
+  {
+    "phase": "after",
+    "page": "bookings",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "طلبات النقل",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "طلبات النقل",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "bookings",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "طلبات النقل",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "طلبات النقل",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "bookings",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "طلبات النقل",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "طلبات النقل",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "bookings/create",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "active": "طلبات النقل",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "bookings/create",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 780,
+      "width": 768,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "active": "طلبات النقل",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "bookings/create",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 396,
+      "width": 390,
+      "tables": 0,
+      "regions": 0,
+      "formCount": 2,
+      "active": "طلبات النقل",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "services",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "الخدمات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الخدمات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "s is not defined"
+    ],
+    "dialogs": [],
+    "emptyState": true,
+    "sortChangesFirstRow": true,
+    "confirmationVisible": true,
+    "confirmationCancelled": false
+  },
+  {
+    "phase": "after",
+    "page": "services",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "الخدمات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الخدمات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "s is not defined"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "services",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "الخدمات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الخدمات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "s is not defined"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "accounts",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "الحسابات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "حسابات الشركات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "accounts",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "الحسابات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "حسابات الشركات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "accounts",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "الحسابات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "حسابات الشركات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "private-companies",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "الشركات الخاصة",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الشركات الخاصة",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "private-companies",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "الشركات الخاصة",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الشركات الخاصة",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "private-companies",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "الشركات الخاصة",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الشركات الخاصة",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "employees",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "الموظفين",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 1,
+      "active": "الموظفين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "employees",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "الموظفين",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 1,
+      "active": "الموظفين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "employees",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "الموظفين",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 1,
+      "active": "الموظفين",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "receipts",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "الإيصالات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الإيصالات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "Cannot set properties of undefined (setting '_DT_CellIndex')"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "receipts",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "الإيصالات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الإيصالات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "Cannot set properties of undefined (setting '_DT_CellIndex')"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "receipts",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "الإيصالات",
+      "tables": 1,
+      "regions": 1,
+      "formCount": 2,
+      "active": "الإيصالات",
+      "bodyDirection": "rtl"
+    },
+    "errors": [
+      "Cannot set properties of undefined (setting '_DT_CellIndex')"
+    ],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "profile",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "الملف الشخصي",
+      "tables": 0,
+      "regions": 0,
+      "formCount": 3,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "profile",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "الملف الشخصي",
+      "tables": 0,
+      "regions": 0,
+      "formCount": 3,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "profile",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "الملف الشخصي",
+      "tables": 0,
+      "regions": 0,
+      "formCount": 3,
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "agent-photos",
+    "width": 1440,
+    "metrics": {
+      "scrollWidth": 1440,
+      "width": 1440,
+      "heading": "صور المناديب",
+      "tables": 0,
+      "regions": 0,
+      "formCount": 4,
+      "active": "صور المناديب",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "agent-photos",
+    "width": 768,
+    "metrics": {
+      "scrollWidth": 768,
+      "width": 768,
+      "heading": "صور المناديب",
+      "tables": 0,
+      "regions": 0,
+      "formCount": 4,
+      "active": "صور المناديب",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  },
+  {
+    "phase": "after",
+    "page": "agent-photos",
+    "width": 390,
+    "metrics": {
+      "scrollWidth": 390,
+      "width": 390,
+      "heading": "صور المناديب",
+      "tables": 0,
+      "regions": 0,
+      "formCount": 4,
+      "active": "صور المناديب",
+      "bodyDirection": "rtl"
+    },
+    "errors": [],
+    "dialogs": []
+  }
+]
