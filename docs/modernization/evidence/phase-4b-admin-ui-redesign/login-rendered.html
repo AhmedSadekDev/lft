@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="">
     <title>تسجيل الدخول · Leader for Trans</title>
 
-    <link rel="shortcut icon" href="{{ asset('assets/media/logo.png') }}" />
+    <link rel="shortcut icon" href="https://cloudymenue.cloudy-digital.com/assets/media/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}">
+    <link rel="stylesheet" href="https://cloudymenue.cloudy-digital.com/assets/css/admin-ui.css">
 
     <script>
         (function() {
@@ -56,16 +56,9 @@
                 <h1 class="lft-glass-title">تسجيل الدخول</h1>
                 <p class="lft-glass-subtitle">مرحباً بك في لوحة التحكم</p>
 
-                @if (isset($errors) && $errors->any())
-                    <div style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 18px;">
-                        <i class="fas fa-exclamation-circle ml-2"></i>
-                        {{ $errors->first() }}
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}" autocomplete="on">
-                    @csrf
-
+                
+                <form method="POST" action="https://cloudymenue.cloudy-digital.com/login" autocomplete="on">
+                    <input type="hidden" name="_token" value="">
                     <!-- Email Input -->
                     <div class="form-group mb-3">
                         <label for="email" class="lft-glass-label">البريد الإلكتروني</label>
@@ -74,7 +67,7 @@
                                    type="email" 
                                    class="lft-glass-input" 
                                    name="email" 
-                                   value="{{ old('email', 'superadmin@kasib.com') }}" 
+                                   value="superadmin@kasib.com" 
                                    required 
                                    autocomplete="email" 
                                    autofocus 
@@ -108,16 +101,14 @@
                     <!-- Remember & Forgot Password -->
                     <div class="lft-glass-remember-row">
                         <label class="lft-glass-checkbox-label" for="remember">
-                            <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }} style="accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer;">
+                            <input type="checkbox" name="remember" id="remember"  style="accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer;">
                             <span>تذكر دائماً</span>
                         </label>
 
-                        @if (Route::has('password.request'))
-                            <a class="lft-glass-forgot-link" href="{{ route('password.request') }}">
+                                                    <a class="lft-glass-forgot-link" href="https://cloudymenue.cloudy-digital.com/password/reset">
                                 نسيت كلمة المرور؟
                             </a>
-                        @endif
-                    </div>
+                                            </div>
 
                     <!-- Submit Button -->
                     <button type="submit" class="lft-glass-submit-btn">
@@ -144,6 +135,6 @@
         </div>
     </div>
 
-    <script src="{{ asset('assets/js/admin-ui.js') }}"></script>
+    <script src="https://cloudymenue.cloudy-digital.com/assets/js/admin-ui.js"></script>
 </body>
 </html>

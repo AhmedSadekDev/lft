@@ -15,6 +15,13 @@ License: You must have a valid license purchased only from themeforest(the above
 <!--begin::Head-->
 
 <head>
+    <script>
+        (function() {
+            var saved = localStorage.getItem('lft_theme');
+            var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <base href="">
     <meta charset="utf-8" />
     <title>@yield('admin-page-title', 'لوحة التحكم') | Leader for Trans</title>

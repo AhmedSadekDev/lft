@@ -1,3 +1,7 @@
+<?php
+$indexPath = __DIR__ . '/../resources/views/admin/index.blade.php';
+
+$newIndexContent = <<<'BLADE'
 @extends("layouts.admin")
 
 @section("admin-page-title", "لوحة التحكم")
@@ -586,3 +590,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @endpush
+BLADE;
+
+file_put_contents($indexPath, $newIndexContent);
+echo "resources/views/admin/index.blade.php updated with safe permissions!\n";
