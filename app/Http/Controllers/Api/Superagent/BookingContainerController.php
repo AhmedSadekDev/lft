@@ -21,105 +21,45 @@ class BookingContainerController extends Controller
         try {
             $perPage = (int) $request->get('per_page', default: 100);
             $page    = (int) $request->get('page', 1);
-            $stageType = $request->get('stage_type'); // فلتر حسب نوع المرحلة
+            $stageType = $request->get('stage_type');
 
-            // نفس العلاقات اللي كانت بتتجاب في القديم عشان نتجنب N+1
-            $with = [
-                'booking.company',
-                'booking.factory',
-                'booking.yard',
-                'branch.factory',
-                'container',
-                'notes',
-                'agents',
-            ];
+            $condition = $this->allStageContainerConstraints($stageType);
 
-            // 1) specification (status=0 أو status=1 و superagent_specification_approved=0)
-            $specItems = collect();
-            if (!$stageType || $stageType === 'specification') {
-                $specItems = BookingContainer::with($with)
-                    ->withoutInvoicedBooking()
-                    ->select('*')
-                    ->selectRaw("'specification' as stage_type")
-                    ->where(function ($q) {
-                        $q->where('status', 0)
-                          ->orWhere(function($q2) {
-                              $q2->where('status', 1)
-                                 ->where('superagent_specification_approved', 0);
-                          });
-                    })
-                    ->get();
-            }
+            $query = Booking::query()
+                ->withoutInvoice()
+                ->whereHas('bookingContainers', $condition)
+                ->with([
+                    'bookingContainers' => function ($cQuery) use ($condition) {
+                        $condition($cQuery);
+                        $cQuery->select('*')
+                            ->selectRaw("
+                                CASE
+                                    WHEN superagent_specification_approved = 1 AND superagent_loading_approved = 1 AND superagent_unloading_approved = 0 THEN 'unloading'
+                                    WHEN superagent_specification_approved = 1 AND is_in_loading = 1 AND superagent_loading_approved = 0 AND superagent_unloading_approved = 0 THEN 'loading'
+                                    WHEN superagent_specification_approved = 1 AND is_in_loading = 0 AND superagent_loading_approved = 0 AND superagent_unloading_approved = 0 THEN 'waiting'
+                                    WHEN status = 0 OR (status = 1 AND superagent_specification_approved = 0) THEN 'specification'
+                                    ELSE NULL
+                                END AS stage_type
+                            ")
+                            ->with([
+                                'booking.company',
+                                'booking.factory',
+                                'booking.yard',
+                                'branch.factory',
+                                'container',
+                                'notes',
+                                'agents',
+                            ])
+                            ->orderByDesc('id');
+                    }
+                ])
+                ->orderByDesc('id');
 
-            // 2) waiting (قائمة الانتظار بعد التخصيص وقبل النقل للتحميل)
-            $waitingItems = collect();
-            if (!$stageType || $stageType === 'waiting') {
-                $waitingItems = BookingContainer::with($with)
-                    ->withoutInvoicedBooking()
-                    ->select('*')
-                    ->selectRaw("'waiting' as stage_type")
-                    ->where('superagent_specification_approved', 1)
-                    ->where('is_in_loading', 0)
-                    ->where('superagent_loading_approved', 0)
-                    ->where('superagent_unloading_approved', 0)
-                    ->get();
-            }
-
-            // 3) loading (قائمة التحميل بعد النقل من الانتظار)
-            $loadingItems = collect();
-            if (!$stageType || $stageType === 'loading') {
-                $loadingItems = BookingContainer::with($with)
-                    ->withoutInvoicedBooking()
-                    ->select('*')
-                    ->selectRaw("'loading' as stage_type")
-                    ->where('superagent_specification_approved', 1)
-                    ->where('is_in_loading', 1)
-                    ->where('superagent_loading_approved', 0)
-                    ->where('superagent_unloading_approved', 0)
-                    ->get();
-            }
-
-            // 4) unloading
-            $unloadingItems = collect();
-            if (!$stageType || $stageType === 'unloading') {
-                $unloadingItems = BookingContainer::with($with)
-                    ->withoutInvoicedBooking()
-                    ->select('*')
-                    ->selectRaw("'unloading' as stage_type")
-                    ->where('superagent_specification_approved', 1)
-                    ->where('superagent_loading_approved', 1)
-                    ->where('superagent_unloading_approved', 0)
-                    ->get();
-            }
-
-            // دمج مع أولوية أعلى مرحلة (unloading > loading > waiting > specification) + إزالة التكرار + ترتيب
-            // ترتيب حسب id تنازلي (الأحدث أولاً) مثل الداش بورد
-            $merged = $unloadingItems
-                ->merge($loadingItems)
-                ->merge($waitingItems)
-                ->merge($specItems)
-                ->unique('id')
-                ->filter(fn ($container) => $container->booking !== null)
-                ->sortByDesc('id')
-                ->groupBy('booking_id')
-                ->map(function ($containers) {
-                    $booking = $containers->first()->booking;
-                    $booking->setRelation('bookingContainers', $containers->values());
-
-                    return $booking;
-                })
-                ->sortByDesc('id')
-                ->values();
-
-            // Manual pagination بنفس فورمات لارافيل
-            $total     = $merged->count();
-            $results   = $merged->forPage($page, $perPage)->values();
-            $paginator = new LengthAwarePaginator(
-                $results,
-                $total,
+            $paginator = $query->paginate(
                 $perPage,
-                $page,
-                ['path' => $request->url(), 'query' => $request->query()]
+                ['*'],
+                'page',
+                $page
             );
 
             $data = MissionBookingResource::collection($paginator)
@@ -131,6 +71,66 @@ class BookingContainerController extends Controller
         } catch (\Throwable $ex) {
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
+    }
+
+    private function allStageContainerConstraints(?string $stageType): \Closure
+    {
+        return match ($stageType) {
+            'specification' => function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('status', 0)
+                        ->orWhere(function ($sub2) {
+                            $sub2->where('status', 1)
+                                 ->where('superagent_specification_approved', 0);
+                        });
+                });
+            },
+            'waiting' => function ($q) {
+                $q->where('superagent_specification_approved', 1)
+                  ->where('is_in_loading', 0)
+                  ->where('superagent_loading_approved', 0)
+                  ->where('superagent_unloading_approved', 0);
+            },
+            'loading' => function ($q) {
+                $q->where('superagent_specification_approved', 1)
+                  ->where('is_in_loading', 1)
+                  ->where('superagent_loading_approved', 0)
+                  ->where('superagent_unloading_approved', 0);
+            },
+            'unloading' => function ($q) {
+                $q->where('superagent_specification_approved', 1)
+                  ->where('superagent_loading_approved', 1)
+                  ->where('superagent_unloading_approved', 0);
+            },
+            default => function ($q) {
+                $q->where(function ($orQ) {
+                    $orQ->where(function ($sub) {
+                        $sub->where('status', 0)
+                            ->orWhere(function ($sub2) {
+                                $sub2->where('status', 1)
+                                     ->where('superagent_specification_approved', 0);
+                            });
+                    })
+                    ->orWhere(function ($sub) {
+                        $sub->where('superagent_specification_approved', 1)
+                            ->where('is_in_loading', 0)
+                            ->where('superagent_loading_approved', 0)
+                            ->where('superagent_unloading_approved', 0);
+                    })
+                    ->orWhere(function ($sub) {
+                        $sub->where('superagent_specification_approved', 1)
+                            ->where('is_in_loading', 1)
+                            ->where('superagent_loading_approved', 0)
+                            ->where('superagent_unloading_approved', 0);
+                    })
+                    ->orWhere(function ($sub) {
+                        $sub->where('superagent_specification_approved', 1)
+                            ->where('superagent_loading_approved', 1)
+                            ->where('superagent_unloading_approved', 0);
+                    });
+                });
+            },
+        };
     }
 
     private function stageContainerConstraints(string $stage): \Closure

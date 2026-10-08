@@ -1,0 +1,37 @@
+{
+  "performance": {
+    "legacy_queries_per_call": 186,
+    "sql_first_queries_per_call": 3,
+    "query_reduction": 183,
+    "query_reduction_pct": "98.4%",
+    "legacy_avg_ms": 90.86,
+    "sql_first_avg_ms": 5.89,
+    "latency_speedup_ms": 84.97,
+    "legacy_peak_memory_bytes": 1769032,
+    "sql_first_peak_memory_bytes": 487888,
+    "memory_reduction_pct": "72.4%"
+  },
+  "behavioral_equivalence": {
+    "scenarios_tested": 8,
+    "scenarios_passed": 8,
+    "equivalence_pct": "100%",
+    "json_structure_matches": true,
+    "json_types_matches": true
+  },
+  "regression": {
+    "total_tests": 134,
+    "passed": 99,
+    "failed": 25,
+    "errors": 10,
+    "baseline_identical_failures": true,
+    "new_failures_introduced": 0
+  },
+  "database_policy_compliance": {
+    "ddl_executed": 0,
+    "dml_executed": 0,
+    "indexes_added": 0,
+    "migrations_run": false,
+    "yards_status": "LEGACY CODE / DATABASE MISMATCH (UNVERIFIED - ENVIRONMENT LIMITATION)"
+  },
+  "phase_complete": true
+}

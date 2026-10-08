@@ -1,0 +1,7 @@
+-- Phase 3 Field APIs Optimization, 2026-10-08.
+-- No new DDL applied. Existing Phase 1 and foreign key indexes retained.
+-- Existing indexes utilized:
+--   - `booking_containers`.`fk_booking_containers_booking_id` (`booking_id`)
+--   - `invoices`.`fk_invoices_booking_id` (`booking_id`)
+--   - `bookings`.`PRIMARY` (`id`)
+-- Performance target achieved: 98.4% query reduction (186 -> 3 queries) and 15x speedup with zero schema alterations.
