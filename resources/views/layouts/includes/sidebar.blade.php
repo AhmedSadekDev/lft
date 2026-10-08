@@ -3,12 +3,15 @@
     <!--begin::Aside-->
     <!--begin::Aside-->
     <div class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside" aria-label="التنقل الرئيسي">
-        <!--begin::Brand-->
+                <!--begin::Brand-->
         <div class="brand flex-column-auto" id="kt_brand">
             <!--begin::Logo-->
-            <a href="{{ route('main') }}" class="brand-logo">
-                <img alt="Leader for Trans" src="{{ asset('assets/media/logo.png') }}" />
-                <span class="lft-brand-name" dir="ltr">LEADER<span><small>TRANSPORT & LOGISTICS</small></span></span>
+            <a href="{{ route('main') }}" class="brand-logo lft-sidebar-brand d-flex align-items-center">
+                <img src="{{ asset('assets/media/logo.png') }}" alt="Leader for Trans" class="lft-sidebar-logo" />
+                <div class="lft-brand-titles mr-3">
+                    <span class="lft-brand-title">Leader for Trans</span>
+                    <span class="lft-brand-subtitle">منظومة التجارة والأعمال</span>
+                </div>
             </a>
             <!--end::Logo-->
             <!--begin::Toggle-->
