@@ -101,7 +101,7 @@ class ReceiptController extends Controller
 
                         // خصم وليت المندوب + إنشاء سجل مصروف حتى يظهر في التطبيق والداشبورد
                         if ($paymentType === 'agent' && $agentId) {
-                            $agent = Agent::find($agentId);
+                            $agent = Agent::lockForUpdate()->find($agentId);
                             if ($agent) {
                                 $agent->wallet = (float) ($agent->wallet ?? 0) - (float) $data['cost'];
                                 $agent->save();
@@ -273,6 +273,18 @@ class ReceiptController extends Controller
                 $locked->delete();
 
                 if ($bookingServiceId) {
+                    $linkedExpenses = AgentExpense::where('booking_service_id', $bookingServiceId)->get();
+                    foreach ($linkedExpenses as $exp) {
+                        if ($exp->agent_id && $exp->value) {
+                            $expAgent = Agent::lockForUpdate()->find($exp->agent_id);
+                            if ($expAgent) {
+                                $expAgent->wallet = (float) ($expAgent->wallet ?? 0) + (float) $exp->value;
+                                $expAgent->save();
+                            }
+                        }
+                        $exp->delete();
+                    }
+
                     BookingService::query()
                         ->where('id', $bookingServiceId)
                         ->whereIn('payment_type', ['supplier', 'vault', 'agent'])

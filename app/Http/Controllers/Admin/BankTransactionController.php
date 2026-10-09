@@ -93,8 +93,8 @@ class BankTransactionController extends Controller
         DB::beginTransaction();
     
         try {
-            $bank = Bank::findOrFail($request->bank_id);
-            $vault = Vault::firstOrFail();
+            $bank = Bank::lockForUpdate()->findOrFail($request->bank_id);
+            $vault = Vault::lockForUpdate()->firstOrFail();
             // Handle image upload
             if ($request->hasFile('image')) {
                 $imageName = time() . '_transaction.' . $request->image->extension();
@@ -104,16 +104,32 @@ class BankTransactionController extends Controller
             }
             switch ($request->type) {
                 case 2:
-                    $transBank = Bank::findOrFail($request->trans_bank_id);
+                    $transBank = Bank::lockForUpdate()->findOrFail($request->trans_bank_id);
     
+                    if ((float) $bank->amount < (float) $request->amount) {
+                        DB::rollBack();
+                        return redirect()->back()->with('error', __('main.bank_wallet_does_not_have_enough_amount'));
+                    }
+
                     $bank->amount -= $request->amount;
                     $transBank->amount += $request->amount;
     
+                    $bank->save();
                     $transBank->save();
+
+                    BankTrnsaction::create([
+                        'bank_id' => $bank->id,
+                        'name' => $request->name,
+                        'date' => $request->date,
+                        'amount' => $request->amount,
+                        'type' => 2,
+                        'user_id' => auth()->user()->id,
+                        'image' => $data['image'] ?? null
+                    ]);
                     break;
     
                 case 0:
-                    if ($bank->amount < $request->amount) {
+                    if ((float) $bank->amount < (float) $request->amount) {
                         DB::rollBack();
                         INFO('bank_wallet_does_not_have_enough_amount');
                         return redirect()->back()->with('error', __('main.bank_wallet_does_not_have_enough_amount'));
@@ -142,7 +158,7 @@ class BankTransactionController extends Controller
                     break;
     
                 case 1:
-                    $company = Company::findOrFail($request->company_id);
+                    $company = Company::lockForUpdate()->findOrFail($request->company_id);
                     
                     $company->wallet -= $request->amount;
                     $company->save();
@@ -272,15 +288,15 @@ class BankTransactionController extends Controller
         DB::beginTransaction();
 
         try {
-            $transaction = BankTrnsaction::findOrFail($id);
-            $originalAmount = $transaction->amount;
-            $newAmount = $request->amount;
+            $transaction = BankTrnsaction::lockForUpdate()->findOrFail($id);
+            $originalAmount = (float) $transaction->amount;
+            $newAmount = (float) $request->amount;
             $amountDifference = $newAmount - $originalAmount;
 
-            $bank = Bank::findOrFail($transaction->bank_id);
-            $transBank = $request->type == 2 ? Bank::findOrFail($request->trans_bank_id) : null;
-            $company = $request->type == 1 ? Company::findOrFail($request->company_id) : null;
-            $vault = Vault::first(); // Modify this to get the correct vault
+            $bank = Bank::lockForUpdate()->findOrFail($transaction->bank_id);
+            $transBank = $request->type == 2 ? Bank::lockForUpdate()->findOrFail($request->trans_bank_id) : null;
+            $company = $request->type == 1 ? Company::lockForUpdate()->findOrFail($request->company_id) : null;
+            $vault = Vault::lockForUpdate()->firstOrFail();
 
             if ($request->type == 0) { // Withdraw transaction
                 if ($newAmount > $originalAmount) {
@@ -353,14 +369,14 @@ class BankTransactionController extends Controller
 
     public function destroy($id)
     {
-        $transaction = BankTrnsaction::findOrFail($id);
-
         DB::beginTransaction();
 
         try {
+            $transaction = BankTrnsaction::lockForUpdate()->findOrFail($id);
+
             // حذف سداد شركة من شاشة البنك يجب أن يرجع الأثر على كشف الشركة
             if ((int) $transaction->type === 0 && !is_null($transaction->company_id)) {
-                $bank = Bank::find($transaction->bank_id);
+                $bank = Bank::lockForUpdate()->find($transaction->bank_id);
                 if ($bank) {
                     $bank->amount = ($bank->amount ?? 0) + (float) $transaction->amount;
                     $bank->save();
@@ -373,7 +389,7 @@ class BankTransactionController extends Controller
                     InvoicePayment::where('bank_transaction_id', $transaction->id)->delete();
                 } elseif (!is_null($transaction->company_id) && str_contains((string) $transaction->name, 'سداد الرصيد الافتتاحي')) {
                     // سداد رصيد افتتاحي: إرجاع الرصيد الافتتاحي مرة أخرى
-                    $company = Company::find($transaction->company_id);
+                    $company = Company::lockForUpdate()->find($transaction->company_id);
                     if ($company) {
                         $company->opening_balance = ($company->opening_balance ?? 0) + (float) $transaction->amount;
                         $company->save();

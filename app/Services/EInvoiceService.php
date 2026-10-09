@@ -3,7 +3,9 @@ namespace App\Services;
 
 use App\Traits\ResponseTrait;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 
 class EInvoiceService
 {
@@ -21,8 +23,11 @@ class EInvoiceService
     /**
      * Get Access Token
      */
-    public function getAccessToken($clientId, $clientSecret)
+    public function getAccessToken($clientId = null, $clientSecret = null)
     {
+        $clientId = $clientId ?? env('ETA_CLIENT_ID');
+        $clientSecret = $clientSecret ?? env('ETA_CLIENT_SECRET');
+
         try {
             $response = $this->client->post("https://id.eta.gov.eg/connect/token", [
                 'form_params' => [
@@ -36,7 +41,7 @@ class EInvoiceService
             $data = json_decode($response->getBody(), true);
 
             return $data['access_token'] ?? null;
-        } catch (GuzzleException $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -63,10 +68,10 @@ class EInvoiceService
                 'message' => 'Invoice submitted successfully',
             ];
 
-        } catch (GuzzleHttp\Exception\ClientException $e) {
-            $responseBody = json_decode($e->getResponse()->getBody()->getContents(), true);
+        } catch (ClientException $e) {
+            $responseBody = $e->hasResponse() ? json_decode($e->getResponse()->getBody()->getContents(), true) : [];
 
-            if (isset($responseBody['error']) && str_contains($responseBody['error'], 'identical to a previous payload')) {
+            if (isset($responseBody['error']) && (str_contains($responseBody['error'], 'identical to a previous payload') || str_contains($responseBody['error'], 'Try to submit payload after'))) {
 
                 preg_match('/Try to submit payload after (\d+) se/', $responseBody['error'], $matches);
 
@@ -91,6 +96,16 @@ class EInvoiceService
             return [
                 'status'  => false,
                 'message' => 'ETA API Error: ' . json_encode($responseBody),
+            ];
+        } catch (GuzzleException $e) {
+            return [
+                'status'  => false,
+                'message' => 'ETA Connection Error: ' . $e->getMessage(),
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'status'  => false,
+                'message' => 'Unexpected Error: ' . $e->getMessage(),
             ];
         }
 

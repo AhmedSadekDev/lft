@@ -45,6 +45,8 @@ class ParallelContainerStagesTest extends TestCase
             $t->unsignedBigInteger('yard_id')->nullable();
             $t->unsignedBigInteger('shipping_agent_id')->nullable();
             $t->string('booking_number')->default('B-1');
+            $t->string('invoice_status')->nullable();
+            $t->tinyInteger('is_submitted')->default(0);
             $t->timestamps();
         });
         foreach (['yards', 'shipping_agents'] as $table) {
