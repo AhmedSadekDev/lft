@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<!--
+Template Name: Metronic - Bootstrap 4 HTML, React, Angular 10 & VueJS Admin Dashboard Theme
+Author: KeenThemes
+Website: http://www.keenthemes.com/
+Contact: support@keenthemes.com
+Follow: www.twitter.com/keenthemes
+Dribbble: www.dribbble.com/keenthemes
+Like: www.facebook.com/keenthemes
+Purchase: https://1.envato.market/EA4JP
+Renew Support: https://1.envato.market/EA4JP
+License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project.
+-->
+<html lang="ar" dir="rtl" data-theme="dark">
+<!--begin::Head-->
+
+<head>
+    <script>
+        (function() {
+            var saved = localStorage.getItem('lft_theme');
+            var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <base href="">
+    <meta charset="utf-8" />
+    <title>الحاويات | Leader for Trans</title>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta name="csrf-token" content="">
+    <meta name="description" content="Leader for Trans — إدارة النقل والحاويات والحسابات" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!--begin::Fonts-->
+    
+    <!--end::Fonts-->
+    <!--begin::Page Vendors Styles(used by this page)-->
+    <link href="../../../../public/assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
+    <!--end::Page Vendors Styles-->
+    <!--begin::Global Theme Styles(used by all pages)-->
+    <link href="../../../../public/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="../../../../public/assets/plugins/custom/prismjs/prismjs.bundle.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="../../../../public/assets/css/dataTables.bootstrap4.min.css">
+    <link href="../../../../public/assets/css/style.bundle.rtl.css" rel="stylesheet" type="text/css" />
+    <link href="../../../../public/assets/css/style.css" rel="stylesheet" type="text/css" />
+    <!--end::Global Theme Styles-->
+    <!--begin::Layout Themes(used by all pages)-->
+    <link href="../../../../public/assets/css/themes/layout/header/base/light.css" rel="stylesheet" type="text/css" />
+    <link href="../../../../public/assets/css/themes/layout/header/menu/light.css" rel="stylesheet" type="text/css" />
+    <link href="../../../../public/assets/css/themes/layout/brand/light.css" rel="stylesheet" type="text/css" />
+    <link href="../../../../public/assets/css/themes/layout/aside/light.css" rel="stylesheet" type="text/css" />
+    <link href="../../../../public/assets/css/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
+
+
+    <!--end::Layout Themes-->
+    <link rel="shortcut icon" href="../../../../public/assets/media/logo.png" />
+
+
+    <script src="../../../../public/assets/js/jquery-3.5.1.js"></script>
+    
+
+    <style>
+        .bs-canvas-overlay {
+            opacity: 0;
+            z-index: -1;
+        }
+
+        .bs-canvas-overlay.show {
+            opacity: 0.85;
+            z-index: 1100;
+        }
+
+        .required-field::after {
+            content: "*";
+            color: red;
+        }
+    </style>
+
+        <link href="../../../../public/assets/css/admin-ui.css?v=4b" rel="stylesheet" type="text/css" />
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+
+<body id="kt_body" class="lft-admin header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
+    <a class="lft-skip-link" href="#kt_content">انتقل إلى المحتوى</a>
+    <div class="bs-canvas-overlay bg-dark position-fixed w-100 h-100"></div>
+
+    <!--begin::Wrapper-->
+    <!--begin::Main-->
+    <!--begin::Header Mobile-->
+    <div id="kt_header_mobile" class="header-mobile align-items-center header-mobile-fixed">
+        <!--begin::Logo-->
+        <a href="https://cloudymenue.cloudy-digital.com/dashboard">
+            <img alt="Logo" src="../../../../public/assets/media/logo.png" />
+        </a>
+        <!--end::Logo-->
+        <!--begin::Toolbar-->
+        <div class="d-flex align-items-center">
+            <!--begin::Aside Mobile Toggle-->
+            <button class="btn p-0 burger-icon burger-icon-left" id="kt_aside_mobile_toggle" type="button" aria-label="فتح قائمة التنقل" aria-expanded="false">
+                <span></span>
+            </button>
+            <!--end::Aside Mobile Toggle-->
+            <!--begin::Topbar Mobile Toggle-->
+            <button class="btn btn-hover-text-primary p-0 ml-2" id="kt_header_mobile_topbar_toggle" type="button" aria-label="قائمة الحساب">
+                <span class="svg-icon svg-icon-xl">
+                    <!--begin::Svg Icon | path:assets/media/svg/icons/General/User.svg-->
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <polygon points="0 0 24 0 24 24 0 24" />
+                            <path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                            <path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="#000000" fill-rule="nonzero" />
+                        </g>
+                    </svg>
+                </span>
+            </button>
+            <!--end::Topbar Mobile Toggle-->
+        </div>
+        <!--end::Toolbar-->
+    </div>
+    <!--end::Header Mobile-->
+    <div class="d-flex flex-column flex-root">
+<!--begin::Page-->
+<div class="d-flex flex-row flex-column-fluid page">
+    <!--begin::Aside-->
+    <!--begin::Aside-->
+    <div class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside" aria-label="التنقل الرئيسي">
+                <!--begin::Brand-->
+        <div class="brand flex-column-auto" id="kt_brand">
+            <!--begin::Logo-->
+            <a href="https://cloudymenue.cloudy-digital.com/dashboard" class="brand-logo lft-sidebar-brand d-flex align-items-center">
+                <img src="../../../../public/assets/media/logo.png" alt="Leader for Trans" class="lft-sidebar-logo" />
+                <div class="lft-brand-titles mr-3">
+                    <span class="lft-brand-title">Leader for Trans</span>
+                    <span class="lft-brand-subtitle">منظومة التجارة والأعمال</span>
+                </div>
+            </a>
+            <!--end::Logo-->
+            <!--begin::Toggle-->
+            <button class="brand-toggle btn btn-sm px-0" id="kt_aside_toggle" type="button" aria-label="طي قائمة التنقل">
+                <span class="svg-icon svg-icon svg-icon-xl">
+                    <!--begin::Svg Icon | path:assets/media/svg/icons/Navigation/Angle-double-left.svg-->
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                        height="24px" viewBox="0 0 24 24" version="1.1">
+                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <polygon points="0 0 24 0 24 24 0 24" />
+                            <path
+                                d="M5.29288961,6.70710318 C4.90236532,6.31657888 4.90236532,5.68341391 5.29288961,5.29288961 C5.68341391,4.90236532 6.31657888,4.90236532 6.70710318,5.29288961 L12.7071032,11.2928896 C13.0856821,11.6714686 13.0989277,12.281055 12.7371505,12.675721 L7.23715054,18.675721 C6.86395813,19.08284 6.23139076,19.1103429 5.82427177,18.7371505 C5.41715278,18.3639581 5.38964985,17.7313908 5.76284226,17.3242718 L10.6158586,12.0300721 L5.29288961,6.70710318 Z"
+                                fill="#000000" fill-rule="nonzero"
+                                transform="translate(8.999997, 11.999999) scale(-1, 1) translate(-8.999997, -11.999999)" />
+                            <path
+                                d="M10.7071009,15.7071068 C10.3165766,16.0976311 9.68341162,16.0976311 9.29288733,15.7071068 C8.90236304,15.3165825 8.90236304,14.6834175 9.29288733,14.2928932 L15.2928873,8.29289322 C15.6714663,7.91431428 16.2810527,7.90106866 16.6757187,8.26284586 L22.6757187,13.7628459 C23.0828377,14.1360383 23.1103407,14.7686056 22.7371482,15.1757246 C22.3639558,15.5828436 21.7313885,15.6103465 21.3242695,15.2371541 L16.0300699,10.3841378 L10.7071009,15.7071068 Z"
+                                fill="#000000" fill-rule="nonzero" opacity="0.3"
+                                transform="translate(15.999997, 11.999999) scale(-1, 1) rotate(-270.000000) translate(-15.999997, -11.999999)" />
+                        </g>
+                    </svg>
+                    <!--end::Svg Icon-->
+                </span>
+            </button>
+            <!--end::Toolbar-->
+        </div>
+        <!--end::Brand-->
+        <!--begin::Aside Menu-->
+        <div class="aside-menu-wrapper flex-column-fluid" id="kt_aside_menu_wrapper">
+            <!--begin::Menu Container-->
+            <div id="kt_aside_menu" class="aside-menu mb-4" data-menu-vertical="1" data-menu-scroll="1"
+                data-menu-dropdown-timeout="500">
+                <!--begin::Menu Nav-->
+                <ul class="menu-nav pt-0">
+                    <li class="lft-nav-label" role="presentation">مساحة العمل</li>
+                    <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                        <a href="https://cloudymenue.cloudy-digital.com/dashboard" class="menu-link">
+                            <span class="svg-icon menu-icon">
+                                <i class="fas fa-home"></i>
+                            </span>
+                            <span class="menu-text">الرئيسية</span>
+                        </a>
+                    </li>
+
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-box"></i>
+                                </span>
+                                <span class="menu-text">الحاويات</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">الحاويات</span>
+                                        </span>
+                                    </li>
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers" class="menu-link">
+                                                <span class="menu-text">الحاويات</span>
+                                            </a>
+                                        </li>
+                                                                    </ul>
+                            </div>
+                        </li>
+                    
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-box"></i>
+                                </span>
+                                <span class="menu-text">الخدمات</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/serviceCategories" id="serviceCategories-link"
+                                                class="menu-link">
+                                                <span class="menu-text">الفئات</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/services" id="services-link"
+                                                class="menu-link">
+                                                <span class="menu-text">الخدمات</span>
+                                            </a>
+                                        </li>
+                                                                    </ul>
+                            </div>
+                        </li>
+                    
+
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+
+                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/yards" id="yards-link" class="menu-link">
+                                <span class="svg-icon menu-icon text-muted">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="14" width="14"
+                                        viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                        <path fill="#b5b5c3"
+                                            d="M243.4 2.6l-224 96c-14 6-21.8 21-18.7 35.8S16.8 160 32 160v8c0 13.3 10.7 24 24 24H456c13.3 0 24-10.7 24-24v-8c15.2 0 28.3-10.7 31.3-25.6s-4.8-29.9-18.7-35.8l-224-96c-8-3.4-17.2-3.4-25.2 0zM128 224H64V420.3c-.6 .3-1.2 .7-1.8 1.1l-48 32c-11.7 7.8-17 22.4-12.9 35.9S17.9 512 32 512H480c14.1 0 26.5-9.2 30.6-22.7s-1.1-28.1-12.9-35.9l-48-32c-.6-.4-1.2-.7-1.8-1.1V224H384V416H344V224H280V416H232V224H168V416H128V224zM256 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                                    </svg>
+                                </span>
+                                <span class="menu-text">الساحات</span>
+                            </a>
+                        </li>
+                    
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+
+                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/shippingAgents" id="shippingAgents-link"
+                                class="menu-link">
+                                <span class="svg-icon menu-icon text-muted">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="14" width="14"
+                                        viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                        <path fill="#b5b5c3"
+                                            d="M243.4 2.6l-224 96c-14 6-21.8 21-18.7 35.8S16.8 160 32 160v8c0 13.3 10.7 24 24 24H456c13.3 0 24-10.7 24-24v-8c15.2 0 28.3-10.7 31.3-25.6s-4.8-29.9-18.7-35.8l-224-96c-8-3.4-17.2-3.4-25.2 0zM128 224H64V420.3c-.6 .3-1.2 .7-1.8 1.1l-48 32c-11.7 7.8-17 22.4-12.9 35.9S17.9 512 32 512H480c14.1 0 26.5-9.2 30.6-22.7s-1.1-28.1-12.9-35.9l-48-32c-.6-.4-1.2-.7-1.8-1.1V224H384V416H344V224H280V416H232V224H168V416H128V224zM256 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                                    </svg>
+                                </span>
+                                <span class="menu-text">التوكيلات الملاحية</span>
+                            </a>
+                        </li>
+                    
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="14" width="14"
+                                        viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                        <path fill="#b5b5c3"
+                                            d="M243.4 2.6l-224 96c-14 6-21.8 21-18.7 35.8S16.8 160 32 160v8c0 13.3 10.7 24 24 24H456c13.3 0 24-10.7 24-24v-8c15.2 0 28.3-10.7 31.3-25.6s-4.8-29.9-18.7-35.8l-224-96c-8-3.4-17.2-3.4-25.2 0zM128 224H64V420.3c-.6 .3-1.2 .7-1.8 1.1l-48 32c-11.7 7.8-17 22.4-12.9 35.9S17.9 512 32 512H480c14.1 0 26.5-9.2 30.6-22.7s-1.1-28.1-12.9-35.9l-48-32c-.6-.4-1.2-.7-1.8-1.1V224H384V416H344V224H280V416H232V224H168V416H128V224zM256 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                                    </svg>
+                                </span>
+                                <span class="menu-text">المدن و المناطق</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">المدن و المناطق</span>
+                                        </span>
+                                    </li>
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/citiesAndRegions" class="menu-link">
+                                                <span class="menu-text">المدن و المناطق</span>
+                                            </a>
+                                        </li>
+                                                                    </ul>
+                            </div>
+                        </li>
+                    
+
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-building"></i>
+                                </span>
+                                <span class="menu-text">العملاء</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">الشركات</span>
+                                        </span>
+                                    </li>
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/companies" class="menu-link">
+                                                <span class="menu-text">الشركات</span>
+                                            </a>
+                                        </li>
+                                    
+                                    <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                        data-menu-toggle="hover">
+                                        <a href="https://cloudymenue.cloudy-digital.com/dashboard/private-companies" class="menu-link">
+                                            <span class="menu-text">الشركات الخاصة</span>
+                                        </a>
+                                    </li>
+
+
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/employees" class="menu-link">
+                                                <span class="menu-text">الموظفين</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/factories" class="menu-link">
+                                                <span class="menu-text">المصانع</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/branches" class="menu-link">
+                                                <span class="menu-text">فروع</span>
+                                            </a>
+                                        </li>
+                                                                    </ul>
+                            </div>
+                        </li>
+                    
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-building"></i>
+                                </span>
+                                <span class="menu-text">النقل</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">النقل</span>
+                                        </span>
+                                    </li>
+
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/drivers" class="menu-link">
+                                                <span class="menu-text">السائقين</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/cars" class="menu-link">
+                                                <span class="menu-text">السيارات</span>
+                                            </a>
+                                        </li>
+                                    
+
+                                </ul>
+                            </div>
+                        </li>
+                    
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-building"></i>
+                                </span>
+                                <span class="menu-text">المندوبين</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">المندوبين</span>
+                                        </span>
+                                    </li>
+
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/superagents" class="menu-link">
+                                                <span class="menu-text">المندوبين المسؤلين</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/agents" class="menu-link">
+                                                <span class="menu-text">المندوبين</span>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item" aria-haspopup="true">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/agent-photos" class="menu-link">
+                                                <span class="menu-text">صور المناديب</span>
+                                            </a>
+                                        </li>
+                                                                    </ul>
+                            </div>
+                        </li>
+                    
+                    
+                                            <li class="menu-item menu-item-submenu "
+                            aria-haspopup="true"
+                            data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-truck-loading"></i>
+                                </span>
+                                <span class="menu-text">الموردين</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">الموردين</span>
+                                        </span>
+                                    </li>
+                                    <li class="menu-item" aria-haspopup="true">
+                                        <a href="https://cloudymenue.cloudy-digital.com/dashboard/suppliers" class="menu-link">
+                                            <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                            <span class="menu-text">قائمة الموردين</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item" aria-haspopup="true">
+                                        <a href="https://cloudymenue.cloudy-digital.com/dashboard/suppliers/create" class="menu-link">
+                                            <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                            <span class="menu-text">إضافة مورد</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item" aria-haspopup="true">
+                                        <a href="https://cloudymenue.cloudy-digital.com/dashboard/receipts" class="menu-link">
+                                            <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                            <span class="menu-text">الإيصالات</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item" aria-haspopup="true">
+                                        <a href="https://cloudymenue.cloudy-digital.com/dashboard/receipts/create" class="menu-link">
+                                            <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                            <span class="menu-text">إضافة إيصال</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+
+                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/permissions" id="permissions-link" class="menu-link">
+                                <span class="svg-icon menu-icon text-muted">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="14" width="14"
+                                        viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                        <path fill="#b5b5c3"
+                                            d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0z" />
+                                    </svg>
+                                </span>
+                                <span class="menu-text">الصلاحيات</span>
+                            </a>
+                        </li>
+                    
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-users"></i>
+                                </span>
+                                <span class="menu-text">إدارة المستخدمين</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">إدارة المستخدمين</span>
+                                        </span>
+                                    </li>
+
+
+
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/users?role=Admin"
+                                                id="static-pages-link" class="menu-link">
+                                                <span class="menu-text">Admin</span>
+                                            </a>
+                                        </li>
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/users?role=%D9%85%D8%AF%D8%AE%D9%84%20%D8%A8%D9%8A%D8%A7%D9%86%D8%A7%D8%AA"
+                                                id="static-pages-link" class="menu-link">
+                                                <span class="menu-text">مدخل بيانات</span>
+                                            </a>
+                                        </li>
+                                                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                        data-menu-toggle="hover">
+                                        <a href="https://cloudymenue.cloudy-digital.com/dashboard/users" id="static-pages-link"
+                                            class="menu-link">
+                                            <span class="menu-text">ليس لديهم أدوار</span>
+                                        </a>
+                                    </li>
+
+
+                                </ul>
+                            </div>
+                        </li>
+                    
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-cog"></i>
+                                </span>
+                                <span class="menu-text">إعدادات الموقع</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">إعدادات الموقع</span>
+                                        </span>
+                                    </li>
+
+
+
+
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/staticPages" id="static-pages-link"
+                                                class="menu-link">
+                                                <span class="menu-text">الصفحات الثابتة</span>
+                                            </a>
+                                        </li>
+                                                                                                                <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/ourServices" id="our-services-link"
+                                                class="menu-link">
+                                                <span class="menu-text">خدماتنا</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/chooseUs" id="choose-us-link"
+                                                class="menu-link">
+                                                <span class="menu-text">لماذا أخترتنا</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/sponsers" id="sponsers-link"
+                                                class="menu-link">
+                                                <span class="menu-text">الرعاة</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/reviews" id="reviews-link"
+                                                class="menu-link">
+                                                <span class="menu-text">التقييمات</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/settings/1/edit" id="settings-link"
+                                                class="menu-link">
+                                                <span class="menu-text">الإعدادات</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/contactUs" id="Contact-us-link"
+                                                class="menu-link">
+                                                <span class="menu-text">اتصل بنا</span>
+                                            </a>
+                                        </li>
+                                                                    </ul>
+                            </div>
+                        </li>
+                    
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </span>
+                                <span class="menu-text">طلبات النقل</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">طلبات النقل</span>
+                                        </span>
+                                    </li>
+
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/bookings" class="menu-link">
+                                                <span class="menu-text">طلبات النقل</span>
+                                            </a>
+                                        </li>
+                                    
+                                </ul>
+                            </div>
+                        </li>
+                    
+
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-calculator"></i>
+                                </span>
+                                <span class="menu-text">الحسابات والتقارير</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">الحسابات والتقارير</span>
+                                        </span>
+                                    </li>
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/accounts" class="menu-link">
+                                                <span class="menu-text">حسابات الشركات</span>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/accounts/checks" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">الشيكات</span>
+                                            </a>
+                                        </li>
+                                                                                                                <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/suppliers" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">الموردين</span>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/receipts" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">إيصالات الموردين</span>
+                                            </a>
+                                        </li>
+                                                                                                                <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/cars" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">حسابات السيارات</span>
+                                            </a>
+                                        </li>
+                                                                                                                <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/general_expenses" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">المصروفات العامة</span>
+                                            </a>
+                                        </li>
+                                                                                                                <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/accounts/profit-loss" class="menu-link">
+                                                <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                                <span class="menu-text">تقرير الأرباح والخسائر</span>
+                                            </a>
+                                        </li>
+                                                                    </ul>
+                            </div>
+                        </li>
+                    
+
+                                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="fas fa-box"></i>
+                                </span>
+                                <span class="menu-text">الحسابات</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/banks" id="banks-link" class="menu-link">
+                                                <span class="menu-text">البنوك</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/vaults" id="vaults-link"
+                                                class="menu-link">
+                                                <span class="menu-text">الخزنه</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/financial_custody_agents"
+                                                id="services-link" class="menu-link">
+                                                <span
+                                                    class="menu-text">عهده الماليه للمندوبين</span>
+                                            </a>
+                                        </li>
+                                    
+                                                                            <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/financial_custody_superagents"
+                                                id="services-link" class="menu-link">
+                                                <span
+                                                    class="menu-text">عهده الماليه للمندوبين المسؤلين</span>
+                                            </a>
+                                        </li>
+                                                                    </ul>
+                            </div>
+                        </li>
+                    
+
+
+
+
+
+
+
+
+
+                </ul>
+                <!--end::Menu Nav-->
+            </div>
+            <!--end::Menu Container-->
+        </div>
+        <!--end::Aside Menu-->
+    </div>
+    <!--end::Aside-->
+    <!--begin::Wrapper-->
+    <div class="d-flex flex-column flex-row-fluid wrapper" id="kt_wrapper">
+
+        <!--begin::Header-->
+        <div id="kt_header" class="header header-fixed">
+            <!--begin::Container-->
+            <div class="container-fluid d-flex align-items-stretch justify-content-between px-6">
+                <!--begin::Page Title & Breadcrumb-->
+                <div class="d-flex align-items-center flex-wrap mr-4 py-3">
+                    <div class="d-flex flex-column">
+                        <h4 class="text-dark font-weight-bolder my-1 mr-3 font-size-h4" style="color: var(--text-primary) !important;">
+                            الحاويات                        </h4>
+                        <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-1 font-size-sm">
+                            <li class="breadcrumb-item text-muted">
+                                <a href="https://cloudymenue.cloudy-digital.com/dashboard" class="text-muted text-hover-primary">الرئيسية</a>
+                            </li>
+                            <li class="breadcrumb-item text-muted">
+                                <span>الحاويات</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!--end::Page Title & Breadcrumb-->
+
+                <!--begin::Topbar Actions-->
+                <div class="d-flex align-items-center">
+                    <!-- Global Search -->
+                    <div class="lft-topbar-search d-none d-lg-block mr-4">
+                        <i class="fas fa-search lft-topbar-search-icon"></i>
+                        <input type="text" placeholder="البحث في النظام..." aria-label="البحث في النظام">
+                    </div>
+
+                    <div class="lft-topbar-actions">
+                        <!-- Light / Dark Mode Toggle Pill -->
+                        <div class="lft-theme-toggle mr-2" role="group" aria-label="تبديل المظهر">
+                            <button type="button" class="lft-theme-toggle-btn active" data-theme-val="light" title="المظهر الفاتح">
+                                <i class="fas fa-sun"></i>
+                            </button>
+                            <button type="button" class="lft-theme-toggle-btn" data-theme-val="dark" title="المظهر الداكن">
+                                <i class="fas fa-moon"></i>
+                            </button>
+                        </div>
+
+                        <!-- Notifications Button -->
+                        <div class="dropdown mr-2">
+                            <button type="button" class="lft-icon-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="الإشعارات">
+                                <i class="far fa-bell"></i>
+                                <span class="lft-badge-counter">5</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right p-0 m-0 dropdown-menu-md">
+                                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                                    <h6 class="font-weight-bolder mb-0">التنبيهات</h6>
+                                    <span class="badge badge-light-primary">5 جديدة</span>
+                                </div>
+                                <div class="p-3 font-size-sm">
+                                    <div class="d-flex align-items-center py-2 border-bottom">
+                                        <div class="w-8px h-8px rounded-circle bg-success mr-2"></div>
+                                        <span>تم إنشاء حجز جديد #509</span>
+                                    </div>
+                                    <div class="d-flex align-items-center py-2 border-bottom">
+                                        <div class="w-8px h-8px rounded-circle bg-primary mr-2"></div>
+                                        <span>تم اعتماد مرحلة تحميل لحاوية</span>
+                                    </div>
+                                    <div class="d-flex align-items-center py-2">
+                                        <div class="w-8px h-8px rounded-circle bg-warning mr-2"></div>
+                                        <span>شيكات مستحقة خلال 3 أيام</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fullscreen Toggle Button -->
+                        <button type="button" class="lft-icon-btn mr-3 d-none d-sm-inline-flex" onclick="if(!document.fullscreenElement){document.documentElement.requestFullscreen();}else{document.exitFullscreen();}" title="ملء الشاشة">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </button>
+
+                        <!-- User Profile Dropdown -->
+                        <div class="dropdown">
+                            <div class="lft-user-profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">
+                                <div class="lft-user-avatar">
+                                    A
+                                </div>
+                                <div class="lft-user-info d-none d-md-flex">
+                                    <span class="lft-user-name">Admin</span>
+                                    <span class="lft-user-role">مدير النظام</span>
+                                </div>
+                                <i class="fas fa-chevron-down font-size-xs text-muted mr-1"></i>
+                            </div>
+                            <div class="dropdown-menu dropdown-menu-right py-2 mt-2 shadow-sm border-0" style="border-radius: 12px; min-width: 200px;">
+                                <div class="px-4 py-2 border-bottom mb-2">
+                                    <div class="font-weight-bold text-dark">Admin</div>
+                                    <small class="text-muted">admin@admin.com</small>
+                                </div>
+                                <a class="dropdown-item py-2" href="https://cloudymenue.cloudy-digital.com/dashboard/profile">
+                                    <i class="far fa-user ml-2 text-primary"></i> تعديل الملف الشخصي
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item py-2 text-danger" href="https://cloudymenue.cloudy-digital.com/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt ml-2 text-danger"></i> Logout
+                                </a>
+                                <form id="logout-form" action="https://cloudymenue.cloudy-digital.com/logout" method="POST" class="d-none">
+                                    <input type="hidden" name="_token" value="">                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Topbar Actions-->
+            </div>
+            <!--end::Container-->
+        </div>
+        <!--end::Header-->
+
+        <!--begin::Content-->
+        <main class="content d-flex flex-column flex-column-fluid" id="kt_content" tabindex="-1">
+            <div class="container-fluid">
+    <header class="lft-page-heading">
+    <div>
+        <h1>الحاويات</h1>
+        <nav aria-label="مسار التنقل">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="https://cloudymenue.cloudy-digital.com/dashboard">الرئيسية</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">الحاويات</li>
+                            </ol>
+        </nav>
+    </div>
+    <span class="lft-page-tag" dir="ltr">LEADER / WORKSPACE</span>
+</header>
+
+    <!--begin::Card-->
+    <div class="card card-custom shadow-sm">
+        <div class="card-header border-0 py-4">
+            <div class="card-title">
+                <h3 class="card-label font-weight-bolder text-dark">
+                    <i class="fas fa-box text-primary mr-2"></i>
+                    الحاويات
+                </h3>
+            </div>
+            <div class="card-toolbar">
+                <div class="d-flex gap-2 flex-wrap">
+                                            <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers/create" class="btn btn-primary font-weight-bold shadow-sm">
+                            <i class="fas fa-plus mr-1"></i>إضافة
+                        </a>
+                                    </div>
+            </div>
+        </div>
+
+        <!-- شريط البحث -->
+        <div class="card-body border-top">
+            <form action="https://cloudymenue.cloudy-digital.com/dashboard/containers" method="get" class="mb-4">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label class="font-weight-bold text-dark mb-2">البحث</label>
+                        <div class="input-group input-group-solid">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-light">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                            </div>
+                            <input type="text" name="search" class="form-control form-control-solid"
+                                   placeholder="ابحث عن النوع أو الحجم..."
+                                   value="">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary font-weight-bold w-100">
+                            <i class="fas fa-search mr-1"></i> بحث
+                        </button>
+                    </div>
+                                    </div>
+            </form>
+
+            <!-- معلومات النتائج -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="text-muted">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    عرض 1 - 7 من أصل 7 حاوية
+                </div>
+            </div>
+
+            <!-- الجدول -->
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-head-custom table-vertical-center no-datatable">
+                    <thead class="thead-light">
+                        <tr class="text-center">
+                            <th scope="col" style="width: 80px;">#</th>
+                            <th scope="col">النوع</th>
+                            <th scope="col">الحجم</th>
+                            <th scope="col">تم الإضافة فى</th>
+                            <th scope="col" style="width: 120px;">العمليات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                    <tr>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-secondary badge-pill">7</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">
+                                        <i class="fas fa-tag mr-1 text-muted"></i>TRA
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-muted">
+                                        <i class="fas fa-ruler-combined mr-1"></i>40
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <small class="text-muted">
+                                        2026-08-20
+                                    </small>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                                                                    <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers/7/edit"
+                                               class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                               title="تعديل">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </a>
+                                                                                                                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                                    onclick="Delete(7)"
+                                                    title="حذف">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </button>
+                                                                            </div>
+                                </td>
+                            </tr>
+                                                    <tr>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-secondary badge-pill">6</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">
+                                        <i class="fas fa-tag mr-1 text-muted"></i>HC
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-muted">
+                                        <i class="fas fa-ruler-combined mr-1"></i>45
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <small class="text-muted">
+                                        2026-08-07
+                                    </small>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                                                                    <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers/6/edit"
+                                               class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                               title="تعديل">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </a>
+                                                                                                                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                                    onclick="Delete(6)"
+                                                    title="حذف">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </button>
+                                                                            </div>
+                                </td>
+                            </tr>
+                                                    <tr>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-secondary badge-pill">5</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">
+                                        <i class="fas fa-tag mr-1 text-muted"></i>RF
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-muted">
+                                        <i class="fas fa-ruler-combined mr-1"></i>40
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <small class="text-muted">
+                                        2025-12-28
+                                    </small>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                                                                    <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers/5/edit"
+                                               class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                               title="تعديل">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </a>
+                                                                                                                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                                    onclick="Delete(5)"
+                                                    title="حذف">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </button>
+                                                                            </div>
+                                </td>
+                            </tr>
+                                                    <tr>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-secondary badge-pill">4</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">
+                                        <i class="fas fa-tag mr-1 text-muted"></i>DV
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-muted">
+                                        <i class="fas fa-ruler-combined mr-1"></i>40
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <small class="text-muted">
+                                        2025-11-26
+                                    </small>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                                                                    <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers/4/edit"
+                                               class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                               title="تعديل">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </a>
+                                                                                                                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                                    onclick="Delete(4)"
+                                                    title="حذف">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </button>
+                                                                            </div>
+                                </td>
+                            </tr>
+                                                    <tr>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-secondary badge-pill">3</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">
+                                        <i class="fas fa-tag mr-1 text-muted"></i>ثقيل
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-muted">
+                                        <i class="fas fa-ruler-combined mr-1"></i>20
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <small class="text-muted">
+                                        2025-11-26
+                                    </small>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                                                                    <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers/3/edit"
+                                               class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                               title="تعديل">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </a>
+                                                                                                                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                                    onclick="Delete(3)"
+                                                    title="حذف">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </button>
+                                                                            </div>
+                                </td>
+                            </tr>
+                                                    <tr>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-secondary badge-pill">2</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">
+                                        <i class="fas fa-tag mr-1 text-muted"></i>DV
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-muted">
+                                        <i class="fas fa-ruler-combined mr-1"></i>20
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <small class="text-muted">
+                                        2025-11-26
+                                    </small>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                                                                    <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers/2/edit"
+                                               class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                               title="تعديل">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </a>
+                                                                                                                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                                    onclick="Delete(2)"
+                                                    title="حذف">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </button>
+                                                                            </div>
+                                </td>
+                            </tr>
+                                                    <tr>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-secondary badge-pill">1</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">
+                                        <i class="fas fa-tag mr-1 text-muted"></i>HC
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-muted">
+                                        <i class="fas fa-ruler-combined mr-1"></i>40
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <small class="text-muted">
+                                        2025-11-26
+                                    </small>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center gap-2">
+                                                                                    <a href="https://cloudymenue.cloudy-digital.com/dashboard/containers/1/edit"
+                                               class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                               title="تعديل">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </a>
+                                                                                                                            <button class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                                    onclick="Delete(1)"
+                                                    title="حذف">
+                                                <i class="fas fa-trash text-danger"></i>
+                                            </button>
+                                                                            </div>
+                                </td>
+                            </tr>
+                                            </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+                    </div>
+    </div>
+    <!--end::Card-->
+</div>
+
+<style>
+    .table-head-custom th {
+        background-color: var(--surface-secondary) !important;
+        color: var(--text-secondary) !important;
+        font-weight: 700;
+        border-bottom: 1px solid var(--border) !important;
+    }
+    .table-hover tbody tr:hover td {
+        background-color: var(--surface-secondary) !important;
+        transition: background-color 0.2s ease;
+    }
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+    }
+    .btn-icon:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+</style>
+        </main>
+        <!--end::Content-->
+
+        <!--begin::Footer-->
+        <div class="footer bg-white py-4 d-flex flex-lg-column" id="kt_footer">
+            <!--begin::Container-->
+            <div class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
+                <!--begin::Copyright-->
+                <div class="text-dark order-2 order-md-1">
+                    <span class="text-muted font-weight-bold mr-2">2026 ©</span>
+                    <a href="https://cloudymenue.cloudy-digital.com/dashboard" class="text-dark-75 text-hover-primary">LeaderForTrans</a>
+                </div>
+                <!--end::Copyright-->
+                <!--begin::Nav-->
+                <div class="nav nav-dark">
+                </div>
+                <!--end::Nav-->
+            </div>
+            <!--end::Container-->
+        </div>
+        <!--end::Footer-->
+    </div>
+    <!--end::Wrapper-->
+
+</div>
+
+
+<!--begin::Global Config-->
+<script>
+    var KTAppSettings = {
+        "breakpoints": { "sm": 576, "md": 768, "lg": 992, "xl": 1200, "xxl": 1400 },
+        "colors": {
+            "theme": {
+                "base": { "white": "#ffffff", "primary": "#3699FF", "secondary": "#E5EAEE", "success": "#1BC5BD", "info": "#8950FC", "warning": "#FFA800", "danger": "#F64E60", "light": "#E4E6EF", "dark": "#181C32" },
+                "light": { "white": "#ffffff", "primary": "#E1F0FF", "secondary": "#EBEDF3", "success": "#C9F7F5", "info": "#EEE5FF", "warning": "#FFF4DE", "danger": "#FFE2E5", "light": "#F3F6F9", "dark": "#D6D6E0" },
+                "inverse": { "white": "#ffffff", "primary": "#ffffff", "secondary": "#3F4254", "success": "#ffffff", "info": "#ffffff", "warning": "#ffffff", "danger": "#ffffff", "light": "#464E5F", "dark": "#ffffff" }
+            },
+            "gray": { "gray-100": "#F3F6F9", "gray-200": "#EBEDF3", "gray-300": "#E4E6EF", "gray-400": "#D1D3E0", "gray-500": "#B5B5C3", "gray-600": "#7E8299", "gray-700": "#5E6278", "gray-800": "#3F4254", "gray-900": "#181C32" }
+        },
+        "font-family": "Poppins"
+    };
+</script>
+<!--end::Global Config-->
+<!--begin::Global Theme Bundle(used by all pages)-->
+<script src="../../../../public/assets/plugins/global/plugins.bundle.js"></script>
+<script src="../../../../public/assets/js/scripts.bundle.js"></script>
+<!--end::Global Theme Bundle-->
+
+<script src="../../../../public/assets/js/jquery.dataTables.min.js"></script>
+<script src="../../../../public/assets/js/dataTables.bootstrap4.min.js"></script>
+<script src="../../../../public/assets/js/bootstrap-select.min.js"></script>
+<!-- =================== CDNs =================== -->
+
+<script src="../../../../public/assets/js/sweetalert.min.js"></script>
+<!-- Toaster Scripts --->
+<script>
+    if (typeof toastr !== 'undefined') {
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+            'rtl': false
+        };
+    }
+</script>
+<!-- =================== \CDNs =================== -->
+<script>
+    $(document).ready(function() {
+        // تهيئة DataTable على جميع الجداول ما عدا التي تحتوي على class no-datatable
+        $('table:not(.no-datatable)').DataTable({
+            "order": [
+                [0, 'desc']
+            ],
+            "language": {
+                "sProcessing": "جارٍ التحميل...",
+                "sLengthMenu": "أظهر _MENU_ مدخلات",
+                "sZeroRecords": "لم يعثر على أية سجلات",
+                "sInfo": "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                "sInfoEmpty": "يعرض 0 إلى 0 من أصل 0 سجل",
+                "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
+                "sInfoPostFix": "",
+                "sSearch": "ابحث:",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "الأول",
+                    "sPrevious": "السابق",
+                    "sNext": "التالي",
+                    "sLast": "الأخير"
+                }
+            }
+        });
+    });
+
+    </script>
+
+<script>
+    function executeToBeDisabledSelections() {
+        $("option:selected[value='to_be_disabled']").each(function(index, element) {
+            $(element).attr({
+                disabled: true,
+                selected: true
+            });
+        });
+    }
+    executeToBeDisabledSelections();
+</script>
+
+    <script>
+
+        function Delete(id) {
+            Swal.fire({
+                title: "هل أنت متأكد؟",
+                text: "لن تستطيع استعادة البيانات مرة اخرى!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "تأكيد",
+                cancelButtonText: "إلغاء",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = 'https://cloudymenue.cloudy-digital.com/dashboard/containers/:id';
+                    url = url.replace(':id', id);
+                    var token = '';
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    });
+                    $.ajax({
+                        url: url,
+                        type: 'delete',
+                        success: function(response, textStatus, xhr) {
+                            console.log(response, xhr.status);
+                            if(xhr.status == 200){
+                                Swal.fire({
+                                    title: "تم",
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                });
+                                location.reload();
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+<script src="../../../../public/assets/js/admin-ui.js?v=4b"></script>
+
+<!--end::Page Scripts-->
+</body>
+<!--end::Body-->
+
+</html>
+
+<!--begin::Page Scripts(used by this page)-->
+<script src="../../../../public/assets/js/pages/widgets.js"></script>
+<script src="../../../../public/assets/js/pages/waypoints.min.js"></script>
+<script src="../../../../public/assets/js/pages/counterup.min.js"></script>
+
+<script>
+    $('.counter').counterUp({
+        delay: 10,
+        time: 1500
+    });
+</script>

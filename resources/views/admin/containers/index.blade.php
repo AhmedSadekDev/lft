@@ -147,12 +147,13 @@
 
 <style>
     .table-head-custom th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-        border-bottom: 2px solid #dee2e6;
+        background-color: var(--surface-secondary) !important;
+        color: var(--text-secondary) !important;
+        font-weight: 700;
+        border-bottom: 1px solid var(--border) !important;
     }
-    .table-hover tbody tr:hover {
-        background-color: #f8f9fa;
+    .table-hover tbody tr:hover td {
+        background-color: var(--surface-secondary) !important;
         transition: background-color 0.2s ease;
     }
     .btn-icon {
@@ -161,12 +162,12 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 5px;
-        transition: all 0.3s ease;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
     }
     .btn-icon:hover {
         transform: translateY(-2px);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow-sm);
     }
 </style>
 @endsection

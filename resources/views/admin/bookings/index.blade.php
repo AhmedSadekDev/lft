@@ -5,29 +5,32 @@
             font-size: 14px;
         }
         .bookings-table thead th {
-            background-color: #f8f9fa;
-            color: #495057;
-            font-weight: 600;
-            border-bottom: 2px solid #dee2e6;
-            padding: 12px;
+            background-color: var(--surface-secondary) !important;
+            color: var(--text-secondary) !important;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border) !important;
+            padding: 12px 14px;
             white-space: nowrap;
         }
         .bookings-table tbody td {
-            padding: 12px;
+            padding: 12px 14px;
             vertical-align: middle;
+            color: var(--text-primary);
+            border-top: 1px solid var(--border-light) !important;
         }
-        .bookings-table tbody tr:hover {
-            background-color: #f8f9fa;
+        .bookings-table tbody tr:hover td {
+            background-color: var(--surface-secondary) !important;
         }
         .filter-card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
             margin-bottom: 20px;
         }
         .badge-custom {
             padding: 6px 12px;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             font-size: 12px;
         }
         .action-buttons {
@@ -44,19 +47,28 @@
         }
         .search-input-group .form-control {
             padding-right: 40px;
+            background-color: var(--surface-secondary);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+        .search-input-group .form-control:focus {
+            background-color: var(--surface);
+            border-color: var(--primary);
         }
         .search-input-group .search-icon {
             position: absolute;
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: #6c757d;
+            color: var(--text-muted);
         }
         .filter-badge {
             display: inline-block;
             margin: 2px;
             padding: 4px 8px;
-            background: #e9ecef;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
             border-radius: 4px;
             font-size: 12px;
         }
@@ -65,40 +77,41 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid var(--border);
             margin-top: 20px;
         }
         .pagination-info {
-            color: #6c757d;
+            color: var(--text-secondary);
             font-size: 14px;
         }
         .pagination {
             margin: 0;
         }
         .pagination .page-link {
-            color: #495057;
-            border: 1px solid #dee2e6;
+            color: var(--text-primary);
+            background-color: var(--surface);
+            border: 1px solid var(--border);
             padding: 8px 12px;
             margin: 0 2px;
-            border-radius: 4px;
-            transition: all 0.3s;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
         .pagination .page-link:hover {
-            background-color: #e9ecef;
-            border-color: #adb5bd;
-            color: #495057;
+            background-color: var(--surface-secondary);
+            border-color: var(--primary);
+            color: var(--primary);
         }
         .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: #fff;
+            background-color: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: #fff !important;
             font-weight: 600;
         }
         .pagination .page-item.disabled .page-link {
-            color: #6c757d;
+            color: var(--text-muted);
             pointer-events: none;
-            background-color: #fff;
-            border-color: #dee2e6;
+            background-color: var(--surface-secondary);
+            border-color: var(--border);
             opacity: 0.5;
         }
         .custom-pagination {
@@ -123,40 +136,40 @@
             padding: 8px 14px;
             min-width: 40px;
             height: 40px;
-            color: #495057;
-            background-color: #fff;
-            border: 1px solid #dee2e6;
+            color: var(--text-primary);
+            background-color: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 6px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
         }
         .pagination-link:hover:not(.disabled) {
-            background-color: #e9ecef;
-            border-color: #adb5bd;
-            color: #495057;
+            background-color: var(--surface-secondary);
+            border-color: var(--primary);
+            color: var(--primary);
             transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-sm);
         }
         .pagination-item.active .pagination-link {
-            background-color: #007bff;
-            border-color: #007bff;
+            background-color: var(--primary);
+            border-color: var(--primary);
             color: #fff;
             font-weight: 600;
-            box-shadow: 0 2px 6px rgba(0,123,255,0.3);
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
         }
         .pagination-item.active .pagination-link:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
             transform: translateY(-1px);
         }
         .pagination-link.disabled,
         .pagination-item.disabled .pagination-link {
-            color: #6c757d;
-            background-color: #f8f9fa;
-            border-color: #e9ecef;
+            color: var(--text-muted);
+            background-color: var(--surface-secondary);
+            border-color: var(--border);
             cursor: not-allowed;
             opacity: 0.6;
         }
@@ -186,29 +199,29 @@
             align-items: center;
             gap: 8px;
             padding: 9px 16px;
-            border-radius: 8px;
-            background: #fff;
-            border: 1px solid #dee2e6;
-            color: #495057;
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
             text-decoration: none;
             font-weight: 600;
             font-size: 13.5px;
-            transition: all 0.25s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
         }
         .stage-tab-btn:hover {
-            background: #f8f9fa;
-            color: #007bff;
-            border-color: #b8daff;
+            background: var(--surface-secondary);
+            color: var(--primary);
+            border-color: var(--primary);
             transform: translateY(-1px);
             text-decoration: none;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
         }
         .stage-tab-btn.active {
-            background: #007bff;
+            background: var(--primary);
             color: #fff;
-            border-color: #007bff;
-            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
         }
         .stage-tab-btn .badge {
             font-size: 11px;
@@ -220,8 +233,9 @@
             color: #fff;
         }
         .stage-tab-btn:not(.active) .badge {
-            background: #e9ecef;
-            color: #495057;
+            background: var(--surface-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
         }
         @media (max-width: 768px) {
             .pagination-wrapper {

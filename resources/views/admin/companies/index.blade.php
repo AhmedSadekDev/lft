@@ -325,31 +325,32 @@
 
         .table-separate thead th {
             border: none;
-            background-color: #f3f6f9;
-            color: #464e5f;
-            font-weight: 600;
+            background-color: var(--surface-secondary) !important;
+            color: var(--text-secondary) !important;
+            font-weight: 700;
             padding: 15px 10px;
             font-size: 13px;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .table-separate tbody tr {
-            background-color: #fff;
-            border: 1px solid #ebedf3;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            background-color: var(--surface) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
         }
 
         .table-separate tbody tr:hover {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
             transform: translateY(-2px);
+            background-color: var(--surface-secondary) !important;
         }
 
         .table-separate tbody td {
             border: none;
-            padding: 20px 10px;
+            padding: 16px 10px;
             vertical-align: middle;
+            color: var(--text-primary);
         }
 
         .table-separate tbody tr:first-child td:first-child {
@@ -369,15 +370,20 @@
 
         .dropdown-menu {
             min-width: 200px;
+            background-color: var(--surface) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: var(--shadow-lg) !important;
         }
 
         .dropdown-item {
             padding: 10px 20px;
             transition: all 0.2s;
+            color: var(--text-primary) !important;
         }
 
         .dropdown-item:hover {
-            background-color: #f3f6f9;
+            background-color: var(--surface-secondary) !important;
+            color: var(--primary) !important;
             padding-right: 25px;
         }
 

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="">
+    <title>تسجيل الدخول · Leader for Trans</title>
+
+    <link rel="shortcut icon" href="../../../../public/assets/media/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../../../../public/assets/css/admin-ui.css">
+
+    <script>
+        (function() {
+            var theme = localStorage.getItem('lft_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+<body style="margin: 0; padding: 0;">
+    <div class="lft-login-page">
+        <div class="lft-login-overlay"></div>
+
+        <!-- Topbar Controls (Language & Theme Toggle) -->
+        <div class="lft-login-topbar">
+            <div class="lft-lang-pill">
+                <i class="fas fa-globe"></i>
+                <span>العربية</span>
+            </div>
+            <div class="lft-theme-toggle">
+                <button type="button" class="lft-theme-toggle-btn" data-theme-val="light" title="الوضع الفاتح">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button type="button" class="lft-theme-toggle-btn active" data-theme-val="dark" title="الوضع الداكن">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Center Login Container -->
+        <div class="lft-login-card-container">
+            <!-- Brand Header -->
+            <div class="lft-login-brand-header">
+                <div class="lft-login-emblem">
+                    <i class="fas fa-truck-moving"></i>
+                </div>
+                <div class="lft-login-brand-name">Leader for Trans</div>
+                <div class="lft-login-brand-tagline">منظومة التجارة والأعمال الرقمية</div>
+            </div>
+
+            <!-- Glassmorphism Card -->
+            <div class="lft-glass-card">
+                <h1 class="lft-glass-title">تسجيل الدخول</h1>
+                <p class="lft-glass-subtitle">مرحباً بك في لوحة التحكم</p>
+
+                
+                <form method="POST" action="https://cloudymenue.cloudy-digital.com/login" autocomplete="on">
+                    <input type="hidden" name="_token" value="">
+                    <!-- Email Input -->
+                    <div class="form-group mb-3">
+                        <label for="email" class="lft-glass-label">البريد الإلكتروني</label>
+                        <div class="lft-glass-input-wrapper">
+                            <input id="email" 
+                                   type="email" 
+                                   class="lft-glass-input" 
+                                   name="email" 
+                                   value="superadmin@kasib.com" 
+                                   required 
+                                   autocomplete="email" 
+                                   autofocus 
+                                   placeholder="superadmin@kasib.com">
+                            <span class="lft-glass-input-icon">
+                                <i class="far fa-envelope"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="form-group mb-3">
+                        <label for="password" class="lft-glass-label">كلمة المرور</label>
+                        <div class="lft-glass-input-wrapper">
+                            <input id="password" 
+                                   type="password" 
+                                   class="lft-glass-input" 
+                                   name="password" 
+                                   required 
+                                   autocomplete="current-password" 
+                                   placeholder="••••••••••••">
+                            <span class="lft-glass-input-icon">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <button type="button" class="lft-glass-toggle-pw" data-target="password" title="إظهار / إخفاء كلمة المرور">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember & Forgot Password -->
+                    <div class="lft-glass-remember-row">
+                        <label class="lft-glass-checkbox-label" for="remember">
+                            <input type="checkbox" name="remember" id="remember"  style="accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer;">
+                            <span>تذكر دائماً</span>
+                        </label>
+
+                                                    <a class="lft-glass-forgot-link" href="https://cloudymenue.cloudy-digital.com/password/reset">
+                                نسيت كلمة المرور؟
+                            </a>
+                                            </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="lft-glass-submit-btn">
+                        <span>تسجيل الدخول</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+
+                    <div class="lft-glass-divider">
+                        <span>أو</span>
+                    </div>
+
+                    <!-- Footer Link -->
+                    <div class="lft-glass-footer">
+                        ليس لديك حساب؟ <a href="mailto:support@leaderfortrans.com">تواصل مع المسؤول</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Security Badge -->
+            <div class="lft-security-badge">
+                <i class="fas fa-shield-alt text-primary"></i>
+                <span>بوابة دخول المسؤولين فقط</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../../public/assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -2,33 +2,34 @@
 @section('content')
 <style>
     .agent-photos-page .photos-intro {
-        color: #7e8299;
+        color: var(--text-muted);
         margin-bottom: 0;
     }
     .agent-photos-page .photos-filters {
-        background: #f8f9fc;
-        border: 1px solid #ebedf3;
-        border-radius: .5rem;
+        background: var(--surface-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
         padding: 1.25rem;
     }
     .agent-photos-page .photo-card {
-        border-color: #ebedf3;
-        border-radius: .5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
         overflow: hidden;
         transition: box-shadow .2s ease, transform .2s ease;
         position: relative;
     }
     .agent-photos-page .photo-card:hover {
-        box-shadow: 0 .5rem 1.5rem rgba(24, 28, 50, .1);
+        box-shadow: var(--shadow);
         transform: translateY(-2px);
     }
     .agent-photos-page .photo-card.is-selected {
-        border-color: #3699ff;
-        background-color: #f0f7ff;
+        border-color: var(--primary);
+        background-color: var(--primary-soft);
     }
     .agent-photos-page .photo-preview {
         align-items: center;
-        background: #f3f6f9;
+        background: var(--surface-secondary);
         display: flex;
         height: 200px;
         justify-content: center;
@@ -45,45 +46,50 @@
         top: 10px;
         right: 10px;
         z-index: 5;
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--surface);
+        border: 1px solid var(--border);
         padding: 4px 8px;
         border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-sm);
     }
     .agent-photos-page .photo-name {
         overflow-wrap: anywhere;
         font-size: 0.85rem;
+        color: var(--text-primary);
     }
     .agent-photos-page .nav-tabs .nav-link {
         font-weight: 600;
         font-size: 1rem;
         padding: 0.75rem 1.25rem;
+        color: var(--text-secondary);
     }
     .agent-photos-page .nav-tabs .nav-link.active {
-        color: #3699ff;
-        border-bottom: 2px solid #3699ff;
+        color: var(--primary);
+        border-bottom: 2px solid var(--primary);
     }
     .agent-photos-page .bulk-toolbar {
-        background: #e1f0ff;
-        border: 1px solid #b5d8ff;
-        border-radius: .5rem;
+        background: var(--primary-soft);
+        border: 1px solid var(--primary);
+        border-radius: var(--radius-sm);
         padding: 0.75rem 1.25rem;
     }
     .search-results-box {
         max-height: 250px;
         overflow-y: auto;
-        border: 1px solid #ebedf3;
+        border: 1px solid var(--border);
         border-radius: 6px;
+        background: var(--surface);
         margin-top: 5px;
     }
     .search-result-item {
         padding: 10px 12px;
-        border-bottom: 1px solid #f3f6f9;
+        border-bottom: 1px solid var(--border-light);
         cursor: pointer;
         transition: background 0.15s;
+        color: var(--text-primary);
     }
     .search-result-item:hover, .search-result-item.selected {
-        background: #f3f6f9;
+        background: var(--surface-secondary);
     }
     .search-result-item:last-child {
         border-bottom: none;

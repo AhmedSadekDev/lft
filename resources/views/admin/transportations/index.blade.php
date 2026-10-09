@@ -5,12 +5,13 @@
             direction: rtl;
         }
         #transportationsTable thead th {
-            background-color: #f7f8fa;
-            font-weight: 600;
-            border-bottom: 2px solid #dee2e6;
+            background-color: var(--surface-secondary) !important;
+            color: var(--text-secondary) !important;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border) !important;
         }
-        #transportationsTable tbody tr:hover {
-            background-color: #f8f9fa;
+        #transportationsTable tbody tr:hover td {
+            background-color: var(--surface-secondary) !important;
             transition: background-color 0.2s;
         }
         .empty-state {
