@@ -44,16 +44,33 @@ class BookingController extends Controller
     {
         // relations read by BookingResource / ContainerResource
         $relations = ['bookingContainers.container', 'bookingContainers.branch', 'last_movements', 'employee', 'shippingAgent'];
+        $perPage = (int) request()->get('per_page', 20);
+        $page = (int) request()->get('page', 1);
 
         if (auth('employees')->check()) {
             $employeeId = auth('employees')->id();
-            $bookings = Booking::with($relations)->where('employee_id', $employeeId)->get();
+            $query = Booking::with($relations)->where('employee_id', $employeeId);
         } else {
             $company = auth()->user();
-            $bookings = $company->bookings()->with($relations)->get(); // حسب العلاقة المعرفة في الموديل
+            $query = $company->bookings()->with($relations);
         }
-    
-        return $this->returnAllData(BookingResource::collection($bookings));
+
+        $bookings = $query->orderBy('id', 'desc')->paginate($perPage, ['*'], 'page', $page);
+        $data = BookingResource::collection($bookings->items());
+        $pagination = [
+            'total' => $bookings->total(),
+            'per_page' => $bookings->perPage(),
+            'current_page' => $bookings->currentPage(),
+            'total_pages' => $bookings->lastPage(),
+        ];
+
+        return response()->json([
+            'status' => true,
+            'errNum' => "0000",
+            'message' => '',
+            'data' => $data,
+            'pagination' => $pagination,
+        ], 200);
     }
     public function booking_papers(Request $request){
         $booking = Booking::where('booking_number', $request->booking_number)->first();

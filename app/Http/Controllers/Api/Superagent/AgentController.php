@@ -52,20 +52,33 @@ class AgentController extends Controller
     {
         try {
 
-            $agents = Agent::orderBy("id", "desc")->ofFilter()->get();
+            $perPage = (int) request()->get('per_page', 20);
+            $page = (int) request()->get('page', 1);
 
-            $todayBookings = BookingContainerAgent::whereIn('agent_id', $agents->modelKeys())
+            $agents = Agent::orderBy("id", "desc")->ofFilter()->paginate($perPage, ['*'], 'page', $page);
+
+            $todayBookings = BookingContainerAgent::whereIn('agent_id', $agents->getCollection()->modelKeys())
                 ->whereDate('created_at', now())
                 ->groupBy('agent_id')
                 ->selectRaw('agent_id, count(distinct booking_container_id) as aggregate')
                 ->pluck('aggregate', 'agent_id');
-            $agents->each(fn (Agent $agent) => $agent->setAttribute('number_of_bookings', (int) ($todayBookings[$agent->id] ?? 0)));
+            $agents->getCollection()->each(fn (Agent $agent) => $agent->setAttribute('number_of_bookings', (int) ($todayBookings[$agent->id] ?? 0)));
 
-            $data = AgentResource::collection($agents);
+            $data = AgentResource::collection($agents->items());
+            $pagination = [
+                'total' => $agents->total(),
+                'per_page' => $agents->perPage(),
+                'current_page' => $agents->currentPage(),
+                'total_pages' => $agents->lastPage(),
+            ];
 
-            //response
-
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $ex) {
 
 

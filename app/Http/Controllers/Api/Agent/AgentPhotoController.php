@@ -25,12 +25,25 @@ class AgentPhotoController extends Controller
 
     public function index(Request $request)
     {
-        $data = $request->validate(['per_page' => 'sometimes|integer|min:1|max:100']);
+        $data = $request->validate(['per_page' => 'sometimes|integer|min:1']);
         $photos = AgentPhoto::where('agent_id', auth('agent')->id())
             ->latest('id')->paginate($data['per_page'] ?? 24);
         $photos->getCollection()->transform(fn ($photo) => $this->photoData($photo));
 
-        return $this->returnAllData($photos, __('alerts.success'));
+        $pagination = [
+            'total' => $photos->total(),
+            'per_page' => $photos->perPage(),
+            'current_page' => $photos->currentPage(),
+            'total_pages' => $photos->lastPage(),
+        ];
+
+        return response()->json([
+            'status' => true,
+            'errNum' => "0000",
+            'message' => __('alerts.success'),
+            'data' => $photos->items(),
+            'pagination' => $pagination,
+        ], 200);
     }
 
     public function store(Request $request)

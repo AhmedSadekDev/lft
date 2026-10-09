@@ -197,10 +197,33 @@ class ExpenseController extends Controller
             $merged = $financial_custodies->concat($expenses);
 
             $ordered = $merged->sortBy('created_at')->values();
+            $total = $ordered->count();
+            $perPage = (int) request()->get('per_page', 20);
+            $page = (int) request()->get('page', 1);
+            $slice = $ordered->slice(($page - 1) * $perPage, $perPage)->values();
 
-            $data = ExpenseResource::collection($ordered);
+            $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+                $slice,
+                $total,
+                $perPage,
+                $page
+            );
 
-            return $this->returnAllData($data, __('alerts.success'));
+            $data = ExpenseResource::collection($slice);
+            $pagination = [
+                'total' => $paginator->total(),
+                'per_page' => $paginator->perPage(),
+                'current_page' => $paginator->currentPage(),
+                'total_pages' => $paginator->lastPage(),
+            ];
+
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $exception) {
             return $this->returnError(401, $exception->getMessage());
         }

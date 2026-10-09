@@ -62,11 +62,22 @@ class BookingContainerController extends Controller
                 $page
             );
 
-            $data = MissionBookingResource::collection($paginator)
-                ->response()
-                ->getData(true);
+            $data = MissionBookingResource::collection($paginator)->response()->getData(true);
+            $pagination = [
+                'total' => $paginator->total(),
+                'per_page' => $paginator->perPage(),
+                'current_page' => $paginator->currentPage(),
+                'total_pages' => $paginator->lastPage(),
+            ];
+            $data['pagination'] = $pagination;
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
 
         } catch (\Throwable $ex) {
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
@@ -201,8 +212,21 @@ class BookingContainerController extends Controller
         try {
             $bookings = $this->paginateBookingsForStage($request, 'specification');
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
+            $pagination = [
+                'total' => $bookings->total(),
+                'per_page' => $bookings->perPage(),
+                'current_page' => $bookings->currentPage(),
+                'total_pages' => $bookings->lastPage(),
+            ];
+            $data['pagination'] = $pagination;
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $ex) {
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
@@ -217,8 +241,21 @@ class BookingContainerController extends Controller
         try {
             $bookings = $this->paginateBookingsForStage($request, 'waiting');
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
+            $pagination = [
+                'total' => $bookings->total(),
+                'per_page' => $bookings->perPage(),
+                'current_page' => $bookings->currentPage(),
+                'total_pages' => $bookings->lastPage(),
+            ];
+            $data['pagination'] = $pagination;
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $ex) {
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
@@ -287,8 +324,21 @@ class BookingContainerController extends Controller
         try {
             $bookings = $this->paginateBookingsForStage($request, 'loading');
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
+            $pagination = [
+                'total' => $bookings->total(),
+                'per_page' => $bookings->perPage(),
+                'current_page' => $bookings->currentPage(),
+                'total_pages' => $bookings->lastPage(),
+            ];
+            $data['pagination'] = $pagination;
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $ex) {
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }
@@ -299,8 +349,21 @@ class BookingContainerController extends Controller
         try {
             $bookings = $this->paginateBookingsForStage($request, 'unloading');
             $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
+            $pagination = [
+                'total' => $bookings->total(),
+                'per_page' => $bookings->perPage(),
+                'current_page' => $bookings->currentPage(),
+                'total_pages' => $bookings->lastPage(),
+            ];
+            $data['pagination'] = $pagination;
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $ex) {
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }

@@ -57,6 +57,9 @@ class YardController extends Controller
 
             // Get all bookings that belong to the specified yard
             // YardBookingResource will show all containers in the booking
+            $perPage = (int) $request->get('per_page', 20);
+            $page = (int) $request->get('page', 1);
+
             $bookings = Booking::where('yard_id', $request->yard_id)
                 ->withoutInvoice()
                 ->whereHas('bookingContainers', static function ($q) {
@@ -74,11 +77,23 @@ class YardController extends Controller
                     'factory'
                 ])
                 ->orderBy('id', 'desc')
-                ->get();
+                ->paginate($perPage, ['*'], 'page', $page);
 
-            $data = YardBookingResource::collection($bookings);
+            $data = YardBookingResource::collection($bookings->items());
+            $pagination = [
+                'total' => $bookings->total(),
+                'per_page' => $bookings->perPage(),
+                'current_page' => $bookings->currentPage(),
+                'total_pages' => $bookings->lastPage(),
+            ];
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $Exception) {
             return $this->returnError(500, $Exception->getMessage());
         }

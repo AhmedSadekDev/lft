@@ -22,13 +22,26 @@ class TransferAgentController extends Controller
         try {
 
             $agent = auth()->guard('agent')->user();
+            $perPage = (int) request()->get('per_page', 20);
+            $page = (int) request()->get('page', 1);
 
-            $agents = Agent::where("id", "!=", $agent->id)->ofFilter()->get();
+            $agents = Agent::where("id", "!=", $agent->id)->ofFilter()->orderBy('id', 'desc')->paginate($perPage, ['*'], 'page', $page);
 
-            $data = NameResource::collection($agents);
+            $data = NameResource::collection($agents->items());
+            $pagination = [
+                'total' => $agents->total(),
+                'per_page' => $agents->perPage(),
+                'current_page' => $agents->currentPage(),
+                'total_pages' => $agents->lastPage(),
+            ];
 
-
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $Exception) {
             return $this->returnError(401, $Exception->getMessage());
         }

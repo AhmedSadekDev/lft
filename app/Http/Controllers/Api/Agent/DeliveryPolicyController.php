@@ -162,6 +162,9 @@ class DeliveryPolicyController extends Controller
             $agent = auth()->guard('agent')->user();
 
 
+            $perPage = (int) request()->get('per_page', 20);
+            $page = (int) request()->get('page', 1);
+
             $delivery_policies = DeliveryPolicy::whereDoesntHave('booking_containers.booking.invoice')->with([
                 'car',
                 'driver',
@@ -172,12 +175,25 @@ class DeliveryPolicyController extends Controller
                 }
             ])->whereHas("money_transfer", function ($q) use ($agent) {
                 return $q->where("transferer_id", $agent->id);
-            })->get();
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
 
-            $data = DeliveryPolicyResource::collection($delivery_policies);
+            $data = DeliveryPolicyResource::collection($delivery_policies->items());
+            $pagination = [
+                'total' => $delivery_policies->total(),
+                'per_page' => $delivery_policies->perPage(),
+                'current_page' => $delivery_policies->currentPage(),
+                'total_pages' => $delivery_policies->lastPage(),
+            ];
 
-
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $Exception) {
             return $this->returnError(500, $Exception->getMessage());
         }

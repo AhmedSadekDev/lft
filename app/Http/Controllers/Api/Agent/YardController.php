@@ -44,6 +44,9 @@ class YardController extends Controller
                 ->wherePivot("created_at", "<=", now()->endOfDay())
                 ->get();
 
+            $perPage = (int) $request->get('per_page', 20);
+            $page = (int) $request->get('page', 1);
+
             // Get bookings that belong to the specified yard and have containers assigned to this agent
             $bookings = Booking::where('yard_id', $request->yard_id)
                 ->whereDoesntHave('invoice')
@@ -54,11 +57,23 @@ class YardController extends Controller
                     $query->whereIn('booking_containers.id', $agent_booking_containers->pluck('id')->toArray());
                 }])
                 ->orderBy('id', 'desc')
-                ->get();
+                ->paginate($perPage, ['*'], 'page', $page);
 
-            $data = BookingResource::collection($bookings);
+            $data = BookingResource::collection($bookings->items());
+            $pagination = [
+                'total' => $bookings->total(),
+                'per_page' => $bookings->perPage(),
+                'current_page' => $bookings->currentPage(),
+                'total_pages' => $bookings->lastPage(),
+            ];
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $Exception) {
             return $this->returnError(500, $Exception->getMessage());
         }

@@ -34,7 +34,27 @@ class ContainerStageController extends Controller
             'receipts_version' => $container->stages->firstWhere('type_id', $type)?->version ?? 1,
         ]);
 
-        return $this->returnAllData($containers, __('alerts.success'));
+        $pagination = [
+            'total' => $containers->total(),
+            'per_page' => $containers->perPage(),
+            'current_page' => $containers->currentPage(),
+            'total_pages' => $containers->lastPage(),
+        ];
+
+        return response()->json([
+            'status' => true,
+            'errNum' => "0000",
+            'message' => __('alerts.success'),
+            'data' => [
+                'data' => $containers->items(),
+                'current_page' => $containers->currentPage(),
+                'per_page' => $containers->perPage(),
+                'total' => $containers->total(),
+                'last_page' => $containers->lastPage(),
+                'pagination' => $pagination,
+            ],
+            'pagination' => $pagination,
+        ], 200);
     }
 
     public function receipts(Request $request, ContainerStageService $service)

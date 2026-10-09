@@ -167,6 +167,9 @@ class BookingContainerAssignmentController extends Controller
             // exclude bookings that have invoices
             $booking_ids_without_invoices = array_diff($booking_ids, $bookings_with_invoices);
 
+            $perPage = (int) $request->get('per_page', 20);
+            $page = (int) $request->get('page', 1);
+
             // fetch bookings that don't have an invoice
             $bookings = Booking::whereIn("id", $booking_ids_without_invoices)
                 ->when($word != null, function ($q) use ($word) {
@@ -176,14 +179,26 @@ class BookingContainerAssignmentController extends Controller
                     });
                 })
                 ->orderBy("id", "desc")
-                ->get();
+                ->paginate($perPage, ['*'], 'page', $page);
 
 
             //return data
-            $data = BookingResource::collection($bookings);
+            $data = BookingResource::collection($bookings->items());
+            $pagination = [
+                'total' => $bookings->total(),
+                'per_page' => $bookings->perPage(),
+                'current_page' => $bookings->currentPage(),
+                'total_pages' => $bookings->lastPage(),
+            ];
 
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $Exception) {
             return $this->returnError(500, $Exception->getMessage());
         }
@@ -207,15 +222,31 @@ class BookingContainerAssignmentController extends Controller
                 ->merge($service->visibleContainers($agent->id, 2)->pluck('id'))
                 ->unique();
 
+            $perPage = (int) request()->get('per_page', 20);
+            $page = (int) request()->get('page', 1);
+
             $agent_booking_containers = \App\Models\BookingContainer::whereIn('id', $ids)
                 ->whereDoesntHave('delivery_policies')
-                ->get();
+                ->orderBy('id', 'desc')
+                ->paginate($perPage, ['*'], 'page', $page);
 
             //return data
-            $data = SimpleBookingContainer2Resource::collection($agent_booking_containers);
+            $data = SimpleBookingContainer2Resource::collection($agent_booking_containers->items());
+            $pagination = [
+                'total' => $agent_booking_containers->total(),
+                'per_page' => $agent_booking_containers->perPage(),
+                'current_page' => $agent_booking_containers->currentPage(),
+                'total_pages' => $agent_booking_containers->lastPage(),
+            ];
 
 
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $Exception) {
             return $this->returnError(500, $Exception->getMessage());
         }

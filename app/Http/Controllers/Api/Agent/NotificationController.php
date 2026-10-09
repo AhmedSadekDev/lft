@@ -16,27 +16,39 @@ class NotificationController extends Controller
     {
         try {
             $agent = auth('agent')->user();
+            $perPage = (int) $request->get('per_page', 20);
+            $page = (int) $request->get('page', 1);
 
             $notifications = AppNotification::with('bookingContainer:id,booking_id')
                 ->whereDoesntHave('bookingContainer.booking.invoice')
                 ->where(function ($query) use ($agent) {
-                $query->where('type', AppNotification::all)
-                    ->orWhere(function ($q) use ($agent) {
-                        $q->where("notificationable_id", $agent->id)->where("notificationable_type", Agent::class);
-                    });
-            })
+                    $query->where('type', AppNotification::all)
+                        ->orWhere(function ($q) use ($agent) {
+                            $q->where("notificationable_id", $agent->id)->where("notificationable_type", Agent::class);
+                        });
+                })
                 ->when($request->date, function ($query) use ($request) {
                     $formattedDate = \Carbon\Carbon::parse($request->date)->format('Y-m-d');
                     $query->whereDate('created_at', '=', $formattedDate);
                 })
-                ->orderBy("id","desc")
-                ->get();
+                ->orderBy("id", "desc")
+                ->paginate($perPage, ['*'], 'page', $page);
 
+            $data = NotificationResource::collection($notifications->items());
+            $pagination = [
+                'total' => $notifications->total(),
+                'per_page' => $notifications->perPage(),
+                'current_page' => $notifications->currentPage(),
+                'total_pages' => $notifications->lastPage(),
+            ];
 
-            $data = NotificationResource::collection($notifications);
-
-
-            return $this->returnAllData($data, __('alerts.success'));
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $Exception) {
             return $this->returnError(401, $Exception->getMessage());
         }
