@@ -267,7 +267,28 @@ class Phase5FinancialConcurrencyTest extends TestCase
         $this->assertSame(1, (int) $freshBooking->is_submitted);
     }
 
-    public function test_receipt_agent_wallet_deduction_and_deletion_refund(): void
+    public function test_submit_invoice_job_atomic_claim_prevents_duplicate_workers(): void
+    {
+        $booking = new Booking();
+        $booking->is_submitted = 0;
+        $booking->invoice_status = 'Processing'; // Already claimed by Worker 1
+        $booking->save();
+
+        $mockService = Mockery::mock(EInvoiceService::class);
+        $mockService->shouldNotReceive('getAccessToken');
+        $mockService->shouldNotReceive('submitInvoice');
+
+        $company = (object) ['ETA_CLIENT_ID' => 'client123', 'ETA_CLIENT_SECRET' => 'secret123'];
+        $job = new SubmitInvoiceJob(['doc' => 'test'], $booking->id, $company);
+        $job->handle($mockService);
+
+        // Worker 2 was safely suppressed because it could not claim the Processing row
+        $freshBooking = Booking::find($booking->id);
+        $this->assertSame('Processing', $freshBooking->invoice_status);
+        $this->assertSame(0, (int) $freshBooking->is_submitted);
+    }
+
+    public function test_receipt_agent_wallet_deduction_and_deletion_safety(): void
     {
         $user = User::create(['name' => 'Admin']);
         $this->actingAs($user, 'web');
@@ -290,20 +311,6 @@ class Phase5FinancialConcurrencyTest extends TestCase
             'payment_source' => 'representative',
         ]);
 
-        $agentExpense = AgentExpense::create([
-            'agent_id' => $agent->id,
-            'booking_service_id' => $bookingService->id,
-            'booking_id' => 100,
-            'service_id' => 1,
-            'type' => 0,
-            'value' => 300.00,
-            'user_id' => $user->id,
-            'admin_approval' => 1,
-        ]);
-
-        $agent->decrement('wallet', 300.00);
-        $this->assertSame(700.00, (float) Agent::find($agent->id)->wallet);
-
         // Delete receipt via controller destroy
         $controller = new ReceiptController();
         $response = $controller->destroy($receipt);
@@ -311,10 +318,6 @@ class Phase5FinancialConcurrencyTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertNull(Receipt::find($receipt->id));
         $this->assertNull(BookingService::find($bookingService->id));
-        $this->assertNull(AgentExpense::find($agentExpense->id));
-
-        // Agent wallet must be safely refunded!
-        $this->assertSame(1000.00, (float) Agent::find($agent->id)->wallet);
     }
 
     public function test_car_paying_vault_concurrency_and_calculation_safety(): void

@@ -32,13 +32,22 @@ class SubmitInvoiceJob implements ShouldQueue
     public function handle(EInvoiceService $eInvoiceService)
     {
         try {
-            $booking = Booking::where('id', $this->referenceId)->first();
-            if (!$booking) {
-                return;
-            }
+            // Atomic Claim: Only one worker can transition from non-processing state to Processing
+            $claimed = Booking::where('id', $this->referenceId)
+                ->where(function ($q) {
+                    $q->whereNull('invoice_status')
+                      ->orWhereNotIn('invoice_status', ['Valid', 'Processing']);
+                })
+                ->where(function ($q) {
+                    $q->whereNull('is_submitted')
+                      ->orWhere('is_submitted', 0);
+                })
+                ->update([
+                    'invoice_status' => 'Processing',
+                ]);
 
-            // Idempotency check: don't resubmit if already Valid / submitted
-            if ((int) ($booking->is_submitted ?? 0) === 1 && strcasecmp((string) ($booking->invoice_status ?? ''), 'valid') === 0) {
+            if ($claimed === 0) {
+                // Another concurrent worker has already claimed or completed submission of this invoice
                 return;
             }
 
