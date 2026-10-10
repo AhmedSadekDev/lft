@@ -33,7 +33,7 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'localization'], function(){
     // ------------------ Dashboard ------------------
-    Route::group(['namespace' => 'App\Http\Controllers\Api', 'prefix' => 'booking'], function() {
+    Route::group(['namespace' => 'App\Http\Controllers\Api', 'prefix' => 'booking', 'middleware' => 'throttle:60,1'], function() {
         Route::get('track', [BookingController::class, 'getBooking']);
         Route::get('container/{booking_container}', [BookingController::class,'getContainerDetails']);
         Route::get('booking_papers', [BookingController::class,'booking_papers']);

@@ -1,0 +1,22 @@
+-- ============================================================================
+-- Leader for Trans (LFT) - Phase 6 Performance Indexes
+-- ============================================================================
+-- Policy Reference: docs/modernization/permanent-database-policy.md
+-- Phase: Phase 6 (Client Portal, Mobile & Desktop Pagination Optimization)
+-- Status: APPROVED PERFORMANCE INDEX
+-- Date: 2026-10-10
+-- ============================================================================
+--
+-- INDEX ANALYSIS & DECISION SUMMARY:
+-- 1. bookings table:
+--    - Target query: Public tracking lookup `WHERE booking_number = ?`
+--      (GET /api/booking/track, GET /api/booking/booking_papers)
+--    - Row count: 474 rows
+--    - EXPLAIN before: type=ALL, rows=438, filtered=10.00% (Full table scan)
+--    - EXPLAIN after:  type=ref, key=idx_bookings_booking_number, rows=1, filtered=100%
+--    - Safety: ALGORITHM=INPLACE, LOCK=NONE, non-unique secondary index
+--    - Addresses: RSK-04 audit finding (unindexed public tracking endpoint)
+--
+-- ============================================================================
+
+ALTER TABLE `bookings` ADD INDEX `idx_bookings_booking_number` (`booking_number`), ALGORITHM=INPLACE, LOCK=NONE;

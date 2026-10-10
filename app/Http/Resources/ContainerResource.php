@@ -16,10 +16,10 @@ class ContainerResource extends JsonResource
     {
         return [
             'id'                => $this->id,
-            'container_id'      => $this->container->id,
+            'container_id'      => $this->container?->id ?? $this->container_id,
             'container_number'  => $this->container_no,
-            'container_size'    => $this->container->size,
-            'container_type'    => $this->container->type,
+            'container_size'    => $this->container?->size,
+            'container_type'    => $this->container?->type,
             'last_status'       => $this->status ?? 'Gate out empty',
             'date'              => $this->arrival_date ?? now(),
         ];

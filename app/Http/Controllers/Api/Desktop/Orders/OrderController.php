@@ -45,16 +45,19 @@ class OrderController extends Controller
         ]);
 
         try {
-            $bookings = Booking::query();
+            $bookings = Booking::query()->with(['company', 'factory', 'invoice']);
 
             if ($request->filled('search')) {
-                $bookings->whereHas('bookingContainers', function ($container) use ($request) {
-                    $container->where('container_no', 'like', '%' . $request->search . '%');
-                })
-                    ->orWhere('employee_name', 'like', '%' . $request->search . '%')
-                    ->orWhereHas('invoice', function ($invoice) use ($request) {
-                        $invoice->where('invoice_number', 'like', '%' . $request->search . '%');
+                $search = $request->search;
+                $bookings->where(function ($q) use ($search) {
+                    $q->whereHas('bookingContainers', function ($container) use ($search) {
+                        $container->where('container_no', 'like', '%' . $search . '%');
+                    })
+                    ->orWhere('employee_name', 'like', '%' . $search . '%')
+                    ->orWhereHas('invoice', function ($invoice) use ($search) {
+                        $invoice->where('invoice_number', 'like', '%' . $search . '%');
                     });
+                });
             }
 
             $bookings = OrderResource::collection(

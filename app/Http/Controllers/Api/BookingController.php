@@ -21,7 +21,7 @@ class BookingController extends Controller
         if (is_null($booking)) {
             return response()->json(['status' => false, 'message' => __('admin.not_found')]);
         }
-        $booking->load('bookingContainers');
+        $booking->load('bookingContainers.container');
         $containers = ContainerResource::collection($booking->bookingContainers);
     
         return response()->json(['status' => true, 'message' => 'Orders', 'data' => $containers]);
@@ -29,7 +29,13 @@ class BookingController extends Controller
 
     public function getContainerDetails(BookingContainer $booking_container)
     {
-        $booking = $booking_container->booking()->with('bookingContainers')->first();
+        $booking = $booking_container->booking()->with([
+            'bookingContainers.container',
+            'last_movements',
+            'employee',
+            'shippingAgent',
+        ])->first();
+        $booking_container->load(['branch', 'last_movement']);
         $data = [
             'bookingDetails' => new BookingResource($booking, $booking_container->id),
             'factoryDetails' => $booking_container->branch ? new FactoryResource($booking_container->branch) : null,
@@ -72,9 +78,13 @@ class BookingController extends Controller
             'pagination' => $pagination,
         ], 200);
     }
-    public function booking_papers(Request $request){
+    public function booking_papers(Request $request)
+    {
         $booking = Booking::where('booking_number', $request->booking_number)->first();
-        $booking_papers = BookingPaper::where('booking_id', $booking->id)->get();
+        if (is_null($booking)) {
+            return response()->json(['status' => false, 'errNum' => '404', 'message' => __('admin.not_found'), 'data' => []], 200);
+        }
+        $booking_papers = BookingPaper::with('image')->where('booking_id', $booking->id)->get();
         return $this->returnAllData(BookingPaperResource::collection($booking_papers));
     }
 

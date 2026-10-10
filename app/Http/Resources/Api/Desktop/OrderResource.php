@@ -15,7 +15,7 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        $invoice = Invoice::where('booking_id', $this->id)->first();
+        $invoice = $this->relationLoaded('invoice') ? $this->invoice : Invoice::where('booking_id', $this->id)->first();
         return [
             'id'             => $this->id,
             'company_name'   => $this->company?->name ?? "__",

@@ -16,6 +16,12 @@ use App\Models\AgentExpense;
 use App\Models\Superagent;
 use App\Models\Yard;
 use App\Models\ShippingAgent;
+use App\Models\Container;
+use App\Models\BookingPaper;
+use App\Models\Image;
+use App\Models\Invoice;
+use App\Models\Factory;
+use App\Models\Employee;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -29,25 +35,13 @@ class Phase6MobilePaginationTest extends TestCase
         DB::disconnect('sqlite');
         config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
         DB::reconnect('sqlite');
+        Schema::dropAllTables();
 
         $this->createInMemorySchema();
     }
 
     private function createInMemorySchema(): void
     {
-        $tables = [
-            'agents', 'superagents', 'app_notifications', 'bookings', 'booking_containers',
-            'delivery_policies', 'delivery_policy_containers', 'money_transfers',
-            'agent_expenses', 'agent_photos', 'yards', 'companies', 'invoices',
-            'booking_container_agents', 'booking_container_superagents', 'container_stages',
-            'booking_container_stages', 'cars', 'drivers', 'cities_and_regions', 'images',
-            'branches', 'shipping_agents', 'services', 'containers', 'booking_papers', 'notes', 'factories',
-            'daily_booking_containers'
-        ];
-
-        foreach ($tables as $table) {
-            Schema::dropIfExists($table);
-        }
 
         Schema::create('agents', function (Blueprint $t) {
             $t->increments('id');
@@ -85,6 +79,8 @@ class Phase6MobilePaginationTest extends TestCase
         Schema::create('companies', function (Blueprint $t) {
             $t->increments('id');
             $t->string('name')->default('Company');
+            $t->string('email')->nullable();
+            $t->string('password')->nullable();
             $t->timestamps();
         });
 
@@ -127,6 +123,14 @@ class Phase6MobilePaginationTest extends TestCase
         Schema::create('containers', function (Blueprint $t) {
             $t->increments('id');
             $t->string('type')->default('40ft');
+            $t->string('size')->default('40');
+            $t->timestamps();
+        });
+
+        Schema::create('employees', function (Blueprint $t) {
+            $t->increments('id');
+            $t->string('name')->default('Employee');
+            $t->unsignedInteger('company_id')->nullable();
             $t->timestamps();
         });
 
@@ -138,6 +142,18 @@ class Phase6MobilePaginationTest extends TestCase
             $t->unsignedInteger('shipping_agent_id')->nullable();
             $t->unsignedInteger('factory_id')->nullable();
             $t->unsignedInteger('employee_id')->nullable();
+            $t->string('employee_name')->nullable();
+            $t->string('certificate_number')->nullable();
+            $t->string('type_of_action')->nullable();
+            $t->date('discharge_date')->nullable();
+            $t->date('permit_end_date')->nullable();
+            $t->string('submission_id')->nullable();
+            $t->string('invoice_uuid')->nullable();
+            $t->integer('is_submitted')->default(0);
+            $t->string('invoice_status')->nullable();
+            $t->string('signature_company')->nullable();
+            $t->integer('signature_company_id')->nullable();
+            $t->timestamp('signature_date')->nullable();
             $t->timestamps();
         });
 
@@ -153,6 +169,7 @@ class Phase6MobilePaginationTest extends TestCase
             $t->timestamp('specification_completed_at')->nullable();
             $t->timestamp('loading_completed_at')->nullable();
             $t->timestamp('unloading_completed_at')->nullable();
+            $t->timestamp('arrival_date')->nullable();
             $t->unsignedInteger('container_id')->nullable();
             $t->unsignedInteger('branch_id')->nullable();
             $t->timestamps();
@@ -622,5 +639,174 @@ class Phase6MobilePaginationTest extends TestCase
         $this->assertEquals(1, $json['pagination']['current_page']);
         $this->assertEquals(1, $json['pagination']['total_pages']);
         $this->assertCount(15, $json['data']['data']);
+    }
+
+    public function test_public_tracking_fetches_booking_and_containers_with_eager_loading(): void
+    {
+        $booking = Booking::create([
+            'booking_number' => 'BK-TRACK-999',
+            'discharge_date' => now()->toDateString(),
+        ]);
+
+        $containerType = Container::create([
+            'type' => '40ft Dry',
+            'size' => '40',
+        ]);
+
+        for ($i = 1; $i <= 3; $i++) {
+            BookingContainer::create([
+                'booking_id' => $booking->id,
+                'container_no' => "CONT-TRK-$i",
+                'container_id' => $containerType->id,
+                'status' => 1,
+            ]);
+        }
+
+        $response = $this->getJson('/api/booking/track?order_number=BK-TRACK-999');
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => true,
+            'message' => 'Orders',
+        ]);
+
+        $data = $response->json('data');
+        $this->assertCount(3, $data);
+        $this->assertEquals('CONT-TRK-1', $data[0]['container_number']);
+        $this->assertEquals('40', $data[0]['container_size']);
+        $this->assertEquals('40ft Dry', $data[0]['container_type']);
+    }
+
+    public function test_public_tracking_not_found_returns_error_response(): void
+    {
+        $response = $this->getJson('/api/booking/track?order_number=NON-EXISTENT-BOOKING');
+        $response->assertStatus(200);
+        $this->assertFalse($response->json('status'));
+        $this->assertEquals(__('admin.not_found'), $response->json('message'));
+    }
+
+    public function test_public_tracking_route_has_throttle_middleware(): void
+    {
+        $route = collect(\Illuminate\Support\Facades\Route::getRoutes()->get('GET'))->first(function ($r) {
+            return $r->uri() === 'api/booking/track';
+        });
+
+        $this->assertNotNull($route);
+        $middleware = $route->gatherMiddleware();
+        $this->assertTrue(
+            collect($middleware)->contains(fn ($m) => str_contains($m, 'throttle')),
+            'Public tracking route must be protected by throttle middleware.'
+        );
+    }
+
+    public function test_container_details_returns_structured_booking_info(): void
+    {
+        $company = Company::create(['name' => 'Details Company']);
+        $booking = Booking::create([
+            'booking_number' => 'BK-DETAILS-1',
+            'company_id' => $company->id,
+        ]);
+        $containerType = Container::create(['type' => '20ft', 'size' => '20']);
+        $container = BookingContainer::create([
+            'booking_id' => $booking->id,
+            'container_no' => 'CONT-DET-1',
+            'container_id' => $containerType->id,
+        ]);
+
+        $response = $this->getJson("/api/booking/container/{$container->id}");
+        $response->assertStatus(200);
+        $json = $response->json();
+        $this->assertTrue($json['status']);
+        $this->assertArrayHasKey('bookingDetails', $json['data']);
+        $this->assertArrayHasKey('factoryDetails', $json['data']);
+        $this->assertArrayHasKey('lastMovements', $json['data']);
+    }
+
+    public function test_booking_papers_returns_metadata_and_eager_loaded_images(): void
+    {
+        $booking = Booking::create(['booking_number' => 'BK-PAPERS-1']);
+        for ($i = 1; $i <= 2; $i++) {
+            $paper = BookingPaper::create([
+                'booking_id' => $booking->id,
+                'type' => $i,
+            ]);
+            Image::create([
+                'imageable_type' => BookingPaper::class,
+                'imageable_id' => $paper->id,
+                'image' => "papers/paper_$i.jpg",
+            ]);
+        }
+
+        $response = $this->getJson('/api/booking/booking_papers?booking_number=BK-PAPERS-1');
+        $response->assertStatus(200);
+        $json = $response->json();
+        $this->assertTrue($json['status']);
+        $this->assertCount(2, $json['data']);
+        $this->assertEquals('papers/paper_1.jpg', $json['data'][0]['image']);
+    }
+
+    public function test_booking_papers_handles_non_existent_booking_gracefully(): void
+    {
+        $response = $this->getJson('/api/booking/booking_papers?booking_number=UNKNOWN-BOOKING');
+        $response->assertStatus(200);
+        $this->assertFalse($response->json('status'));
+        $this->assertEquals('404', $response->json('errNum'));
+    }
+
+    public function test_desktop_orders_pagination_and_eager_loading(): void
+    {
+        $company = Company::create(['name' => 'Desktop Co']);
+        $factory = Factory::create(['name' => 'Desktop Factory']);
+
+        for ($i = 1; $i <= 25; $i++) {
+            $booking = Booking::create([
+                'booking_number' => "BK-DESK-$i",
+                'company_id' => $company->id,
+                'factory_id' => $factory->id,
+                'is_submitted' => 0,
+            ]);
+            Invoice::create([
+                'booking_id' => $booking->id,
+                'invoice_number' => "INV-DESK-$i",
+            ]);
+        }
+
+        $request = \Illuminate\Http\Request::create('/api/desktop/orders/all', 'GET', [
+            'limit' => 10,
+            'page' => 1,
+        ]);
+
+        $controller = app(\App\Http\Controllers\Api\Desktop\Orders\OrderController::class);
+        $response = $controller->all($request);
+
+        $json = $response->getData(true);
+        $this->assertTrue($json['status']);
+        $this->assertEquals(25, $json['data']['pagination']['total']);
+        $this->assertEquals(10, $json['data']['pagination']['per_page']);
+        $this->assertEquals(1, $json['data']['pagination']['current_page']);
+        $this->assertEquals(3, $json['data']['pagination']['total_pages']);
+        $this->assertCount(10, $json['data']['orders']);
+    }
+
+    public function test_client_portal_company_bookings_pagination(): void
+    {
+        $company = Company::create(['name' => 'Portal Company']);
+        for ($i = 1; $i <= 25; $i++) {
+            Booking::create([
+                'company_id' => $company->id,
+                'booking_number' => "BK-PORTAL-$i",
+            ]);
+        }
+
+        $this->actingAs($company, 'api');
+
+        $response = $this->getJson('/api/profile/bookings');
+        $response->assertStatus(200);
+        $json = $response->json();
+        $this->assertTrue($json['status']);
+        $this->assertEquals(25, $json['pagination']['total']);
+        $this->assertEquals(20, $json['pagination']['per_page']);
+        $this->assertEquals(1, $json['pagination']['current_page']);
+        $this->assertEquals(2, $json['pagination']['total_pages']);
+        $this->assertCount(20, $json['data']);
     }
 }
