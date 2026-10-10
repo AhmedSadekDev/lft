@@ -34,6 +34,12 @@ class Phase6MobilePaginationTest extends TestCase
         parent::setUp();
         \Mockery::close();
         auth()->forgetGuards();
+
+        $ref = new \ReflectionProperty(\Illuminate\Database\Eloquent\Model::class, 'guardableColumns');
+        $ref->setAccessible(true);
+        $ref->setValue(null, []);
+        \Illuminate\Database\Eloquent\Model::unguard();
+
         DB::disconnect('sqlite');
         config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
         DB::reconnect('sqlite');
@@ -46,6 +52,12 @@ class Phase6MobilePaginationTest extends TestCase
     {
         \Mockery::close();
         auth()->forgetGuards();
+
+        $ref = new \ReflectionProperty(\Illuminate\Database\Eloquent\Model::class, 'guardableColumns');
+        $ref->setAccessible(true);
+        $ref->setValue(null, []);
+        \Illuminate\Database\Eloquent\Model::reguard();
+
         Schema::dropAllTables();
         DB::disconnect('sqlite');
         parent::tearDown();
