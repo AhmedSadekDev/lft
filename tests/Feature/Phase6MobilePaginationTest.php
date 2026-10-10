@@ -32,8 +32,10 @@ class Phase6MobilePaginationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        \Mockery::close();
+        auth()->forgetGuards();
+        DB::disconnect('sqlite');
         config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
-        DB::purge('sqlite');
         DB::reconnect('sqlite');
         Schema::dropAllTables();
 
@@ -42,8 +44,10 @@ class Phase6MobilePaginationTest extends TestCase
 
     protected function tearDown(): void
     {
+        \Mockery::close();
+        auth()->forgetGuards();
         Schema::dropAllTables();
-        DB::purge('sqlite');
+        DB::disconnect('sqlite');
         parent::tearDown();
     }
 
