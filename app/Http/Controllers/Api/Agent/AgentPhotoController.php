@@ -41,7 +41,14 @@ class AgentPhotoController extends Controller
             'status' => true,
             'errNum' => "0000",
             'message' => __('alerts.success'),
-            'data' => $photos->items(),
+            'data' => [
+                'data' => $photos->items(),
+                'current_page' => $photos->currentPage(),
+                'per_page' => $photos->perPage(),
+                'total' => $photos->total(),
+                'last_page' => $photos->lastPage(),
+                'pagination' => $pagination,
+            ],
             'pagination' => $pagination,
         ], 200);
     }

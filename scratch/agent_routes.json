@@ -1,0 +1,277 @@
+[
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/login",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\LoginController@login"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/set_password",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\SetPasswordController@set_password"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/sendOtp",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\OtpController@sendOtp"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/verifyOtp",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\OtpController@verifyOtp"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/resetPassword",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\OtpController@resetPassword"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/photos",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\AgentPhotoController@index"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/photos",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\AgentPhotoController@store"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/photos\/{photo}\/image",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\AgentPhotoController@image"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/wallets",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\WalletController@index"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/charge-cars-wallet",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\WalletController@chargeCarWallet"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_profile",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\ProfileController@fetch_profile"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/update_profile",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\ProfileController@update_profile"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/change_image",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\ProfileController@change_image"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/cities",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\CityController@index"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/containers-with-no-policies",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@getContainers"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/change_password",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\ChangePasswordController@change_password"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_financial_custody",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@fetch_financial_custody"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/make_general_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@make_general_expenses"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/update_expense",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@update_expense"
+    },
+    {
+        "method": "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+        "uri": "\/api\/agent\/fetch_all_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@fetch_all_expenses"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_latest_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@fetch_latest_expenses"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/delete_expense",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@delete_expense"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/make_reservation_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@make_reservation_expenses"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_service_categories",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ServiceCategoryController@fetch_service_categories"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/fetch_agents",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\TransferAgentController@fetch_agents"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/transfer_to_agent",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\TransferAgentController@transfer_to_agent"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/create_delivery_policy",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@create_delivery_policy"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/update_delivery_policy",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@update_delivery_policy"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_delivery_policies",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@fetch_delivery_policies"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/delivery_policy_details",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@delivery_policy_details"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/delivery_policy_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@delivery_policy_expenses"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/settle_delivery_policy",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@settle_delivery_policy"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/delete_delivery_policy",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@delete_delivery_policy"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/make_car_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\CarExpenseController@make_car_expenses"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/fetch_your_notifications",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\NotificationController@fetch_notifications"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/mark_notification_read",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\NotificationController@mark_as_read"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/logout",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\LoginController@logout"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_drivers",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DriverController@fetch_drivers"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_cars",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\CarController@fetch_cars"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/done_specification",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@done_specification"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/done_loading",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@done_loading"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/done_unloading",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@done_unloading"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/send_notes",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@send_notes"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_loading_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_loading_assignments"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_specification_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_specification_assignments"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_unloading_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_unloading_assignments"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/fetch_bookings",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_bookings"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_booking_containers",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_booking_containers"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_home_statistics",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_home_statistics"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/save_specification_booking_yard",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingPaperController@save_specification_booking_yard"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/save_loading_booking_container",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingPaperController@save_loading_booking_container"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/save_unloading_booking_sail",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingPaperController@save_unloading_booking_sail"
+    },
+    {
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/send_car_papers",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingPaperController@send_car_papers"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_yards",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\YardController@fetch_yards"
+    },
+    {
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_yard_bookings",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\YardController@fetch_yard_bookings"
+    }
+]

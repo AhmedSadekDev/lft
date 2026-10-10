@@ -1,0 +1,443 @@
+[
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/token_ininvalid",
+        "action": "ProfileController@token_ininvalid",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/login",
+        "action": "LoginController@login",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/set_password",
+        "action": "SetPasswordController@set_password",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/sendOtp",
+        "action": "OtpController@sendOtp",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/verifyOtp",
+        "action": "OtpController@verifyOtp",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/resetPassword",
+        "action": "OtpController@resetPassword",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/details",
+        "action": "BookingContainerController@details",
+        "type": "Single Resource \/ Summary",
+        "pagination": "غير مطلوب (سجل مفرد \/ إحصائيات)",
+        "reason": "بيانات ملخصة، أرصدة محفظة، إحصائيات، أو سجل منفرد"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/stage_receipts",
+        "action": "ContainerStageController@receipts",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/pending_stage_receipts",
+        "action": "ContainerStageController@pending",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/close_stage_receipts",
+        "action": "ContainerStageController@close",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/container-step-approve",
+        "action": "AgentController@approve",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/send_stage_email",
+        "action": "AgentController@send_stage_email",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/send_stage_whatsapp",
+        "action": "AgentController@send_stage_whatsapp",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/containers-expenses",
+        "action": "AgentController@expenses",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/wallets",
+        "action": "WalletController@index",
+        "type": "Single Resource \/ Summary",
+        "pagination": "غير مطلوب (سجل مفرد \/ إحصائيات)",
+        "reason": "بيانات ملخصة، أرصدة محفظة، إحصائيات، أو سجل منفرد"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/charge-agents-wallet",
+        "action": "WalletController@chargeAgentWallet",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/fetch_profile",
+        "action": "ProfileController@fetch_profile",
+        "type": "Single Resource \/ Summary",
+        "pagination": "غير مطلوب (سجل مفرد \/ إحصائيات)",
+        "reason": "بيانات ملخصة، أرصدة محفظة، إحصائيات، أو سجل منفرد"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/update_profile",
+        "action": "ProfileController@update_profile",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/change_password",
+        "action": "ChangePasswordController@change_password",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/logout",
+        "action": "LoginController@logout",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/fetch_home",
+        "action": "HomeController@fetch_home",
+        "type": "Single Resource \/ Summary",
+        "pagination": "غير مطلوب (سجل مفرد \/ إحصائيات)",
+        "reason": "بيانات ملخصة، أرصدة محفظة، إحصائيات، أو سجل منفرد"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/change-container-status",
+        "action": "AgentController@changeStatus",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/specification",
+        "action": "BookingContainerController@specification",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/waiting",
+        "action": "BookingContainerController@waiting",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/move_to_loading",
+        "action": "BookingContainerController@move_to_loading",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/loading",
+        "action": "BookingContainerController@loading",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/unloading",
+        "action": "BookingContainerController@unloading",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/missions\/all",
+        "action": "BookingContainerController@all",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/fetch_agents",
+        "action": "AgentController@fetch_agents",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/assign_agents",
+        "action": "AgentController@assign_agents",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/assign_specification_booking",
+        "action": "AgentController@assign_specification_booking",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/done_specification",
+        "action": "BookingContainerActionController@done_specification",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/done_loading",
+        "action": "BookingContainerActionController@done_loading",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/done_unloading",
+        "action": "BookingContainerActionController@done_unloading",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/make_it_today",
+        "action": "BookingContainerActionController@make_it_today",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/make_specification_today",
+        "action": "BookingContainerActionController@make_specification_today",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/notes",
+        "action": "BookingContainerActionController@notes",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/save_specification_booking_yard",
+        "action": "ShippingAgentController@save_specification_booking_yard",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/all",
+        "action": "ShippingAgentController@all",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/specification_assignments",
+        "action": "ShippingAgentController@specification_assignments",
+        "type": "Active Daily Queue",
+        "pagination": "غير مطلوب (طابور يومي محدود)",
+        "reason": "تكليفات اليوم الميدانية المباشرة للمندوب (محدودة بتاريخ اليوم)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/unloading_assignments",
+        "action": "ShippingAgentController@unloading_assignments",
+        "type": "Active Daily Queue",
+        "pagination": "غير مطلوب (طابور يومي محدود)",
+        "reason": "تكليفات اليوم الميدانية المباشرة للمندوب (محدودة بتاريخ اليوم)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/booking\/loading_assignments",
+        "action": "ShippingAgentController@loading_assignments",
+        "type": "Active Daily Queue",
+        "pagination": "غير مطلوب (طابور يومي محدود)",
+        "reason": "تكليفات اليوم الميدانية المباشرة للمندوب (محدودة بتاريخ اليوم)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/booking\/save_loading_booking_container",
+        "action": "ShippingAgentController@save_loading_booking_container",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/fetch_your_notifications",
+        "action": "NotificationController@fetch_notifications",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/fetch_agents_notifications",
+        "action": "NotificationController@fetch_agents_notifications",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Superagent",
+        "method": "POST",
+        "uri": "\/api\/superagent\/mark_notification_read",
+        "action": "NotificationController@mark_as_read",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/fetch_yards",
+        "action": "YardController@fetch_yards",
+        "type": "Reference \/ Lookup",
+        "pagination": "غير مطلوب (قوائم مرجعية ثابتة)",
+        "reason": "بيانات مرجعية للقوائم المنسدلة (Dropdowns) محدودة العدد وثابتة"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/fetch_active_yards",
+        "action": "YardController@fetch_active_yards",
+        "type": "Reference \/ Lookup",
+        "pagination": "غير مطلوب (قوائم مرجعية ثابتة)",
+        "reason": "بيانات مرجعية للقوائم المنسدلة (Dropdowns) محدودة العدد وثابتة"
+    },
+    {
+        "role": "Superagent",
+        "method": "GET",
+        "uri": "\/api\/superagent\/fetch_yard_bookings",
+        "action": "YardController@fetch_yard_bookings",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    }
+]

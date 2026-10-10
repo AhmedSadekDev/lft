@@ -527,7 +527,7 @@ class Phase6MobilePaginationTest extends TestCase
         $this->assertEquals(24, $json['pagination']['per_page']);
         $this->assertEquals(1, $json['pagination']['current_page']);
         $this->assertEquals(3, $json['pagination']['total_pages']);
-        $this->assertCount(24, $json['data']);
+        $this->assertCount(24, $json['data']['data'] ?? $json['data']);
     }
 
     public function test_agent_transfer_agents_pagination(): void

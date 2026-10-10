@@ -1,0 +1,497 @@
+[
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/login",
+        "action": "LoginController@login",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/set_password",
+        "action": "SetPasswordController@set_password",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/sendOtp",
+        "action": "OtpController@sendOtp",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/verifyOtp",
+        "action": "OtpController@verifyOtp",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/resetPassword",
+        "action": "OtpController@resetPassword",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/photos",
+        "action": "AgentPhotoController@index",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/photos",
+        "action": "AgentPhotoController@store",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/photos\/{photo}\/image",
+        "action": "AgentPhotoController@image",
+        "type": "Single Resource \/ Summary",
+        "pagination": "غير مطلوب (سجل مفرد \/ إحصائيات)",
+        "reason": "بيانات ملخصة، أرصدة محفظة، إحصائيات، أو سجل منفرد"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/wallets",
+        "action": "WalletController@index",
+        "type": "Single Resource \/ Summary",
+        "pagination": "غير مطلوب (سجل مفرد \/ إحصائيات)",
+        "reason": "بيانات ملخصة، أرصدة محفظة، إحصائيات، أو سجل منفرد"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/charge-cars-wallet",
+        "action": "WalletController@chargeCarWallet",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_profile",
+        "action": "ProfileController@fetch_profile",
+        "type": "Single Resource \/ Summary",
+        "pagination": "غير مطلوب (سجل مفرد \/ إحصائيات)",
+        "reason": "بيانات ملخصة، أرصدة محفظة، إحصائيات، أو سجل منفرد"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/update_profile",
+        "action": "ProfileController@update_profile",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/change_image",
+        "action": "ProfileController@change_image",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/cities",
+        "action": "CityController@index",
+        "type": "Reference \/ Lookup",
+        "pagination": "غير مطلوب (قوائم مرجعية ثابتة)",
+        "reason": "بيانات مرجعية للقوائم المنسدلة (Dropdowns) محدودة العدد وثابتة"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/containers-with-no-policies",
+        "action": "BookingContainerActionController@getContainers",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/change_password",
+        "action": "ChangePasswordController@change_password",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_financial_custody",
+        "action": "ExpenseController@fetch_financial_custody",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/make_general_expenses",
+        "action": "ExpenseController@make_general_expenses",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/update_expense",
+        "action": "ExpenseController@update_expense",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+        "uri": "\/api\/agent\/fetch_all_expenses",
+        "action": "ExpenseController@fetch_all_expenses",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_latest_expenses",
+        "action": "ExpenseController@fetch_latest_expenses",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/delete_expense",
+        "action": "ExpenseController@delete_expense",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/make_reservation_expenses",
+        "action": "ExpenseController@make_reservation_expenses",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_service_categories",
+        "action": "ServiceCategoryController@fetch_service_categories",
+        "type": "Reference \/ Lookup",
+        "pagination": "غير مطلوب (قوائم مرجعية ثابتة)",
+        "reason": "بيانات مرجعية للقوائم المنسدلة (Dropdowns) محدودة العدد وثابتة"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/fetch_agents",
+        "action": "TransferAgentController@fetch_agents",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/transfer_to_agent",
+        "action": "TransferAgentController@transfer_to_agent",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/create_delivery_policy",
+        "action": "DeliveryPolicyController@create_delivery_policy",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/update_delivery_policy",
+        "action": "DeliveryPolicyController@update_delivery_policy",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_delivery_policies",
+        "action": "DeliveryPolicyController@fetch_delivery_policies",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/delivery_policy_details",
+        "action": "DeliveryPolicyController@delivery_policy_details",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/delivery_policy_expenses",
+        "action": "DeliveryPolicyController@delivery_policy_expenses",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/settle_delivery_policy",
+        "action": "DeliveryPolicyController@settle_delivery_policy",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/delete_delivery_policy",
+        "action": "DeliveryPolicyController@delete_delivery_policy",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/make_car_expenses",
+        "action": "CarExpenseController@make_car_expenses",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/fetch_your_notifications",
+        "action": "NotificationController@fetch_notifications",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/mark_notification_read",
+        "action": "NotificationController@mark_as_read",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/logout",
+        "action": "LoginController@logout",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "قائمة ديناميكية قابلة للتضخم؛ تم تطبيق SQL Pagination"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_drivers",
+        "action": "DriverController@fetch_drivers",
+        "type": "Reference \/ Lookup",
+        "pagination": "غير مطلوب (قوائم مرجعية ثابتة)",
+        "reason": "بيانات مرجعية للقوائم المنسدلة (Dropdowns) محدودة العدد وثابتة"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_cars",
+        "action": "CarController@fetch_cars",
+        "type": "Reference \/ Lookup",
+        "pagination": "غير مطلوب (قوائم مرجعية ثابتة)",
+        "reason": "بيانات مرجعية للقوائم المنسدلة (Dropdowns) محدودة العدد وثابتة"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/done_specification",
+        "action": "BookingContainerActionController@done_specification",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/done_loading",
+        "action": "BookingContainerActionController@done_loading",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/done_unloading",
+        "action": "BookingContainerActionController@done_unloading",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/send_notes",
+        "action": "BookingContainerActionController@send_notes",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_loading_assignments",
+        "action": "BookingContainerAssignmentController@fetch_loading_assignments",
+        "type": "Active Daily Queue",
+        "pagination": "غير مطلوب (طابور يومي محدود)",
+        "reason": "تكليفات اليوم الميدانية المباشرة للمندوب (محدودة بتاريخ اليوم)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_specification_assignments",
+        "action": "BookingContainerAssignmentController@fetch_specification_assignments",
+        "type": "Active Daily Queue",
+        "pagination": "غير مطلوب (طابور يومي محدود)",
+        "reason": "تكليفات اليوم الميدانية المباشرة للمندوب (محدودة بتاريخ اليوم)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_unloading_assignments",
+        "action": "BookingContainerAssignmentController@fetch_unloading_assignments",
+        "type": "Active Daily Queue",
+        "pagination": "غير مطلوب (طابور يومي محدود)",
+        "reason": "تكليفات اليوم الميدانية المباشرة للمندوب (محدودة بتاريخ اليوم)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/fetch_bookings",
+        "action": "BookingContainerAssignmentController@fetch_bookings",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_booking_containers",
+        "action": "BookingContainerAssignmentController@fetch_booking_containers",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/booking\/fetch_home_statistics",
+        "action": "BookingContainerAssignmentController@fetch_home_statistics",
+        "type": "Single Resource \/ Summary",
+        "pagination": "غير مطلوب (سجل مفرد \/ إحصائيات)",
+        "reason": "بيانات ملخصة، أرصدة محفظة، إحصائيات، أو سجل منفرد"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/save_specification_booking_yard",
+        "action": "BookingPaperController@save_specification_booking_yard",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/save_loading_booking_container",
+        "action": "BookingPaperController@save_loading_booking_container",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/save_unloading_booking_sail",
+        "action": "BookingPaperController@save_unloading_booking_sail",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "POST",
+        "uri": "\/api\/agent\/booking\/send_car_papers",
+        "action": "BookingPaperController@send_car_papers",
+        "type": "Action \/ Mutation",
+        "pagination": "غير مطلوب (Action)",
+        "reason": "مسار تنفيذ عمليات (تسجيل دخول، اعتماد، إضافة، تحديث، إلغاء)"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_yards",
+        "action": "YardController@fetch_yards",
+        "type": "Reference \/ Lookup",
+        "pagination": "غير مطلوب (قوائم مرجعية ثابتة)",
+        "reason": "بيانات مرجعية للقوائم المنسدلة (Dropdowns) محدودة العدد وثابتة"
+    },
+    {
+        "role": "Agent",
+        "method": "GET",
+        "uri": "\/api\/agent\/fetch_yard_bookings",
+        "action": "YardController@fetch_yard_bookings",
+        "type": "Collection \/ Listing",
+        "pagination": "تم تطبيق الترقيم (PAGINATED)",
+        "reason": "تم تفعيل الترقيم الكامل وإرجاع كائن pagination المستقل"
+    }
+]

@@ -1,0 +1,247 @@
+[
+    {
+        "method": "GET",
+        "uri": "/api/superagent/token_ininvalid",
+        "action": "Superagent\\Auth\\ProfileController@token_ininvalid"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/login",
+        "action": "Superagent\\Auth\\LoginController@login"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/set_password",
+        "action": "Superagent\\Auth\\SetPasswordController@set_password"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/sendOtp",
+        "action": "Superagent\\Auth\\OtpController@sendOtp"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/verifyOtp",
+        "action": "Superagent\\Auth\\OtpController@verifyOtp"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/resetPassword",
+        "action": "Superagent\\Auth\\OtpController@resetPassword"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/details",
+        "action": "Superagent\\BookingContainerController@details"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/stage_receipts",
+        "action": "Superagent\\ContainerStageController@receipts"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/pending_stage_receipts",
+        "action": "Superagent\\ContainerStageController@pending"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/close_stage_receipts",
+        "action": "Superagent\\ContainerStageController@close"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/container-step-approve",
+        "action": "Superagent\\AgentController@approve"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/send_stage_email",
+        "action": "Superagent\\AgentController@send_stage_email"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/send_stage_whatsapp",
+        "action": "Superagent\\AgentController@send_stage_whatsapp"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/containers-expenses",
+        "action": "Superagent\\AgentController@expenses"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/wallets",
+        "action": "Superagent\\WalletController@index"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/charge-agents-wallet",
+        "action": "Superagent\\WalletController@chargeAgentWallet"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_profile",
+        "action": "Superagent\\Auth\\ProfileController@fetch_profile"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/update_profile",
+        "action": "Superagent\\Auth\\ProfileController@update_profile"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/change_password",
+        "action": "Superagent\\Auth\\ChangePasswordController@change_password"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/logout",
+        "action": "Superagent\\Auth\\LoginController@logout"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_home",
+        "action": "Superagent\\HomeController@fetch_home"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/change-container-status",
+        "action": "Superagent\\AgentController@changeStatus"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/specification",
+        "action": "Superagent\\BookingContainerController@specification"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/waiting",
+        "action": "Superagent\\BookingContainerController@waiting"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/move_to_loading",
+        "action": "Superagent\\BookingContainerController@move_to_loading"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/loading",
+        "action": "Superagent\\BookingContainerController@loading"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/unloading",
+        "action": "Superagent\\BookingContainerController@unloading"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/missions/all",
+        "action": "Superagent\\BookingContainerController@all"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/fetch_agents",
+        "action": "Superagent\\AgentController@fetch_agents"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/assign_agents",
+        "action": "Superagent\\AgentController@assign_agents"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/assign_specification_booking",
+        "action": "Superagent\\AgentController@assign_specification_booking"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/done_specification",
+        "action": "Superagent\\BookingContainerActionController@done_specification"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/done_loading",
+        "action": "Superagent\\BookingContainerActionController@done_loading"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/done_unloading",
+        "action": "Superagent\\BookingContainerActionController@done_unloading"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/make_it_today",
+        "action": "Superagent\\BookingContainerActionController@make_it_today"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/make_specification_today",
+        "action": "Superagent\\BookingContainerActionController@make_specification_today"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/notes",
+        "action": "Superagent\\BookingContainerActionController@notes"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/save_specification_booking_yard",
+        "action": "Superagent\\ShippingAgentController@save_specification_booking_yard"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/all",
+        "action": "Superagent\\ShippingAgentController@all"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/specification_assignments",
+        "action": "Superagent\\ShippingAgentController@specification_assignments"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/unloading_assignments",
+        "action": "Superagent\\ShippingAgentController@unloading_assignments"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/loading_assignments",
+        "action": "Superagent\\ShippingAgentController@loading_assignments"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/save_loading_booking_container",
+        "action": "Superagent\\ShippingAgentController@save_loading_booking_container"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/fetch_your_notifications",
+        "action": "Superagent\\NotificationController@fetch_notifications"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/fetch_agents_notifications",
+        "action": "Superagent\\NotificationController@fetch_agents_notifications"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/mark_notification_read",
+        "action": "Superagent\\NotificationController@mark_as_read"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_yards",
+        "action": "Superagent\\YardController@fetch_yards"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_active_yards",
+        "action": "Superagent\\YardController@fetch_active_yards"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_yard_bookings",
+        "action": "Superagent\\YardController@fetch_yard_bookings"
+    }
+]

@@ -1,0 +1,1149 @@
+Warning: TTY mode is not supported on Windows platform.
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ExampleTest[39m
+  [32;1m✓[39;22m[39m [2mthat true is true[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\InvoicePrintVisibilityTest[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #1[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #2[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #3[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #4[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #5[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #6[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #7[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #8[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #9[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #10[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #11[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #12[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #13[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #14[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #15[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #16[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #17[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #18[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #19[22m[39m
+  [32;1m✓[39;22m[39m [2monly explicit print destinations are used with data set #20[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ListingProfilesTest[39m
+  [32;1m✓[39;22m[39m [2mresource search profiles preserve contains bindings and grouping[22m[39m
+  [32;1m✓[39;22m[39m [2minvalid sort inputs fall back as a pair[22m[39m
+  [32;1m✓[39;22m[39m [2mone sided iso dates use ranges and preserve edge cases[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminDashboardOptimizationTest[39m
+  [32;1m✓[39;22m[39m [2mbooking controller middleware permissions[22m[39m
+  [32;1m✓[39;22m[39m [2mdashboard controller is invokable and mapped[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AgentPhotosTest[39m
+  [32;1m✓[39;22m[39m [2muploads multiple images without booking or wallet changes[22m[39m
+  [32;1m✓[39;22m[39m [2magent only lists and views their own images[22m[39m
+  [32;1m✓[39;22m[39m [2mrejects non images and oversized images without saving any files[22m[39m
+  [32;1m✓[39;22m[39m [2mupload failure rolls back records and cleans files[22m[39m
+  [32;1m✓[39;22m[39m [2mdashboard filters photos by agent and date[22m[39m
+  [32;1m✓[39;22m[39m [2mdashboard routes require existing agent view permission[22m[39m
+  [32;1m✓[39;22m[39m [2mdashboard image requires permission and streams the saved file[22m[39m
+  [32;1m✓[39;22m[39m [2mdashboard can delete a photo and its saved file[22m[39m
+  [32;1m✓[39;22m[39m [2mdashboard accepts an end date without a start date[22m[39m
+  [32;1m✓[39;22m[39m [2munauthenticated users cannot upload or list images[22m[39m
+  [32;1m✓[39;22m[39m [2mbulk destroy deletes multiple photos and files[22m[39m
+  [32;1m✓[39;22m[39m [2massign photo copies to public storage and creates booking paper[22m[39m
+  [32;1m✓[39;22m[39m [2msearch bookings finds by booking number and container no[22m[39m
+  [32;1m✓[39;22m[39m [2mdashboard filters by unassigned and assigned status[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BookingContainerExportTest[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "all"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "stage"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "legacy status"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "stage overrides status"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "waiting"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "invoiced"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "date range"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "date from"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "date to"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "company"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "tax"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "without invoice"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "with invoice"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "container search"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "invoice search"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport matches filtered listing with data set "combined"[22m[39m
+  [32;1m✓[39;22m[39m [2mexport handles missing container and includes employee and notes in xlsx[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BookingUpdatePermissionTest[39m
+  [32;1m✓[39;22m[39m [2medit and save use the existing update permission with data set "edit allowed"[22m[39m
+  [32;1m✓[39;22m[39m [2medit and save use the existing update permission with data set "save allowed"[22m[39m
+  [32;1m✓[39;22m[39m [2medit and save use the existing update permission with data set "edit denied"[22m[39m
+  [32;1m✓[39;22m[39m [2medit and save use the existing update permission with data set "save denied"[22m[39m
+  [32;1m✓[39;22m[39m [2medit and save use the existing update permission with data set "previous stage allowed"[22m[39m
+  [32;1m✓[39;22m[39m [2medit and save use the existing update permission with data set "previous stage denied"[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExampleTest[39m
+  [32;1m✓[39;22m[39m [2mthe homepage redirects to the main route[22m[39m
+
+  [37;41;1m FAIL [39;49;22m[39m Tests\Feature\ParallelContainerStagesTest[39m
+  [31;1m⨯[39;22m[39m [2msuperagent done actions advance all stages without an agent[22m[39m
+  [31;1m⨯[39;22m[39m [2msuperagent done actions cannot skip specification[22m[39m
+  [32;1m✓[39;22m[39m [2mgeneral expense cannot drop booking or stage context and debit wallet[22m[39m
+  [31;1m⨯[39;22m[39m [2mmultiple unloading receipts remain visible with their images after approval[22m[39m
+  [31;1m⨯[39;22m[39m [2mdashboard can return one container step by step to specification[22m[39m
+  [32;1m✓[39;22m[39m [2mdirect rewind cannot bypass invoice protection[22m[39m
+  [32;1m✓[39;22m[39m [2mdashboard rewind rejects stale requests and invoiced bookings[22m[39m
+  [31;1m⨯[39;22m[39m [2mdashboard previous stage endpoint validates and returns only the selected container[22m[39m
+  [31;1m⨯[39;22m[39m [2mdashboard rewind allows return with expenses and reopens closed receipts[22m[39m
+  [31;1m⨯[39;22m[39m [2msuperagent done flag tracks completion before approval with data set "specification"[22m[39m
+  [31;1m⨯[39;22m[39m [2msuperagent done flag tracks completion before approval with data set "loading"[22m[39m
+  [31;1m⨯[39;22m[39m [2msuperagent done flag tracks completion before approval with data set "unloading"[22m[39m
+  [31;1m⨯[39;22m[39m [2msuperagent missions group containers before paginating bookings[22m[39m
+  [31;1m⨯[39;22m[39m [2msuperagent waiting done stays one after waiting[22m[39m
+  [32;1m✓[39;22m[39m [2mdetails show container 700 loaded while booking 425 is incomplete[22m[39m
+  [31;1m⨯[39;22m[39m [2massignments without grouping relations remain visible in every stage with data set "specification"[22m[39m
+  [32;1m✓[39;22m[39m [2massignments without grouping relations remain visible in every stage with data set "loading"[22m[39m
+  [31;1m⨯[39;22m[39m [2massignments without grouping relations remain visible in every stage with data set "unloading"[22m[39m
+  [31;1m⨯[39;22m[39m [2mlegacy assignments have consistent visibility and permissions with data set "specification"[22m[39m
+  [32;1m✓[39;22m[39m [2mlegacy assignments have consistent visibility and permissions with data set "loading"[22m[39m
+  [31;1m⨯[39;22m[39m [2mlegacy assignments have consistent visibility and permissions with data set "unloading"[22m[39m
+  [31;1m⨯[39;22m[39m [2mclosed or approved stages cannot accept invisible assignments with data set "specification"[22m[39m
+  [31;1m⨯[39;22m[39m [2mclosed or approved stages cannot accept invisible assignments with data set "loading"[22m[39m
+  [31;1m⨯[39;22m[39m [2mclosed or approved stages cannot accept invisible assignments with data set "unloading"[22m[39m
+  [31;1m⨯[39;22m[39m [2mrewound stages reappear with completion enabled with data set "specification"[22m[39m
+  [31;1m⨯[39;22m[39m [2mrewound stages reappear with completion enabled with data set "loading"[22m[39m
+  [31;1m⨯[39;22m[39m [2mrewound stages reappear with completion enabled with data set "unloading"[22m[39m
+  [31;1m⨯[39;22m[39m [2mapproved loading rewind restores loading visibility even if loading flag was cleared[22m[39m
+  [31;1m⨯[39;22m[39m [2mwaiting assignment appears only after move to loading[22m[39m
+  [31;1m⨯[39;22m[39m [2minvoice hides all phases from every assigned agent[22m[39m
+  [32;1m✓[39;22m[39m [2minvoice blocks stale agent writes and persisted expense and policy references[22m[39m
+  [32;1m✓[39;22m[39m [2mbooking search cannot restore an invoiced or unassigned order[22m[39m
+  [31;1m⨯[39;22m[39m [2mtwo agents keep independent assignments and late receipts[22m[39m
+  [31;1m⨯[39;22m[39m [2msame agent can work both phases without duplicate containers[22m[39m
+  [31;1m⨯[39;22m[39m [2mclose checks the reviewed version and rejects late writes[22m[39m
+  [32;1m✓[39;22m[39m [2mretries are idempotent even after closure[22m[39m
+  [32;1m✓[39;22m[39m [2mstale edits and deletes do not overwrite or refund twice[22m[39m
+  [32;1m✓[39;22m[39m [2munassigned agent and premature unloading are rejected[22m[39m
+  [32;1m✓[39;22m[39m [2mfailed image write rolls back receipt and wallet[22m[39m
+  [31;1m⨯[39;22m[39m [2massignment api serializes the selected phase after three days[22m[39m
+  [32;1m✓[39;22m[39m [2mexpense api requires retry key and version and preserves context[22m[39m
+  [31;1m⨯[39;22m[39m [2mwaiting toggle cannot hide completed loading[22m[39m
+  [31;1m⨯[39;22m[39m [2mrewind is rejected once the next agent is assigned[22m[39m
+  [32;1m✓[39;22m[39m [2mreview snapshot starts at version one[22m[39m
+  [32;1m✓[39;22m[39m [2msuperagent closes only the reviewed phase[22m[39m
+  [31;1m⨯[39;22m[39m [2msuperagent can close loading receipts without moving to unloading[22m[39m
+  [31;1m⨯[39;22m[39m [2mloading receipts cannot close while waiting for loading[22m[39m
+  [31;1m⨯[39;22m[39m [2mloading approval keeps container visible for unloading assignment with data set "open receipts"[22m[39m
+  [31;1m⨯[39;22m[39m [2mloading approval keeps container visible for unloading assignment with data set "closed receipts"[22m[39m
+  [32;1m✓[39;22m[39m [2mapproved expenses cannot be edited by the agent[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves legacy rows without inventing past assignments[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves each existing state with data set "specification in progress"[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves each existing state with data set "specification awaiting approval"[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves each existing state with data set "waiting for loading"[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves each existing state with data set "loading in progress"[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves each existing state with data set "loading awaiting approval"[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves each existing state with data set "unloading in progress"[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves each existing state with data set "unloading awaiting approval"[22m[39m
+  [32;1m✓[39;22m[39m [2mmigration preserves each existing state with data set "fully approved"[22m[39m
+  [32;1m✓[39;22m[39m [2mexisting stage is created once when receipts are reviewed[22m[39m
+  [31;1m⨯[39;22m[39m [2mold completed stage without timestamp is not completed again[22m[39m
+  [32;1m✓[39;22m[39m [2minsufficient balance rolls back every database write[22m[39m
+  [32;1m✓[39;22m[39m [2madmin cannot change a receipt after stage closure[22m[39m
+  [32;1m✓[39;22m[39m [2mused migration cannot discard receipt history[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Phase5FinancialConcurrencyTest[39m
+  [32;1m✓[39;22m[39m [2meinvoice handles client exception cleanly[22m[39m
+  [32;1m✓[39;22m[39m [2msubmit invoice job skips already valid submitted booking[22m[39m
+  [32;1m✓[39;22m[39m [2msubmit invoice job atomic claim prevents duplicate workers[22m[39m
+  [32;1m✓[39;22m[39m [2mreceipt agent wallet deduction and deletion safety[22m[39m
+  [32;1m✓[39;22m[39m [2mcar paying vault concurrency and calculation safety[22m[39m
+  [32;1m✓[39;22m[39m [2mbank transaction transfer between banks creates audit and preserves balances[22m[39m
+
+  [37;41;1m FAIL [39;49;22m[39m Tests\Feature\Phase6MobilePaginationTest[39m
+  [32;1m✓[39;22m[39m [2magent notifications pagination contract[22m[39m
+  [32;1m✓[39;22m[39m [2msuperagent notifications pagination and scoping[22m[39m
+  [32;1m✓[39;22m[39m [2magent delivery policies pagination[22m[39m
+  [32;1m✓[39;22m[39m [2magent all expenses pagination[22m[39m
+  [32;1m✓[39;22m[39m [2msuperagent fetch agents pagination[22m[39m
+  [32;1m✓[39;22m[39m [2magent photos pagination metadata[22m[39m
+  [32;1m✓[39;22m[39m [2magent transfer agents pagination[22m[39m
+  [32;1m✓[39;22m[39m [2magent fetch bookings search and pagination[22m[39m
+  [32;1m✓[39;22m[39m [2msuperagent stage missions pagination[22m[39m
+  [31;1m⨯[39;22m[39m [2msuperagent pending stage receipts pagination[22m[39m
+  [31;1m⨯[39;22m[39m [2mpublic tracking fetches booking and containers with eager loading[22m[39m
+  [32;1m✓[39;22m[39m [2mpublic tracking not found returns error response[22m[39m
+  [32;1m✓[39;22m[39m [2mpublic tracking route has throttle middleware[22m[39m
+  [32;1m✓[39;22m[39m [2mcontainer details returns structured booking info[22m[39m
+  [32;1m✓[39;22m[39m [2mbooking papers returns metadata and eager loaded images[22m[39m
+  [32;1m✓[39;22m[39m [2mbooking papers handles non existent booking gracefully[22m[39m
+  [32;1m✓[39;22m[39m [2mdesktop orders pagination and eager loading[22m[39m
+  [31;1m⨯[39;22m[39m [2mclient portal company bookings pagination[22m[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ProfileTest[39m
+  [32;1m✓[39;22m[39m [2mguests cannot access or update profile[22m[39m
+  [32;1m✓[39;22m[39m [2mprofile updates only authenticated user and allowed fields[22m[39m
+  [32;1m✓[39;22m[39m [2mduplicate email is rejected[22m[39m
+  [32;1m✓[39;22m[39m [2mpassword change is hashed and keeps user authenticated[22m[39m
+  [32;1m✓[39;22m[39m [2minvalid password changes are rejected[22m[39m
+  [32;1m✓[39;22m[39m [2minvalid password changes are rejected with data set #1[22m[39m
+  [32;1m✓[39;22m[39m [2minvalid password changes are rejected with data set #2[22m[39m
+
+  [2m---[22m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msuperagent done actions advance all stages without an agent[39;22m
+[39;1m  Failed asserting that null is not null.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m173[39m
+    169▕             $this->assertSame(200, $response->status(), $response->getContent());
+    170▕             $container = BookingContainer::find(1);
+    171▕             $this->assertSame($type + 1, (int) $container->status);
+    172▕             $this->assertSame(1, (int) $container->{'superagent_'.$name.'_approved'});
+  ➜ 173▕             $this->assertNotNull($container->{$name.'_completed_at'});
+    174▕             $this->assertNotNull($container->{$name.'_approved_at'});
+    175▕             $this->assertSame($type === 0 ? 0 : 1, (int) $container->is_in_loading);
+    176▕             $this->assertDatabaseHas('daily_booking_containers', [
+    177▕                 'booking_container_id' => 1, 'booking_container_status' => $type + 1,
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msuperagent done actions cannot skip specification[39;22m
+[39;1m  Expected response status code [409] but received 500.
+  Failed asserting that 409 is identical to 500.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m213[39m
+    209▕         $this->actingAs($superagent, 'superagent');
+    210▕ 
+    211▕         foreach (['loading', 'unloading'] as $name) {
+    212▕             $this->postJson('/api/superagent/booking/done_'.$name, ['booking_container_id' => 1])
+  ➜ 213▕                 ->assertStatus(409);
+    214▕         }
+    215▕         $this->assertSame(0, (int) BookingContainer::find(1)->status);
+    216▕     }
+    217▕
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mmultiple unloading receipts remain visible with their images after approval[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  يجب اعتماد التحميل أولاً[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mdashboard can return one container step by step to specification[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  يجب اعتماد التحميل أولاً[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mdashboard previous stage endpoint validates and returns only the selected container[39;22m
+[39;1m  Failed asserting that 1 is identical to 0.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m351[39m
+    347▕         $url = route('booking-containers.previous-stage', 1);
+    348▕         $this->postJson($url)->assertUnprocessable();
+    349▕         $this->postJson($url, ['expected_status' => 3])->assertStatus(409);
+    350▕         $this->postJson($url, ['expected_status' => 1])->assertOk();
+  ➜ 351▕         $this->assertSame(0, (int) BookingContainer::find(1)->status);
+    352▕         $this->postJson($url, ['expected_status' => 1])->assertStatus(409);
+    353▕     }
+    354▕ 
+    355▕     public function test_dashboard_rewind_allows_return_with_expenses_and_reopens_closed_receipts(): void
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mdashboard rewind allows return with expenses and reopens closed receipts[39;22m
+[39;1m  Failed asserting that 1 is identical to 0.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m360[39m
+    356▕     {
+    357▕         $service = app(ContainerStageService::class);
+    358▕         $this->receipt();
+    359▕         $service->returnToPreviousStage(1, 1);
+  ➜ 360▕         $this->assertSame(0, (int) BookingContainer::find(1)->status);
+    361▕         $this->assertDatabaseHas('agent_expenses', ['booking_container_id' => 1]);
+    362▕ 
+    363▕         $service->approve(1, 0);
+    364▕         $service->moveToLoading([1], true);
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msuperagent done flag tracks completion before approval with data set "specification"[39;22m
+[39;1m  Failed asserting that null is identical to 0.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m399[39m
+    395▕         $this->actingAs($superagent, 'superagent');
+    396▕         $name = ContainerStageService::NAMES[$type];
+    397▕         $url = '/api/superagent/booking/'.$name;
+    398▕         $flag = 'data.data.0.is_'.$name.'_done';
+  ➜ 399▕         $this->getJson($url)->assertOk()->assertJsonPath($flag, 0)
+    400▕             ->assertJsonPath('data.data.0.booking_containers.0.is_'.$name.'_done', 0);
+    401▕ 
+    402▕         app(ContainerStageService::class)->complete(1, $type);
+    403▕         $this->assertSame(0, (int) BookingContainer::find(1)->{'superagent_'.$name.'_approved'});
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msuperagent done flag tracks completion before approval with data set "loading"[39;22m
+[39;1m  Failed asserting that 0 is identical to 1.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m404[39m
+    400▕             ->assertJsonPath('data.data.0.booking_containers.0.is_'.$name.'_done', 0);
+    401▕ 
+    402▕         app(ContainerStageService::class)->complete(1, $type);
+    403▕         $this->assertSame(0, (int) BookingContainer::find(1)->{'superagent_'.$name.'_approved'});
+  ➜ 404▕         $this->getJson($url)->assertOk()->assertJsonPath($flag, 1)
+    405▕             ->assertJsonPath('data.data.0.booking_containers.0.is_'.$name.'_done', 1);
+    406▕ 
+    407▕         // Legacy completion without timestamps must produce the same result.
+    408▕         BookingContainer::find(1)->update([$name.'_completed_at' => null]);
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msuperagent done flag tracks completion before approval with data set "unloading"[39;22m
+[39;1m  Failed asserting that null is identical to 0.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m399[39m
+    395▕         $this->actingAs($superagent, 'superagent');
+    396▕         $name = ContainerStageService::NAMES[$type];
+    397▕         $url = '/api/superagent/booking/'.$name;
+    398▕         $flag = 'data.data.0.is_'.$name.'_done';
+  ➜ 399▕         $this->getJson($url)->assertOk()->assertJsonPath($flag, 0)
+    400▕             ->assertJsonPath('data.data.0.booking_containers.0.is_'.$name.'_done', 0);
+    401▕ 
+    402▕         app(ContainerStageService::class)->complete(1, $type);
+    403▕         $this->assertSame(0, (int) BookingContainer::find(1)->{'superagent_'.$name.'_approved'});
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msuperagent missions group containers before paginating bookings[39;22m
+[39;1m  Failed asserting that two strings are identical.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m456[39m
+    452▕             ->assertJsonPath('data.data.0.booking_id', 1)
+    453▕             ->assertJsonCount(3, 'data.data.0.booking_containers');
+    454▕         $containers = collect($response->json('data.data.0.booking_containers'))->keyBy('id');
+    455▕         $this->assertSame('loading', $containers[1]['type']);
+  ➜ 456▕         $this->assertSame('waiting', $containers[$waiting->id]['type']);
+    457▕         $this->assertSame('waiting', $containers[$otherWaiting->id]['type']);
+    458▕ 
+    459▕         $this->getJson('/api/superagent/booking/missions/all?stage_type=waiting&per_page=1')->assertOk()
+    460▕             ->assertJsonPath('data.meta.total', 1)
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+  --- Expected
+  +++ Actual
+  @@ @@
+  -'waiting'
+  +'loading'
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msuperagent waiting done stays one after waiting[39;22m
+[39;1m  Failed asserting that null is identical to 1.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m484[39m
+    480▕         $this->actingAs($superagent, 'superagent');
+    481▕         $service = app(ContainerStageService::class);
+    482▕         $service->moveToLoading([1], false);
+    483▕         $this->getJson('/api/superagent/booking/waiting')->assertOk()
+  ➜ 484▕             ->assertJsonPath('data.data.0.is_specification_done', 1)
+    485▕             ->assertJsonPath('data.data.0.is_waiting_done', 1)
+    486▕             ->assertJsonPath('data.data.0.booking_containers.0.is_waiting_done', 1)
+    487▕             ->assertJsonPath('data.data.0.is_loading_done', 0)
+    488▕             ->assertJsonPath('data.data.0.is_unloading_done', 0);
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1massignments without grouping relations remain visible in every stage with data set "specification"[39;22m
+[39;1m  Failed asserting that 1 is identical to 0.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m561[39m
+    557▕             'superagent_specification_approved' => $type > 0,
+    558▕             'superagent_loading_approved' => $type > 1,
+    559▕         ]);
+    560▕         $service = app(ContainerStageService::class);
+  ➜ 561▕         $this->assertSame($type, $service->assign(1, [1]));
+    562▕         $this->actingAs(Agent::find(1), 'agent');
+    563▕ 
+    564▕         return $service;
+    565▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m570[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::prepareAssignmentStage()[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1massignments without grouping relations remain visible in every stage with data set "unloading"[39;22m
+[39;1m  Failed asserting that 1 is identical to 2.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m561[39m
+    557▕             'superagent_specification_approved' => $type > 0,
+    558▕             'superagent_loading_approved' => $type > 1,
+    559▕         ]);
+    560▕         $service = app(ContainerStageService::class);
+  ➜ 561▕         $this->assertSame($type, $service->assign(1, [1]));
+    562▕         $this->actingAs(Agent::find(1), 'agent');
+    563▕ 
+    564▕         return $service;
+    565▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m570[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::prepareAssignmentStage()[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mlegacy assignments have consistent visibility and permissions with data set "specification"[39;22m
+[39;1m  Failed asserting that 1 is identical to 0.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m561[39m
+    557▕             'superagent_specification_approved' => $type > 0,
+    558▕             'superagent_loading_approved' => $type > 1,
+    559▕         ]);
+    560▕         $service = app(ContainerStageService::class);
+  ➜ 561▕         $this->assertSame($type, $service->assign(1, [1]));
+    562▕         $this->actingAs(Agent::find(1), 'agent');
+    563▕ 
+    564▕         return $service;
+    565▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m586[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::prepareAssignmentStage()[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mlegacy assignments have consistent visibility and permissions with data set "unloading"[39;22m
+[39;1m  Failed asserting that 1 is identical to 2.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m561[39m
+    557▕             'superagent_specification_approved' => $type > 0,
+    558▕             'superagent_loading_approved' => $type > 1,
+    559▕         ]);
+    560▕         $service = app(ContainerStageService::class);
+  ➜ 561▕         $this->assertSame($type, $service->assign(1, [1]));
+    562▕         $this->actingAs(Agent::find(1), 'agent');
+    563▕ 
+    564▕         return $service;
+    565▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m586[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::prepareAssignmentStage()[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mclosed or approved stages cannot accept invisible assignments with data set "specification"[39;22m
+[39;1m  Failed asserting that 1 is identical to 0.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m561[39m
+    557▕             'superagent_specification_approved' => $type > 0,
+    558▕             'superagent_loading_approved' => $type > 1,
+    559▕         ]);
+    560▕         $service = app(ContainerStageService::class);
+  ➜ 561▕         $this->assertSame($type, $service->assign(1, [1]));
+    562▕         $this->actingAs(Agent::find(1), 'agent');
+    563▕ 
+    564▕         return $service;
+    565▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m598[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::prepareAssignmentStage()[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mclosed or approved stages cannot accept invisible assignments with data set "loading"[39;22m
+[39;1m  Expected a rejected operation[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m732[39m
+    728▕     private function assertConflict(callable $callback, int $status = 409): void
+    729▕     {
+    730▕         try {
+    731▕             $callback();
+  ➜ 732▕             $this->fail('Expected a rejected operation');
+    733▕         } catch (HttpException $e) {
+    734▕             $this->assertSame($status, $e->getStatusCode());
+    735▕         }
+    736▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m605[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::assertConflict(Object(Closure))[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mclosed or approved stages cannot accept invisible assignments with data set "unloading"[39;22m
+[39;1m  Failed asserting that 1 is identical to 2.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m561[39m
+    557▕             'superagent_specification_approved' => $type > 0,
+    558▕             'superagent_loading_approved' => $type > 1,
+    559▕         ]);
+    560▕         $service = app(ContainerStageService::class);
+  ➜ 561▕         $this->assertSame($type, $service->assign(1, [1]));
+    562▕         $this->actingAs(Agent::find(1), 'agent');
+    563▕ 
+    564▕         return $service;
+    565▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m598[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::prepareAssignmentStage()[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mrewound stages reappear with completion enabled with data set "specification"[39;22m
+[39;1m  Failed asserting that 1 is identical to 0.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m561[39m
+    557▕             'superagent_specification_approved' => $type > 0,
+    558▕             'superagent_loading_approved' => $type > 1,
+    559▕         ]);
+    560▕         $service = app(ContainerStageService::class);
+  ➜ 561▕         $this->assertSame($type, $service->assign(1, [1]));
+    562▕         $this->actingAs(Agent::find(1), 'agent');
+    563▕ 
+    564▕         return $service;
+    565▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m612[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::prepareAssignmentStage()[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mrewound stages reappear with completion enabled with data set "loading"[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  حالة الرجوع غير صحيحة[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mrewound stages reappear with completion enabled with data set "unloading"[39;22m
+[39;1m  Failed asserting that 1 is identical to 2.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m561[39m
+    557▕             'superagent_specification_approved' => $type > 0,
+    558▕             'superagent_loading_approved' => $type > 1,
+    559▕         ]);
+    560▕         $service = app(ContainerStageService::class);
+  ➜ 561▕         $this->assertSame($type, $service->assign(1, [1]));
+    562▕         $this->actingAs(Agent::find(1), 'agent');
+    563▕ 
+    564▕         return $service;
+    565▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m612[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::prepareAssignmentStage()[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mapproved loading rewind restores loading visibility even if loading flag was cleared[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  حالة الرجوع غير صحيحة[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mwaiting assignment appears only after move to loading[39;22m
+[39;1m  Failed asserting that two arrays are identical.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m641[39m
+    637▕     {
+    638▕         $service = $this->prepareAssignmentStage(1);
+    639▕         BookingContainer::find(1)->update(['is_in_loading' => false]);
+    640▕         $service->assign(1, [1]);
+  ➜ 641▕         $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()->assertJsonPath('data', []);
+    642▕         $service->moveToLoading([1], true);
+    643▕         $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()
+    644▕             ->assertJsonPath('data.0.booking_containers.0.id', 1);
+    645▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+  --- Expected
+  +++ Actual
+  @@ @@
+  -Array &0 ()
+  +Array &0 (
+  +    0 => Array &1 (
+  +        'id' => 1
+  +        'title' => 'Yard'
+  +        'booking_containers' => Array &2 (
+  +            0 => Array &3 (
+  +                'id' => 1
+  +                'company_name' => ''
+  +                'factory_name' => ''
+  +                'container_type' => null
+  +                'branch' => null
+  +                'sail_of_number' => null
+  +                'container_number' => null
+  +                'arrival_date' => null
+  +                'booking_number' => 'B-1'
+  +                'container_size' => ''
+  +                'shipping_agent' => 'Shipping'
+  +                'yard_title' => 'Yard'
+  +                'yard_id' => 1
+  +                'booking_id' => 1
+  +                'stage_type' => 'loading'
+  +                'stage_status' => 'pending'
+  +                'is_completed' => false
+  +                'is_approved' => false
+  +                'is_in_loading' => 1
+  +                'moved_to_loading_at' => null
+  +                'status_color' => 'red'
+  +                'card_header_color' => 'red'
+  +                'can_upload_receipts' => true
+  +                'can_complete_stage' => true
+  +                'operational_stage' => 'loading'
+  +                'type_id' => 1
+  +                'receipts_closed' => false
+  +                'receipts_version' => 1
+  +                'specification_approved_at' => null
+  +                'loading_approved_at' => null
+  +                'unloading_approved_at' => null
+  +                'notes' => Array &4 ()
+  +                'specification_latter' => ''
+  +                'container_image' => ''
+  +                'loading_answer' => ''
+  +                'container_with_sail_image' => ''
+  +                'unloading_image' => ''
+  +            )
+  +        )
+  +    )
+  +)
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1minvoice hides all phases from every assigned agent[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  المرحلة معتمدة بالفعل؛ اختر المرحلة الحالية للإسناد أو أرسل الطلب بدون type_id.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mtwo agents keep independent assignments and late receipts[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  يجب اعتماد التحميل أولاً[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msame agent can work both phases without duplicate containers[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  يجب اعتماد التحميل أولاً[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mclose checks the reviewed version and rejects late writes[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  يجب اعتماد التحميل أولاً[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1massignment api serializes the selected phase after three days[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  يجب اعتماد التحميل أولاً[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mwaiting toggle cannot hide completed loading[39;22m
+[39;1m  Expected a rejected operation[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m732[39m
+    728▕     private function assertConflict(callable $callback, int $status = 409): void
+    729▕     {
+    730▕         try {
+    731▕             $callback();
+  ➜ 732▕             $this->fail('Expected a rejected operation');
+    733▕         } catch (HttpException $e) {
+    734▕             $this->assertSame($status, $e->getStatusCode());
+    735▕         }
+    736▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m877[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::assertConflict(Object(Closure))[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mrewind is rejected once the next agent is assigned[39;22m
+  [41;1m PHPUnit\Framework\ExceptionWrapper [49;22m
+
+[39;1m  يجب اعتماد التحميل أولاً[39;22m
+
+  at [32mD:\laragon\www\leader\leader\vendor\laravel\framework\src\Illuminate\Foundation\Application.php[39m:[32m1172[39m
+    1168▕         if ($code == 404) {
+    1169▕             throw new NotFoundHttpException($message);
+    1170▕         }
+    1171▕ 
+  ➜ 1172▕         throw new HttpException($code, $message, null, $headers);
+    1173▕     }
+    1174▕ 
+    1175▕     /**
+    1176▕      * Register a terminating callback with the application.
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1msuperagent can close loading receipts without moving to unloading[39;22m
+[39;1m  Failed asserting that 1 is identical to 2.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m936[39m
+    932▕             ->assertOk()->assertJsonPath('data.data', []);
+    933▕         $this->assertConflict(fn () => $this->receipt('after-close'));
+    934▕ 
+    935▕         $this->assertTrue(app(ContainerStageService::class)->approve(1, 1, 7));
+  ➜ 936▕         $this->assertSame(2, app(ContainerStageService::class)->currentType(BookingContainer::find(1)));
+    937▕     }
+    938▕ 
+    939▕     public function test_loading_receipts_cannot_close_while_waiting_for_loading(): void
+    940▕     {
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mloading receipts cannot close while waiting for loading[39;22m
+[39;1m  Expected a rejected operation[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m732[39m
+    728▕     private function assertConflict(callable $callback, int $status = 409): void
+    729▕     {
+    730▕         try {
+    731▕             $callback();
+  ➜ 732▕             $this->fail('Expected a rejected operation');
+    733▕         } catch (HttpException $e) {
+    734▕             $this->assertSame($status, $e->getStatusCode());
+    735▕         }
+    736▕     }
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39;22m:[39;1m942[39;22m
+  [90m    Tests\Feature\ParallelContainerStagesTest::assertConflict(Object(Closure))[39m
+
+  [33m2   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mloading approval keeps container visible for unloading assignment with data set "open receipts"[39;22m
+[39;1m  Failed asserting that two arrays are identical.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m964[39m
+    960▕         $superagent = new \App\Models\Superagent;
+    961▕         $superagent->forceFill(['id' => 7]);
+    962▕         $this->actingAs($superagent, 'superagent');
+    963▕         $this->getJson('/api/superagent/booking/loading')
+  ➜ 964▕             ->assertOk()->assertJsonPath('data.data', []);
+    965▕         $unloading = $this->getJson('/api/superagent/booking/unloading');
+    966▕         $this->assertSame(200, $unloading->status(), $unloading->getContent());
+    967▕         $unloading->assertJsonPath('data.data.0.booking_containers.0.id', 1);
+    968▕         foreach (['', '?stage_type=unloading'] as $query) {
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+  --- Expected
+  +++ Actual
+  @@ @@
+  -Array &0 ()
+  +Array &0 (
+  +    0 => Array &1 (
+  +        'id' => 1
+  +        'booking_id' => 1
+  +        'booking_container_id' => 1
+  +        'booking_number' => 'B-1'
+  +        'is_today' => 1
+  +        'is_specification_done' => 1
+  +        'is_waiting_done' => 1
+  +        'is_loading_done' => 0
+  +        'is_unloading_done' => 0
+  +        'booking_containers' => Array &2 (
+  +            0 => Array &3 (
+  +                'id' => 1
+  +                'is_specification_done' => 1
+  +                'is_waiting_done' => 1
+  +                'is_loading_done' => 0
+  +                'is_unloading_done' => 0
+  +                'company_name' => ''
+  +                'factory_name' => ''
+  +                'container_type' => ''
+  +                'branch' => ''
+  +                'sail_of_number' => null
+  +                'container_number' => null
+  +                'arrival_date' => null
+  +                'booking_number' => 'B-1'
+  +                'certificate_number' => ''
+  +                'container_size' => ''
+  +                'shipping_agent' => ''
+  +                'date' => '2026-10-10'
+  +                'office_policy' => ''
+  +                'exit_date' => ''
+  +                'yard_title' => 'Yard'
+  +                'yard_id' => 1
+  +                'notes' => Array &4 ()
+  +                'is_today' => 0
+  +                'booking_id' => 1
+  +                'responsible_agents' => Array &5 (
+  +                    0 => Array &6 (
+  +                        'id' => 1
+  +                        'name' => ''
+  +                        'image' => 'https://cloudymenue.cloudy-digital.com/storage/agents'
+  +                        'number_of_bookings' => 1
+  +                    )
+  +                )
+  +                'specification_latter' => ''
+  +                'container_image' => ''
+  +                'loading_answer' => ''
+  +                'container_with_sail_image' => ''
+  +                'unloading_image' => ''
+  +            )
+  +        )
+  +        'specification_containers' => Array &7 ()
+  +        'waiting_containers' => Array &8 ()
+  +        'loading_containers' => Array &9 (
+  +            0 => Array &10 (
+  +                'id' => 1
+  +                'is_specification_done' => 1
+  +                'is_waiting_done' => 1
+  +                'is_loading_done' => 0
+  +                'is_unloading_done' => 0
+  +                'company_name' => ''
+  +                'factory_name' => ''
+  +                'container_type' => ''
+  +                'branch' => ''
+  +                'sail_of_number' => null
+  +                'container_number' => null
+  +                'arrival_date' => null
+  +                'booking_number' => 'B-1'
+  +                'certificate_number' => ''
+  +                'container_size' => ''
+  +                'shipping_agent' => ''
+  +                'date' => '2026-10-10'
+  +                'office_policy' => ''
+  +                'exit_date' => ''
+  +                'yard_title' => 'Yard'
+  +                'yard_id' => 1
+  +                'notes' => Array &11 ()
+  +                'is_today' => 0
+  +                'booking_id' => 1
+  +                'responsible_agents' => Array &12 (
+  +                    0 => Array &13 (
+  +                        'id' => 1
+  +                        'name' => ''
+  +                        'image' => 'https://cloudymenue.cloudy-digital.com/storage/agents'
+  +                        'number_of_bookings' => 1
+  +                    )
+  +                )
+  +                'specification_latter' => ''
+  +                'container_image' => ''
+  +                'loading_answer' => ''
+  +                'container_with_sail_image' => ''
+  +                'unloading_image' => ''
+  +            )
+  +        )
+  +        'unloading_containers' => Array &14 ()
+  +    )
+  +)
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mloading approval keeps container visible for unloading assignment with data set "closed receipts"[39;22m
+[39;1m  Failed asserting that two arrays are identical.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m964[39m
+    960▕         $superagent = new \App\Models\Superagent;
+    961▕         $superagent->forceFill(['id' => 7]);
+    962▕         $this->actingAs($superagent, 'superagent');
+    963▕         $this->getJson('/api/superagent/booking/loading')
+  ➜ 964▕             ->assertOk()->assertJsonPath('data.data', []);
+    965▕         $unloading = $this->getJson('/api/superagent/booking/unloading');
+    966▕         $this->assertSame(200, $unloading->status(), $unloading->getContent());
+    967▕         $unloading->assertJsonPath('data.data.0.booking_containers.0.id', 1);
+    968▕         foreach (['', '?stage_type=unloading'] as $query) {
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+  --- Expected
+  +++ Actual
+  @@ @@
+  -Array &0 ()
+  +Array &0 (
+  +    0 => Array &1 (
+  +        'id' => 1
+  +        'booking_id' => 1
+  +        'booking_container_id' => 1
+  +        'booking_number' => 'B-1'
+  +        'is_today' => 1
+  +        'is_specification_done' => 1
+  +        'is_waiting_done' => 1
+  +        'is_loading_done' => 0
+  +        'is_unloading_done' => 0
+  +        'booking_containers' => Array &2 (
+  +            0 => Array &3 (
+  +                'id' => 1
+  +                'is_specification_done' => 1
+  +                'is_waiting_done' => 1
+  +                'is_loading_done' => 0
+  +                'is_unloading_done' => 0
+  +                'company_name' => ''
+  +                'factory_name' => ''
+  +                'container_type' => ''
+  +                'branch' => ''
+  +                'sail_of_number' => null
+  +                'container_number' => null
+  +                'arrival_date' => null
+  +                'booking_number' => 'B-1'
+  +                'certificate_number' => ''
+  +                'container_size' => ''
+  +                'shipping_agent' => ''
+  +                'date' => '2026-10-10'
+  +                'office_policy' => ''
+  +                'exit_date' => ''
+  +                'yard_title' => 'Yard'
+  +                'yard_id' => 1
+  +                'notes' => Array &4 ()
+  +                'is_today' => 0
+  +                'booking_id' => 1
+  +                'responsible_agents' => Array &5 (
+  +                    0 => Array &6 (
+  +                        'id' => 1
+  +                        'name' => ''
+  +                        'image' => 'https://cloudymenue.cloudy-digital.com/storage/agents'
+  +                        'number_of_bookings' => 1
+  +                    )
+  +                )
+  +                'specification_latter' => ''
+  +                'container_image' => ''
+  +                'loading_answer' => ''
+  +                'container_with_sail_image' => ''
+  +                'unloading_image' => ''
+  +            )
+  +        )
+  +        'specification_containers' => Array &7 ()
+  +        'waiting_containers' => Array &8 ()
+  +        'loading_containers' => Array &9 (
+  +            0 => Array &10 (
+  +                'id' => 1
+  +                'is_specification_done' => 1
+  +                'is_waiting_done' => 1
+  +                'is_loading_done' => 0
+  +                'is_unloading_done' => 0
+  +                'company_name' => ''
+  +                'factory_name' => ''
+  +                'container_type' => ''
+  +                'branch' => ''
+  +                'sail_of_number' => null
+  +                'container_number' => null
+  +                'arrival_date' => null
+  +                'booking_number' => 'B-1'
+  +                'certificate_number' => ''
+  +                'container_size' => ''
+  +                'shipping_agent' => ''
+  +                'date' => '2026-10-10'
+  +                'office_policy' => ''
+  +                'exit_date' => ''
+  +                'yard_title' => 'Yard'
+  +                'yard_id' => 1
+  +                'notes' => Array &11 ()
+  +                'is_today' => 0
+  +                'booking_id' => 1
+  +                'responsible_agents' => Array &12 (
+  +                    0 => Array &13 (
+  +                        'id' => 1
+  +                        'name' => ''
+  +                        'image' => 'https://cloudymenue.cloudy-digital.com/storage/agents'
+  +                        'number_of_bookings' => 1
+  +                    )
+  +                )
+  +                'specification_latter' => ''
+  +                'container_image' => ''
+  +                'loading_answer' => ''
+  +                'container_with_sail_image' => ''
+  +                'unloading_image' => ''
+  +            )
+  +        )
+  +        'unloading_containers' => Array &14 ()
+  +    )
+  +)
+  [31;1m• Tests\Feature\ParallelContainerStagesTest [39;22m> [31;1mold completed stage without timestamp is not completed again[39;22m
+[39;1m  Failed asserting that true is false.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\ParallelContainerStagesTest.php[39m:[32m1066[39m
+    1062▕ 
+    1063▕     public function test_old_completed_stage_without_timestamp_is_not_completed_again(): void
+    1064▕     {
+    1065▕         BookingContainer::find(1)->update(['status' => 2, 'loading_completed_at' => null]);
+  ➜ 1066▕         $this->assertFalse(app(ContainerStageService::class)->complete(1, 1, 1));
+    1067▕         $this->assertSame(2, (int) BookingContainer::find(1)->status);
+    1068▕     }
+    1069▕ 
+    1070▕     public function test_insufficient_balance_rolls_back_every_database_write(): void
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+
+  [31;1m• Tests\Feature\Phase6MobilePaginationTest [39;22m> [31;1msuperagent pending stage receipts pagination[39;22m
+[39;1m  Failed asserting that 0 matches expected 15.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\Phase6MobilePaginationTest.php[39m:[32m654[39m
+    650▕         $response = $this->getJson('/api/superagent/booking/pending_stage_receipts?type_id=1');
+    651▕         $response->assertStatus(200);
+    652▕         $json = $response->json();
+    653▕ 
+  ➜ 654▕         $this->assertEquals(15, $json['pagination']['total']);
+    655▕         $this->assertEquals(50, $json['pagination']['per_page']);
+    656▕         $this->assertEquals(1, $json['pagination']['current_page']);
+    657▕         $this->assertEquals(1, $json['pagination']['total_pages']);
+    658▕         $this->assertCount(15, $json['data']['data']);
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+  
+  [31;1m• Tests\Feature\Phase6MobilePaginationTest [39;22m> [31;1mpublic tracking fetches booking and containers with eager loading[39;22m
+[39;1m  Failed asserting that null matches expected '40'.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\Phase6MobilePaginationTest.php[39m:[32m692[39m
+    688▕ 
+    689▕         $data = $response->json('data');
+    690▕         $this->assertCount(3, $data);
+    691▕         $this->assertEquals('CONT-TRK-1', $data[0]['container_number']);
+  ➜ 692▕         $this->assertEquals('40', $data[0]['container_size']);
+    693▕         $this->assertEquals('40ft Dry', $data[0]['container_type']);
+    694▕     }
+    695▕ 
+    696▕     public function test_public_tracking_not_found_returns_error_response(): void
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+  
+  [31;1m• Tests\Feature\Phase6MobilePaginationTest [39;22m> [31;1mclient portal company bookings pagination[39;22m
+[39;1m  Failed asserting that 0 matches expected 25.[39;22m
+
+  at [32mD:\laragon\www\leader\leader\tests\Feature\Phase6MobilePaginationTest.php[39m:[32m823[39m
+    819▕         $response = $this->getJson('/api/profile/bookings');
+    820▕         $response->assertStatus(200);
+    821▕         $json = $response->json();
+    822▕         $this->assertTrue($json['status']);
+  ➜ 823▕         $this->assertEquals(25, $json['pagination']['total']);
+    824▕         $this->assertEquals(20, $json['pagination']['per_page']);
+    825▕         $this->assertEquals(1, $json['pagination']['current_page']);
+    826▕         $this->assertEquals(2, $json['pagination']['total_pages']);
+    827▕         $this->assertCount(20, $json['data']);
+
+  [33m1   [39m[39;1mD:\laragon\www\leader\leader\vendor\phpunit\phpunit\phpunit[39;22m:[39;1m107[39;22m
+  [90m    PHPUnit\TextUI\Command::main()[39m
+  
+
+  [37;1mTests:  [39;22m[31;1m38 failed[39;22m[39m, [39m[32;1m122 passed[39;22m
+  [37;1mTime:   [39;22m[39m6.67s[39m
+
+
