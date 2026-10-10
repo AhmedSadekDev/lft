@@ -18,6 +18,7 @@ class AgentPhotoController extends Controller
         return [
             'id' => $photo->id,
             'image' => route('api.agent.photos.image', $photo),
+            'thumbnail' => route('api.agent.photos.image', ['photo' => $photo, 'thumb' => 1]),
             'original_name' => $photo->original_name,
             'created_at' => $photo->created_at->toIso8601String(),
         ];
@@ -92,11 +93,22 @@ class AgentPhotoController extends Controller
         return $this->returnAllData($photos, __('alerts.success'));
     }
 
-    public function image(int $photo)
+    public function image(Request $request, int $photo)
     {
         $photo = AgentPhoto::where('agent_id', auth('agent')->id())->find($photo);
         if (! $photo || ! Storage::disk('agent_photos')->exists($photo->path)) {
             return $this->returnError(404, 'الصورة غير موجودة.');
+        }
+
+        if ($request->boolean('thumb')) {
+            $fullPath = Storage::disk('agent_photos')->path($photo->path);
+            $thumbPath = app(\App\Services\ThumbnailService::class)->generateThumbnail($fullPath, null, 300, 300);
+            if ($thumbPath && is_file($thumbPath)) {
+                return response()->file($thumbPath, [
+                    'Cache-Control' => 'private, no-store',
+                    'X-Content-Type-Options' => 'nosniff',
+                ]);
+            }
         }
 
         return Storage::disk('agent_photos')->response($photo->path, null, [

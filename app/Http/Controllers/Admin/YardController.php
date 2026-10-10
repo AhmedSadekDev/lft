@@ -24,7 +24,7 @@ class YardController extends Controller
     public function index()
     {
         $input = [
-            'yards' => Yard::all(),
+            'yards' => \App\Services\ReferenceDataService::getYards(),
         ];
 
         return view('admin.yards.index', $input);

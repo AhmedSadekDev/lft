@@ -45,6 +45,13 @@ class AgentImageUploadService
             $fullPath = $directory . DIRECTORY_SEPARATOR . $storedName;
             $this->writeCompressedImage($file, $fullPath);
 
+            // Generate thumbnail without blocking upload if thumbnail fails
+            try {
+                app(\App\Services\ThumbnailService::class)->generateThumbnail($fullPath, null, 300, 300);
+            } catch (\Throwable $e) {
+                // Non-blocking thumbnail generation
+            }
+
             return [
                 'ok' => true,
                 'path' => $relativePath,

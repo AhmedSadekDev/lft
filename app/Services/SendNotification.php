@@ -2,63 +2,31 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\FireBasePushNotification;
+use App\Jobs\SendPushNotificationJob;
 use Illuminate\Support\Facades\Log;
 
 class SendNotification
 {
-    public static function send($token, $title, $text, $data = []): bool
+    /**
+     * Dispatch notification asynchronously via background queue.
+     */
+    public static function sendAsync($token, $title, $text, $data = [], ?string $eventId = null): void
     {
-        Log::info('Attempting to send push notification', [
-            'token' => $token,
-            'title' => $title,
-            'text' => $text,
-            'data' => $data,
-        ]);
+        SendPushNotificationJob::dispatch((string) $token, (string) $title, (string) $text, (array) $data, $eventId);
+    }
 
-        if (empty($token)) {
-            Log::warning('Push notification skipped: Empty device token', [
-                'title' => $title,
-                'text' => $text,
-                'data' => $data,
-            ]);
-            return false;
-        }
-
-        try {
-            $firebase = new FireBasePushNotification();
-            $result = $firebase->to($token, $text, $title, $data);
-            $decoded = json_decode((string) $result, true);
-
-            if (is_array($decoded) && isset($decoded['error'])) {
-                Log::error('Push notification rejected by FCM', [
-                    'token' => $token,
-                    'title' => $title,
-                    'error' => $decoded['error'],
-                ]);
-
-                return false;
-            }
-
-            Log::info('Push notification sent successfully', [
-                'token' => $token,
-                'title' => $title,
-                'text' => $text,
-                'result' => $result,
-            ]);
-
+    /**
+     * Send push notification.
+     * If $async is true, dispatches to queue; otherwise executes synchronously.
+     */
+    public static function send($token, $title, $text, $data = [], ?string $eventId = null, bool $async = false): bool
+    {
+        if ($async) {
+            static::sendAsync($token, $title, $text, $data, $eventId);
             return true;
-        } catch (\Throwable $e) {
-            Log::error('Push notification failed to send', [
-                'token' => $token,
-                'title' => $title,
-                'text' => $text,
-                'data' => $data,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return false;
         }
+
+        $job = new SendPushNotificationJob((string) $token, (string) $title, (string) $text, (array) $data, $eventId);
+        return $job->handle();
     }
 }

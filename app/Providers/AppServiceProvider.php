@@ -4,8 +4,14 @@ namespace App\Providers;
 
 use App\Models\Booking;
 use App\Models\BookingContainer;
+use App\Models\Branch;
+use App\Models\shippingAgent;
+use App\Models\Yard;
 use App\Observers\BookingContainerObserver;
 use App\Observers\BookingObserver;
+use App\Observers\BranchObserver;
+use App\Observers\ShippingAgentObserver;
+use App\Observers\YardObserver;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -40,6 +46,8 @@ class AppServiceProvider extends ServiceProvider
 
         Booking::observe(BookingObserver::class);
         BookingContainer::observe(BookingContainerObserver::class);
-
+        Yard::observe(YardObserver::class);
+        shippingAgent::observe(ShippingAgentObserver::class);
+        Branch::observe(BranchObserver::class);
     }
 }

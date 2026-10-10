@@ -127,11 +127,11 @@ class BookingController extends Controller
         return [
             'companies'         => $companies,
             'company_employees' => $company_employees,
-            'shipping_agents'   => shippingAgent::pluck('title', 'id'),
+            'shipping_agents'   => \App\Services\ReferenceDataService::getShippingAgentsPluck(),
             'type_of_actions'   => bookingActions(),
             'containers_type'   => Container::all()->pluck('full_name', 'id'),
             'factories'         => Factory::pluck('name', 'id'),
-            'branches'          => Branch::pluck('name', 'id'),
+            'branches'          => \App\Services\ReferenceDataService::getBranchesPluck(),
             'employees'        => Employee::pluck('name', 'id'),
 
         ];

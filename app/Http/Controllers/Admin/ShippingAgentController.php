@@ -23,7 +23,7 @@ class ShippingAgentController extends Controller
     public function index()
     {
         $input = [
-            'shippingAgents' => shippingAgent::all(),
+            'shippingAgents' => \App\Services\ReferenceDataService::getShippingAgents(),
         ];
 
         return view('admin.shippingAgents.index', $input);
