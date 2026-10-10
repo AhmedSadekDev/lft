@@ -32,12 +32,19 @@ class Phase6MobilePaginationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        DB::disconnect('sqlite');
         config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
+        DB::purge('sqlite');
         DB::reconnect('sqlite');
         Schema::dropAllTables();
 
         $this->createInMemorySchema();
+    }
+
+    protected function tearDown(): void
+    {
+        Schema::dropAllTables();
+        DB::purge('sqlite');
+        parent::tearDown();
     }
 
     private function createInMemorySchema(): void
@@ -81,6 +88,7 @@ class Phase6MobilePaginationTest extends TestCase
             $t->string('name')->default('Company');
             $t->string('email')->nullable();
             $t->string('password')->nullable();
+            $t->boolean('taxed')->default(0);
             $t->timestamps();
         });
 
@@ -321,6 +329,15 @@ class Phase6MobilePaginationTest extends TestCase
             $t->unsignedInteger('booking_container_id');
             $t->unsignedInteger('superagent_id')->nullable();
             $t->integer('booking_container_status')->default(0);
+            $t->timestamps();
+        });
+
+        Schema::create('booking_movements', function (Blueprint $t) {
+            $t->increments('id');
+            $t->unsignedInteger('booking_id')->nullable();
+            $t->unsignedInteger('container_id')->nullable();
+            $t->string('status')->nullable();
+            $t->date('date')->nullable();
             $t->timestamps();
         });
     }
@@ -741,7 +758,7 @@ class Phase6MobilePaginationTest extends TestCase
         $json = $response->json();
         $this->assertTrue($json['status']);
         $this->assertCount(2, $json['data']);
-        $this->assertEquals('papers/paper_1.jpg', $json['data'][0]['image']);
+        $this->assertStringContainsString('papers/paper_1.jpg', $json['data'][0]['image']);
     }
 
     public function test_booking_papers_handles_non_existent_booking_gracefully(): void

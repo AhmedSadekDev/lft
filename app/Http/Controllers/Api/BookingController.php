@@ -57,8 +57,8 @@ class BookingController extends Controller
             $employeeId = auth('employees')->id();
             $query = Booking::with($relations)->where('employee_id', $employeeId);
         } else {
-            $company = auth()->user();
-            $query = $company->bookings()->with($relations);
+            $company = auth('api')->user() ?? auth()->user();
+            $query = $company ? $company->bookings()->with($relations) : Booking::query()->whereRaw('1=0');
         }
 
         $bookings = $query->orderBy('id', 'desc')->paginate($perPage, ['*'], 'page', $page);

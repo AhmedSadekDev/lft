@@ -128,7 +128,7 @@ class Booking extends Model
 
     public function getTaxedInvoiceAttribute($value)
     {
-        return ($this->company->taxed == 0 ? __('admin.no') : __('admin.yes'));
+        return (($this->company?->taxed ?? 0) == 0 ? __('admin.no') : __('admin.yes'));
     }
 
 
