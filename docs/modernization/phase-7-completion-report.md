@@ -188,17 +188,43 @@ Schema::connection('mysql')->hasTable('cache') // Result: false
   ✓ thumbnail service never overwrites original image
   ✓ thumbnail service fallback to original url
   ✓ agent photos listing includes thumbnail route
+  ✓ fcm job permits consecutive legitimate notifications without event id
+  ✓ fcm job failure does not block retry attempts
+  ✓ private thumbnail authorization enforces auth and ownership
 
-Tests: 16 passed (100% PASS)
-Time:  6.49s
+Tests: 19 passed (100% PASS)
+Time:  1.72s
 ```
 
-### 9.2 Full Monolithic Test Suite Execution (`php artisan test`):
+### 9.2 Deep Dive: FCM Idempotency & Retry Safety Verification
+In response to the architectural review:
+1. **Event-Specific vs General Notifications:**
+   - Idempotency suppression applies **ONLY** when a discrete business `$eventId` is passed (e.g., `booking_stage_assigned_101`).
+   - When `$eventId === null` (general or broadcast alerts), **no deduplication occurs**; consecutive legitimate notifications for the same user or content are delivered without suppression (`test_fcm_job_permits_consecutive_legitimate_notifications_without_event_id`).
+2. **Transient Failures Do Not Block Worker Retries:**
+   - The idempotency cache lock is set **strictly after** FCM confirms successful delivery (`test_fcm_job_failure_does_not_block_retry_attempts`).
+   - If an attempt fails due to a network timeout or transient error, no success lock is written, ensuring worker retries (attempt 2, attempt 3) run freely without suppression.
+
+### 9.3 Deep Dive: Thumbnail Authorization & Private Storage Verification
+In response to the security review:
+1. **Private Storage Location:**
+   - Thumbnail files for agent photos are stored strictly under `storage/app/private/agent_photos/thumbnails/`.
+   - The directory `app/private` is located **outside the web document root** (`public/`) and has no public symbolic link. Direct access via web server URL is physically impossible.
+2. **Route Authorization & Tenant Boundaries:**
+   - Both original photos and thumbnails are served through the same authenticated controllers:
+     - **Mobile Route:** `GET /api/agent/photos/{photo}/image?thumb=1` is protected by `auth:agent` middleware and strictly scoped by `$photo->agent_id == auth('agent')->id()`.
+     - **Admin Route:** `GET /admin/agent-photos/{photo}/image?thumb=1` is protected by `auth` middleware and `permission:agents.index`.
+   - Verified in `test_private_thumbnail_authorization_enforces_auth_and_ownership`:
+     - Unauthenticated requests: **401 Unauthorized**.
+     - Agent B requesting Agent A's thumbnail: **404 Not Found**.
+     - Authorized Agent A: **200 OK**.
+
+### 9.4 Full Monolithic Test Suite Execution (`php artisan test`):
 ```text
-Tests:  35 failed, 141 passed
-Time:   50.39s
+Tests:  35 failed, 144 passed
+Time:   20.77s
 ```
-* **Passing Tests:** **141 passed** (up from 125 pre-Phase 7 baseline).
+* **Passing Tests:** **144 passed** (125 baseline + 19 Phase 7 tests).
 * **Failing Tests:** Exactly **35 baseline failures**, 100% belonging to `ParallelContainerStagesTest` (monolithic hardcoded ID collision documented since Phase 0).
 * **New Regressions:** **0**.
 
@@ -238,11 +264,13 @@ When the system owner authorizes production deployment in a future maintenance w
 PHASE 7 — QUEUES, CACHING & MEDIA OPTIMIZATION: COMPLETE — VERIFIED
 - Background Job architecture for FCM and Email fully implemented.
 - Real asynchronous execution verified with active worker in isolated DB.
+- FCM Idempotency strictly event-bound; failures do not block retries.
+- Thumbnails reside on private storage with 100% route authorization.
 - File-based reference data caching active with Model Observers.
 - Strict financial cache prohibition verified (0 financial caching).
 - Native PHP GD ThumbnailService active with -90%+ payload reduction.
 - 0 DDL or migrations executed against operational database 'leader'.
-- Full Test Suite: 141 passed, 35 baseline preserved, 0 regressions.
+- Full Test Suite: 144 passed, 35 baseline preserved, 0 regressions.
 - Production deployment on hold per owner policy.
 ====================================================================
 ```

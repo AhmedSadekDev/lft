@@ -81,9 +81,20 @@ class AgentPhotoController extends Controller
         ));
     }
 
-    public function image(AgentPhoto $photo)
+    public function image(Request $request, AgentPhoto $photo)
     {
         abort_unless(Storage::disk('agent_photos')->exists($photo->path), 404);
+
+        if ($request->boolean('thumb')) {
+            $fullPath = Storage::disk('agent_photos')->path($photo->path);
+            $thumbPath = app(\App\Services\ThumbnailService::class)->generateThumbnail($fullPath, null, 300, 300);
+            if ($thumbPath && is_file($thumbPath)) {
+                return response()->file($thumbPath, [
+                    'Cache-Control' => 'private, no-store',
+                    'X-Content-Type-Options' => 'nosniff',
+                ]);
+            }
+        }
 
         return Storage::disk('agent_photos')->response($photo->path, null, [
             'Cache-Control' => 'private, no-store',

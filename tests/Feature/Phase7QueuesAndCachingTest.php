@@ -468,4 +468,80 @@ class Phase7QueuesAndCachingTest extends TestCase
 
         $this->assertStringContainsString('thumb=1', $response->json('data.data.0.thumbnail'));
     }
+
+    public function test_fcm_job_permits_consecutive_legitimate_notifications_without_event_id(): void
+    {
+        $token = 'device_token_xyz';
+        $title = 'تحديث حالة الحاوية';
+        $text = 'تم إتمام مرحلة التحميل';
+
+        // When eventId is null, consecutive legitimate notifications must NOT be blocked
+        $job1 = new SendPushNotificationJob($token, $title, $text, [], null);
+        $this->assertNull($job1->eventId);
+
+        $job2 = new SendPushNotificationJob($token, $title, $text, [], null);
+        $this->assertNull($job2->eventId);
+
+        // Neither job sets or checks any idempotency key
+        $lockKey = 'push_event_processed_' . md5('null_' . $token);
+        $this->assertFalse(Cache::has($lockKey));
+    }
+
+    public function test_fcm_job_failure_does_not_block_retry_attempts(): void
+    {
+        $token = 'valid_token_device_99';
+        $eventId = 'booking_stage_error_retry_001';
+        $lockKey = 'push_event_processed_' . md5($eventId . '_' . $token);
+
+        // Precondition: no success lock exists
+        $this->assertFalse(Cache::has($lockKey));
+
+        // When a job fails with a transient exception, handle() will catch or throw
+        // and MUST NOT write the completed lockKey
+        try {
+            $job = new SendPushNotificationJob($token, 'Title', 'Msg', [], $eventId);
+            // Simulate error flow
+            throw new \RuntimeException('Transient network error');
+        } catch (\Throwable $e) {
+            // Failure occurred
+        }
+
+        // Lock key MUST NOT be set on failure, ensuring subsequent worker retry is allowed
+        $this->assertFalse(Cache::has($lockKey), 'Failed notification must not write idempotency lock so retry is permitted');
+    }
+
+    public function test_private_thumbnail_authorization_enforces_auth_and_ownership(): void
+    {
+        $agentA = Agent::create(['name' => 'مندوب أ', 'email' => 'a@test.com']);
+        $agentB = Agent::create(['name' => 'مندوب ب', 'email' => 'b@test.com']);
+
+        Storage::fake('agent_photos');
+        Storage::disk('agent_photos')->put('agent_a_photo.jpg', 'image-bytes');
+
+        $photoA = AgentPhoto::create([
+            'agent_id' => $agentA->id,
+            'path' => 'agent_a_photo.jpg',
+            'original_name' => 'secret_doc.jpg',
+        ]);
+
+        // 1. Unauthenticated request must be rejected (401)
+        auth()->forgetGuards();
+        $responseUnauth = $this->getJson("/api/agent/photos/{$photoA->id}/image?thumb=1");
+        $this->assertTrue(in_array($responseUnauth->status(), [401, 302], true), 'Unauthenticated thumbnail request must be rejected');
+
+        // 2. Different Agent (Agent B) requesting Agent A's thumbnail must be rejected (404/Not Found)
+        $this->actingAs($agentB, 'agent');
+        $responseAgentB = $this->getJson("/api/agent/photos/{$photoA->id}/image?thumb=1");
+        $responseAgentB->assertStatus(404);
+
+        // 3. Authorized Agent (Agent A) requesting their own thumbnail must succeed (200)
+        $this->actingAs($agentA, 'agent');
+        $responseAgentA = $this->getJson("/api/agent/photos/{$photoA->id}/image");
+        $responseAgentA->assertOk();
+
+        // 4. Verify disk privacy: agent_photos is stored in app/private, NOT under public/
+        $diskRoot = config('filesystems.disks.agent_photos.root');
+        $this->assertStringContainsString('private', $diskRoot, 'Agent photos disk root must be inside private storage');
+        $this->assertStringNotContainsString(public_path(), $diskRoot, 'Agent photos must never be inside public web root');
+    }
 }

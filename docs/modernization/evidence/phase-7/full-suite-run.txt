@@ -2,23 +2,42 @@
 LEADER FOR TRANS — FULL MONOLITHIC TEST SUITE EXECUTION LOG (PHASE 7)
 ====================================================================
 Command: php artisan test
-Date: 2026-10-10 20:54:06
+Date: 2026-10-10 21:07:57
 Environment: Local / Windows / PHP 8.3.26 / Laravel 9.52.20
 
 --------------------------------------------------------------------
 SUMMARY:
-Tests:  35 failed, 141 passed
-Time:   50.39s
+Tests:  35 failed, 144 passed
+Time:   20.77s
 --------------------------------------------------------------------
 
 BREAKDOWN OF TEST RESULTS:
-- Phase 7 Queues & Caching Suite (Tests\Feature\Phase7QueuesAndCachingTest): 16/16 PASSED
+- Phase 7 Queues & Caching Suite (Tests\Feature\Phase7QueuesAndCachingTest): 19/19 PASSED
+  * FCM payload preservation and serialization
+  * FCM retry and backoff configuration
+  * FCM empty token permanent rejection
+  * FCM idempotency prevents duplicate dispatch
+  * Real asynchronous worker processing in isolated environment
+  * Container status notification implements ShouldQueue
+  * Reference data caching and cache hit
+  * Yard observer invalidates cache on create, update, delete
+  * Shipping agent and branch observers invalidate cache
+  * Strict financial cache prohibition invariant
+  * Thumbnail service resizes JPEG preserving aspect ratio
+  * Thumbnail service handles PNG with transparency
+  * Thumbnail service rejects path traversal and remote URLs
+  * Thumbnail service never overwrites original image
+  * Thumbnail service fallback to original URL
+  * Agent photos listing includes thumbnail route
+  * FCM permits consecutive legitimate notifications without eventId
+  * FCM failure does not block retry attempts
+  * Private thumbnail authorization enforces auth and ownership
 - Phase 6 Mobile Pagination Suite (Tests\Feature\Phase6MobilePaginationTest): 18/18 PASSED
 - Phase 5 Financial Concurrency Suite (Tests\Feature\Phase5FinancialConcurrencyTest): 6/6 PASSED
 - Legacy Agent Photos Suite (Tests\Feature\AgentPhotosTest): 14/14 PASSED
 - Booking Update Permission Suite (Tests\Feature\BookingUpdatePermissionTest): 6/6 PASSED
 - Other Feature & Unit Tests: 81/81 PASSED
-- TOTAL PASSED: 141 PASSED
+- TOTAL PASSED: 144 PASSED
 
 HISTORICAL BASELINE FAILURES:
 - Tests\Feature\ParallelContainerStagesTest: Exactly 35 baseline failures preserved.
