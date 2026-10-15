@@ -269,6 +269,45 @@
         }
     });
 
+    // Shared confirm helpers (available even if bootstrap-select is missing)
+    window.lftConfirmForm = function (form, opts) {
+        opts = opts || {};
+        if (!window.Swal) {
+            if (window.confirm(opts.text || opts.title || 'متابعة؟')) form.submit();
+            return false;
+        }
+        Swal.fire({
+            title: opts.title || 'هل أنت متأكد؟',
+            text: opts.text || '',
+            icon: opts.icon || 'warning',
+            showCancelButton: true,
+            confirmButtonText: opts.confirmText || 'تأكيد',
+            cancelButtonText: opts.cancelText || 'إلغاء',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-primary mx-1',
+                cancelButton: 'btn btn-secondary mx-1',
+            },
+        }).then(function (result) {
+            if (result.isConfirmed) form.submit();
+        });
+        return false;
+    };
+
+    window.lftAlert = function (message, icon) {
+        if (!window.Swal) {
+            window.alert(message);
+            return;
+        }
+        Swal.fire({
+            title: message,
+            icon: icon || 'info',
+            confirmButtonText: 'حسناً',
+            buttonsStyling: false,
+            customClass: { confirmButton: 'btn btn-primary mx-1' },
+        });
+    };
+
     // 10. Searchable dropdowns: every <select> becomes a bootstrap-select with live search.
     // Opt a select out with the data-native-select attribute.
     // Page scripts keep using the native select API; the observer below mirrors their
@@ -329,13 +368,21 @@
     };
 
     var enhanceSelect = function (sel) {
+        // Never touch SweetAlert2 internals (hidden select used for inputType:select)
+        if (
+            !sel
+            || sel.classList.contains('swal2-select')
+            || sel.classList.contains('swal2-input')
+            || (sel.closest && sel.closest('.swal2-container, .swal2-popup, .swal2-actions'))
+        ) {
+            return;
+        }
         // .selectpicker elements may already have been initialized by the plugin itself
         if (isEnhanced(sel)) {
             if (addSearchTokens(sel)) $(sel).selectpicker('refresh');
             return;
         }
         if ($(sel).is(SKIP_SELECTOR) || $(sel).closest(SKIP_CLOSEST).length || parseInt(sel.getAttribute('size'), 10) > 1) return;
-        if (sel.classList.contains('swal2-select') || sel.classList.contains('swal2-input')) return;
         if (sel.parentNode && $(sel.parentNode).hasClass('bootstrap-select')) {
             unwrapClonedWidget(sel);
         }
@@ -433,20 +480,34 @@
         flush();
     });
 
-    // Safety net: if anything still enhanced a SweetAlert select, tear the widget down
-    // the moment a popup opens so delete confirms never show a searchable dropdown.
+    // Safety net: SweetAlert2 keeps a hidden <select class="swal2-select"> in every popup.
+    // If bootstrap-select ever wraps it, destroy the widget and KEEP the native select hidden
+    // (never .show() — that was surfacing an empty searchable dropdown in delete confirms).
     var destroySwalSelectpickers = function () {
-        $('.swal2-container select, .swal2-popup select, select.swal2-select').each(function () {
+        var $root = $('.swal2-container, .swal2-popup');
+        if (!$root.length) return;
+
+        $root.find('.bootstrap-select').each(function () {
+            var $wrap = $(this);
+            var $sel = $wrap.find('select').first();
+            if ($sel.length && $.data($sel[0], 'selectpicker')) {
+                try { $sel.selectpicker('destroy'); } catch (e) { /* ignore */ }
+            } else if ($sel.length) {
+                $wrap.before($sel);
+                $wrap.remove();
+            } else {
+                $wrap.remove();
+            }
+        });
+
+        $root.find('select.swal2-select, select.swal2-input, select').each(function () {
             var $sel = $(this);
             if ($.data(this, 'selectpicker')) {
                 try { $sel.selectpicker('destroy'); } catch (e) { /* ignore */ }
             }
-            var wrap = this.parentNode;
-            if (wrap && $(wrap).hasClass('bootstrap-select')) {
-                wrap.parentNode.insertBefore(this, wrap);
-                wrap.parentNode.removeChild(wrap);
-            }
-            $sel.removeClass('bs-select-hidden').show();
+            // Swal's internal select must stay invisible
+            this.style.setProperty('display', 'none', 'important');
+            $sel.addClass('swal2-select').attr('aria-hidden', 'true');
         });
     };
 
@@ -454,7 +515,9 @@
         var originalFire = Swal.fire.bind(Swal);
         Swal.fire = function () {
             var result = originalFire.apply(Swal, arguments);
+            destroySwalSelectpickers();
             setTimeout(destroySwalSelectpickers, 0);
+            setTimeout(destroySwalSelectpickers, 50);
             if (result && typeof result.then === 'function') {
                 result.then(function () { destroySwalSelectpickers(); }, function () {});
             }

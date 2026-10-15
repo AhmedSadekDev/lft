@@ -23,4 +23,6 @@ return [
     'expired_otp'           => 'لقد انتهت صلاحية رمز التحقق الخاص بك',
     'verified'              => 'تم التحقق',
     "old_password_incorrect" => "كلمة المرور القديمة غير صحيحة",
+    'password_updated'       => 'تم تحديث كلمة المرور بنجاح',
+    'user_not_found'         => 'المستخدم غير موجود',
 ];

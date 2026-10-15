@@ -4425,6 +4425,22 @@ html body.lft-admin .card.card-custom .card-footer .row {
     background: rgba(255, 255, 255, 0.03) !important;
 }
 
+/* SweetAlert2: keep internal select hidden even if a theme tries to style it */
+html body.lft-admin .swal2-container select.swal2-select,
+html body.lft-admin .swal2-popup select.swal2-select,
+html body.lft-admin .swal2-container .bootstrap-select,
+html body.lft-admin .swal2-popup .bootstrap-select {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+
 /* ==========================================================================
    bootstrap-select — readable menus in every admin form (beats Metronic #3f4254)
    Menus may render inside the widget OR be moved to <body> via data-container.

@@ -1,19 +1,11 @@
 @extends('layouts.admin')
 @section('content')
-    
     <div class="container-fluid lft-simple-page">
         @include('layouts.includes.breadcrumb', ['page' => __('main.permissions')])
-        <!--begin::Card-->
         <div class="card card-custom gutter-b lft-simple-card">
             <div class="card-header border-0">
-                <div class="card-toolbar">
-                    <!--begin::Button-->
-
-                    <a href="{{ route('permissions.index') }}" class="btn btn-primary font-weight-bolder">
-                        <i class="fas fa-arrow-right" aria-hidden="true"></i>{{ __('main.back') }}
-                    </a>
-
-                    <!--end::Button-->
+                <div class="card-title">
+                    <h3 class="card-label">إضافة صلاحية / دور</h3>
                 </div>
                 <div class="card-toolbar">
                     <a href="{{ route('permissions.index') }}" class="btn btn-secondary btn-sm">
@@ -21,10 +13,11 @@
                     </a>
                 </div>
             </div>
-            <div class="card-body">
-                <form action="{{ route('permissions.store') }}" method="post">
-                    @csrf
+            <form action="{{ route('permissions.store') }}" method="post" class="lft-simple-form">
+                @csrf
+                <div class="card-body">
                     <div class="form-group">
+                        <label class="required-field">{{ __('admin.name') }}</label>
                         <input class="form-control" type="text" name="name" placeholder="{{ __('admin.name') }}"
                             value="{{ old('name') }}" required>
                         @error('name')
@@ -32,11 +25,10 @@
                         @enderror
                     </div>
 
-                    <lable class="mb-2">{{ __("main.permissions") }}:</lable>
+                    <label class="mb-2 font-weight-bold">{{ __('main.permissions') }}:</label>
                     <div class="row">
-
                         @foreach ($permissions as $permission)
-                            <div class="form-check col-3 mb-3">
+                            <div class="form-check col-md-3 col-sm-6 mb-3">
                                 <input id="permission{{ $permission->id }}" class="form-check-input" type="checkbox"
                                     name="permissions[]" value="{{ $permission->id }}">
                                 <label for="permission{{ $permission->id }}"
@@ -44,14 +36,11 @@
                             </div>
                         @endforeach
                     </div>
-
-
-                    <div class="d-flex justify-content-end my-3">
-                      <button type="submit" class="btn btn-primary">{{ __('admin.save') }}</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="card-footer lft-simple-form-footer">
+                    <button type="submit" class="btn btn-primary">{{ __('admin.save') }}</button>
+                </div>
+            </form>
         </div>
-        <!--end::Card-->
     </div>
-    @endsection
+@endsection

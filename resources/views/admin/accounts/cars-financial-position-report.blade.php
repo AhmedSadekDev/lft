@@ -1,14 +1,14 @@
 @extends("layouts.admin")
 
 @section("content")
-<div class="container-fluid">
+<div class="container-fluid lft-simple-page">
     @include("layouts.includes.breadcrumb", [ 'page' => 'الموقف المالي - السيارات' ])
 
     <!--begin::Card-->
-    <div class="card card-custom shadow-sm">
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide shadow-sm">
         <div class="card-header border-0 py-4">
             <div class="card-title">
-                <h3 class="card-label font-weight-bolder text-dark">
+                <h3 class="card-label font-weight-bolder">
                     <i class="fas fa-chart-line text-info mr-2"></i>
                     الموقف المالي - السيارات
                 </h3>

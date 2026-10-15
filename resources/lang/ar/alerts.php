@@ -44,4 +44,7 @@ return [
     'Expense saved successfully'       => 'تم حفظ المصروفات بنجاح',
     'notAuth'                          => 'غير مصرح لك بالدخول',
     'branch_must_match_booking_factory' => 'فرع الحاوية يجب أن يكون تابعًا لنفس مصنع الطلب',
+    'error_occurred'                   => 'حدث خطأ',
+    'failed'                           => 'فشلت العملية',
+    'not_found'                        => 'غير موجود',
 ];

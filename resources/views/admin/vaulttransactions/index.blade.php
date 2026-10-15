@@ -30,10 +30,10 @@
     </style>
 @section("content")
 <div class="container-fluid lft-simple-page">
-    @include("layouts.includes.breadcrumb", [ 'page' => __('main.banks') ])
+    @include("layouts.includes.breadcrumb", [ 'page' => __('main.vaults') ])
     <!--begin::Card-->
     <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
-        <div class="card-header flex-wrap py-5 d-flex justify-content-between align-items-center">
+        <div class="card-header border-0 d-flex justify-content-between align-items-center">
             <div class="card-toolbar d-flex gap-2">
                 <!-- زر الفلتر -->
                 <button type="button" class="btn btn-primary fw-bold shadow-sm" data-toggle="modal" data-target="#filterModal">

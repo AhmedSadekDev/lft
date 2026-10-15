@@ -7,7 +7,7 @@
     <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide shadow-sm">
         <div class="card-header border-0 py-4">
             <div class="card-title">
-                <h3 class="card-label font-weight-bolder text-dark">
+                <h3 class="card-label font-weight-bolder">
                     <i class="fas fa-car text-primary mr-2"></i>
                     {{ __('main.cars') }}
                 </h3>
@@ -36,7 +36,7 @@
             <form action="{{ route('cars.index') }}" method="get" class="mb-4">
                 <div class="row align-items-end">
                     <div class="col-md-4">
-                        <label class="font-weight-bold text-dark mb-2">البحث</label>
+                        <label class="font-weight-bold mb-2">البحث</label>
                         <div class="input-group input-group-solid">
                             <div class="input-group-prepend">
                                 <span class="input-group-text bg-light">

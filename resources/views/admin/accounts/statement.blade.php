@@ -1,13 +1,13 @@
 @extends("layouts.admin")
 
 @section("content")
-<div class="container-fluid">
+<div class="container-fluid lft-simple-page">
 
     @include("layouts.includes.breadcrumb", [
         'page' => 'كشف حساب - ' . $company->name
     ])
 
-    <div class="card shadow-sm border-0">
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide shadow-sm border-0">
 
         <!-- Header -->
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -226,7 +226,7 @@
                                         @if(!empty($paymentIds))
                                             <form method="POST"
                                                   action="{{ route('accounts.payment.group.destroy', ['companyId' => $company->id, 'from' => $fromDate, 'to' => $toDate]) }}"
-                                                  onsubmit="return confirm('هل أنت متأكد من حذف عملية السداد بالكامل؟ سيتم إعادة المبالغ كمستحق على الشركة.');"
+                                                  onsubmit="return lftConfirmForm(this, { title: '{{ __('alerts.are_you_sure') }}', text: 'هل أنت متأكد من حذف عملية السداد بالكامل؟ سيتم إعادة المبالغ كمستحق على الشركة.', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });"
                                                   class="d-inline">
                                                 @csrf
                                                 @method('DELETE')

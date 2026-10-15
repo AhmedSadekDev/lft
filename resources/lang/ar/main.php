@@ -117,7 +117,13 @@ return [
     'download_all_invoices' => 'تحميل الفواتير',
     'no_data_available' => 'لا توجد بيانات متاحة',
     'currency' => 'ج.م',
-    'container_not_written_yet' => 'لم يتم كتابه رقم الحاويه بعد'
-
-
+    'container_not_written_yet' => 'لم يتم كتابه رقم الحاويه بعد',
+    'agent_car_transfer' => 'تحويل سيارات المندوبين',
+    'invoice' => 'الفاتورة',
+    'payments' => 'المدفوعات',
+    'not_allowed' => 'غير مسموح',
+    'there_are_errors' => 'توجد أخطاء',
+    'transaction_failed' => 'فشلت المعاملة',
+    'transaction_updated_successfully' => 'تم تحديث المعاملة بنجاح',
+    'cnf_passsword' => 'تأكيد كلمة المرور',
 ];

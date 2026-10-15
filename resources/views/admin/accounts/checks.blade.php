@@ -1,14 +1,14 @@
 @extends("layouts.admin")
 
 @section("content")
-<div class="container-fluid">
+<div class="container-fluid lft-simple-page">
     @include("layouts.includes.breadcrumb", [ 'page' => 'الشيكات' ])
 
     <!--begin::Card-->
-    <div class="card card-custom shadow-sm">
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide shadow-sm">
         <div class="card-header border-0 py-4">
             <div class="card-title">
-                <h3 class="card-label font-weight-bolder text-dark">
+                <h3 class="card-label font-weight-bolder">
                     <i class="fas fa-money-check text-primary mr-2"></i>
                     الشيكات
                 </h3>
@@ -91,7 +91,8 @@
                                     @if(!$check->check_paid_at)
                                         <form action="{{ route('accounts.checks.mark-paid', $check->id) }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('هل أنت متأكد من استحقاق هذا الشيك؟ سيتم خصم القيمة من حساب الشركة.')">
+                                            <button type="submit" class="btn btn-sm btn-success"
+                                                onclick="return lftConfirmForm(this.form, { title: '{{ __('alerts.are_you_sure') }}', text: 'هل أنت متأكد من استحقاق هذا الشيك؟ سيتم خصم القيمة من حساب الشركة.', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });">
                                                 <i class="fas fa-check"></i> تم الاستحقاق
                                             </button>
                                         </form>

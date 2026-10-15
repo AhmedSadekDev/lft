@@ -44,4 +44,8 @@ return [
     'inactive'                  => 'Inactive',
     'Expense saved successfully' => 'Expense saved successfully',
     'branch_must_match_booking_factory' => 'The container branch must belong to the booking factory',
+    'notAuth'                   => 'You are not authorized',
+    'error_occurred'            => 'An error occurred',
+    'failed'                    => 'Operation failed',
+    'not_found'                 => 'Not found',
 ];

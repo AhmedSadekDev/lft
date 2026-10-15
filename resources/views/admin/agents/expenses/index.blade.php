@@ -5,18 +5,19 @@
     <!--begin::Card-->
     <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
         <div class="card-header border-0">
+            <div class="card-title">
+                <h3 class="card-label">{{ __('main.expenses') }}</h3>
+            </div>
             <div class="card-toolbar">
-                <!--begin::Button-->
                 @if ($awaitingReviewIds->isNotEmpty())
-                    <form method="POST" action="{{ route('expenses.agent_expenses.review', $agent) }}"
-                        onsubmit="return confirm('سيتم اعتماد {{ $awaitingReviewIds->count() }} إيصال وإخفاؤها من تطبيق المندوب. متابعة؟')">
+                    <form id="reviewExpensesForm" method="POST" action="{{ route('expenses.agent_expenses.review', $agent) }}"
+                        onsubmit="return lftConfirmForm(this, { title: '{{ __('alerts.are_you_sure') }}', text: 'سيتم اعتماد {{ $awaitingReviewIds->count() }} إيصال وإخفاؤها من تطبيق المندوب. متابعة؟', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });">
                         @csrf
                         <button type="submit" class="btn btn-primary font-weight-bolder">
                             <i class="fas fa-check-double"></i> تمت مراجعة الإيصالات ({{ $awaitingReviewIds->count() }})
                         </button>
                     </form>
                 @endif
-                <!--end::Button-->
             </div>
         </div>
         <div class="card-body">
@@ -70,12 +71,9 @@
     </div>
     <!--end::Card-->
 </div>
-
-
 @endsection
 @push('js')
     <script>
-
         function DeleteExpense(id, version) {
             Swal.fire({
                 title: "{{ __('alerts.are_you_sure') }}",
@@ -88,6 +86,17 @@
                 customClass: {
                     confirmButton: 'btn btn-primary mx-1',
                     cancelButton: 'btn btn-secondary mx-1',
+                },
+                didOpen: function () {
+                    if (typeof destroySwalSelectpickers === 'function') {
+                        // no-op; cleanup lives in admin-ui.js
+                    }
+                    var popup = document.querySelector('.swal2-popup');
+                    if (popup) {
+                        popup.querySelectorAll('select, .bootstrap-select').forEach(function (el) {
+                            el.style.setProperty('display', 'none', 'important');
+                        });
+                    }
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -125,8 +134,5 @@
                 }
             });
         }
-
-
     </script>
 @endpush
-

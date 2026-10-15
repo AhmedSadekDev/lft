@@ -60,7 +60,7 @@ class ResetPasswordRequest extends FormRequest
         return [
             'email'                 => __('main.email'),
             'password'              => __('main.password'),
-            'password_confirmation' => __('main.cnf_passsword'),
+            'password_confirmation' => __('main.cnf_password'),
         ];
     }
 

@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}?v=5j">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}?v=5k">
 </head>
 <body style="margin: 0; padding: 0;">
     <main class="lft-login-page">
@@ -61,6 +61,6 @@
         </div>
     </main>
 
-    <script src="{{ asset('assets/js/admin-ui.js') }}?v=5e"></script>
+    <script src="{{ asset('assets/js/admin-ui.js') }}?v=5f"></script>
 </body>
 </html>

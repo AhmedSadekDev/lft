@@ -101,11 +101,11 @@
     }
 </style>
 
-<div class="container">
+<div class="container-fluid lft-simple-page">
     @include('layouts.includes.breadcrumb', ['page' => 'صور المناديب'])
     <div class="agent-photos-page">
-        <div class="card card-custom">
-            <div class="card-header align-items-center flex-wrap py-5">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
+            <div class="card-header border-0 align-items-center flex-wrap py-5">
                 <div>
                     <h3 class="card-title mb-2">صور المناديب وتسكين الحجوزات</h3>
                     <p class="photos-intro">استعرض الصور المرفوعة من المناديب، واحذف غير المطلوب، وسكّن كل صورة في الطلب أو الحاوية الخاصة بها.</p>
@@ -307,7 +307,9 @@
                                             </button>
 
                                             <!-- زر الحذف -->
-                                            <form method="POST" action="{{ route('agent-photos.destroy', $photo) }}" onsubmit="return confirm('هل أنت متأكد من حذف هذه الصورة نهائيًا؟');" class="d-inline ml-2">
+                                            <form method="POST" action="{{ route('agent-photos.destroy', $photo) }}"
+                                                onsubmit="return lftConfirmForm(this, { title: '{{ __('alerts.are_you_sure') }}', text: 'هل أنت متأكد من حذف هذه الصورة نهائيًا؟', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });"
+                                                class="d-inline ml-2">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-light-danger" title="حذف الصورة">
@@ -565,7 +567,7 @@
                 });
 
                 if (selected.length === 0) {
-                    alert('يرجى تحديد صورة واحدة على الأقل أولاً.');
+                    lftAlert('يرجى تحديد صورة واحدة على الأقل أولاً.', 'warning');
                     return;
                 }
 
@@ -617,21 +619,23 @@
                 });
 
                 if (selectedIds.length === 0) {
-                    alert('يرجى تحديد صورة واحدة على الأقل أولاً.');
+                    lftAlert('يرجى تحديد صورة واحدة على الأقل أولاً.', 'warning');
                     return;
                 }
 
-                if (!confirm('هل أنت متأكد من حذف ' + selectedIds.length + ' صور محددة نهائيًا؟')) {
-                    return;
-                }
-
+                var form = document.getElementById('bulkDeleteForm');
                 var inputsContainer = $('#bulkDeleteInputs');
                 inputsContainer.empty();
                 selectedIds.forEach(function(id) {
                     inputsContainer.append('<input type="hidden" name="photo_ids[]" value="' + id + '">');
                 });
 
-                $('#bulkDeleteForm').submit();
+                lftConfirmForm(form, {
+                    title: '{{ __("alerts.are_you_sure") }}',
+                    text: 'هل أنت متأكد من حذف ' + selectedIds.length + ' صور محددة نهائيًا؟',
+                    confirmText: '{{ __("alerts.confirm") }}',
+                    cancelText: '{{ __("alerts.cancel") }}',
+                });
             });
         }
 

@@ -486,5 +486,18 @@ return [
     'note' => 'ملاحظة',
     'export' => 'تصدير اكسيل',
     'bank' => 'البنك',
-    'superagents' => 'المندوبين المسئولين'
+    'superagents' => 'المندوبين المسئولين',
+    'superagent' => 'المندوب المسئول',
+
+    // UI labels (forms / filters / yards / vaults)
+    'add_new_yard' => 'إضافة ساحة جديدة',
+    'edit_yard_information' => 'تعديل بيانات الساحة',
+    'vaults' => 'الخزن',
+    'all' => 'الكل',
+    'cancel' => 'إلغاء',
+    'choose_arrival_date' => 'اختر تاريخ الوصول',
+    'date_from' => 'تاريخ من',
+    'date_to' => 'تاريخ إلى',
+    'no_data' => 'لا توجد بيانات',
+    'result' => 'نتيجة',
 ];

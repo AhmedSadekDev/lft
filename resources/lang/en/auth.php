@@ -23,4 +23,6 @@ return [
     'expired_otp'           => 'Your OTP has been expired',
     'verified'              => 'Verified',
     "old_password_incorrect" => "Old password is incorrect",
+    'password_updated'       => 'Password updated successfully',
+    'user_not_found'         => 'User not found',
 ];

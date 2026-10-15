@@ -5,14 +5,15 @@
         <!--begin::Card-->
         <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
             <div class="card-header border-0">
+                <div class="card-title">
+                    <h3 class="card-label">{{ __('main.agents') }}</h3>
+                </div>
                 <div class="card-toolbar">
-                    <!--begin::Button-->
                     @if (auth()->user()->hasPermissionTo('agents.create'))
                         <a href="{{ route('agents.create') }}" class="btn btn-primary font-weight-bolder">
                             <i class="fas fa-plus" aria-hidden="true"></i>{{ __('admin.add') }}
                         </a>
                     @endif
-                    <!--end::Button-->
                 </div>
             </div>
             <div class="card-body">
