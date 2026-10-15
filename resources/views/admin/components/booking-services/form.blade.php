@@ -5,7 +5,8 @@
     {!! Form::open([
         'url' => $action,
         'method' => $method,
-        'enctype' => 'multipart/form-data',
+        'enctype' => 'multipart/form-data',,
+        'class' => 'lft-simple-form',
     ]) !!}
 @elseif ($method == 'PUT')
     {!! Form::model($booking_service ?? null, [
@@ -206,10 +207,10 @@
     </div>
 </div>
 
-<div class="card-footer">
+<div class="card-footer lft-simple-form-footer">
     @if ($method == 'POST')
         {!! Form::submit(__('admin.save'), [
-            'class' => 'btn btn-primary btn-md text-uppercase font-weight-bold chat-send py-2 px-6',
+            'class' => 'btn btn-primary',
         ]) !!}
     @elseif ($method == 'PUT')
         {!! Form::submit(__('admin.update'), [

@@ -1,5 +1,7 @@
 @if($method == 'POST')
-    {!! Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true]) !!}
+    {!! Form::open(['url' => $action, 'method' => $method, 'enctype'=>'multipart/form-data', 'files' => true,
+        'class' => 'lft-simple-form',
+    ]) !!}
 @elseif ($method == 'PUT')
     {!! Form::model($serviceCategory, ['url' => [$action], 'method'=>$method , 'enctype'=>'multipart/form-data', 'files' => true]) !!}
 @endif
@@ -59,9 +61,9 @@
         </div>
     </div>
 
-    <div class="card-footer">
+    <div class="card-footer lft-simple-form-footer">
         @if($method == 'POST')
-                {!! Form::submit(__('admin.save'), ["class"=>"btn btn-primary btn-md text-uppercase font-weight-bold chat-send py-2 px-6"]) !!}
+                {!! Form::submit(__('admin.save'), ["class"=>"btn btn-primary"]) !!}
             @elseif ($method == 'PUT')
                 {!! Form::submit(__('admin.update'), ["class"=>"btn btn-primary"]) !!}
             @endif

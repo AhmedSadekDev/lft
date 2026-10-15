@@ -1,5 +1,7 @@
 @if($method == 'POST')
-    {!! Form::open(['url' => $action, 'method' => $method]) !!}
+    {!! Form::open(['url' => $action, 'method' => $method,
+        'class' => 'lft-simple-form',
+    ]) !!}
 @elseif ($method == 'PUT')
     {!! Form::model($supplier, ['url' => [$action], 'method' => $method]) !!}
 @endif
@@ -39,7 +41,7 @@
         </div>
     </div>
 
-    <div class="card-footer">
+    <div class="card-footer lft-simple-form-footer">
         @if($method == 'POST')
             {!! Form::submit(__('admin.save'), ['class' => 'btn btn-primary']) !!}
         @else

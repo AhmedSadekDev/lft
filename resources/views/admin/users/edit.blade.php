@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container">
+    
+    <div class="container-fluid lft-simple-page">
+<div class="container">
         @include('layouts.includes.breadcrumb', ['page' => __('main.manage_users')])
         <!--begin::Card-->
         <div class="card card-custom">
@@ -15,8 +17,8 @@
 
                     <!--end::Button-->
                 </div>
-                <div class="mt-3">
-                    <a href="{{ route('users.index', ['role' => request()->role]) }}" class="btn btn-secondary float-right">
+                <div class="card-toolbar">
+                    <a href="{{ route('users.index', ['role' => request()->role]) }}" class="btn btn-secondary btn-sm">
                         {{ __('main.back') }}
                     </a>
                 </div>
@@ -92,5 +94,6 @@
             </div>
         </div>
         <!--end::Card-->
+    </div>
     </div>
 @endsection

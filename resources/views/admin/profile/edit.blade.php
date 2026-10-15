@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 @section('content')
+
+    <div class="container-fluid lft-simple-page">
 <div class="container">
     @include('layouts.includes.breadcrumb', ['page' => __('profile.title')])
     @if(session('success'))
@@ -68,4 +70,5 @@
         </div>
     </div>
 </div>
+    </div>
 @endsection

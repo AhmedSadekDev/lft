@@ -3,7 +3,7 @@
     <div class="container-fluid lft-simple-page">
         @include('layouts.includes.breadcrumb', ['page' => __('admin.add') . ' — ' . __('main.banks')])
 
-        <div class="card card-custom gutter-b lft-simple-card">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--narrow">
             <div class="card-header border-0">
                 <div class="card-title mb-0">
                     <h3 class="card-label mb-0">

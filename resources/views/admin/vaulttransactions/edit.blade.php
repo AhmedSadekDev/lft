@@ -1,7 +1,9 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="container">
+    
+    <div class="container-fluid lft-simple-page">
+<div class="container">
         @include('layouts.includes.breadcrumb', ['page' => __('admin.vaults')])
 
         <div class="card card-custom">
@@ -22,12 +24,13 @@
                         <input type="number" step="0.01" name="amount" class="form-control" value="{{ old('amount', $item->amount) }}" required>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer lft-simple-form-footer">
                     <button type="submit" class="btn btn-primary">{{ __('admin.save') }}</button>
                     <a href="{{ route('vaultransactions.index') }}" class="btn btn-secondary">{{ __('admin.cancel') }}</a>
                 </div>
             </form>
         </div>
+    </div>
     </div>
 @endsection
 

@@ -1,7 +1,9 @@
 @extends("layouts.admin")
 @section("content")
-    <!--begin::Card-->
-    <div class="card card-custom gutter-b">
+    
+    <div class="container-fluid lft-simple-page">
+<!--begin::Card-->
+    <div class="card card-custom gutter-b lft-simple-card">
         <div class="card-header">
             <div class="card-title">
                 {{ __('admin.edit_container_information') }}
@@ -41,7 +43,7 @@
                     </div>
                 </div>
         
-                <div class="card-footer">
+                <div class="card-footer lft-simple-form-footer">
                     
                     {!! Form::submit(__('admin.update'), ["class"=>"btn btn-primary"]) !!}
                 </div>
@@ -53,5 +55,6 @@
 
         
         
+    </div>
     </div>
 @endsection

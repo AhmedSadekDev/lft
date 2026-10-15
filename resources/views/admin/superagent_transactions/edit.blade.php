@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container">
+    
+    <div class="container-fluid lft-simple-page">
+<div class="container">
         @include('layouts.includes.breadcrumb', ['page' => __('main.car_shipments')])
         <!--begin::Card-->
         <div class="card card-custom">
@@ -64,5 +66,6 @@
             </div>
         </div>
         <!--end::Card-->
+    </div>
     </div>
 @endsection

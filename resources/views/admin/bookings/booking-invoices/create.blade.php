@@ -1,9 +1,12 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container-fluid invoice-create-page">
+    
+    <div class="container-fluid lft-simple-page">
+<div class="container-fluid invoice-create-page">
         @include('layouts.includes.breadcrumb', ['page' => __('admin.add_new_invoice')])
         @include('admin.components.booking-invoices.listings')
         @include('admin.components.booking-invoices.totals-form')
+    </div>
     </div>
 @endsection
 

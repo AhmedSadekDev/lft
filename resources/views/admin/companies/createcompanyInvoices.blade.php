@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <div class="card-footer">
+        <div class="card-footer lft-simple-form-footer">
             {!! Form::submit(__('admin.save'), [
                 'class' => 'btn btn-primary btn-md text-uppercase font-weight-bold chat-send py-2 px-6',
             ]) !!}

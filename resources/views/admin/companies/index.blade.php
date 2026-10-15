@@ -265,7 +265,7 @@
                 @endif
                 @if($companies->hasPages())
                 <!--begin::Pagination-->
-                <div class="card-footer">
+                <div class="card-footer lft-simple-form-footer">
                     <div class="d-flex justify-content-between align-items-center flex-wrap">
                         <div class="mr-3">
                             <span class="text-muted font-weight-bold">

@@ -94,7 +94,7 @@
     </div>
 </div>
 
-<div class="card-footer">
+<div class="card-footer lft-simple-form-footer">
     {!! Form::submit(__('admin.update'), [
         'class' => 'btn btn-primary',
     ]) !!}

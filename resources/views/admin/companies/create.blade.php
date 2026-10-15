@@ -1,17 +1,20 @@
 @extends("layouts.admin")
 @section("content")
-    <!--begin::Card-->
-    <div class="card card-custom gutter-b">
+    
+    <div class="container-fluid lft-simple-page">
+<!--begin::Card-->
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
         <div class="card-header">
             <div class="card-title">
                 {{ __('admin.add_new_company') }}
             </div>
-            <div class="mt-3">
-                <a href="{{ route('companies.index') }}" class="btn btn-secondary float-right">
+            <div class="card-toolbar">
+                <a href="{{ route('companies.index') }}" class="btn btn-secondary btn-sm">
                     {{ __('main.back') }}
                 </a>
             </div>
         </div>
         @include('admin.companies.form')
+    </div>
     </div>
 @endsection

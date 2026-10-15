@@ -24,7 +24,9 @@
 @endphp
 
 @if($method == 'POST')
-    {!! Form::open(['url' => $action, 'method' => $method, 'id' => 'receiptForm', 'files' => true, 'enctype' => 'multipart/form-data']) !!}
+    {!! Form::open(['url' => $action, 'method' => $method, 'id' => 'receiptForm', 'files' => true, 'enctype' => 'multipart/form-data',
+        'class' => 'lft-simple-form',
+    ]) !!}
 @elseif ($method == 'PUT')
     {!! Form::model($receipt, ['url' => [$action], 'method' => $method, 'id' => 'receiptForm', 'files' => true, 'enctype' => 'multipart/form-data']) !!}
 @endif
@@ -200,7 +202,7 @@
     </div>
 </div>
 
-<div class="card-footer">
+<div class="card-footer lft-simple-form-footer">
     @if($method == 'POST')
         {!! Form::submit(__('admin.save'), ['class' => 'btn btn-primary']) !!}
     @else

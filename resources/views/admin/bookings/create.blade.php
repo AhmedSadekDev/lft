@@ -1,19 +1,21 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="card card-custom gutter-b">
-        <div class="card-header">
-            <div class="card-title">
-                {{ __('admin.add_new_booking') }}
+    <div class="container-fluid lft-simple-page">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
+            <div class="card-header">
+                <div class="card-title mb-0">
+                    {{ __('admin.add_new_booking') }}
+                </div>
+                <div class="card-toolbar">
+                    <a href="{{ route('bookings.index') }}" class="btn btn-secondary btn-sm">
+                        {{ __('main.back') }}
+                    </a>
+                </div>
             </div>
-            <div class="mt-3">
-                <a href="{{ route('bookings.index') }}" class="btn btn-secondary float-right">
-                    {{ __('main.back') }}
-                </a>
-            </div>
+
+            {{-- Include the form component for creating/editing bookings --}}
+            @include('admin.bookings.form')
         </div>
-        
-        {{-- Include the form component for creating/editing bookings --}}
-        @include('admin.bookings.form')
     </div>
 @endsection
 
