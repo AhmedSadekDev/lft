@@ -3,6 +3,8 @@
     $titleAr = old('title.ar', old('title[ar]', isset($serviceCategory) ? ($serviceCategory->getTranslations('title')['ar'] ?? '') : ''));
     $serviceStatus = old('service_status', isset($serviceCategory) ? $serviceCategory->service_status : null);
     $printSection = old('invoice_print_section', isset($serviceCategory) ? $serviceCategory->invoice_print_section : null);
+    $statusOptions = ['' => __('admin.select')] + ($status ?? []);
+    $printOptions = ['' => __('admin.select')] + ($print_sections ?? []);
 @endphp
 
 @if ($method == 'POST')
@@ -27,13 +29,16 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                {!! Form::label('input_title_en', __('admin.en_title'), ['class' => 'required-field']) !!}
-                {!! Form::text('title[en]', $titleEn, [
-                    'class' => 'form-control',
-                    'id' => 'input_title_en',
-                    'placeholder' => __('admin.en_title'),
-                    'required' => true,
-                ]) !!}
+                <label for="input_title_en" class="required-field">{{ __('admin.en_title') }}</label>
+                <input
+                    type="text"
+                    name="title[en]"
+                    id="input_title_en"
+                    class="form-control"
+                    value="{{ $titleEn }}"
+                    placeholder="{{ __('admin.en_title') }}"
+                    required
+                >
                 @error('title.en')
                     <small class="text-danger d-block mt-1">{{ $message }}</small>
                 @enderror
@@ -42,13 +47,16 @@
 
         <div class="col-md-6">
             <div class="form-group">
-                {!! Form::label('input_title_ar', __('admin.ar_title'), ['class' => 'required-field']) !!}
-                {!! Form::text('title[ar]', $titleAr, [
-                    'class' => 'form-control',
-                    'id' => 'input_title_ar',
-                    'placeholder' => __('admin.ar_title'),
-                    'required' => true,
-                ]) !!}
+                <label for="input_title_ar" class="required-field">{{ __('admin.ar_title') }}</label>
+                <input
+                    type="text"
+                    name="title[ar]"
+                    id="input_title_ar"
+                    class="form-control"
+                    value="{{ $titleAr }}"
+                    placeholder="{{ __('admin.ar_title') }}"
+                    required
+                >
                 @error('title.ar')
                     <small class="text-danger d-block mt-1">{{ $message }}</small>
                 @enderror
@@ -57,13 +65,20 @@
 
         <div class="col-md-6">
             <div class="form-group">
-                {!! Form::label('input_service_status', __('admin.add_to_invoice'), ['class' => 'required-field']) !!}
-                {!! Form::select('service_status', $status, $serviceStatus, [
-                    'class' => 'form-control',
-                    'id' => 'input_service_status',
-                    'placeholder' => __('admin.service_status'),
-                    'required' => true,
-                ]) !!}
+                <label for="input_service_status" class="required-field">{{ __('admin.add_to_invoice') }}</label>
+                <select
+                    name="service_status"
+                    id="input_service_status"
+                    class="form-control"
+                    data-native-select
+                    required
+                >
+                    @foreach ($statusOptions as $value => $label)
+                        <option value="{{ $value }}" @selected($value === '' ? ($serviceStatus === null || $serviceStatus === '') : (string) $serviceStatus === (string) $value)>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
                 @error('service_status')
                     <small class="text-danger d-block mt-1">{{ $message }}</small>
                 @enderror
@@ -72,19 +87,20 @@
 
         <div class="col-md-6">
             <div class="form-group mb-0">
-                {!! Form::label('input_invoice_print_section', __('admin.invoice_print_section'), ['class' => 'required-field']) !!}
-                {!! Form::select(
-                    'invoice_print_section',
-                    $print_sections ?? [],
-                    $printSection,
-                    [
-                        'class' => 'form-control',
-                        'id' => 'input_invoice_print_section',
-                        'placeholder' => __('admin.invoice_print_section'),
-                        'required' => true,
-                        'data-container' => 'body',
-                    ]
-                ) !!}
+                <label for="input_invoice_print_section" class="required-field">{{ __('admin.invoice_print_section') }}</label>
+                <select
+                    name="invoice_print_section"
+                    id="input_invoice_print_section"
+                    class="form-control"
+                    data-native-select
+                    required
+                >
+                    @foreach ($printOptions as $value => $label)
+                        <option value="{{ $value }}" @selected($value === '' ? ($printSection === null || $printSection === '') : (string) $printSection === (string) $value)>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
                 @error('invoice_print_section')
                     <small class="text-danger d-block mt-1">{{ $message }}</small>
                 @enderror
