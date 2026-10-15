@@ -1,0 +1,926 @@
+[
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/done_loading",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@done_loading",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/done_specification",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@done_specification",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/done_unloading",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@done_unloading",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/booking/fetch_booking_containers",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_booking_containers",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, api, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/fetch_bookings",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_bookings",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, api, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/booking/fetch_home_statistics",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_home_statistics",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, api, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/booking/fetch_loading_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_loading_assignments",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, api, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/booking/fetch_specification_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_specification_assignments",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, api, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/booking/fetch_unloading_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerAssignmentController@fetch_unloading_assignments",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, api, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/save_loading_booking_container",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingPaperController@save_loading_booking_container",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/save_specification_booking_yard",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingPaperController@save_specification_booking_yard",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/save_unloading_booking_sail",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingPaperController@save_unloading_booking_sail",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/send_car_papers",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingPaperController@send_car_papers",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/booking/send_notes",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@send_notes",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/change_image",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\ProfileController@change_image",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/change_password",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\ChangePasswordController@change_password",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/charge-cars-wallet",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\WalletController@chargeCarWallet",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/cities",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\CityController@index",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/containers-with-no-policies",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\BookingContainerActionController@getContainers",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/create_delivery_policy",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@create_delivery_policy",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/delete_delivery_policy",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@delete_delivery_policy",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/delete_expense",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@delete_expense",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/delivery_policy_details",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@delivery_policy_details",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/delivery_policy_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@delivery_policy_expenses",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/fetch_agents",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\TransferAgentController@fetch_agents",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET|POST|PUT|PATCH|DELETE|OPTIONS",
+        "uri": "/api/agent/fetch_all_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@fetch_all_expenses",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_cars",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\CarController@fetch_cars",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_delivery_policies",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@fetch_delivery_policies",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_drivers",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DriverController@fetch_drivers",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_financial_custody",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@fetch_financial_custody",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_latest_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@fetch_latest_expenses",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_profile",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\ProfileController@fetch_profile",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_service_categories",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ServiceCategoryController@fetch_service_categories",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_yard_bookings",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\YardController@fetch_yard_bookings",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/fetch_yards",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\YardController@fetch_yards",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/fetch_your_notifications",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\NotificationController@fetch_notifications",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/login",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\LoginController@login",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/logout",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\LoginController@logout",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/make_car_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\CarExpenseController@make_car_expenses",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/make_general_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@make_general_expenses",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/make_reservation_expenses",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@make_reservation_expenses",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/mark_notification_read",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\NotificationController@mark_as_read",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/photos",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\AgentPhotoController@index",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/photos",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\AgentPhotoController@store",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent, throttle:30,1",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/photos/{photo}/image",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\AgentPhotoController@image",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/resetPassword",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\OtpController@resetPassword",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/sendOtp",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\OtpController@sendOtp",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/set_password",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\SetPasswordController@set_password",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/settle_delivery_policy",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@settle_delivery_policy",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/transfer_to_agent",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\TransferAgentController@transfer_to_agent",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/update_delivery_policy",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\DeliveryPolicyController@update_delivery_policy",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/update_expense",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\ExpenseController@update_expense",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/update_profile",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\ProfileController@update_profile",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/agent/verifyOtp",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\Auth\\OtpController@verifyOtp",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/agent/wallets",
+        "action": "App\\Http\\Controllers\\Api\\Agent\\WalletController@index",
+        "middleware": "web, localization, App\\Http\\Middleware\\BlockInvoicedAgentBookings, auth:agent",
+        "group": "Agent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/desktop/companies/all",
+        "action": "App\\Http\\Controllers\\Api\\Desktop\\Orders\\CompanyController@all",
+        "middleware": "web, localization, auth:desktop",
+        "group": "Desktop Invoicing API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/desktop/login",
+        "action": "App\\Http\\Controllers\\Api\\Desktop\\Auth\\LoginController@login",
+        "middleware": "web, localization",
+        "group": "Desktop Invoicing API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/desktop/logout",
+        "action": "App\\Http\\Controllers\\Api\\Desktop\\Auth\\LoginController@logout",
+        "middleware": "web, localization, auth:desktop",
+        "group": "Desktop Invoicing API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/desktop/orders/all",
+        "action": "App\\Http\\Controllers\\Api\\Desktop\\Orders\\OrderController@all",
+        "middleware": "web, localization, auth:desktop",
+        "group": "Desktop Invoicing API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/desktop/orders/invoices",
+        "action": "App\\Http\\Controllers\\Api\\Desktop\\Orders\\OrderController@invoices",
+        "middleware": "web, localization, auth:desktop",
+        "group": "Desktop Invoicing API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/desktop/orders/submitInvoices",
+        "action": "App\\Http\\Controllers\\Api\\Desktop\\Orders\\OrderController@submitInvoices",
+        "middleware": "web, localization, auth:desktop",
+        "group": "Desktop Invoicing API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/desktop/orders/updateStatus",
+        "action": "App\\Http\\Controllers\\Api\\Desktop\\Orders\\OrderController@updateStatus",
+        "middleware": "web, localization, auth:desktop",
+        "group": "Desktop Invoicing API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/booking/booking_papers",
+        "action": "App\\Http\\Controllers\\Api\\BookingController@booking_papers",
+        "middleware": "web, localization, throttle:60,1",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/booking/container/{booking_container}",
+        "action": "App\\Http\\Controllers\\Api\\BookingController@getContainerDetails",
+        "middleware": "web, localization, throttle:60,1",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/booking/track",
+        "action": "App\\Http\\Controllers\\Api\\BookingController@getBooking",
+        "middleware": "web, localization, throttle:60,1",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/choose-us",
+        "action": "App\\Http\\Controllers\\Api\\ChooseUsController@getChooses",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/contact_us",
+        "action": "App\\Http\\Controllers\\Api\\ContactUsController@store",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/forget-password",
+        "action": "App\\Http\\Controllers\\Api\\Auth\\PasswordResetController@forgetPassword",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/login",
+        "action": "App\\Http\\Controllers\\Api\\Auth\\LoginController@login",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/logout",
+        "action": "App\\Http\\Controllers\\Api\\Auth\\LoginController@logout",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/our-services",
+        "action": "App\\Http\\Controllers\\Api\\OurServiceController@getServices",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/page/{key}",
+        "action": "App\\Http\\Controllers\\Api\\StaticPageController@page",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/profile/bookings",
+        "action": "App\\Http\\Controllers\\Api\\BookingController@getCompanyBookings",
+        "middleware": "web, localization, auth:api,employees",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/profile/employees",
+        "action": "App\\Http\\Controllers\\Api\\EmployeeController@getEmployees",
+        "middleware": "web, localization, auth:api,employees",
+        "group": "Other API"
+    },
+    {
+        "method": "PUT",
+        "uri": "/api/profile/update_information",
+        "action": "App\\Http\\Controllers\\Api\\CompanyController@update",
+        "middleware": "web, localization, auth:api,employees",
+        "group": "Other API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/reset-password",
+        "action": "App\\Http\\Controllers\\Api\\Auth\\PasswordResetController@resetPassword",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/reviews",
+        "action": "App\\Http\\Controllers\\Api\\ReviewController@getReviews",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/services",
+        "action": "App\\Http\\Controllers\\Api\\OurServiceController@getServices",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/set-password",
+        "action": "App\\Http\\Controllers\\Api\\Auth\\SetPasswordController@setPassword",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/settings",
+        "action": "App\\Http\\Controllers\\Api\\SettingController@getSettings",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/sponsers",
+        "action": "App\\Http\\Controllers\\Api\\SponserController@getSponsers",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/user",
+        "action": "Closure",
+        "middleware": "web",
+        "group": "Other API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/verify-otp",
+        "action": "App\\Http\\Controllers\\Api\\Auth\\PasswordResetController@verifyOtp",
+        "middleware": "web, localization",
+        "group": "Other API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/all",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ShippingAgentController@all",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/assign_agents",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\AgentController@assign_agents",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/assign_specification_booking",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\AgentController@assign_specification_booking",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/close_stage_receipts",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ContainerStageController@close",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/details",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerController@details",
+        "middleware": "web, localization",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/done_loading",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerActionController@done_loading",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/done_specification",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerActionController@done_specification",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/done_unloading",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerActionController@done_unloading",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/fetch_agents",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\AgentController@fetch_agents",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/loading",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerController@loading",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/loading_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ShippingAgentController@loading_assignments",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/make_it_today",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerActionController@make_it_today",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/make_specification_today",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerActionController@make_specification_today",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/missions/all",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerController@all",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/move_to_loading",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerController@move_to_loading",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/notes",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerActionController@notes",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/pending_stage_receipts",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ContainerStageController@pending",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/save_loading_booking_container",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ShippingAgentController@save_loading_booking_container",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/save_specification_booking_yard",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ShippingAgentController@save_specification_booking_yard",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/send_stage_email",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\AgentController@send_stage_email",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/booking/send_stage_whatsapp",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\AgentController@send_stage_whatsapp",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/specification",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerController@specification",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/specification_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ShippingAgentController@specification_assignments",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/stage_receipts",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ContainerStageController@receipts",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/unloading",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerController@unloading",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/unloading_assignments",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\ShippingAgentController@unloading_assignments",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/booking/waiting",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\BookingContainerController@waiting",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/change-container-status",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\AgentController@changeStatus",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/change_password",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\ChangePasswordController@change_password",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/charge-agents-wallet",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\WalletController@chargeAgentWallet",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/container-step-approve",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\AgentController@approve",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/containers-expenses",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\AgentController@expenses",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_active_yards",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\YardController@fetch_active_yards",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/fetch_agents_notifications",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\NotificationController@fetch_agents_notifications",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_home",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\HomeController@fetch_home",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_profile",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\ProfileController@fetch_profile",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_yard_bookings",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\YardController@fetch_yard_bookings",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/fetch_yards",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\YardController@fetch_yards",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/fetch_your_notifications",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\NotificationController@fetch_notifications",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/login",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\LoginController@login",
+        "middleware": "web, localization",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/logout",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\LoginController@logout",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/mark_notification_read",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\NotificationController@mark_as_read",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/resetPassword",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\OtpController@resetPassword",
+        "middleware": "web, localization",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/sendOtp",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\OtpController@sendOtp",
+        "middleware": "web, localization",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/set_password",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\SetPasswordController@set_password",
+        "middleware": "web, localization",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/token_ininvalid",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\ProfileController@token_ininvalid",
+        "middleware": "web",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/update_profile",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\ProfileController@update_profile",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    },
+    {
+        "method": "POST",
+        "uri": "/api/superagent/verifyOtp",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\Auth\\OtpController@verifyOtp",
+        "middleware": "web, localization",
+        "group": "Superagent API"
+    },
+    {
+        "method": "GET",
+        "uri": "/api/superagent/wallets",
+        "action": "App\\Http\\Controllers\\Api\\Superagent\\WalletController@index",
+        "middleware": "web, localization, auth:superagent",
+        "group": "Superagent API"
+    }
+]
