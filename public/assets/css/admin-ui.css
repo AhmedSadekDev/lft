@@ -1191,6 +1191,12 @@ label, .lft-admin label {
     display: block;
 }
 
+.lft-glass-label-hint {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--auth-muted);
+}
+
 .lft-glass-input-wrapper {
     position: relative;
     margin-bottom: 18px;
