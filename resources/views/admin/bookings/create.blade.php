@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container-fluid booking-form-page">
+    
+    <div class="container-fluid lft-simple-page">
+<div class="container-fluid booking-form-page">
         @include('layouts.includes.breadcrumb', ['page' => __('admin.add_new_booking')])
 
         <div class="booking-form-hero">
@@ -16,9 +18,10 @@
             </div>
         </div>
 
-        <div class="card card-custom gutter-b booking-form-card">
+        <div class="card card-custom gutter-b lft-simple-card booking-form-card">
             @include('admin.bookings.form')
         </div>
+    </div>
     </div>
 @endsection
 

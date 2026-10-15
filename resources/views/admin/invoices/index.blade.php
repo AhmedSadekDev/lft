@@ -50,10 +50,10 @@
 @endsection
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid lft-simple-page">
         @include('layouts.includes.breadcrumb', ['page' => __('main.Tax_invoices')])
         <!--begin::Card-->
-        <div class="card card-custom">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
             <div class="card-header flex-wrap  align-items-center py-5">
                 <div class="card-toolbar">
                     <div class="">
@@ -460,6 +460,11 @@
             showCancelButton: true,
             confirmButtonText: "{{ __('alerts.confirm') }}",
             cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
         }).then((result) => {
             if (result.isConfirmed) {
                 var url = '{{ route('invoice_payments.destroy', ':id') }}';

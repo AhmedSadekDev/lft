@@ -1,7 +1,9 @@
 @extends("layouts.admin")
 @section("content")
-    <!--begin::Card-->
-    <div class="card card-custom gutter-b">
+    
+    <div class="container-fluid lft-simple-page">
+<!--begin::Card-->
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
         <div class="card-header">
             <div class="card-title">
                 {{ __('Send FCM Notification') }}
@@ -70,5 +72,6 @@
             {!! Form::submit("Send Notification", ["class" => "btn btn-primary btn-md text-uppercase font-weight-bold chat-send py-2 px-6"]) !!}
         </div>
         {!! Form::close() !!}
+    </div>
     </div>
 @endsection

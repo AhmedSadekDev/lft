@@ -70,6 +70,11 @@
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
                 cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = '{{ route("expenses.destroy", ":id") }}';

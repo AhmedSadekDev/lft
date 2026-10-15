@@ -1,9 +1,9 @@
 @extends("layouts.admin")
 @section("content")
-<div class="container">
+<div class="container-fluid lft-simple-page">
     @include("layouts.includes.breadcrumb", [ 'page' => __('main.contactUs') ])
     <!--begin::Card-->
-    <div class="card card-custom">
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
         <div class="card-body">
             <table class="table table-responsive-sm" id="table">
                 <thead class="thead-light">
@@ -40,11 +40,8 @@
 @endsection
 @push('js')
     <script>
-        (function($) {
-            "use strict";
-        })(jQuery);
 
-        function Delete(id) {
+function Delete(id) {
             Swal.fire({
                 title: "{{ __('alerts.are_you_sure') }}",
                 text: "{{ __('alerts.not_revert_information') }}",
@@ -52,6 +49,11 @@
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
                 cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = '{{ route("contactUs.destroy", ":id") }}';

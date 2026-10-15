@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container">
+    <div class="container-fluid lft-simple-page">
         @include('layouts.includes.breadcrumb', ['page' => __('main.suppliers')])
 
-        <div class="card card-custom">
-            <div class="card-header flex-wrap py-5">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
+            <div class="card-header border-0">
                 <div class="card-title">
                     <h3 class="card-label">{{ __('main.suppliers') }}</h3>
                 </div>
@@ -105,18 +105,41 @@
 @push('js')
 <script>
     function DeleteSupplier(id) {
-        if (!confirm('هل أنت متأكد من حذف المورد؟')) return;
-        $.ajax({
-            url: '{{ url('dashboard/suppliers') }}/' + id,
-            type: 'POST',
-            data: {_method: 'DELETE', _token: '{{ csrf_token() }}'},
-            success: function (res) {
-                toastr.success(res.msg || 'تم الحذف');
-                location.reload();
+        Swal.fire({
+            title: "{{ __('alerts.are_you_sure') }}",
+            text: "{{ __('alerts.not_revert_information') }}",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: "{{ __('alerts.confirm') }}",
+            cancelButtonText: "{{ __('alerts.cancel') }}",
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-primary mx-1',
+                cancelButton: 'btn btn-secondary mx-1',
             },
-            error: function () {
-                toastr.error('تعذر حذف المورد');
-            }
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+            $.ajax({
+                url: '{{ url('dashboard/suppliers') }}/' + id,
+                type: 'POST',
+                data: {_method: 'DELETE', _token: '{{ csrf_token() }}'},
+                success: function (res) {
+                    Swal.fire({
+                        title: "{{ __('alerts.done') }}",
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true,
+                    }).then(function () { location.reload(); });
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "{{ __('alerts.error') }}",
+                        text: 'تعذر حذف المورد',
+                        icon: 'error',
+                    });
+                }
+            });
         });
     }
 </script>

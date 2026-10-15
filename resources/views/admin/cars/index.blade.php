@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid lft-simple-page">
     @include('layouts.includes.breadcrumb', ['page' => __('main.cars')])
 
     <!--begin::Card-->
-    <div class="card card-custom shadow-sm">
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide shadow-sm">
         <div class="card-header border-0 py-4">
             <div class="card-title">
                 <h3 class="card-label font-weight-bolder text-dark">
@@ -224,6 +224,11 @@
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
                 cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = '{{ route('cars.destroy', ':id') }}';

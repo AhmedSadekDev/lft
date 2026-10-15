@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container">
+    <div class="container-fluid lft-simple-page">
         @include('layouts.includes.breadcrumb', ['page' => __('main.vault')])
         <!--begin::Vaultd-->
-        <div class="vaultd vaultd-custom">
-            <div class="vaultd-header row justify-content-between align-items-center flex-wrap py-5">
-                <div class="vaultd-toolbar">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
+            <div class="card-header border-0">
+                <div class="card-toolbar">
                     <!--begin::Button-->
                     {{-- @if (auth()->user()->hasPermissionTo('vaults.create'))
                         <a href="{{ route('vaults.create') }}" class="btn btn-primary font-weight-bolder">
@@ -60,7 +60,7 @@
                     </p>
                 </div>
             </div>
-            <div class="vaultd-body">
+            <div class="card-body">
                 <table class="table table-responsive-xl" id="table">
                     <thead class="thead-light">
                         <tr>
@@ -110,6 +110,11 @@
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
                 cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = '{{ route('vaults.destroy', ':id') }}';

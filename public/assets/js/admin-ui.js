@@ -285,7 +285,17 @@
         noneSelectedText: 'اختر'
     });
 
-    var SKIP_SELECTOR = '[data-native-select], .dataTables_length select, .select2-hidden-accessible';
+    // Never touch SweetAlert2's internal inputs (it keeps a hidden <select class="swal2-select">
+    // in every popup; enhancing it surfaces a searchable dropdown inside delete confirms).
+    var SKIP_SELECTOR = [
+        '[data-native-select]',
+        '.dataTables_length select',
+        '.select2-hidden-accessible',
+        '.swal2-select',
+        '.swal2-container select',
+        '.swal2-popup select'
+    ].join(', ');
+    var SKIP_CLOSEST = '.swal2-container, .swal2-popup, .swal2-actions';
     var OBSERVE_OPTIONS = { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled', 'selected'] };
     var pendingRoots = [];
     var pendingRefresh = [];
@@ -324,7 +334,8 @@
             if (addSearchTokens(sel)) $(sel).selectpicker('refresh');
             return;
         }
-        if ($(sel).is(SKIP_SELECTOR) || parseInt(sel.getAttribute('size'), 10) > 1) return;
+        if ($(sel).is(SKIP_SELECTOR) || $(sel).closest(SKIP_CLOSEST).length || parseInt(sel.getAttribute('size'), 10) > 1) return;
+        if (sel.classList.contains('swal2-select') || sel.classList.contains('swal2-input')) return;
         if (sel.parentNode && $(sel.parentNode).hasClass('bootstrap-select')) {
             unwrapClonedWidget(sel);
         }
@@ -420,5 +431,44 @@
     $(function () {
         queueOnce(pendingRoots, document.body);
         flush();
+    });
+
+    // Safety net: if anything still enhanced a SweetAlert select, tear the widget down
+    // the moment a popup opens so delete confirms never show a searchable dropdown.
+    var destroySwalSelectpickers = function () {
+        $('.swal2-container select, .swal2-popup select, select.swal2-select').each(function () {
+            var $sel = $(this);
+            if ($.data(this, 'selectpicker')) {
+                try { $sel.selectpicker('destroy'); } catch (e) { /* ignore */ }
+            }
+            var wrap = this.parentNode;
+            if (wrap && $(wrap).hasClass('bootstrap-select')) {
+                wrap.parentNode.insertBefore(this, wrap);
+                wrap.parentNode.removeChild(wrap);
+            }
+            $sel.removeClass('bs-select-hidden').show();
+        });
+    };
+
+    if (window.Swal && typeof Swal.fire === 'function') {
+        var originalFire = Swal.fire.bind(Swal);
+        Swal.fire = function () {
+            var result = originalFire.apply(Swal, arguments);
+            setTimeout(destroySwalSelectpickers, 0);
+            if (result && typeof result.then === 'function') {
+                result.then(function () { destroySwalSelectpickers(); }, function () {});
+            }
+            return result;
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!window.MutationObserver) return;
+        var swalWatch = new MutationObserver(function () {
+            if (document.querySelector('.swal2-container')) {
+                destroySwalSelectpickers();
+            }
+        });
+        swalWatch.observe(document.body, { childList: true, subtree: true });
     });
 })();

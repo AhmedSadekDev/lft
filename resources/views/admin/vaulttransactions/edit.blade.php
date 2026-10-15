@@ -3,10 +3,9 @@
 @section('content')
     
     <div class="container-fluid lft-simple-page">
-<div class="container">
         @include('layouts.includes.breadcrumb', ['page' => __('admin.vaults')])
 
-        <div class="card card-custom">
+        <div class="card card-custom gutter-b lft-simple-card">
             <div class="card-header">
                 <h3 class="card-title">{{ __('admin.edit') }}</h3>
             </div>
@@ -31,7 +30,6 @@
             </form>
         </div>
     </div>
-    </div>
-@endsection
+    @endsection
 
 

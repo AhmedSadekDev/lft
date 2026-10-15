@@ -1,10 +1,10 @@
 @extends("layouts.admin")
 @section("content")
-<div class="container">
+<div class="container-fluid lft-simple-page">
     @include("layouts.includes.breadcrumb", [ 'page' => __('main.staticPages') ])
     <!--begin::Card-->
-    <div class="card card-custom">
-        <div class="card-header flex-wrap py-5">
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
+        <div class="card-header border-0">
             <div class="card-toolbar">
                 <!--begin::Button-->
                 {{-- <a href="{{route('staticPages.create')}}" class="btn btn-primary font-weight-bolder">
@@ -60,11 +60,8 @@
 @endsection
 @push('js')
     <script>
-        (function($) {
-            "use strict";s
-        })(jQuery);
 
-        function Delete(id) {
+function Delete(id) {
             Swal.fire({
                 title: "{{ __('alerts.are_you_sure') }}",
                 text: "{{ __('alerts.not_revert_information') }}",
@@ -72,6 +69,11 @@
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
                 cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = '{{ route("staticPages.destroy", ":id") }}';
@@ -91,7 +93,7 @@
                             console.log(response);
                             location.reload();
                             Swal.fire({
-                                title: {{ __('alerts.done') }},
+                                title: "{{ __('alerts.done') }}",
                                 icon: 'success',
                                 showConfirmButton: false,
                                 timer: 3000,

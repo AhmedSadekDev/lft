@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 @section('content')
-    <style>
+    
+    <div class="container-fluid lft-simple-page">
+<style>
         .bookings-table {
             font-size: 14px;
         }
@@ -496,7 +498,7 @@
         </div>
 
         <!-- Bookings Table Card -->
-        <div class="card card-custom">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
             <div class="card-header flex-wrap py-4">
                 <div class="card-title">
                     <h3 class="card-label">
@@ -765,6 +767,7 @@
             </div>
         </div>
     </div>
+    </div>
 @endsection
 
 @push('js')
@@ -793,6 +796,11 @@
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
                 cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = '{{ route('bookings.destroy', ':id') }}';

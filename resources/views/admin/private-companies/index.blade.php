@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container">
+    <div class="container-fluid lft-simple-page">
         @include('layouts.includes.breadcrumb', ['page' => 'الشركات الخاصة'])
         <!--begin::Card-->
-        <div class="card card-custom">
-            <div class="card-header flex-wrap py-5">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
+            <div class="card-header border-0">
                 <div class="card-title">
                     <h3 class="card-label">الشركات الخاصة</h3>
                 </div>
@@ -130,10 +130,13 @@
             text: "لن تتمكن من التراجع عن هذا!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
             confirmButtonText: 'نعم، احذف!',
-            cancelButtonText: 'إلغاء'
+            cancelButtonText: 'إلغاء',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-primary mx-1',
+                cancelButton: 'btn btn-secondary mx-1',
+            },
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({

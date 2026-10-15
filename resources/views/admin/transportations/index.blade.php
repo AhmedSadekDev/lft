@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 @section('content')
-    <style>
+    
+    <div class="container-fluid lft-simple-page">
+<style>
         #transportationsTable {
             direction: rtl;
         }
@@ -24,8 +26,8 @@
     <div class="container">
         @include('layouts.includes.breadcrumb', ['page' => __('main.transportations')])
         <!--begin::Card-->
-        <div class="card card-custom">
-            <div class="card-header flex-wrap py-5">
+        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
+            <div class="card-header border-0">
                 <div class="card-toolbar">
                     <!--begin::Button-->
                     @if (auth()->user()->hasPermissionTo('transportations.create'))
@@ -140,6 +142,7 @@
         <!--end::Card-->
     </div>
     @include('admin.transportations.modals.import')
+    </div>
 @endsection
 @push('js')
     <script>
@@ -174,6 +177,11 @@
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
                 cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = '{{ route('companyTransportations.destroy', ':id') }}';
@@ -191,7 +199,7 @@
                         success: function(response) {
                             location.reload();
                             Swal.fire({
-                                title: {{ __('alerts.done') }},
+                                title: "{{ __('alerts.done') }}",
                                 icon: 'success',
                                 showConfirmButton: false,
                                 timer: 3000,

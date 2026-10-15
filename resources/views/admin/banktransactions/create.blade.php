@@ -2,11 +2,10 @@
 @section('content')
     
     <div class="container-fluid lft-simple-page">
-<div class="container">
         @include('layouts.includes.breadcrumb', ['page' => __('main.banks')])
         <!--begin::Card-->
-        <div class="card card-custom">
-            <div class="card-header flex-wrap py-5">
+        <div class="card card-custom gutter-b lft-simple-card">
+            <div class="card-header border-0">
                 <div class="card-toolbar">
                     <!--begin::Button-->
 
@@ -122,8 +121,7 @@
         </div>
         <!--end::Card-->
     </div>
-    </div>
-@endsection
+    @endsection
 
 
 @push('js')

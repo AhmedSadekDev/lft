@@ -29,10 +29,10 @@
         /* Only for demo */
     </style>
 @section("content")
-<div class="container">
+<div class="container-fluid lft-simple-page">
     @include("layouts.includes.breadcrumb", [ 'page' => __('main.agent_car_transfer') ])
     <!--begin::Card-->
-    <div class="card card-custom">
+    <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
         <div class="card-header flex-wrap py-5 d-flex justify-content-between align-items-center">
             <div class="card-toolbar d-flex gap-2">
                 @if (auth()->user()->hasPermissionTo('agents.index'))
@@ -189,6 +189,11 @@
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
                 cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = '{{ route("agent_car_tranfer.destroy", ":id") }}';

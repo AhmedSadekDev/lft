@@ -75,7 +75,7 @@ License: You must have a valid license purchased only from themeforest(the above
     </style>
 
     @stack('css')
-    <link href="{{ asset('assets/css/admin-ui.css') }}?v=5h" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/admin-ui.css') }}?v=5i" rel="stylesheet" type="text/css" />
 </head>
 <!--end::Head-->
 <!--begin::Body-->

@@ -2,14 +2,13 @@
 @section('content')
 
     <div class="container-fluid lft-simple-page">
-<div class="container">
     @include('layouts.includes.breadcrumb', ['page' => __('profile.title')])
     @if(session('success'))
         <div class="alert alert-success" role="status">{{ session('success') }}</div>
     @endif
     <div class="row">
         <div class="col-lg-7 mb-5">
-            <div class="card card-custom">
+            <div class="card card-custom gutter-b lft-simple-card">
                 <div class="card-header"><h3 class="card-title">{{ __('profile.details') }}</h3></div>
                 <form action="{{ route('profile.update') }}" method="POST">
                     @csrf
@@ -41,7 +40,7 @@
             </div>
         </div>
         <div class="col-lg-5 mb-5">
-            <div class="card card-custom">
+            <div class="card card-custom gutter-b lft-simple-card">
                 <div class="card-header"><h3 class="card-title">{{ __('profile.change_password') }}</h3></div>
                 <form action="{{ route('profile.password') }}" method="POST">
                     @csrf
@@ -70,5 +69,4 @@
         </div>
     </div>
 </div>
-    </div>
-@endsection
+    @endsection
