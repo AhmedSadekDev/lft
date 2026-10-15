@@ -1,19 +1,22 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container-fluid lft-simple-page">
-        <div class="card card-custom gutter-b lft-simple-card lft-simple-card--wide">
-            <div class="card-header">
-                <div class="card-title mb-0">
-                    {{ __('admin.add_new_booking') }}
-                </div>
-                <div class="card-toolbar">
-                    <a href="{{ route('bookings.index') }}" class="btn btn-secondary btn-sm">
-                        {{ __('main.back') }}
-                    </a>
-                </div>
-            </div>
+    <div class="container-fluid booking-form-page">
+        @include('layouts.includes.breadcrumb', ['page' => __('admin.add_new_booking')])
 
-            {{-- Include the form component for creating/editing bookings --}}
+        <div class="booking-form-hero">
+            <div class="booking-form-hero-inner">
+                <div>
+                    <h1 class="booking-form-hero-title">{{ __('admin.add_new_booking') }}</h1>
+                    <p class="booking-form-hero-subtitle">أدخل بيانات الطلب والحاويات ثم أكّد الحفظ</p>
+                </div>
+                <a href="{{ route('bookings.index') }}" class="booking-form-hero-back">
+                    <i class="fas fa-arrow-right"></i>
+                    {{ __('main.back') }}
+                </a>
+            </div>
+        </div>
+
+        <div class="card card-custom gutter-b booking-form-card">
             @include('admin.bookings.form')
         </div>
     </div>
@@ -22,13 +25,10 @@
 @push('js')
 <script>
     $(document).ready(function () {
-        /**
-         * Handle factory change event to dynamically fetch and update branches dropdown
-         */
         $(document).on('change', '#factory_id', function () {
             let factoryId = $(this).val();
             let url = '{{ route("factory.branches", ":id") }}'.replace(':id', factoryId);
-            
+
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -39,6 +39,9 @@
                             options += `<option value="${id}">${name}</option>`;
                         });
                         $('#branch_id').html(options);
+                        if ($('#branch_id').hasClass('selectpicker')) {
+                            $('#branch_id').selectpicker('refresh');
+                        }
                     }
                 },
                 error: function (xhr, status, error) {
@@ -47,9 +50,6 @@
             });
         });
 
-        /**
-         * Load employees dynamically based on selected company
-         */
         var company_employees = {!! json_encode($company_employees) !!};
         $('#company_id').on('change', function () {
             var companyId = $(this).val();
@@ -61,10 +61,6 @@
             }
         });
 
-    
-        /**
-         * Set the minimum date for date inputs (prevents selecting past dates)
-         */
         let today = new Date().toISOString().split('T')[0];
         $('#permit_end_date_input, #discharge_date_input, .arrival_date_input').attr('min', today);
     });
