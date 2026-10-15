@@ -124,7 +124,118 @@
             });
         });
 
-        // 4. Fullscreen Toggle
+        // 4. Table row dropdowns: tables scroll horizontally, so their menus are
+        // positioned fixed to escape the scroll container instead of being clipped.
+        // Capture phase runs before Bootstrap's delegated handler builds the instance.
+        document.addEventListener('click', function (e) {
+            var toggle = e.target.closest ? e.target.closest('[data-toggle="dropdown"]') : null;
+            if (toggle && toggle.closest('table, .table-responsive') && !toggle.hasAttribute('data-popper-config')) {
+                toggle.setAttribute('data-popper-config', '{"positionFixed":true}');
+            }
+        }, true);
+
+        // 5. Icon-only row actions get an accessible name from their icon.
+        var iconLabels = {
+            'fa-edit': 'تعديل', 'fa-pen': 'تعديل', 'fa-pencil-alt': 'تعديل',
+            'fa-trash': 'حذف', 'fa-trash-alt': 'حذف',
+            'fa-eye': 'عرض', 'fa-ellipsis-v': 'خيارات', 'fa-ellipsis-h': 'خيارات',
+            'fa-print': 'طباعة', 'fa-download': 'تحميل'
+        };
+        var labelIconButtons = function () {
+            document.querySelectorAll('.btn-icon:not([aria-label])').forEach(function (btn) {
+                if (btn.textContent.trim()) return;
+                var icon = btn.querySelector('i');
+                if (!icon) return;
+                for (var cls in iconLabels) {
+                    if (icon.classList.contains(cls)) {
+                        btn.setAttribute('aria-label', iconLabels[cls]);
+                        if (!btn.hasAttribute('title')) btn.setAttribute('title', iconLabels[cls]);
+                        return;
+                    }
+                }
+            });
+        };
+        labelIconButtons();
+        if (window.jQuery) {
+            window.jQuery(document).on('draw.dt', labelIconButtons);
+        }
+
+        // 6. Sidebar: highlight the current page and open its group.
+        var asideMenu = document.getElementById('kt_aside_menu');
+        if (asideMenu) {
+            var trimPath = function (p) { return p.replace(/\/+$/, '') || '/'; };
+            var herePath = trimPath(location.pathname);
+            var links = asideMenu.querySelectorAll('a.menu-link[href]');
+            var homePath = null;
+            var bestLink = null;
+            var bestScore = -1;
+            links.forEach(function (a) {
+                var url;
+                if (a.getAttribute('href').indexOf('javascript') === 0) return;
+                try { url = new URL(a.href); } catch (err) { return; }
+                if (url.origin !== location.origin) return;
+                var path = trimPath(url.pathname);
+                if (homePath === null) homePath = path;
+                var score = -1;
+                if (path === herePath) {
+                    score = path.length * 2 + (url.search === location.search ? 1 : 0);
+                } else if (path !== homePath && herePath.indexOf(path + '/') === 0) {
+                    score = path.length * 2;
+                }
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestLink = a;
+                }
+            });
+            if (bestLink) {
+                var activeItem = bestLink.closest('.menu-item');
+                activeItem.classList.add('menu-item-active');
+                bestLink.setAttribute('aria-current', 'page');
+                var group = activeItem.parentElement.closest('.menu-item');
+                if (group) {
+                    group.classList.add('menu-item-open', 'menu-item-here');
+                }
+            }
+        }
+
+        // 7. Sidebar page search (filters menu items by their visible labels).
+        var sidebarSearch = document.getElementById('lftSidebarSearch');
+        if (asideMenu && sidebarSearch) {
+            var normalize = function (s) {
+                return s.toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, ' ').trim();
+            };
+            var emptyNote = document.getElementById('lftSidebarEmpty');
+            var topItems = asideMenu.querySelectorAll('.menu-nav > .menu-item');
+            var filterMenu = function () {
+                var q = normalize(sidebarSearch.value);
+                var anyVisible = false;
+                topItems.forEach(function (item) {
+                    var label = item.querySelector('.menu-link > .menu-text');
+                    var selfMatch = !!q && !!label && normalize(label.textContent).indexOf(q) !== -1;
+                    var subs = item.querySelectorAll('.menu-subnav > .menu-item:not(.menu-item-parent)');
+                    var subMatch = false;
+                    subs.forEach(function (sub) {
+                        var show = !q || selfMatch || normalize(sub.textContent).indexOf(q) !== -1;
+                        sub.classList.toggle('lft-filter-hidden', !show);
+                        if (show && q) subMatch = true;
+                    });
+                    var visible = !q || selfMatch || subMatch;
+                    item.classList.toggle('lft-filter-hidden', !visible);
+                    item.classList.toggle('lft-filter-open', !!q && subs.length > 0 && visible);
+                    if (visible) anyVisible = true;
+                });
+                if (emptyNote) emptyNote.hidden = anyVisible;
+            };
+            sidebarSearch.addEventListener('input', filterMenu);
+            sidebarSearch.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    sidebarSearch.value = '';
+                    filterMenu();
+                }
+            });
+        }
+
+        // 8. Fullscreen Toggle
         var fullscreenBtn = document.getElementById('lftFullscreenToggle');
         if (fullscreenBtn) {
             fullscreenBtn.addEventListener('click', function (e) {
