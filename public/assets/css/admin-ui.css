@@ -4037,6 +4037,12 @@ html body.lft-admin .select2-container--open .select2-selection {
     border-color: var(--k-cyan) !important;
     box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25) !important;
 }
+/* Keep bootstrap-select's inner search field quieter than page inputs */
+html body.lft-admin .bootstrap-select .bs-searchbox .form-control:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+    background-color: var(--bg-input) !important;
+}
 html body.lft-admin .form-control::placeholder {
     color: var(--text-muted) !important;
     font-weight: 500;
@@ -4341,8 +4347,13 @@ html body.lft-admin .card.card-custom.gutter-b:has(> .card-header):has(form .car
     max-width: 1100px;
     border: 1px solid var(--border-color) !important;
     border-radius: 14px !important;
-    overflow: hidden;
+    /* visible so bootstrap-select menus are not clipped */
+    overflow: visible;
     box-shadow: var(--shadow-card, 0 2px 14px rgba(0, 0, 0, 0.06));
+}
+html body.lft-admin .lft-simple-card > .card-header {
+    border-radius: 14px 14px 0 0;
+    overflow: hidden;
 }
 html body.lft-admin .lft-simple-card.lft-simple-card--narrow {
     max-width: 820px;
@@ -4412,4 +4423,150 @@ html body.lft-admin .card.card-custom .card-footer .row {
 [data-theme="dark"] body.lft-admin form.lft-simple-form > .card-footer,
 [data-theme="dark"] body.lft-admin .card.card-custom form > .card-footer {
     background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* ==========================================================================
+   bootstrap-select — readable menus in every admin form (beats Metronic #3f4254)
+   Menus may render inside the widget OR be moved to <body> via data-container.
+   ========================================================================== */
+html body.lft-admin .bootstrap-select {
+    width: 100% !important;
+}
+html body.lft-admin .bootstrap-select > .dropdown-toggle,
+html body.lft-admin .bootstrap-select > .dropdown-toggle.btn-light,
+html body.lft-admin .bootstrap-select > .dropdown-toggle.btn-secondary {
+    background-color: var(--bg-input) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    box-shadow: none !important;
+}
+html body.lft-admin .bootstrap-select > .dropdown-toggle .filter-option,
+html body.lft-admin .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
+    color: var(--text-primary) !important;
+}
+html body.lft-admin .bootstrap-select > .dropdown-toggle.bs-placeholder,
+html body.lft-admin .bootstrap-select > .dropdown-toggle.bs-placeholder .filter-option-inner-inner {
+    color: var(--text-muted) !important;
+}
+html body.lft-admin .bootstrap-select.show > .dropdown-toggle,
+html body.lft-admin .bootstrap-select > .dropdown-toggle:focus,
+html body.lft-admin .bootstrap-select > .dropdown-toggle:active {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.22) !important;
+}
+
+/* Search box inside open menus — soft focus, not neon cyan */
+html body.lft-admin .bootstrap-select .bs-searchbox {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid var(--border-color);
+}
+html body.lft-admin .bootstrap-select .bs-searchbox .form-control,
+html body.lft-admin .bootstrap-select .bs-searchbox .form-control:focus {
+    background-color: var(--bg-input) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    height: 38px !important;
+}
+html body.lft-admin .bootstrap-select .bs-searchbox .form-control:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+html body.lft-admin .bootstrap-select .bs-searchbox .form-control::placeholder {
+    color: var(--text-muted) !important;
+}
+
+/* Menu shell (in-widget + body-attached) */
+html body.lft-admin .bootstrap-select .dropdown-menu,
+html body.lft-admin.bootstrap-select .dropdown-menu,
+body > .bootstrap-select.dropdown-menu,
+body > .dropdown-menu.bootstrap-select {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--shadow-card, 0 12px 32px rgba(0, 0, 0, 0.35)) !important;
+    z-index: 1060 !important;
+}
+html body.lft-admin .bootstrap-select .dropdown-menu.inner,
+html body.lft-admin .bootstrap-select .dropdown-menu .inner {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Option rows + Metronic .text span (#3f4254) — force readable contrast */
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a,
+html body.lft-admin .bootstrap-select .dropdown-menu li a,
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a .text,
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a .text *,
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a span,
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a .bs-icon,
+body > .bootstrap-select .dropdown-menu.inner > li > a,
+body > .bootstrap-select .dropdown-menu.inner > li > a .text,
+body > .dropdown-menu .inner > li > a,
+body > .dropdown-menu .inner > li > a .text {
+    color: var(--text-primary) !important;
+}
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a .text,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a .text *,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li > a span,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu li a,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu li a .text,
+html[data-theme="dark"] body > .bootstrap-select .dropdown-menu.inner > li > a,
+html[data-theme="dark"] body > .bootstrap-select .dropdown-menu.inner > li > a .text,
+html[data-theme="dark"] body > .dropdown-menu.inner > li > a,
+html[data-theme="dark"] body > .dropdown-menu.inner > li > a .text,
+html[data-theme="dark"] body > .dropdown-menu .inner > li > a,
+html[data-theme="dark"] body > .dropdown-menu .inner > li > a .text {
+    color: #e8eef9 !important;
+}
+
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li:hover > a,
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li.selected > a,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li:hover > a,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li.selected > a,
+html[data-theme="dark"] body > .dropdown-menu .inner > li:hover > a,
+html[data-theme="dark"] body > .dropdown-menu .inner > li.selected > a {
+    background-color: var(--fill-hover) !important;
+    background-image: none !important;
+}
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li:hover > a .text,
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li.selected > a .text,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li:hover > a .text,
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li.selected > a .text,
+html[data-theme="dark"] body > .dropdown-menu .inner > li:hover > a .text,
+html[data-theme="dark"] body > .dropdown-menu .inner > li.selected > a .text {
+    color: var(--primary-hover, #60a5fa) !important;
+}
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li.active:not(.selected) > a,
+html[data-theme="dark"] body > .dropdown-menu .inner > li.active:not(.selected) > a {
+    background-color: var(--primary) !important;
+}
+html[data-theme="dark"] body.lft-admin .bootstrap-select .dropdown-menu.inner > li.active:not(.selected) > a .text,
+html[data-theme="dark"] body > .dropdown-menu .inner > li.active:not(.selected) > a .text {
+    color: #ffffff !important;
+}
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li.disabled > a,
+html body.lft-admin .bootstrap-select .dropdown-menu.inner > li.disabled > a .text,
+html body.lft-admin .bootstrap-select .no-results,
+html body.lft-admin .bootstrap-select .dropdown-header {
+    color: var(--text-muted) !important;
+}
+
+/* Select2 parity (if used on any form) */
+html[data-theme="dark"] body.lft-admin .select2-dropdown,
+html[data-theme="dark"] .select2-container--open .select2-dropdown {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+html[data-theme="dark"] body.lft-admin .select2-container--default .select2-results__option,
+html[data-theme="dark"] .select2-container--default .select2-results__option {
+    color: #e8eef9 !important;
+}
+html[data-theme="dark"] .select2-container--default .select2-search--dropdown .select2-search__field {
+    background-color: var(--bg-input) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
