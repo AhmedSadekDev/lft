@@ -192,8 +192,14 @@
         .stage-tabs-wrapper {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 6px;
             margin-bottom: 20px;
+            scrollbar-width: thin;
+        }
+        .stage-tabs-wrapper .stage-tab-btn {
+            flex-shrink: 0;
         }
         .stage-tab-btn {
             display: inline-flex;
@@ -285,6 +291,15 @@
                 'unloading' => ['label' => 'التعتيق', 'icon' => 'fas fa-dolly', 'count' => $stageCounts['unloading'] ?? 0],
                 'invoiced'  => ['label' => 'فواتير منتهية', 'icon' => 'fas fa-file-invoice-dollar', 'count' => $stageCounts['invoiced'] ?? 0],
             ];
+            // مراحل المسارات الأخرى بعد الأساسية؛ الشريط يتمرر أفقيًا.
+            $pathTabIcons = [
+                'stuffing' => 'fas fa-boxes', 'clearance' => 'fas fa-stamp',
+                'inbound_release' => 'fas fa-sign-out-alt', 'inbound_empty_return' => 'fas fa-undo',
+                'reefer_loading' => 'fas fa-snowflake', 'reefer_unloading' => 'fas fa-temperature-low',
+            ];
+            foreach ($pathTabIcons as $pathTab => $icon) {
+                $tabItems[$pathTab] = ['label' => \App\Services\ShipmentWorkflow::LABELS[$pathTab], 'icon' => $icon, 'count' => $stageCounts[$pathTab] ?? 0];
+            }
         @endphp
         <div class="stage-tabs-wrapper">
             @foreach($tabItems as $stageKey => $tab)
@@ -338,6 +353,9 @@
                                 <option value="loading" {{ $currentStage == 'loading' ? 'selected' : '' }}>التحميل (Loading)</option>
                                 <option value="unloading" {{ $currentStage == 'unloading' ? 'selected' : '' }}>التعتيق (Unloading)</option>
                                 <option value="invoiced" {{ $currentStage == 'invoiced' ? 'selected' : '' }}>فواتير منتهية (Invoiced)</option>
+                                @foreach ($pathTabIcons as $pathTab => $icon)
+                                    <option value="{{ $pathTab }}" {{ $currentStage == $pathTab ? 'selected' : '' }}>{{ \App\Services\ShipmentWorkflow::LABELS[$pathTab] }}</option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -418,7 +436,7 @@
                                             'loading' => 'التحميل',
                                             'unloading' => 'التعتيق',
                                             'invoiced' => 'فواتير منتهية',
-                                        ];
+                                        ] + \App\Services\ShipmentWorkflow::LABELS;
                                     @endphp
                                     <span class="filter-badge">
                                         المرحلة: {{ $stageLabels[request('stage')] ?? request('stage') }}

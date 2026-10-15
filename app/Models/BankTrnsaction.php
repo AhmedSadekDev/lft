@@ -31,6 +31,11 @@ class BankTrnsaction extends Model
         return $this->belongsTo(Company::class);
     }
 
+    public function transBank()
+    {
+        return $this->belongsTo(Bank::class, 'trans_bank_id');
+    }
+
     public function getTypeNameAttribute()
     {
         return $this->type == 1 ? __('main.credit') : __("main.debit");

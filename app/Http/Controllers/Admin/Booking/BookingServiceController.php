@@ -16,6 +16,7 @@ use App\Models\VaultTransaction;
 use App\Models\BankTrnsaction;
 use App\Models\AgentExpense;
 use App\Services\BookingSupplierReceiptSync;
+use App\Support\InvoiceCurrency;
 use Illuminate\Support\Facades\DB;
 
 class BookingServiceController extends Controller
@@ -54,8 +55,10 @@ class BookingServiceController extends Controller
     {
         DB::beginTransaction();
         try {
+            $money = InvoiceCurrency::normalizeLine($request->only(['currency', 'price', 'exchange_rate']));
             $data = array_merge(
                 $request->validated(),
+                $money,
                 [
                     'booking_id' => $booking->id,
                     'created_by' => auth()->user()->id,
@@ -131,7 +134,8 @@ class BookingServiceController extends Controller
             $oldVaultId = $booking_service->vault_id;
             $oldAgentId = $booking_service->agent_id;
 
-            $data = $request->validated();
+            $money = InvoiceCurrency::normalizeLine($request->only(['currency', 'price', 'exchange_rate']));
+            $data = array_merge($request->validated(), $money);
             $data['updated_by'] = auth()->user()->id;
 
             $booking_service->update($data);
@@ -261,6 +265,9 @@ class BookingServiceController extends Controller
                                 'service_id'         => $booking_service->service_id,
                                 'type'               => AgentExpense::generalExpenses,
                                 'value'              => $price,
+                                'currency'           => $booking_service->currency ?? InvoiceCurrency::EGP,
+                                'foreign_amount'     => $booking_service->foreign_amount,
+                                'exchange_rate'      => $booking_service->exchange_rate,
                                 'notes'              => $transaction_name,
                                 'user_id'            => auth()->id(),
                                 'admin_approval'     => 1,

@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\InvoiceRequest;
 use App\Models\Booking;
 use App\Models\Invoice;
 use App\Services\InvoicePrintBuilder;
+use App\Support\InvoiceCurrency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,16 +33,18 @@ class BookingInvoiceController extends Controller
         $booking->loadExpensesForDisplay();
         $company = $booking->company;
         $invoice_number = Invoice::getNextInvoiceNumberForCompany($company->id);
+        $currency = InvoiceCurrency::normalize($request->get('currency', InvoiceCurrency::EGP));
 
         $transportation_total = $booking->transportation_total_price;
-        $taxed_services_total = $booking->taxed_services_total_price;
-        $untaxed_services_total = $booking->untaxed_services_total_price;
+        $taxed_services_total = $booking->servicesTotalForCurrency($booking->taxed_services(), $currency);
+        $untaxed_services_total = $booking->untaxedServicesTotalForCurrency($currency);
         $input = [
             'method'            => 'POST',
             'action'            => route('booking-invoices.store', ['booking' => $booking->id]),
 
             'booking'           => $booking,
             'invoice_number'    => $invoice_number,
+            'invoice_currency'  => $currency,
 
             'transportation_total' => $transportation_total,
             'taxed_services_total' => $taxed_services_total,
@@ -77,9 +80,11 @@ class BookingInvoiceController extends Controller
                 $request->invoice_number
             );
 
+            $currency = InvoiceCurrency::normalize($request->input('currency', InvoiceCurrency::EGP));
             $invoice_data = array_merge(
                 [
                     'invoice_number' => $invoice_number,
+                    'currency' => $currency,
                     'booking_id' => $booking->id,
 
                     'transportation_json' => $booking->bookingContainers,
@@ -87,12 +92,13 @@ class BookingInvoiceController extends Controller
                     'untaxed_services_json' => $booking->untaxed_services,
 
                     'transportation_total_before_vat' => $booking->transportation_total_price,
-                    'taxed_services_total_before_vat' => $booking->taxed_services_total_price,
-                    'untaxed_services_total_before_vat' => $booking->untaxed_services_total_price,
+                    'taxed_services_total_before_vat' => $booking->servicesTotalForCurrency($booking->taxed_services(), $currency),
+                    'untaxed_services_total_before_vat' => $booking->untaxedServicesTotalForCurrency($currency),
                 ],
                 $request->only([
                     'value_added_tax',
-                    'discount'
+                    'discount',
+                    'sales_tax',
                 ])
             );
             Invoice::create($invoice_data);
@@ -161,9 +167,12 @@ class BookingInvoiceController extends Controller
 
         $booking->loadExpensesForDisplay();
 
+        $currency = InvoiceCurrency::normalize(
+            request()->get('currency', $booking_invoice->currency ?? InvoiceCurrency::EGP)
+        );
         $transportation_total = $booking->transportation_total_price;
-        $taxed_services_total = $booking->taxed_services_total_price;
-        $untaxed_services_total = $booking->untaxed_services_total_price;
+        $taxed_services_total = $booking->servicesTotalForCurrency($booking->taxed_services(), $currency);
+        $untaxed_services_total = $booking->untaxedServicesTotalForCurrency($currency);
 
 
         $input = [
@@ -173,6 +182,7 @@ class BookingInvoiceController extends Controller
             'invoice'           => $booking_invoice,
             'booking'           => $booking,
             'invoice_number'    => $booking->invoice->invoice_number,
+            'invoice_currency'  => $currency,
 
             'transportation_total' => $transportation_total,
             'taxed_services_total' => $taxed_services_total,
@@ -205,22 +215,25 @@ class BookingInvoiceController extends Controller
                 return redirect()->back()->with('error', 'رقم الفاتورة مستخدم بالفعل');
             }
 
+            $currency = InvoiceCurrency::normalize($request->input('currency', $booking_invoice->currency ?? InvoiceCurrency::EGP));
             $invoice_data = array_merge(
                 [
                     'booking_id' => $booking->id,
+                    'currency' => $currency,
 
                     'transportation_json' => $booking->bookingContainers,
                     'taxed_services_json' => $booking->taxed_services,
                     'untaxed_services_json' => $booking->untaxed_services,
 
                     'transportation_total_before_vat' => $booking->transportation_total_price,
-                    'taxed_services_total_before_vat' => $booking->taxed_services_total_price,
-                    'untaxed_services_total_before_vat' => $booking->untaxed_services_total_price,
+                    'taxed_services_total_before_vat' => $booking->servicesTotalForCurrency($booking->taxed_services(), $currency),
+                    'untaxed_services_total_before_vat' => $booking->untaxedServicesTotalForCurrency($currency),
                     'invoice_number' => $invoice_number !== '' ? $invoice_number : $booking_invoice->invoice_number,
                 ],
                 $request->only([
                     'value_added_tax',
-                    'discount'
+                    'discount',
+                    'sales_tax',
                 ])
             );
             $booking_invoice->update($invoice_data);

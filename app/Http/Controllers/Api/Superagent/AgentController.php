@@ -111,14 +111,10 @@ class AgentController extends Controller
                 return $this->returnError(404, __('Booking container not found'));
             }
 
-            // Filter out null and invalid agent IDs
+            // Empty agent_ids clears the stage assignment (container stays available for a new assign).
             $agent_ids = array_values(array_unique(array_filter($request->agent_ids ?? [], function ($id) {
                 return $id !== null && Agent::find($id) !== null;
             })));
-
-            if (empty($agent_ids)) {
-                return $this->returnError(422, 'يجب اختيار مندوب واحد على الأقل');
-            }
 
             $processed_containers = [];
 
@@ -195,14 +191,10 @@ class AgentController extends Controller
             $containerIds = $request->input('booking_container_ids', $request->input('booking_container_id'));
             $containerIds = is_array($containerIds) ? array_filter($containerIds) : ($containerIds ? [$containerIds] : []);
 
-            // Filter out null and invalid agent IDs
+            // Empty agent_ids clears specification assignments on the selected containers.
             $agent_ids = array_values(array_unique(array_filter($request->agent_ids ?? [], function ($id) {
                 return $id !== null && Agent::find($id) !== null;
             })));
-
-            if (empty($agent_ids)) {
-                return $this->returnError(422, 'يجب اختيار مندوب واحد على الأقل');
-            }
 
             $specScope = function ($q) {
                 $q->where('superagent_specification_approved', 0)

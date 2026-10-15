@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\InvoiceCurrency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,7 @@ class Invoice extends Model
 
     protected $fillable = [
         'invoice_number',
+        'currency',
         'booking_id',
 
         'booking_json',
@@ -27,12 +29,31 @@ class Invoice extends Model
         'discount',
     ];
 
+    protected $attributes = [
+        'currency' => InvoiceCurrency::EGP,
+    ];
+
     protected $casts = [
         'booking_json' => 'json',
         'transportation_json' => 'json',
         'taxed_services_json' => 'json',
         'untaxed_services_json' => 'json',
     ];
+
+    public function isUsd(): bool
+    {
+        return InvoiceCurrency::isUsd($this->currency ?? InvoiceCurrency::EGP);
+    }
+
+    public function currencySymbol(): string
+    {
+        return InvoiceCurrency::symbol($this->currency ?? InvoiceCurrency::EGP);
+    }
+
+    public function currencyLabel(string $locale = 'ar'): string
+    {
+        return InvoiceCurrency::label($this->currency ?? InvoiceCurrency::EGP, $locale);
+    }
 
     public function booking()
     {
@@ -151,6 +172,8 @@ class Invoice extends Model
 
     public function getInvoiceTotalBeforeTaxAttribute()
     {
+        $invoiceCurrency = InvoiceCurrency::normalize($this->currency ?? InvoiceCurrency::EGP);
+
         // حساب مجموع الخدمات الخاضعة للضريبة غير الإيصالات
         $nonReceiptTaxedServicesTotal = 0;
         if ($this->booking) {
@@ -159,15 +182,15 @@ class Invoice extends Model
                 $fullName = $service->full_name ?? '';
                 // استبعاد الإيصالات من الحساب
                 if (stripos($fullName, 'ايصالات') === false && stripos($fullName, 'receipt') === false) {
-                    $nonReceiptTaxedServicesTotal += $service->price ?? 0;
+                    $nonReceiptTaxedServicesTotal += InvoiceCurrency::invoiceLineAmount($service, $invoiceCurrency);
                 }
             }
         }
 
-        return round(
-            (float) $this->transportation_total_before_vat + (float) $nonReceiptTaxedServicesTotal,
-            2
-        );
+        $transportation = (float) $this->transportation_total_before_vat;
+        // Pure USD invoices: transportation snapshot is already in USD (entered on containers).
+
+        return round($transportation + (float) $nonReceiptTaxedServicesTotal, 2);
     }
 
     public function getValueAddedTaxAmountAttribute()

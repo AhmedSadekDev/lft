@@ -9,6 +9,7 @@ use App\Models\Agent;
 use App\Models\Booking;
 use App\Models\BookingContainer;
 use App\Models\Invoice;
+use App\Services\ShipmentWorkflow;
 use Illuminate\Http\Request;
 
 class BookingContainerAssignmentController extends Controller
@@ -19,36 +20,62 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            // Grouped by container rather than Yard::whereHas so bookings without a yard are not dropped.
-            $containers = app(\App\Services\ContainerStageService::class)
-                ->visibleContainers($agent->id, 1)
-                ->with(['booking.company', 'booking.factory', 'booking.yard', 'branch.factory', 'container', 'stages'])
-                ->orderByDesc('id')
-                ->get();
 
-            $data = $containers
-                ->groupBy(fn (BookingContainer $container) => (int) ($container->booking?->yard_id ?: 0))
-                ->sortKeysDesc()
-                ->map(function ($group, $yardId) {
-                    /** @var BookingContainer $first */
-                    $first = $group->first();
-
-                    return [
-                        'id' => (int) $yardId,
-                        'title' => $first->booking?->yard?->title ?? 'غير محدد',
-                        'booking_containers' => $group->map(
-                            fn (BookingContainer $container) => (new \App\Http\Resources\Api\Agent\BookingContainerResource($container))->forStage(1)
-                        )->values(),
-                    ];
-                })
-                ->values()
-                ->all();
-
-
-            return $this->returnAllData($data, __('alerts.success'));
+            return $this->returnAllData($this->stageAssignments($agent->id, 1, [ShipmentWorkflow::EXPORT]), __('alerts.success'));
         } catch (\Exception $Exception) {
             return $this->returnError(500, $Exception->getMessage());
         }
+    }
+
+    /**
+     * GET booking/fetch_workflow_assignments?stage=stuffing|clearance|inbound_release|inbound_empty_return|reefer_loading|reefer_unloading
+     * نفس شكل التحميل (المرحلة الثانية) أو التعتيق (المرحلة الثالثة).
+     */
+    public function fetch_workflow_assignments(Request $request)
+    {
+        try {
+            [$workflows, $slot] = ShipmentWorkflow::tab((string) $request->get('stage'));
+            abort_unless(in_array($slot, [1, 2], true), 422, 'استخدم مسار التبويب الأساسي');
+
+            return $this->returnAllData($this->stageAssignments(auth('agent')->id(), $slot, $workflows), __('alerts.success'));
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e) {
+            return $this->returnError($e->getStatusCode(), $e->getMessage());
+        } catch (\Exception $Exception) {
+            return $this->returnError(500, $Exception->getMessage());
+        }
+    }
+
+    /**
+     * Second-stage tasks are grouped by yard, third-stage tasks by shipping agent.
+     */
+    private function stageAssignments(int $agentId, int $type, array $workflows): array
+    {
+        // Grouped by container rather than Yard::whereHas so bookings without a yard are not dropped.
+        $containers = app(\App\Services\ContainerStageService::class)
+            ->visibleContainers($agentId, $type, $workflows)
+            ->with(['booking.company', 'booking.factory', 'booking.yard', 'booking.shippingAgent', 'branch.factory', 'container', 'stages'])
+            ->orderByDesc('id')
+            ->get();
+
+        $byYard = $type === 1;
+
+        return $containers
+            ->groupBy(fn (BookingContainer $container) => (int) ($byYard ? ($container->booking?->yard_id ?: 0) : ($container->booking?->shipping_agent_id ?: 0)))
+            ->sortKeysDesc()
+            ->map(function ($group, $groupId) use ($byYard, $type) {
+                /** @var BookingContainer $first */
+                $first = $group->first();
+
+                return [
+                    'id' => (int) $groupId,
+                    'title' => ($byYard ? $first->booking?->yard?->title : $first->booking?->shippingAgent?->title) ?? 'غير محدد',
+                    'booking_containers' => $group->map(
+                        fn (BookingContainer $container) => (new \App\Http\Resources\Api\Agent\BookingContainerResource($container))->forStage($type)
+                    )->values(),
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     public function fetch_specification_assignments()
@@ -124,29 +151,8 @@ class BookingContainerAssignmentController extends Controller
 
             $agent = auth()->guard('agent')->user();
             /** @var Agent $agent */
-            $containers = app(\App\Services\ContainerStageService::class)
-                ->visibleContainers($agent->id, 2)
-                ->with(['booking.company', 'booking.factory', 'booking.yard', 'booking.shippingAgent', 'branch.factory', 'container', 'stages'])
-                ->orderByDesc('id')
-                ->get();
 
-            $data = $containers
-                ->groupBy(fn (BookingContainer $container) => (int) ($container->booking?->shipping_agent_id ?: 0))
-                ->sortKeysDesc()
-                ->map(function ($group, $shippingId) {
-                    return [
-                        'id' => (int) $shippingId,
-                        'title' => $group->first()->booking?->shippingAgent?->title ?? 'غير محدد',
-                        'booking_containers' => $group->map(
-                            fn (BookingContainer $container) => (new \App\Http\Resources\Api\Agent\BookingContainerResource($container))->forStage(2)
-                        )->values(),
-                    ];
-                })
-                ->values()
-                ->all();
-
-
-            return $this->returnAllData($data, __('alerts.success'));
+            return $this->returnAllData($this->stageAssignments($agent->id, 2, [ShipmentWorkflow::EXPORT]), __('alerts.success'));
         } catch (\Exception $Exception) {
             return $this->returnError(500, $Exception->getMessage());
         }

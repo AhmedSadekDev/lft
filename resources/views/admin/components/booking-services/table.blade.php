@@ -48,7 +48,16 @@
                 </td>
                 <td>{{ $service->responsible_name ?: '—' }}</td>
                 <td class="services_total_price" data-price="{{ $service->price }}">
-                    {{ $service->price }}
+                    @if(($service->currency ?? 'EGP') === 'USD' && $service->foreign_amount)
+                        <span class="d-block">{{ number_format((float) $service->foreign_amount, 2) }} $</span>
+                        <small class="text-muted">{{ number_format((float) $service->price, 2) }} ج.م
+                            @if($service->exchange_rate)
+                                (× {{ rtrim(rtrim(number_format((float) $service->exchange_rate, 6, '.', ''), '0'), '.') }})
+                            @endif
+                        </small>
+                    @else
+                        {{ number_format((float) $service->price, 2) }} ج.م
+                    @endif
                 </td>
                 <td>
                     @if(filled($service->getRawOriginal('image')) && $service->image)

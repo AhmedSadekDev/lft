@@ -21,6 +21,7 @@ use App\Models\ServiceCategory;
 use App\Models\shippingAgent;
 use App\Models\MoneyTransfer;
 use App\Models\Agent;
+use App\Services\ShipmentWorkflow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\NewBooking;
@@ -49,6 +50,25 @@ class BookingController extends Controller
         $query->filterListing($request);
 
         // Calculate counts for each stage tab via single conditional aggregation query (Phase 4A optimization)
+        // Waiting/second/third stage tabs belong to a shipment path: same container condition, filtered by booking type.
+        $slotSql = [
+            'waiting' => '`superagent_specification_approved` = 1 AND `is_in_loading` = 0 AND `superagent_loading_approved` = 0',
+            1 => '`superagent_specification_approved` = 1 AND `is_in_loading` = 1 AND `superagent_loading_approved` = 0',
+            2 => '`superagent_loading_approved` = 1 AND `superagent_unloading_approved` = 0',
+        ];
+        $stageSelects = [];
+        $stageBindings = [];
+        foreach (ShipmentWorkflow::tabs() as $tab => [$workflows, $slot]) {
+            if ($slot === 0) {
+                continue;
+            }
+            [$workflowSql, $workflowBindings] = ShipmentWorkflow::bookingSql($workflows);
+            $stageSelects[] = "COUNT(CASE WHEN {$workflowSql} AND EXISTS (
+                    SELECT 1 FROM `booking_containers`
+                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` AND {$slotSql[$slot]}
+                ) THEN 1 END) as count_{$tab}";
+            array_push($stageBindings, ...$workflowBindings);
+        }
         $stageRow = (clone $query)->setEagerLoads([])
             ->selectRaw("
                 COUNT(*) as count_all,
@@ -57,26 +77,7 @@ class BookingController extends Controller
                     WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
                       AND (`status` = 0 OR (`status` = 1 AND `superagent_specification_approved` = 0))
                 ) THEN 1 END) as count_assigned,
-                COUNT(CASE WHEN EXISTS (
-                    SELECT 1 FROM `booking_containers` 
-                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
-                      AND `superagent_specification_approved` = 1 
-                      AND `is_in_loading` = 0 
-                      AND `superagent_loading_approved` = 0
-                ) THEN 1 END) as count_waiting,
-                COUNT(CASE WHEN EXISTS (
-                    SELECT 1 FROM `booking_containers` 
-                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
-                      AND `superagent_specification_approved` = 1 
-                      AND `is_in_loading` = 1 
-                      AND `superagent_loading_approved` = 0
-                ) THEN 1 END) as count_loading,
-                COUNT(CASE WHEN EXISTS (
-                    SELECT 1 FROM `booking_containers` 
-                    WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
-                      AND `superagent_loading_approved` = 1 
-                      AND `superagent_unloading_approved` = 0
-                ) THEN 1 END) as count_unloading,
+                ".implode(",\n", $stageSelects).",
                 COUNT(CASE WHEN EXISTS (
                     SELECT 1 FROM `invoices` 
                     WHERE `invoices`.`booking_id` = `bookings`.`id`
@@ -85,17 +86,19 @@ class BookingController extends Controller
                     WHERE `booking_containers`.`booking_id` = `bookings`.`id` 
                       AND `superagent_unloading_approved` = 1
                 ) THEN 1 END) as count_invoiced
-            ")
+            ", $stageBindings)
             ->first();
 
         $stageCounts = [
             'all'       => (int) ($stageRow->count_all ?? 0),
             'assigned'  => (int) ($stageRow->count_assigned ?? 0),
-            'waiting'   => (int) ($stageRow->count_waiting ?? 0),
-            'loading'   => (int) ($stageRow->count_loading ?? 0),
-            'unloading' => (int) ($stageRow->count_unloading ?? 0),
             'invoiced'  => (int) ($stageRow->count_invoiced ?? 0),
         ];
+        foreach (array_keys(ShipmentWorkflow::tabs()) as $tab) {
+            if ($tab !== 'specification') {
+                $stageCounts[$tab] = (int) ($stageRow->{'count_'.$tab} ?? 0);
+            }
+        }
 
         // Stage filter
         $currentStage = $request->get('stage', $request->get('status', 'all'));

@@ -32,6 +32,13 @@ class BookingServiceRequest extends FormRequest
         if ($this->input('payment_type') !== 'agent') {
             $this->merge(['agent_id' => null]);
         }
+
+        $currency = strtoupper((string) ($this->input('currency') ?: 'EGP'));
+        $this->merge(['currency' => in_array($currency, ['EGP', 'USD'], true) ? $currency : 'EGP']);
+
+        if ($this->input('currency') !== 'USD') {
+            $this->merge(['exchange_rate' => null]);
+        }
     }
 
     public function rules()
@@ -39,6 +46,8 @@ class BookingServiceRequest extends FormRequest
         return [
             'service_id'    => ['required', 'exists:services,id'],
             'price'         => ['required', 'numeric', 'min:0'],
+            'currency'      => ['required', 'in:EGP,USD'],
+            'exchange_rate' => ['required_if:currency,USD', 'nullable', 'numeric', 'gt:0'],
             'note'          => ['sometimes', 'nullable', 'string'],
             'image'         => ['sometimes', 'nullable', 'mimes:png,jpg,jpeg', 'max:5000'],
             'payment_type'  => ['sometimes', 'nullable', 'in:vault,bank,agent,supplier'],
@@ -56,6 +65,8 @@ class BookingServiceRequest extends FormRequest
             'service' => __('admin.service'),
             'service_type'  => __('admin.service_type'),
             'price'         => __('admin.price'),
+            'currency'      => 'العملة',
+            'exchange_rate' => 'سعر الصرف',
             'note'          => __('admin.note'),
             'image'         => __('admin.receipt_image'),
             'service_id'    => __('admin.service'),

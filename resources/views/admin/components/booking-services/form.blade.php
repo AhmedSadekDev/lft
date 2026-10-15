@@ -49,12 +49,55 @@
             </div>
         </div>
 
-        <div class="col-md-12 col-sm-12">
-            <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
-                {!! Form::label('price', __('admin.price')) !!}
-                {!! Form::number('price', old('price'), ['class' => 'form-control', 'required' => 'required', 'step' => '0.01', 'min' => 0]) !!}
+        @php
+            $lineCurrency = old('currency', isset($booking_service) ? ($booking_service->currency ?? 'EGP') : 'EGP');
+            $lineAmount = old('price', isset($booking_service)
+                ? ($booking_service->currency === 'USD' ? $booking_service->foreign_amount : $booking_service->price)
+                : null);
+            $lineRate = old('exchange_rate', isset($booking_service) ? $booking_service->exchange_rate : null);
+        @endphp
 
-                <small class="text-danger">{{ $errors->first('price') }}</small>
+        <div class="col-md-4 col-sm-12">
+            <div class="form-group{{ $errors->has('currency') ? ' has-error' : '' }}">
+                {!! Form::label('currency', 'العملة') !!}
+                {!! Form::select(
+                    'currency',
+                    ['EGP' => 'جنيه مصري (ج.م)', 'USD' => 'دولار أمريكي ($)'],
+                    $lineCurrency,
+                    ['id' => 'currency', 'class' => 'form-control', 'required' => 'required']
+                ) !!}
+                <small class="text-danger">{{ $errors->first('currency') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-12">
+            <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
+                {!! Form::label('price', 'المبلغ', ['id' => 'price_label']) !!}
+                {!! Form::number('price', $lineAmount, [
+                    'id' => 'price',
+                    'class' => 'form-control',
+                    'required' => 'required',
+                    'step' => '0.01',
+                    'min' => 0,
+                ]) !!}
+                <small class="text-muted" id="price_hint">أدخل المبلغ بالجنيه المصري</small>
+                <small class="text-danger d-block">{{ $errors->first('price') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-12" id="exchange_rate_field">
+            <div class="form-group{{ $errors->has('exchange_rate') ? ' has-error' : '' }}">
+                {!! Form::label('exchange_rate', 'سعر الصرف (ج.م لكل $1)') !!}
+                {!! Form::number('exchange_rate', $lineRate, [
+                    'id' => 'exchange_rate',
+                    'class' => 'form-control',
+                    'step' => '0.000001',
+                    'min' => 0,
+                    'placeholder' => 'مثال: 48.50',
+                ]) !!}
+                <small class="text-muted">يُحسب المقابل بالجنيه تلقائياً للدفاتر والعهدة</small>
+                <small class="text-danger d-block">{{ $errors->first('exchange_rate') }}</small>
+                <div class="mt-2 font-weight-bold" id="egp_preview"></div>
             </div>
         </div>
 
@@ -258,9 +301,38 @@
             }
         }
 
+        function toggleCurrencyFields() {
+            var isUsd = $('#currency').val() === 'USD';
+            $('#exchange_rate_field').toggle(isUsd);
+            $('#price_label').text(isUsd ? 'المبلغ بالدولار' : 'المبلغ بالجنيه');
+            $('#price_hint').text(isUsd
+                ? 'أدخل المبلغ بالدولار ثم سعر الصرف'
+                : 'أدخل المبلغ بالجنيه المصري');
+            $('#exchange_rate').prop('required', isUsd);
+            updateEgpPreview();
+        }
+
+        function updateEgpPreview() {
+            if ($('#currency').val() !== 'USD') {
+                $('#egp_preview').text('');
+                return;
+            }
+            var amount = parseFloat($('#price').val()) || 0;
+            var rate = parseFloat($('#exchange_rate').val()) || 0;
+            if (amount > 0 && rate > 0) {
+                var egp = (amount * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                $('#egp_preview').text('المقابل في الدفاتر: ' + egp + ' ج.م');
+            } else {
+                $('#egp_preview').text('');
+            }
+        }
+
         // Initialize on page load
         $(document).ready(function() {
             togglePaymentFields();
+            toggleCurrencyFields();
+            $('#currency').on('change', toggleCurrencyFields);
+            $('#price, #exchange_rate').on('input', updateEgpPreview);
         });
     </script>
 @endpush

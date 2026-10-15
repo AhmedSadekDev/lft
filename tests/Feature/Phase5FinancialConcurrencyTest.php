@@ -108,6 +108,7 @@ class Phase5FinancialConcurrencyTest extends TestCase
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
+            $table->unsignedBigInteger('trans_bank_id')->nullable();
         });
 
         Schema::create('companies', function (Blueprint $table) {

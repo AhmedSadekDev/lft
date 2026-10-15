@@ -37,8 +37,8 @@ class BookingAgentRequest extends FormRequest
     public function rules()
     {
         return [
-            'agent_ids' => 'required|array|min:1',
-            'agent_ids.*' => 'required|integer|exists:agents,id',
+            'agent_ids' => 'present|array',
+            'agent_ids.*' => 'integer|exists:agents,id',
             'booking_id' => 'sometimes|array',
             'booking_id.*' => 'integer|exists:bookings,id',
             'booking_container_ids' => 'sometimes|array|min:1',

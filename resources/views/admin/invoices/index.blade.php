@@ -186,6 +186,8 @@
                                                 <span class="badge badge-info">{{ __('actions.Outbound') }}</span>
                                             @elseif($booking->type_of_action == 1)
                                                 <span class="badge badge-success">{{ __('actions.Inbound') }}</span>
+                                            @elseif(in_array((string) $booking->type_of_action, ['3', '4'], true))
+                                                <span class="badge badge-primary">{{ __('actions.' . TypeOfAction($booking->type_of_action)) }}</span>
                                             @else
                                                 <span class="badge badge-warning">{{ __('actions.Clearance') }}</span>
                                             @endif

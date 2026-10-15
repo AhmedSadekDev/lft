@@ -80,6 +80,7 @@ Route::group(['middleware' => 'localization'], function () {
             Route::get("booking/loading", "loading");
 
             Route::get("booking/unloading", "unloading");
+            Route::get("booking/workflow_stage", "workflow_stage");
             Route::get("booking/missions/all", "all");
         });
 

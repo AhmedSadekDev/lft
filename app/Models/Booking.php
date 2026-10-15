@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Mappers\ServiceCategoryStatusMapper;
+use App\Services\ShipmentWorkflow;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Booking extends Model
@@ -234,6 +235,44 @@ class Booking extends Model
             ?? 0;
     }
 
+    /**
+     * Sum booking services for invoice creation in the chosen invoice currency.
+     * EGP uses the book `price` (already converted). USD uses foreign_amount on USD lines.
+     */
+    public function servicesTotalForCurrency($query, ?string $currency = \App\Support\InvoiceCurrency::EGP): float
+    {
+        if (! \App\Support\InvoiceCurrency::isUsd($currency)) {
+            return (float) $this->getObjectsTotalPrice($query);
+        }
+
+        return round(
+            (float) $query->get()->sum(
+                fn ($service) => \App\Support\InvoiceCurrency::invoiceLineAmount($service, $currency)
+            ),
+            2
+        );
+    }
+
+    public function untaxedServicesTotalForCurrency(?string $currency = \App\Support\InvoiceCurrency::EGP): float
+    {
+        $servicesTotal = $this->servicesTotalForCurrency($this->untaxed_services(), $currency);
+
+        $expenses = $this->expenses()
+            ->standaloneFromBookingService()
+            ->whereHas('service', function ($query) {
+                $query->whereHas('serviceCategory', function ($query) {
+                    $query->where('service_status', 1);
+                });
+            })
+            ->get();
+
+        $expensesTotal = $expenses->sum(
+            fn ($expense) => \App\Support\InvoiceCurrency::invoiceLineAmount($expense, $currency)
+        );
+
+        return round($servicesTotal + (float) $expensesTotal, 2);
+    }
+
     public function getTransportationTotalPriceAttribute()
     {
         // $x = $this->expenses->sum('value') ;
@@ -415,6 +454,7 @@ class Booking extends Model
 
                 case 'waiting':
                 case 'waiting_loading':
+                    ShipmentWorkflow::constrainBookings($query, ShipmentWorkflow::WITH_WAITING);
                     $query->whereHas('bookingContainers', function ($q) {
                         $q->where('superagent_specification_approved', 1)
                           ->where('is_in_loading', 0)
@@ -424,20 +464,23 @@ class Booking extends Model
 
                 case 'loading':
                 case '1':
-                    $query->whereHas('bookingContainers', function ($q) {
-                        $q->where('superagent_specification_approved', 1)
-                          ->where('is_in_loading', 1)
-                          ->where('superagent_loading_approved', 0);
-                    });
+                    $this->filterPathStage($query, [ShipmentWorkflow::EXPORT], 1);
                     break;
 
                 case 'unloading':
                 case 'discharge':
                 case '2':
-                    $query->whereHas('bookingContainers', function ($q) {
-                        $q->where('superagent_loading_approved', 1)
-                          ->where('superagent_unloading_approved', 0);
-                    });
+                    $this->filterPathStage($query, [ShipmentWorkflow::EXPORT], 2);
+                    break;
+
+                case 'stuffing':
+                case 'clearance':
+                case 'inbound_release':
+                case 'inbound_empty_return':
+                case 'reefer_loading':
+                case 'reefer_unloading':
+                    [$workflows, $slot] = ShipmentWorkflow::tab($stage);
+                    $this->filterPathStage($query, $workflows, $slot);
                     break;
 
                 case 'invoiced':
@@ -451,6 +494,21 @@ class Booking extends Model
                             });
                     });
                     break;
+            }
+        });
+    }
+
+    private function filterPathStage(Builder $query, array $workflows, int $slot): void
+    {
+        ShipmentWorkflow::constrainBookings($query, $workflows);
+        $query->whereHas('bookingContainers', function ($q) use ($slot) {
+            if ($slot === 1) {
+                $q->where('superagent_specification_approved', 1)
+                  ->where('is_in_loading', 1)
+                  ->where('superagent_loading_approved', 0);
+            } else {
+                $q->where('superagent_loading_approved', 1)
+                  ->where('superagent_unloading_approved', 0);
             }
         });
     }
@@ -486,10 +544,12 @@ class Booking extends Model
             ];
         }
 
+        $workflow = ShipmentWorkflow::of($this);
+
         if ($containers->contains(fn($c) => $c->superagent_loading_approved == 1 && $c->superagent_unloading_approved == 0)) {
             return [
-                'key'   => 'unloading',
-                'label' => 'التعتيق',
+                'key'   => ShipmentWorkflow::hasStage($workflow, 2) ? ShipmentWorkflow::stageKey($workflow, 2) : 'unloading',
+                'label' => ShipmentWorkflow::hasStage($workflow, 2) ? ShipmentWorkflow::label($workflow, 2) : 'التعتيق',
                 'badge' => 'badge-info',
                 'icon'  => 'fas fa-dolly',
             ];
@@ -497,8 +557,8 @@ class Booking extends Model
 
         if ($containers->contains(fn($c) => $c->superagent_specification_approved == 1 && $c->is_in_loading == 1 && $c->superagent_loading_approved == 0)) {
             return [
-                'key'   => 'loading',
-                'label' => 'التحميل',
+                'key'   => ShipmentWorkflow::stageKey($workflow, 1),
+                'label' => ShipmentWorkflow::label($workflow, 1),
                 'badge' => 'badge-primary',
                 'icon'  => 'fas fa-truck-loading',
             ];

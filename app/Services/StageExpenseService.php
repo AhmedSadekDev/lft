@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class StageExpenseService
 {
-    private function stage(?int $containerId, ?int $type, int $agentId, bool $asAdmin = false)
+    private function stage(?int $containerId, ?int $type, int $agentId, bool $asAdmin = false, bool $allowClosedReceipts = false)
     {
         if (! $containerId) {
             return null;
@@ -18,7 +18,7 @@ class StageExpenseService
         $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
         if ($asAdmin) {
             $stage = app(ContainerStageService::class)->receipts($container, $type);
-            abort_if($stage->receipts_closed_at, 409, 'تم إقفال إيصالات المرحلة');
+            abort_if($stage->receipts_closed_at && ! $allowClosedReceipts, 409, 'تم إقفال إيصالات المرحلة');
 
             return $stage;
         }
@@ -58,7 +58,8 @@ class StageExpenseService
         DB::transaction(function () use ($agentId, $expenseId, $version, $data, $storeImage, $asAdmin) {
             $snapshot = AgentExpense::withTrashed()->findOrFail($expenseId);
             abort_unless((int) $snapshot->agent_id === $agentId, 403, 'غير مسموح بتعديل هذا الإيصال');
-            $stage = $snapshot->type_id === null ? null : $this->stage($snapshot->booking_container_id, (int) $snapshot->type_id, $agentId, $asAdmin);
+            // The dashboard may remove a wrong receipt after the stage receipts were closed, refunding the agent.
+            $stage = $snapshot->type_id === null ? null : $this->stage($snapshot->booking_container_id, (int) $snapshot->type_id, $agentId, $asAdmin, $asAdmin && $data === null);
             $agent = Agent::lockForUpdate()->find($agentId);
             abort_unless($agent || $asAdmin, 404, 'المندوب غير موجود');
             $expense = AgentExpense::withTrashed()->lockForUpdate()->findOrFail($expenseId);

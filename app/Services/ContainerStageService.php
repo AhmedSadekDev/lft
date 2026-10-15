@@ -42,9 +42,20 @@ class ContainerStageService
         abort_unless($this->assignments($container->id, $type)->where('agent_id', $agentId)->lockForUpdate()->first(), 403, 'المندوب غير مكلف بهذه المرحلة');
     }
 
-    public function assertAvailable(BookingContainer $container, int $type): void
+    public function workflow(BookingContainer $container): int
+    {
+        return ShipmentWorkflow::of($container->booking);
+    }
+
+    public function assertInWorkflow(BookingContainer $container, int $type): void
     {
         abort_unless(isset(self::NAMES[$type]), 422, 'مرحلة غير صحيحة');
+        abort_unless(ShipmentWorkflow::hasStage($this->workflow($container), $type), 422, 'هذه المرحلة غير موجودة في مسار هذا الطلب');
+    }
+
+    public function assertAvailable(BookingContainer $container, int $type): void
+    {
+        $this->assertInWorkflow($container, $type);
         if ($type === 1) {
             abort_unless($container->superagent_specification_approved && ($container->is_in_loading || $container->superagent_loading_approved), 409, 'التحميل لم يبدأ بعد');
         } elseif ($type === 2) {
@@ -77,7 +88,7 @@ class ContainerStageService
         return DB::transaction(function () use ($containerId, $agentIds, $type) {
             $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
             $type = $type ?? $this->currentType($container);
-            abort_unless(isset(self::NAMES[$type]), 422, 'مرحلة غير صحيحة');
+            $this->assertInWorkflow($container, $type);
             abort_unless(\App\Models\Agent::whereIn('id', $agentIds)->count() === count(array_unique($agentIds)), 422, 'مندوب غير موجود');
             abort_if($container->booking()->whereHas('invoice')->exists(), 409, 'تم إصدار فاتورة لهذا الطلب، ولم يعد متاحاً للإسناد.');
             abort_if($container->{'superagent_'.self::NAMES[$type].'_approved'}, 409, 'المرحلة معتمدة بالفعل؛ اختر المرحلة الحالية للإسناد أو أرسل الطلب بدون type_id.');
@@ -143,18 +154,31 @@ class ContainerStageService
                 return false;
             }
             $now = now();
+            $workflow = $this->workflow($container);
             $values = [$flag => 1, $name.'_approved_at' => $now, $name.'_completed_at' => $container->{$name.'_completed_at'} ?: $now];
-            // Specification approval puts the container in waiting until it is moved to loading.
+            $status = max((int) $container->status, $type + 1);
+            // Specification approval puts the container in waiting; paths without waiting go straight to their next stage.
             if ($type === 0) {
-                $values['is_in_loading'] = 0;
-                $values['moved_to_loading_at'] = null;
+                $direct = ! ShipmentWorkflow::hasWaiting($workflow);
+                $values['is_in_loading'] = (int) $direct;
+                $values['moved_to_loading_at'] = $direct ? ($container->moved_to_loading_at ?: $now) : null;
             }
-            $container->update($values + ['status' => max((int) $container->status, $type + 1)]);
+            // The last stage of a short path closes the unused slots, so it is finished everywhere.
+            if ($type > 0 && $type === ShipmentWorkflow::lastStage($workflow)) {
+                foreach (self::NAMES as $later => $laterName) {
+                    if ($later > $type) {
+                        $values += ['superagent_'.$laterName.'_approved' => 1, $laterName.'_approved_at' => $now, $laterName.'_completed_at' => $container->{$laterName.'_completed_at'} ?: $now];
+                    }
+                }
+                $status = count(self::NAMES);
+            }
+            $container->update($values + ['status' => $status]);
             $this->assignments($containerId, $type)->update($values + ['stage_type' => $type]);
-            $dailyUpdate = [$flag => 1, 'booking_container_status' => $container->status];
-            if ($type === 0) {
-                $dailyUpdate['is_in_loading'] = 0;
-                $dailyUpdate['moved_to_loading_at'] = null;
+            $dailyUpdate = ['booking_container_status' => $container->status];
+            foreach ($values as $column => $value) {
+                if (str_starts_with($column, 'superagent_') || in_array($column, ['is_in_loading', 'moved_to_loading_at'], true)) {
+                    $dailyUpdate[$column] = $value;
+                }
             }
             DailyBookingContainer::where('booking_container_id', $containerId)->update($dailyUpdate);
 
@@ -171,6 +195,7 @@ class ContainerStageService
     public function bookingContainersAwaitingApproval(int $bookingId, int $type): array
     {
         abort_unless(isset(self::NAMES[$type]), 422, 'مرحلة غير صحيحة');
+        abort_unless(ShipmentWorkflow::hasStage(ShipmentWorkflow::of(\App\Models\Booking::find($bookingId)), $type), 422, 'هذه المرحلة غير موجودة في مسار هذا الطلب');
         $flag = 'superagent_'.self::NAMES[$type].'_approved';
         $query = BookingContainer::where('booking_id', $bookingId)
             ->where(fn ($q) => $q->where($flag, 0)->orWhereNull($flag));
@@ -230,6 +255,7 @@ class ContainerStageService
         DB::transaction(function () use ($containerIds, $toLoading) {
             $containers = BookingContainer::whereIn('id', $containerIds)->orderBy('id')->lockForUpdate()->get();
             foreach ($containers as $container) {
+                abort_unless(ShipmentWorkflow::hasWaiting($this->workflow($container)), 409, 'لا توجد مرحلة انتظار في مسار هذا الطلب');
                 abort_unless($container->superagent_specification_approved, 409, 'يجب اعتماد التخصيص أولاً');
                 abort_if($container->status >= 2 || $container->superagent_loading_approved, 409, 'لا يمكن تغيير قائمة الانتظار بعد انتهاء التحميل');
                 $values = ['is_in_loading' => (int) $toLoading, 'moved_to_loading_at' => $toLoading ? ($container->moved_to_loading_at ?: now()) : null];
@@ -248,7 +274,8 @@ class ContainerStageService
             abort_unless($expectedStatus >= 1 && $expectedStatus <= 3, 422, __('container_stages.already_specification'));
             abort_if($container->booking()->whereHas('invoice')->exists(), 409, __('container_stages.invoiced'));
 
-            $target = $expectedStatus - 1;
+            // A finished short path returns to its own last stage, not to the unused slot.
+            $target = min($expectedStatus - 1, ShipmentWorkflow::lastStage($this->workflow($container)));
             // Dashboard rollback cancels later assignments, including automatic ones.
             // Later assignments are deleted; expenses are retained and closed receipts are reopened.
             foreach (array_keys(self::NAMES) as $type) {
@@ -265,8 +292,10 @@ class ContainerStageService
         DB::transaction(function () use ($containerId, $target) {
             $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
             abort_if($container->booking()->whereHas('invoice')->exists(), 409, __('container_stages.invoiced'));
-            abort_unless(in_array($target, [0, 1, 2], true) && $target < (int) $container->status, 422, __('container_stages.invalid_return'));
-            abort_if((int) $container->status > $target + 1, 409, __('container_stages.cannot_skip'));
+            $lastStage = ShipmentWorkflow::lastStage($this->workflow($container));
+            $status = min((int) $container->status, $lastStage + 1);
+            abort_unless(in_array($target, [0, 1, 2], true) && $target <= $lastStage && $target < $status, 422, __('container_stages.invalid_return'));
+            abort_if($status > $target + 1, 409, __('container_stages.cannot_skip'));
             foreach (array_keys(self::NAMES) as $type) {
                 abort_if($type > $target && $this->assignments($containerId, $type)->exists(), 409, __('container_stages.next_assigned'));
             }
@@ -308,7 +337,10 @@ class ContainerStageService
         });
     }
 
-    public function visibleContainers(int $agentId, int $type)
+    /**
+     * @param  int[]|null  $workflows  null = every path (specification is shared by all of them)
+     */
+    public function visibleContainers(int $agentId, int $type, ?array $workflows = null)
     {
         abort_unless(isset(self::NAMES[$type]), 422, 'مرحلة غير صحيحة');
         $flag = 'superagent_'.self::NAMES[$type].'_approved';
@@ -322,6 +354,9 @@ class ContainerStageService
             $query->where('superagent_specification_approved', 1)->where('is_in_loading', 1);
         } elseif ($type === 2) {
             $query->where('superagent_loading_approved', 1);
+        }
+        if ($workflows !== null) {
+            $query->whereHas('booking', fn ($booking) => ShipmentWorkflow::constrainBookings($booking, $workflows));
         }
 
         return $query;

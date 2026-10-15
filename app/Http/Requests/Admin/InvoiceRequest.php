@@ -31,10 +31,17 @@ class InvoiceRequest extends FormRequest
     public function rules()
     {
         return [
+            'currency' => 'required|in:EGP,USD',
             'value_added_tax' => 'required|numeric|between:0,100.00',
             'sales_tax' => 'required|numeric|between:0,100.00',
-            'discount' => 'required|numeric|min:0'
+            'discount' => 'required|numeric|min:0',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $currency = strtoupper((string) ($this->input('currency') ?: 'EGP'));
+        $this->merge(['currency' => in_array($currency, ['EGP', 'USD'], true) ? $currency : 'EGP']);
     }
 
     /**

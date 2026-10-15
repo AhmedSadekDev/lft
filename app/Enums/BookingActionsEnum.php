@@ -8,6 +8,8 @@ abstract class BookingActionsEnum extends Enum {
     const Outbound    = 0 ;
     const Inbound     = 1 ;
     const Clearance   = 2 ;
+    const Stuffing    = 3 ;
+    const Reefer      = 4 ;
 }
 
 abstract class Enum {

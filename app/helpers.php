@@ -51,6 +51,10 @@ if(!function_exists('TypeOfAction')){
                 # code...
                 return 'Clearance';
                 break;
+            case '3':
+                return 'Stuffing';
+            case '4':
+                return 'Reefer';
             default:
                 # code...
                 return '__';

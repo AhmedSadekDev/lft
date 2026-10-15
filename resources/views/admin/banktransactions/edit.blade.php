@@ -8,7 +8,7 @@
                 <div class="card-toolbar">
                     <!--begin::Button-->
 
-                    <a href="{{ route('banktransactions.index', request()->id) }}" class="btn btn-primary font-weight-bolder">
+                    <a href="{{ route('banktransactions.index', $item->bank_id) }}" class="btn btn-primary font-weight-bolder">
                         <i class="fas fa-arrow-right" aria-hidden="true"></i>{{ __('main.back') }}
                     </a>
 
@@ -49,48 +49,27 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="type">{{ __('admin.type') }}</label>
-                        <select id="typeSelect" class="form-control" name="type">
-                            <option value="0" @if (old('type') == 0 || (isset($item) && $item->type == 0)) selected @endif>
-                                {{ __('main.debit') }}</option>
-                            <option value="1" @if (old('type') == 1 || (isset($item) && $item->type == 1)) selected @endif>
-                                {{ __('main.credit') }}</option>
-                            <option value="2" @if (old('type') == 2 || (isset($item) && $item->type == 2)) selected @endif>
-                                {{ __('main.transfer') }}</option>
-                        </select>
-                        @error('type')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        <label>{{ __('admin.type') }}</label>
+                        <input class="form-control" type="text" value="{{ $item->typeText() }}" disabled>
+                        <small class="form-text text-muted">
+                            نوع الحركة وطرفها الآخر لا يتغيران بعد التسجيل؛ تعديل المبلغ يُطبَّق على الطرفين معاً
+                            (البنك والخزنة أو البنك المحوَّل إليه). لتغيير النوع احذف الحركة وسجّلها من جديد.
+                        </small>
                     </div>
 
+                    @if ($item->transBank)
+                        <div class="form-group">
+                            <label>{{ __('main.bank_tranferd') }}</label>
+                            <input class="form-control" type="text" value="{{ $item->transBank->name }}" disabled>
+                        </div>
+                    @endif
 
-                    <div class="form-group bankSelectDiv   {{ $item->type != 2 ? 'd-none' : '' }}">
-                        <label for="bankSelect">{{ __('main.bank_tranferd') }}</label>
-                        <select id="bankSelect" class="form-control" name="trans_bank_id">
-                            @foreach ($banks as $bank)
-                                <option value="{{ $bank->id }}" @if (old('trans_bank_id') == $bank->id || $item->trans_bank_id == $bank->id) selected @endif>
-                                    {{ $bank->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('trans_bank_id')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group companySelectDiv   {{ $item->type != 1 ? 'd-none' : '' }}">
-                        <label for="bankSelect">{{ __('main.company') }}</label>
-                        <select id="bankSelect" class="form-control" name="company_id">
-                            @foreach ($companies as $company)
-                                <option value="{{ $company->id }}" @if (old('company_id') == $company->id || $item->company_id == $company->id) selected @endif>
-                                    {{ $company->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('company_id')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    @if ($item->company)
+                        <div class="form-group">
+                            <label>{{ __('main.company') }}</label>
+                            <input class="form-control" type="text" value="{{ $item->company->name }}" disabled>
+                        </div>
+                    @endif
 
 
 
@@ -116,26 +95,3 @@
         <!--end::Card-->
     </div>
 @endsection
-
-
-@push('js')
-    <script>
-        $(document).on('change', '#typeSelect', function() {
-            let value = $(this).val();
-
-            if (value == 2) {
-                $('.bankSelectDiv').removeClass('d-none');
-            } else {
-                $('.bankSelectDiv').addClass('d-none');
-            }
-            
-            
-            
-            if (value == 1) {
-                $('.companySelectDiv').removeClass('d-none');
-            } else {
-                $('.companySelectDiv').addClass('d-none');
-            }
-        });
-    </script>
-@endpush

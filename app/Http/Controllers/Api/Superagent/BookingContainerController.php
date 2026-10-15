@@ -7,6 +7,8 @@ use App\Http\Resources\Api\Superagent\MissionBookingResource;
 use App\Http\Resources\Api\Superagent\SpecificationBookingResource;
 use App\Models\Booking;
 use App\Models\BookingContainer;
+use App\Services\ContainerStageService;
+use App\Services\ShipmentWorkflow;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -22,11 +24,18 @@ class BookingContainerController extends Controller
             $perPage = (int) $request->get('per_page', default: 100);
             $page    = (int) $request->get('page', 1);
             $stageType = $request->get('stage_type');
-
-            $condition = $this->allStageContainerConstraints($stageType);
+            $tabs = ShipmentWorkflow::tabs();
+            $workflows = null;
+            if ($stageType && isset($tabs[$stageType])) {
+                [$workflows, $slot] = $tabs[$stageType];
+                $condition = fn ($q) => ShipmentWorkflow::constrainSlot($q, $slot);
+            } else {
+                $condition = $this->allStageContainerConstraints(null);
+            }
 
             $query = Booking::query()
                 ->withoutInvoice()
+                ->when($workflows !== null, fn ($q) => ShipmentWorkflow::constrainBookings($q, $workflows))
                 ->whereHas('bookingContainers', $condition)
                 ->with([
                     'bookingContainers' => function ($cQuery) use ($condition) {
@@ -61,6 +70,16 @@ class BookingContainerController extends Controller
                 'page',
                 $page
             );
+            // Slot names (loading/unloading) become the tab of the booking's own path.
+            $paginator->getCollection()->each(function (Booking $booking) {
+                $workflow = ShipmentWorkflow::of($booking);
+                $booking->bookingContainers->each(function ($container) use ($workflow) {
+                    $slot = array_search($container->stage_type, ContainerStageService::NAMES, true);
+                    if ($slot) {
+                        $container->stage_type = ShipmentWorkflow::stageKey($workflow, $slot);
+                    }
+                });
+            });
 
             $data = MissionBookingResource::collection($paginator)->response()->getData(true);
             $pagination = [
@@ -144,49 +163,19 @@ class BookingContainerController extends Controller
         };
     }
 
-    private function stageContainerConstraints(string $stage): \Closure
-    {
-        return match ($stage) {
-            'specification' => function ($q) {
-                $q->where(function ($query) {
-                    $query->where('status', 0)
-                        ->orWhere(function ($q2) {
-                            $q2->where('status', 1)
-                                ->where('superagent_specification_approved', 0);
-                        });
-                });
-            },
-            'waiting' => function ($q) {
-                $q->where('superagent_specification_approved', 1)
-                    ->where('is_in_loading', 0)
-                    ->where('superagent_loading_approved', 0)
-                    ->where('superagent_unloading_approved', 0);
-            },
-            'loading' => function ($q) {
-                $q->where('superagent_specification_approved', 1)
-                    ->where('is_in_loading', 1)
-                    ->where('superagent_loading_approved', 0)
-                    ->where('superagent_unloading_approved', 0);
-            },
-            'unloading' => function ($q) {
-                $q->where('superagent_specification_approved', 1)
-                    ->where('superagent_loading_approved', 1)
-                    ->where('superagent_unloading_approved', 0);
-            },
-            default => fn ($q) => $q,
-        };
-    }
-
     /**
-     * Paginate bookings with all their containers matching the requested stage.
+     * Paginate bookings with all their containers matching the requested tab (stage slot + shipment path).
      */
     private function paginateBookingsForStage(Request $request, string $stage)
     {
-        $request->merge(['stage' => $stage]);
-        $constrain = $this->stageContainerConstraints($stage);
+        [$workflows, $slot] = ShipmentWorkflow::tab($stage);
+        // The resource groups containers by slot name; a path tab uses the slot it occupies.
+        $request->merge(['stage' => is_int($slot) ? ($slot === 0 ? 'specification' : ContainerStageService::NAMES[$slot]) : $slot]);
+        $constrain = fn ($q) => ShipmentWorkflow::constrainSlot($q, $slot);
 
         return Booking::query()
             ->withoutInvoice()
+            ->when($workflows !== null, fn ($q) => ShipmentWorkflow::constrainBookings($q, $workflows))
             ->whereHas('bookingContainers', $constrain)
             ->with([
                 'bookingContainers' => function ($query) use ($constrain) {
@@ -314,6 +303,37 @@ class BookingContainerController extends Controller
                 : 'تمت إعادة الحاويات المحددة إلى قائمة الانتظار';
 
             return $this->returnResponseSuccessMessage($message);
+        } catch (\Exception $ex) {
+            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
+        }
+    }
+
+    /**
+     * GET /superagent/booking/workflow_stage?stage=stuffing|clearance|inbound_release|inbound_empty_return|reefer_loading|reefer_unloading
+     * تبويبات المسارات الأخرى؛ نفس شكل استجابة تبويب التحميل.
+     */
+    public function workflow_stage(Request $request)
+    {
+        try {
+            $stage = (string) $request->get('stage');
+            abort_if(in_array($stage, ['specification', 'waiting'], true), 422, 'استخدم مسار التبويب الأساسي');
+            $bookings = $this->paginateBookingsForStage($request, $stage);
+            $data = SpecificationBookingResource::collection($bookings)->response()->getData(true);
+            $pagination = [
+                'total' => $bookings->total(),
+                'per_page' => $bookings->perPage(),
+                'current_page' => $bookings->currentPage(),
+                'total_pages' => $bookings->lastPage(),
+            ];
+            $data['pagination'] = $pagination;
+
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $data,
+                'pagination' => $pagination,
+            ], 200);
         } catch (\Exception $ex) {
             return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
         }

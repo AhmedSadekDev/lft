@@ -7,7 +7,6 @@ use App\Models\Vault;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Models\BankTrnsaction;
-use App\Models\InvoicePayment;
 use App\Models\companyInvoices;
 use App\Http\Traits\ImagesTrait;
 use App\Models\VaultTransaction;
@@ -16,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BankTransactionExport;
+use App\Services\BankTransactionService;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class BankTransactionController extends Controller
 {
@@ -65,13 +66,9 @@ class BankTransactionController extends Controller
 
     public function edit($id)
     {
-        $item = BankTrnsaction::findOrfail($id);
+        $item = BankTrnsaction::with(['bank', 'transBank', 'company'])->findOrfail($id);
 
-        $banks = Bank::where('id', '!=', $id)->get();
-
-        $companies  = Company::all();
-
-        return view('admin.banktransactions.edit', compact('item', 'banks', 'companies'));
+        return view('admin.banktransactions.edit', compact('item'));
     }
 
 
@@ -119,6 +116,7 @@ class BankTransactionController extends Controller
 
                     BankTrnsaction::create([
                         'bank_id' => $bank->id,
+                        'trans_bank_id' => $transBank->id,
                         'name' => $request->name,
                         'date' => $request->date,
                         'amount' => $request->amount,
@@ -268,142 +266,37 @@ class BankTransactionController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'amount' => 'required|numeric',
+            'amount' => 'required|numeric|gt:0',
             'date' => 'nullable',
-            'type' => 'required|in:0,1',
             'image' => 'nullable|mimes:jpg,png,jpeg',
         ]);
-
-        $data['user_id'] = auth()->user()->id;
-
-        $transaction = BankTrnsaction::findOrFail($id);
-        $vault = Vault::first();
-        $originalAmount = $transaction->amount;
-        $newAmount = $request->amount;
-        $amountDifference = $newAmount - $originalAmount;
-
-        $bank = Bank::findOrFail($transaction->bank_id);
-        $transBank = $request->type == 2 ? Bank::findOrFail($request->trans_bank_id) : null;
-
-        DB::beginTransaction();
+        unset($data['image']);
 
         try {
-            $transaction = BankTrnsaction::lockForUpdate()->findOrFail($id);
-            $originalAmount = (float) $transaction->amount;
-            $newAmount = (float) $request->amount;
-            $amountDifference = $newAmount - $originalAmount;
-
-            $bank = Bank::lockForUpdate()->findOrFail($transaction->bank_id);
-            $transBank = $request->type == 2 ? Bank::lockForUpdate()->findOrFail($request->trans_bank_id) : null;
-            $company = $request->type == 1 ? Company::lockForUpdate()->findOrFail($request->company_id) : null;
-            $vault = Vault::lockForUpdate()->firstOrFail();
-
-            if ($request->type == 0) { // Withdraw transaction
-                if ($newAmount > $originalAmount) {
-                    $bank->amount -= $amountDifference;
-                    $vault->amount += $amountDifference;
-
-                    VaultTransaction::create([
-                        'bank_id'  => $bank->id,
-                        'name' => $request->name,
-                        'amount' => $amountDifference,
-                        'type' => 1
-                    ]);
-                } else {
-                    $bank->amount += abs($amountDifference);
-                    $vault->amount -= abs($amountDifference);
-
-                    VaultTransaction::create([
-                        'bank_id'  => $bank->id,
-                        'name' => $request->name,
-                        'amount' => $amountDifference,
-                        'type' => 0
-                    ]);
-                }
-            } elseif ($request->type == 1) { // Deposit transaction
-                if ($newAmount > $originalAmount) {
-                    $bank->amount += $amountDifference;
-                    $company->wallet -= $amountDifference;
-                } else {
-                    $bank->amount -= abs($amountDifference);
-                    $company->wallet += $amountDifference;
-                }
-            } elseif ($request->type == 2) { // Transfer to another bank
-                if ($newAmount > $originalAmount) {
-                    $bank->amount -= $amountDifference;
-                    $transBank->amount += $amountDifference;
-                } else {
-                    $bank->amount += abs($amountDifference);
-                    $transBank->amount -= abs($amountDifference);
-                }
-
-                $transBank->save();
-            }
-
             if ($request->hasFile('image')) {
                 $imageName = time() . '_transaction.' . $request->image->extension();
                 $this->uploadImage($request->image, $imageName, 'banks');
-                $transaction->image = 'Admin/images/banks/' . $imageName;
+                $data['image'] = 'Admin/images/banks/' . $imageName;
             }
 
-            $transaction->amount = $newAmount;
-            $transaction->date = $request->date;
-            $transaction->type = $request->type;
-            $transaction->save();
-            $bank->save();
-            if ($transBank) {
-                $transBank->save();
-            }
-
-            DB::commit();
+            $transaction = app(BankTransactionService::class)->update((int) $id, $data);
         } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', __('main.transaction_failed') . ': ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', __('main.transaction_failed') . ': ' . $e->getMessage());
         }
 
-        // return redirect()->route('banktransactions.index', $request->bank_id)->with('success', __('main.transaction_successful'));
-
-        return to_route('banktransactions.index', $transaction->bank_id)->with('success', __('alerts.added_successfully'));
+        return to_route('banktransactions.index', $transaction->bank_id)->with('success', __('alerts.updated_successfully'));
     }
 
 
     public function destroy($id)
     {
-        DB::beginTransaction();
-
         try {
-            $transaction = BankTrnsaction::lockForUpdate()->findOrFail($id);
-
-            // حذف سداد شركة من شاشة البنك يجب أن يرجع الأثر على كشف الشركة
-            if ((int) $transaction->type === 0 && !is_null($transaction->company_id)) {
-                $bank = Bank::lockForUpdate()->find($transaction->bank_id);
-                if ($bank) {
-                    $bank->amount = ($bank->amount ?? 0) + (float) $transaction->amount;
-                    $bank->save();
-                }
-
-                $relatedPaymentsCount = InvoicePayment::where('bank_transaction_id', $transaction->id)->count();
-
-                if ($relatedPaymentsCount > 0) {
-                    // حذف السداد المرتبط من invoice_payments ليعود كمبلغ مستحق
-                    InvoicePayment::where('bank_transaction_id', $transaction->id)->delete();
-                } elseif (!is_null($transaction->company_id) && str_contains((string) $transaction->name, 'سداد الرصيد الافتتاحي')) {
-                    // سداد رصيد افتتاحي: إرجاع الرصيد الافتتاحي مرة أخرى
-                    $company = Company::lockForUpdate()->find($transaction->company_id);
-                    if ($company) {
-                        $company->opening_balance = ($company->opening_balance ?? 0) + (float) $transaction->amount;
-                        $company->save();
-                    }
-                }
-            }
-
-            $transaction->delete();
-
-            DB::commit();
+            app(BankTransactionService::class)->delete((int) $id);
 
             return response()->json(['staus' => true, 'msg' => __('alerts.deleted_successfully')], 200);
+        } catch (HttpExceptionInterface $e) {
+            return response()->json(['staus' => false, 'msg' => $e->getMessage()], $e->getStatusCode());
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json(['staus' => false, 'msg' => $e->getMessage()], 500);
         }
     }

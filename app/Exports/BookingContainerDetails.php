@@ -37,6 +37,14 @@ class BookingContainerDetails implements FromCollection, WithHeadings, ShouldAut
                         $typePolicy = 'تخليص جمركي';
                         break;
 
+                    case 3:
+                        $typePolicy = 'تستيف';
+                        break;
+
+                    case 4:
+                        $typePolicy = 'صادر برادات';
+                        break;
+
                     default:
                         $typePolicy = 'unknown';
                         break;

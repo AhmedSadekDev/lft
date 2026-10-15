@@ -17,6 +17,38 @@
     </div>
     <div class="totals-card-body">
 
+        @php
+            $invoiceCurrency = old('currency', $invoice_currency ?? (isset($invoice) ? ($invoice->currency ?? 'EGP') : 'EGP'));
+            $currencySymbol = $invoiceCurrency === 'USD' ? '$' : 'ج.م';
+        @endphp
+
+        {{-- عملة الفاتورة --}}
+        <div class="totals-block">
+            <h3 class="totals-block-title">
+                <span class="totals-block-icon totals-block-icon--blue"><i class="fas fa-money-bill-wave"></i></span>
+                عملة الفاتورة
+            </h3>
+            <div class="row align-items-end">
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="totals-input-label">العملة الرئيسية</label>
+                    {!! Form::select(
+                        'currency',
+                        [
+                            'EGP' => 'جنيه مصري — فاتورة محلية (يمكن تضمين إيصالات دولار بسعر صرف)',
+                            'USD' => 'دولار أمريكي — فاتورة دولية كاملة',
+                        ],
+                        $invoiceCurrency,
+                        ['id' => 'invoice_currency', 'class' => 'form-control form-control-solid totals-input', 'required' => 'required']
+                    ) !!}
+                    <small class="text-muted d-block mt-1">
+                        المحلي: الإيصالات بالدولار تتحول للجنيه بسعر الصرف المسجّل على كل إيصال.
+                        الدولي: كل البنود بالدولار؛ لا تُرسل لمنظومة الفاتورة الإلكترونية المصرية.
+                    </small>
+                    @error('currency') <small class="text-danger d-block mt-1">{{ $message }}</small> @enderror
+                </div>
+            </div>
+        </div>
+
         {{-- إجماليات الفاتورة --}}
         <div class="totals-block">
             <h3 class="totals-block-title">
@@ -26,19 +58,19 @@
             <div class="row">
                 <div class="col-sm-6 col-lg-4 mb-3">
                     <div class="totals-value-box">
-                        <span class="totals-value-label">{{ __('admin.transportation_total') }}</span>
+                        <span class="totals-value-label">{{ __('admin.transportation_total') }} ({{ $currencySymbol }})</span>
                         <span class="totals-value-number">{{ number_format((float)$transportation_total, 2) }}</span>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-4 mb-3">
                     <div class="totals-value-box">
-                        <span class="totals-value-label">{{ __('admin.taxed_service_total') }}</span>
+                        <span class="totals-value-label">{{ __('admin.taxed_service_total') }} ({{ $currencySymbol }})</span>
                         <span class="totals-value-number">{{ number_format((float)$taxed_services_total, 2) }}</span>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-4 mb-3">
                     <div class="totals-value-box totals-value-box--primary">
-                        <span class="totals-value-label">{{ __('admin.invoice_total') }}</span>
+                        <span class="totals-value-label">{{ __('admin.invoice_total') }} ({{ $currencySymbol }})</span>
                         <span class="totals-value-number totals-value-number--primary">{{ number_format((float)($transportation_total + $taxed_services_total), 2) }}</span>
                     </div>
                 </div>
@@ -77,7 +109,7 @@
                     @error('sales_tax') <small class="text-danger d-block mt-1">{{ $message }}</small> @enderror
                 </div>
                 <div class="col-md-6 col-lg-3 mb-3">
-                    <label class="totals-input-label">قيمة الضريبة المضافة (جنيه)</label>
+                    <label class="totals-input-label">قيمة الضريبة المضافة ({{ $currencySymbol }})</label>
                     <input class="form-control form-control-solid totals-input" type="number" id="taxAmount" placeholder="0.00" step="0.01" readonly>
                 </div>
                 <div class="col-md-6 col-lg-3 mb-3">
@@ -121,7 +153,7 @@
             </h3>
             <div class="row align-items-end">
                 <div class="col-md-6 col-lg-3 mb-3">
-                    <label class="totals-input-label">{{ __('admin.discount') }} (جنيه)</label>
+                    <label class="totals-input-label">{{ __('admin.discount') }} ({{ $currencySymbol }})</label>
                     {!! Form::number('discount', old('discount') ?? (isset($invoice) ? $invoice->discount : 0), [
                         'class' => 'form-control form-control-solid totals-input',
                         'required' => 'required',
@@ -382,5 +414,11 @@
     $('#sales_tax').on('input', updateInvoiceAndBillableAmounts);
     $('#discount').on('input', updateInvoiceAndBillableAmounts);
     $('#taxAmount').on('input', updateTaxPercentagesBasedOnAmount);
+
+    $('#invoice_currency').on('change', function () {
+        var url = new URL(window.location.href);
+        url.searchParams.set('currency', $(this).val());
+        window.location.href = url.toString();
+    });
 </script>
 @endpush

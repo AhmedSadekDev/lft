@@ -93,5 +93,5 @@
         </div>
         @endif
     </td>
-    <td style="padding: 4px 6px; text-align: center; font-weight: 700; color: #28a745; font-size: 12px; background: #f8f9fa; vertical-align: top;">{{ number_format($booking_service->price ?? 0, 2) }} ج.م</td>
+    <td style="padding: 4px 6px; text-align: center; font-weight: 700; color: #28a745; font-size: 12px; background: #f8f9fa; vertical-align: top;">{{ \App\Support\InvoiceCurrency::formatLine($booking_service, $invoice->currency ?? 'EGP') }}</td>
 </tr>

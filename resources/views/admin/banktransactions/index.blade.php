@@ -158,7 +158,7 @@
         function Delete(id) {
             Swal.fire({
                 title: "{{ __('alerts.are_you_sure') }}",
-                text: "{{ __('alerts.not_revert_information') }}",
+                text: "سيتم حذف الحركة وعكس أثرها على الطرف الآخر (الخزنة أو البنك المحوَّل إليه أو كشف الشركة). {{ __('alerts.not_revert_information') }}",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
@@ -190,6 +190,13 @@
                                 location.reload();
                                 //getNotify();
                             }
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                title: "{{ __('alerts.error') }}",
+                                text: xhr.responseJSON?.msg || "{{ __('alerts.error_occurred') }}",
+                                icon: 'error',
+                            });
                         }
                     });
                 }

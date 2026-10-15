@@ -16,4 +16,6 @@ return [
     'Outbound'      => 'Outbound',
     'Inbound'       => 'Inbound',
     'Clearance'     => 'Clearance',
+    'Stuffing'      => 'Stuffing',
+    'Reefer'        => 'Reefer Export',
 ];

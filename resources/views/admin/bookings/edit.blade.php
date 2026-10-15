@@ -93,27 +93,6 @@
         .booking-container-block .form-group:has(input[name*="arrival_date"]) label::before { content: "\f073"; }
         .booking-container-block .form-group:has(input[name*="containers_count"]) label::before { content: "\f0ca"; }
 
-        .booking-submit-wrap {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-        .booking-submit-btn {
-            background: #198754;
-            color: #fff;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.2s;
-        }
-        .booking-submit-btn:hover { color: #fff; background: #157347; transform: translateY(-2px); }
-        .booking-submit-btn i { font-size: 1rem; }
     </style>
 
     <div class="container booking-edit-page">

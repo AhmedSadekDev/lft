@@ -4170,3 +4170,52 @@ html body.lft-admin .pagination .page-link {
 html body.lft-admin .alert {
     border-radius: 14px !important;
 }
+
+/* Booking form submit bar (create + edit) */
+html body.lft-admin .booking-container-block .border-bottom {
+    border-bottom: 1px solid var(--border-color) !important;
+}
+html body.lft-admin .booking-submit-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--fill-subtle);
+    border-radius: 0 0 14px 14px;
+}
+html body.lft-admin .booking-submit-btn.btn,
+html body.lft-admin .booking-submit-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-width: 140px;
+    padding: 0.8rem 1.75rem !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    color: #ffffff !important;
+    background-color: #2563eb !important;
+    border: 1px solid #2563eb !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+html body.lft-admin .booking-submit-btn:hover,
+html body.lft-admin .booking-submit-btn:focus,
+html body.lft-admin .booking-submit-btn:focus-visible {
+    color: #ffffff !important;
+    background-color: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4) !important;
+}
+html body.lft-admin .booking-submit-btn i {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+[data-theme="dark"] body.lft-admin .booking-submit-wrap {
+    background: rgba(255, 255, 255, 0.03);
+}

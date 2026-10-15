@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\BookingService;
 use App\Models\AgentExpense;
 use App\Models\Invoice;
+use App\Support\InvoiceCurrency;
 use Illuminate\Support\Collection;
 
 class InvoicePrintBuilder
@@ -76,7 +77,10 @@ class InvoicePrintBuilder
             ->map(fn ($expense) => (object) [
                 'type' => 'agent_expense_attachment',
                 'expense' => $expense,
-                'price' => (float) ($expense->value ?? 0),
+                'price' => InvoiceCurrency::invoiceLineAmount($expense, $invoice->currency ?? InvoiceCurrency::EGP),
+                'currency' => $expense->currency ?? InvoiceCurrency::EGP,
+                'foreign_amount' => $expense->foreign_amount ?? null,
+                'exchange_rate' => $expense->exchange_rate ?? null,
             ]);
 
         [$receiptAgentExpenses, $additionalAgentExpenses] = $agentExpenseRows
@@ -94,17 +98,19 @@ class InvoicePrintBuilder
         $receiptItems = $receiptItems->concat($receiptAgentExpenses->values());
         $additionalItems = $additionalItems->concat($additionalAgentExpenses->values());
 
-        // Group receipt booking services + agent receipt expenses by receipt family
-        $receiptItems = $this->groupReceiptServices($receiptItems);
+        $invoiceCurrency = InvoiceCurrency::normalize($invoice->currency ?? InvoiceCurrency::EGP);
 
-        $taxSubtotal = $this->sumItems($taxItems);
+        // Group receipt booking services + agent receipt expenses by receipt family
+        $receiptItems = $this->groupReceiptServices($receiptItems, $invoiceCurrency);
+
+        $taxSubtotal = $this->sumItems($taxItems, $invoiceCurrency);
         // Tax block uses invoice VAT/discount already calculated for tax base
         $vat = (float) ($invoice->value_added_tax_amount ?? 0);
         $discount = (float) ($invoice->discount_amount ?? 0);
         $taxTotal = (float) ($invoice->invoice_total_after_discount ?? max(0, $taxSubtotal + $vat - $discount));
 
-        $receiptSubtotal = $this->sumItems($receiptItems);
-        $additionalSubtotal = $this->sumItems($additionalItems);
+        $receiptSubtotal = $this->sumItems($receiptItems, $invoiceCurrency);
+        $additionalSubtotal = $this->sumItems($additionalItems, $invoiceCurrency);
 
         $taxGroup = $this->makeGroup(
             InvoicePrintSectionMapper::TAX,
@@ -137,6 +143,8 @@ class InvoicePrintBuilder
 
         return [
             'invoice_number' => $baseNumber,
+            'currency' => $invoiceCurrency,
+            'currency_symbol' => InvoiceCurrency::symbol($invoiceCurrency),
             'tax' => $taxGroup,
             'receipt' => $receiptGroup,
             'additional' => $additionalGroup,
@@ -216,7 +224,7 @@ class InvoicePrintBuilder
         return $containers->concat($rest)->values();
     }
 
-    private function groupReceiptServices(Collection $receiptServices): Collection
+    private function groupReceiptServices(Collection $receiptServices, string $invoiceCurrency = InvoiceCurrency::EGP): Collection
     {
         $groups = [];
 
@@ -225,7 +233,7 @@ class InvoicePrintBuilder
                 $key = $this->receiptGroupKeyFromName((string) ($item->full_name ?? ''));
                 $this->initReceiptGroupBucket($groups, $key);
                 $groups[$key]['services']->push($item);
-                $groups[$key]['total'] += (float) ($item->price ?? 0);
+                $groups[$key]['total'] += InvoiceCurrency::invoiceLineAmount($item, $invoiceCurrency);
                 if (filled($item->note)) {
                     $groups[$key]['notes']->push(trim((string) $item->note));
                 }
@@ -238,7 +246,7 @@ class InvoicePrintBuilder
                 $key = $this->receiptGroupKeyFromName($this->expenseDisplayName($expense));
                 $this->initReceiptGroupBucket($groups, $key);
                 $groups[$key]['expenses']->push($expense);
-                $groups[$key]['total'] += (float) ($expense->value ?? $item->price ?? 0);
+                $groups[$key]['total'] += InvoiceCurrency::invoiceLineAmount($expense, $invoiceCurrency);
                 if (filled($expense->notes)) {
                     $groups[$key]['notes']->push(trim((string) $expense->notes));
                 }
@@ -303,23 +311,23 @@ class InvoicePrintBuilder
         return $fullName !== '' ? $fullName : 'عام';
     }
 
-    private function sumItems(Collection $items): float
+    private function sumItems(Collection $items, string $invoiceCurrency = InvoiceCurrency::EGP): float
     {
-        return (float) $items->sum(function ($item) {
+        return (float) $items->sum(function ($item) use ($invoiceCurrency) {
             if ($item instanceof BookingService) {
-                return (float) ($item->price ?? 0);
+                return InvoiceCurrency::invoiceLineAmount($item, $invoiceCurrency);
             }
             if (is_object($item) && isset($item->type) && $item->type === 'grouped_receipt') {
                 return (float) ($item->total_price ?? 0);
             }
             if (is_object($item) && isset($item->type) && $item->type === 'agent_expense_attachment') {
-                return (float) ($item->expense->value ?? $item->price ?? 0);
+                return InvoiceCurrency::invoiceLineAmount($item->expense ?? $item, $invoiceCurrency);
             }
             if (is_object($item) && isset($item->price)) {
                 return (float) $item->price;
             }
 
-            // BookingContainer
+            // BookingContainer — amount already in invoice currency for pure USD invoices
             return (float) ($item->price ?? 0);
         });
     }

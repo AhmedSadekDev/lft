@@ -45,6 +45,7 @@ class ParallelContainerStagesTest extends TestCase
             $t->unsignedBigInteger('yard_id')->nullable();
             $t->unsignedBigInteger('shipping_agent_id')->nullable();
             $t->string('booking_number')->default('B-1');
+            $t->string('type_of_action')->nullable();
             $t->string('invoice_status')->nullable();
             $t->tinyInteger('is_submitted')->default(0);
             $t->timestamps();
@@ -630,6 +631,40 @@ class ParallelContainerStagesTest extends TestCase
         $this->assertSame(1, $service->visibleContainers(2, $type)->count());
     }
 
+    public function test_superagent_can_clear_agents_and_leave_container_unassigned(): void
+    {
+        $service = app(ContainerStageService::class);
+        $service->assign(1, [1], 1);
+        $this->assertSame(1, $service->assignments(1, 1)->count());
+
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+
+        $this->postJson('/api/superagent/booking/assign_agents', [
+            'booking_container_ids' => [1],
+            'type_id' => 1,
+            'agent_ids' => [],
+        ])->assertOk();
+
+        $this->assertSame(0, $service->assignments(1, 1)->count());
+        $this->assertSame(0, $service->visibleContainers(1, 1)->count());
+        $this->assertSame(1, (int) BookingContainer::find(1)->status);
+        $this->assertSame(0, (int) BookingContainer::find(1)->superagent_loading_approved);
+
+        BookingContainer::find(1)->update([
+            'status' => 0,
+            'superagent_specification_approved' => false,
+            'is_in_loading' => false,
+        ]);
+        $service->assign(1, [1], 0);
+        $this->postJson('/api/superagent/booking/assign_specification_booking', [
+            'booking_container_ids' => [1],
+            'agent_ids' => [],
+        ])->assertOk();
+        $this->assertSame(0, $service->assignments(1, 0)->count());
+    }
+
     /** @dataProvider assignmentStages */
     public function test_legacy_assignments_have_consistent_visibility_and_permissions(int $type): void
     {
@@ -984,6 +1019,98 @@ class ParallelContainerStagesTest extends TestCase
         $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('data.0.booking_number', 'OPEN-3');
     }
 
+    private function createWorkflowBooking(int $id, int $type, $createdAt = null): void
+    {
+        DB::table('bookings')->insert([
+            'id' => $id, 'yard_id' => 1, 'shipping_agent_id' => 1, 'booking_number' => "W-$id",
+            'type_of_action' => (string) $type, 'created_at' => $createdAt ?? now(), 'updated_at' => now(),
+        ]);
+        BookingContainer::forceCreate(['id' => $id, 'booking_id' => $id, 'status' => 0, 'superagent_specification_approved' => false, 'is_in_loading' => false]);
+    }
+
+    private function actAsWorkflowSuperagent(): void
+    {
+        if (! Schema::hasColumn('delivery_policy_containers', 'created_at')) {
+            Schema::table('delivery_policy_containers', fn (Blueprint $t) => $t->timestamps());
+        }
+        config(['workflows.effective_from' => now()->subDay()->toDateTimeString()]);
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+    }
+
+    private function tabBookingIds(string $url): array
+    {
+        return collect($this->getJson($url)->assertOk()->json('data.data'))->pluck('id')->all();
+    }
+
+    public function test_stuffing_path_skips_waiting_and_finishes_at_its_second_stage(): void
+    {
+        $this->actAsWorkflowSuperagent();
+        $this->createWorkflowBooking(10, \App\Services\ShipmentWorkflow::STUFFING);
+        $service = app(ContainerStageService::class);
+
+        $this->postJson('/api/superagent/booking/done_specification', ['booking_container_id' => 10])->assertOk();
+        $this->assertSame(1, (int) BookingContainer::find(10)->is_in_loading);
+        $this->assertSame([], $this->tabBookingIds('/api/superagent/booking/waiting'));
+        $this->assertNotContains(10, $this->tabBookingIds('/api/superagent/booking/loading'));
+        $this->getJson('/api/superagent/booking/workflow_stage?stage=stuffing')->assertOk()
+            ->assertJsonPath('data.data.0.id', 10)->assertJsonPath('data.data.0.workflow.name', 'تستيف')
+            ->assertJsonPath('data.data.0.loading_containers.0.id', 10);
+        $this->assertConflict(fn () => $service->assign(10, [2], 2), 422);
+        $this->assertConflict(fn () => $service->moveToLoading([10], false));
+
+        $service->assign(10, [2], 1);
+        $this->actingAs(Agent::find(2), 'agent');
+        $this->getJson('/api/agent/booking/fetch_loading_assignments')->assertOk()->assertJsonPath('data', []);
+        $this->getJson('/api/agent/booking/fetch_workflow_assignments?stage=stuffing')->assertOk()
+            ->assertJsonPath('data.0.booking_containers.0.id', 10)
+            ->assertJsonPath('data.0.booking_containers.0.workflow_stage', 'stuffing')
+            ->assertJsonPath('data.0.booking_containers.0.can_complete_stage', true);
+        $this->getJson('/api/agent/booking/fetch_workflow_assignments?stage=specification')->assertStatus(422);
+
+        $this->actAsWorkflowSuperagent();
+        $this->postJson('/api/superagent/booking/done_loading', ['booking_container_id' => 10])->assertOk();
+        $container = BookingContainer::find(10);
+        $this->assertSame(3, (int) $container->status);
+        $this->assertSame(1, (int) $container->superagent_unloading_approved);
+        $this->assertSame([], $this->tabBookingIds('/api/superagent/booking/workflow_stage?stage=stuffing'));
+        $this->assertSame([], $this->tabBookingIds('/api/superagent/booking/unloading'));
+        $this->postJson('/api/superagent/booking/done_unloading', ['booking_id' => 10])->assertStatus(422);
+
+        $service->returnToPreviousStage(10, 3);
+        $container = BookingContainer::find(10);
+        $this->assertSame(1, (int) $container->status);
+        $this->assertSame(0, (int) $container->superagent_loading_approved);
+        $this->assertSame(0, (int) $container->superagent_unloading_approved);
+    }
+
+    public function test_inbound_and_reefer_paths_use_their_own_tabs_while_old_bookings_stay_export(): void
+    {
+        $this->actAsWorkflowSuperagent();
+        $this->createWorkflowBooking(20, \App\Services\ShipmentWorkflow::INBOUND);
+        $this->createWorkflowBooking(30, \App\Services\ShipmentWorkflow::REEFER);
+        $this->createWorkflowBooking(40, \App\Services\ShipmentWorkflow::INBOUND, now()->subDays(2));
+        foreach ([20, 30, 40] as $id) {
+            $this->postJson('/api/superagent/booking/done_specification', ['booking_container_id' => $id])->assertOk();
+        }
+
+        $this->assertSame([20], $this->tabBookingIds('/api/superagent/booking/workflow_stage?stage=inbound_release'));
+        $this->assertSame([40, 30], $this->tabBookingIds('/api/superagent/booking/waiting'));
+        $this->postJson('/api/superagent/booking/move_to_loading', ['booking_container_ids' => [30, 40]])->assertOk();
+        $this->assertSame([30], $this->tabBookingIds('/api/superagent/booking/workflow_stage?stage=reefer_loading'));
+        $this->assertSame([40, 1], $this->tabBookingIds('/api/superagent/booking/loading'));
+
+        $this->postJson('/api/superagent/booking/done_loading', ['booking_id' => 20])->assertOk();
+        $this->assertSame([20], $this->tabBookingIds('/api/superagent/booking/workflow_stage?stage=inbound_empty_return'));
+        $this->assertSame(0, (int) BookingContainer::find(20)->superagent_unloading_approved);
+        $this->postJson('/api/superagent/booking/done_unloading', ['booking_id' => 20])->assertOk();
+        $this->assertSame([], $this->tabBookingIds('/api/superagent/booking/workflow_stage?stage=inbound_empty_return'));
+        $this->getJson('/api/superagent/booking/missions/all?stage_type=reefer_loading')->assertOk()
+            ->assertJsonPath('data.data.0.booking_containers.0.type', 'reefer_loading');
+        $this->getJson('/api/superagent/booking/workflow_stage?stage=unknown')->assertStatus(422);
+    }
+
     public function test_waiting_toggle_cannot_hide_completed_loading(): void
     {
         app(ContainerStageService::class)->complete(1, 1, 1);
@@ -1188,16 +1315,35 @@ class ParallelContainerStagesTest extends TestCase
         $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
     }
 
-    public function test_admin_cannot_change_a_receipt_after_stage_closure(): void
+    public function test_admin_cannot_edit_a_receipt_after_stage_closure(): void
     {
         $expense = $this->receipt();
         $service = app(ContainerStageService::class);
         $service->approve(1, 1);
         $service->closeReceipts(1, 1, 7, 2);
         $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 1, ['value' => 200], null, true));
-        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 1, null, null, true));
         $this->assertSame(100.0, (float) $expense->fresh()->value);
         $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+    }
+
+    public function test_admin_can_delete_a_wrong_receipt_after_stage_closure_and_refund_the_agent(): void
+    {
+        $expense = $this->receipt();
+        $service = app(ContainerStageService::class);
+        $service->approve(1, 1);
+        $service->closeReceipts(1, 1, 7, 2);
+
+        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 1, null));
+        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+
+        app(StageExpenseService::class)->change(1, $expense->id, 1, null, null, true);
+        $this->assertNull(AgentExpense::find($expense->id));
+        $this->assertNotNull(AgentExpense::withTrashed()->find($expense->id)->voided_at);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+        $this->assertNotNull(BookingContainerStage::where('booking_container_id', 1)->where('type_id', 1)->first()->receipts_closed_at);
+
+        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 2, null, null, true));
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
     }
 
     public function test_used_migration_cannot_discard_receipt_history(): void

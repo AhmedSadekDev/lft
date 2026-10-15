@@ -385,7 +385,9 @@
                                     $imageUrl = '';
                                 }
 
-                                $date = $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('Y-m-d H:i') : '';
+                                // AgentExpense's created_at accessor drops the time
+                                $createdAt = $item->getRawOriginal('created_at');
+                                $date = $createdAt ? \Carbon\Carbon::parse($createdAt)->format('Y-m-d H:i') : '';
                             } elseif ($isPayingcar) {
                                 // سداد المديونية للسيارات (منصرف)
                                 $expenseValue = (float) ($item->value ?? 0);

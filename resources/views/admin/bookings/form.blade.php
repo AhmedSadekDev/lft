@@ -561,7 +561,7 @@
             @endforelse
 
             <div class="booking-submit-wrap">
-                <button type="submit" class="booking-submit-btn">
+                <button type="submit" class="btn btn-primary booking-submit-btn">
                     <i class="fas fa-check"></i>
                     {{ __('admin.submit') }}
                 </button>
@@ -701,7 +701,8 @@
         });
 
         function thirdStep(type_of_action) {
-            if (type_of_action == 0) {
+            // التستيف والصادر البرادات بيانات حاوياتهما مثل التصدير.
+            if (type_of_action == 0 || type_of_action == 3 || type_of_action == 4) {
                 // ----------- OutBound -----------
                 $('.Inbound_inputs').hide();
                 var html = `@include('admin.bookings.thirdStep.outbound')`;

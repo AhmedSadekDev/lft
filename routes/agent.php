@@ -173,6 +173,7 @@ Route::group(['middleware' => ['localization', \App\Http\Middleware\BlockInvoice
 
 
         Route::get("booking/fetch_unloading_assignments", "fetch_unloading_assignments");
+        Route::get("booking/fetch_workflow_assignments", "fetch_workflow_assignments");
 
         Route::post("booking/fetch_bookings", "fetch_bookings");
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\InvoiceCurrency;
 use App\Traits\FileAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,9 @@ class BookingService extends Model
         'service_id',
         'note',
         'price',
+        'currency',
+        'foreign_amount',
+        'exchange_rate',
         'image',
         'service_data', // TODO: HANDLE WHEN THESE SHLD BE ADDED
         'vault_id',
@@ -27,6 +31,36 @@ class BookingService extends Model
         'created_by',
         'updated_by',
     ];
+
+    protected $attributes = [
+        'currency' => InvoiceCurrency::EGP,
+    ];
+
+    protected $casts = [
+        'price' => 'float',
+        'foreign_amount' => 'float',
+        'exchange_rate' => 'float',
+    ];
+
+    public function isUsd(): bool
+    {
+        return InvoiceCurrency::isUsd($this->currency ?? InvoiceCurrency::EGP);
+    }
+
+    public function egpAmount(): float
+    {
+        return round((float) ($this->price ?? 0), 2);
+    }
+
+    public function invoiceAmount(?string $invoiceCurrency = InvoiceCurrency::EGP): float
+    {
+        return InvoiceCurrency::invoiceLineAmount($this, $invoiceCurrency);
+    }
+
+    public function formattedMoney(?string $invoiceCurrency = InvoiceCurrency::EGP): string
+    {
+        return InvoiceCurrency::formatLine($this, $invoiceCurrency);
+    }
 
     /**
      * رابط صورة الإيصال (مجلد public disk: storage/app/public/services)

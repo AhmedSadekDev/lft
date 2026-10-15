@@ -16,4 +16,6 @@ return [
     'Outbound'      => 'تصدير',
     'Inbound'       => 'إستيراد',
     'Clearance'     => 'تخليص جمركي',
+    'Stuffing'      => 'تستيف',
+    'Reefer'        => 'صادر برادات',
 ];

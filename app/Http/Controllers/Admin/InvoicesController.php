@@ -116,6 +116,10 @@ class InvoicesController extends Controller
         // Step 1: Find the booking
         $book = Booking::findOrFail($id);
 
+        if ($book->invoice && \App\Support\InvoiceCurrency::isUsd($book->invoice->currency ?? null)) {
+            return back()->with('error', 'فاتورة الدولار فاتورة تجارية دولية؛ إرسالها لمنظومة الفاتورة الإلكترونية المصرية غير متاح (المنظومة بالجنيه فقط).');
+        }
+
         // Step 2: Get Access Token
         $accessToken = $this->eInvoiceService->getAccessToken();
         // dd($accessToken);

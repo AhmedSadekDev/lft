@@ -30,5 +30,5 @@
             </div>
         </div>
     </td>
-    <td style="padding: 4px 6px; text-align: center; font-weight: 700; color: #28a745; font-size: 12px; background: #f8f9fa; vertical-align: top;">{{ number_format($booking_container->price ?? 0, 2) }} ج.م</td>
+    <td style="padding: 4px 6px; text-align: center; font-weight: 700; color: #28a745; font-size: 12px; background: #f8f9fa; vertical-align: top;">{{ number_format($booking_container->price ?? 0, 2) }} {{ isset($invoice) ? $invoice->currencySymbol() : 'ج.م' }}</td>
 </tr>

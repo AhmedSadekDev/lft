@@ -89,6 +89,11 @@ class BookingContainerResource extends JsonResource
         // أحمر إذا كانت معلقة، أخضر إذا نفذ المندوب الإجراء أو اعتمدته الإدارة
         $statusColor = ($isCompleted || $isApproved) ? 'green' : 'red';
 
+        $workflow = \App\Services\ShipmentWorkflow::of($this->booking);
+        $workflowStage = $contextType !== false && \App\Services\ShipmentWorkflow::hasStage($workflow, $contextType)
+            ? \App\Services\ShipmentWorkflow::stageKey($workflow, $contextType)
+            : null;
+
         return [
             "id" => $this->id,
             'company_name' => $this->booking->company->name ?? "",
@@ -117,6 +122,9 @@ class BookingContainerResource extends JsonResource
             "can_complete_stage" => $canComplete,
             "operational_stage" => $operationalStage,
             "type_id" => $contextType === false ? null : $contextType,
+            "workflow_type" => $workflow,
+            "workflow_stage" => $workflowStage,
+            "workflow_stage_label" => $workflowStage ? \App\Services\ShipmentWorkflow::LABELS[$workflowStage] : null,
             "receipts_closed" => $receiptsClosed,
             "receipts_version" => $receiptVersion,
             "specification_approved_at" => $this->specification_approved_at,

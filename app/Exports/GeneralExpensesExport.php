@@ -221,7 +221,9 @@ class GeneralExpensesExport implements FromCollection, WithHeadings, ShouldAutoS
 
             $data['agentName'] = $item->agent?->name ?? '-';
             $data['bookingNumber'] = $item->bookingContainer?->booking?->booking_number ?? '';
-            $data['date'] = $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('Y-m-d H:i') : '';
+            // AgentExpense's created_at accessor drops the time
+            $createdAt = $item->getRawOriginal('created_at');
+            $data['date'] = $createdAt ? \Carbon\Carbon::parse($createdAt)->format('Y-m-d H:i') : '';
 
             // الحصول على الملاحظات
             $data['notes'] = $item->notes ?? '';

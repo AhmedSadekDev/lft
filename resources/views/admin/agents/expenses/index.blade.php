@@ -43,7 +43,8 @@
                             <td>{{ $allExpense->title ?? "" }}</td>
                             <td>{{ $allExpense instanceof \App\Models\AgentExpense ? ($allExpense->responsible_name ?: '—') : ($allExpense->transferer?->name ?? '—') }}</td>
                             <td>{{ $allExpense->value ?? "" }}</td>
-                            <td>{{ $allExpense->created_at ?? "" }}</td>
+                            @php $createdAt = $allExpense->getRawOriginal('created_at'); @endphp
+                            <td>{{ $createdAt ? \Carbon\Carbon::parse($createdAt)->format('Y-m-d H:i') : '' }}</td>
                             <td>
                                 @if ($allExpense instanceof \App\Models\AgentExpense)
                                     @if ($awaitingReviewIds->has($allExpense->id))
@@ -78,7 +79,7 @@
         function DeleteExpense(id, version) {
             Swal.fire({
                 title: "{{ __('alerts.are_you_sure') }}",
-                text: "{{ __('alerts.not_revert_information') }}",
+                text: "سيتم حذف الإيصال وإرجاع قيمته إلى عهدة المندوب، حتى لو تم إقفال إيصالات المرحلة. {{ __('alerts.not_revert_information') }}",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: "{{ __('alerts.confirm') }}",
