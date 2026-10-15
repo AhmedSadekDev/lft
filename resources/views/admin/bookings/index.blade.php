@@ -154,15 +154,16 @@
             box-shadow: var(--shadow-sm);
         }
         .pagination-item.active .pagination-link {
-            background-color: var(--primary);
-            border-color: var(--primary);
+            background-color: #2563eb;
+            border-color: #2563eb;
             color: #fff;
             font-weight: 600;
             box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
         }
         .pagination-item.active .pagination-link:hover {
-            background-color: var(--primary-hover);
-            border-color: var(--primary-hover);
+            background-color: #1d4ed8;
+            border-color: #1d4ed8;
+            color: #fff;
             transform: translateY(-1px);
         }
         .pagination-link.disabled,
@@ -218,9 +219,9 @@
             box-shadow: var(--shadow);
         }
         .stage-tab-btn.active {
-            background: var(--primary);
+            background: #2563eb;
             color: #fff;
-            border-color: var(--primary);
+            border-color: #2563eb;
             box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
         }
         .stage-tab-btn .badge {
@@ -229,8 +230,9 @@
             border-radius: 20px;
         }
         .stage-tab-btn.active .badge {
-            background: rgba(255, 255, 255, 0.25);
-            color: #fff;
+            background: rgba(15, 23, 42, 0.3) !important;
+            color: #fff !important;
+            border: 0 !important;
         }
         .stage-tab-btn:not(.active) .badge {
             background: var(--surface-secondary);

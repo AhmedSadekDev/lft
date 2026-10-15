@@ -66,12 +66,12 @@
             border: 1px solid transparent;
         }
         .booking-btn-invoice--view {
-            background: var(--success);
+            background: #047857;
             color: #fff;
         }
         .booking-btn-invoice--view:hover { color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.4); text-decoration: none; }
         .booking-btn-invoice--create {
-            background: var(--primary);
+            background: #2563eb;
             color: #fff;
         }
         .booking-btn-invoice--create:hover { color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59,130,246,0.4); text-decoration: none; }
@@ -223,7 +223,7 @@
         .booking-section-icon--teal { background: #0dcaf0; }
         .booking-section-icon--green { background: #198754; }
         .booking-section-badge {
-            background: var(--primary);
+            background: #2563eb;
             color: #fff;
             padding: 0.4rem 0.95rem;
             border-radius: 20px;

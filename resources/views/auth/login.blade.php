@@ -1,149 +1,76 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="dark">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>تسجيل الدخول · Leader for Trans</title>
+@extends('layouts.auth')
 
-    <link rel="shortcut icon" href="{{ asset('assets/media/logo.png') }}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}">
+@section('title', 'تسجيل الدخول')
 
-    <script>
-        (function() {
-            var theme = localStorage.getItem('lft_theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', theme);
-        })();
-    </script>
-</head>
-<body style="margin: 0; padding: 0;">
-    <div class="lft-login-page">
-        <div class="lft-login-overlay"></div>
+@section('content')
+    <h1 class="lft-glass-title">تسجيل الدخول</h1>
+    <p class="lft-glass-subtitle">مرحباً بك في لوحة التحكم</p>
 
-        <!-- Topbar Controls (Language & Theme Toggle) -->
-        <div class="lft-login-topbar">
-            <div class="lft-lang-pill">
-                <i class="fas fa-globe"></i>
-                <span>العربية</span>
-            </div>
-            <div class="lft-theme-toggle">
-                <button type="button" class="lft-theme-toggle-btn" data-theme-val="light" title="الوضع الفاتح">
-                    <i class="fas fa-sun"></i>
-                </button>
-                <button type="button" class="lft-theme-toggle-btn active" data-theme-val="dark" title="الوضع الداكن">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
+    @if (session('status'))
+        <div class="lft-auth-alert lft-auth-alert--success" role="status">
+            <i class="fas fa-check-circle" aria-hidden="true"></i>
+            <span>{{ session('status') }}</span>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('login') }}" autocomplete="on" data-lft-auth-form>
+        @csrf
+
+        <label for="email" class="lft-glass-label">البريد الإلكتروني</label>
+        <div class="lft-glass-input-wrapper">
+            <input id="email"
+                   type="email"
+                   class="lft-glass-input"
+                   name="email"
+                   value="{{ old('email') }}"
+                   required
+                   autocomplete="email"
+                   autofocus
+                   placeholder="name@company.com"
+                   @error('email') aria-invalid="true" aria-describedby="email-error" @enderror>
+            <span class="lft-glass-input-icon"><i class="far fa-envelope" aria-hidden="true"></i></span>
+        </div>
+        @error('email')
+            <span class="lft-glass-field-error" id="email-error" role="alert">{{ $message }}</span>
+        @enderror
+
+        <label for="password" class="lft-glass-label">كلمة المرور</label>
+        <div class="lft-glass-input-wrapper">
+            <input id="password"
+                   type="password"
+                   class="lft-glass-input"
+                   name="password"
+                   required
+                   autocomplete="current-password"
+                   placeholder="••••••••"
+                   @error('password') aria-invalid="true" aria-describedby="password-error" @enderror>
+            <span class="lft-glass-input-icon"><i class="fas fa-lock" aria-hidden="true"></i></span>
+            <button type="button" class="lft-glass-toggle-pw" data-target="password" aria-label="إظهار كلمة المرور" aria-pressed="false">
+                <i class="far fa-eye" aria-hidden="true"></i>
+            </button>
+        </div>
+        @error('password')
+            <span class="lft-glass-field-error" id="password-error" role="alert">{{ $message }}</span>
+        @enderror
+
+        <div class="lft-glass-remember-row">
+            <label class="lft-glass-checkbox-label" for="remember">
+                <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                <span>تذكرني</span>
+            </label>
+
+            @if (Route::has('password.request'))
+                <a class="lft-glass-forgot-link" href="{{ route('password.request') }}">نسيت كلمة المرور؟</a>
+            @endif
         </div>
 
-        <!-- Center Login Container -->
-        <div class="lft-login-card-container">
-            <!-- Brand Header -->
-            <div class="lft-login-brand-header">
-                <div class="lft-login-emblem">
-                    <i class="fas fa-truck-moving"></i>
-                </div>
-                <div class="lft-login-brand-name">Leader for Trans</div>
-                <div class="lft-login-brand-tagline">منظومة التجارة والأعمال الرقمية</div>
-            </div>
+        <button type="submit" class="lft-glass-submit-btn" data-loading-text="جاري تسجيل الدخول...">
+            <span>تسجيل الدخول</span>
+            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+        </button>
 
-            <!-- Glassmorphism Card -->
-            <div class="lft-glass-card">
-                <h1 class="lft-glass-title">تسجيل الدخول</h1>
-                <p class="lft-glass-subtitle">مرحباً بك في لوحة التحكم</p>
-
-                @if (isset($errors) && $errors->any())
-                    <div style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 18px;">
-                        <i class="fas fa-exclamation-circle ml-2"></i>
-                        {{ $errors->first() }}
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}" autocomplete="on">
-                    @csrf
-
-                    <!-- Email Input -->
-                    <div class="form-group mb-3">
-                        <label for="email" class="lft-glass-label">البريد الإلكتروني</label>
-                        <div class="lft-glass-input-wrapper">
-                            <input id="email" 
-                                   type="email" 
-                                   class="lft-glass-input" 
-                                   name="email" 
-                                   value="{{ old('email', 'superadmin@kasib.com') }}" 
-                                   required 
-                                   autocomplete="email" 
-                                   autofocus 
-                                   placeholder="superadmin@kasib.com">
-                            <span class="lft-glass-input-icon">
-                                <i class="far fa-envelope"></i>
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Password Input -->
-                    <div class="form-group mb-3">
-                        <label for="password" class="lft-glass-label">كلمة المرور</label>
-                        <div class="lft-glass-input-wrapper">
-                            <input id="password" 
-                                   type="password" 
-                                   class="lft-glass-input" 
-                                   name="password" 
-                                   required 
-                                   autocomplete="current-password" 
-                                   placeholder="••••••••••••">
-                            <span class="lft-glass-input-icon">
-                                <i class="fas fa-lock"></i>
-                            </span>
-                            <button type="button" class="lft-glass-toggle-pw" data-target="password" title="إظهار / إخفاء كلمة المرور">
-                                <i class="far fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Remember & Forgot Password -->
-                    <div class="lft-glass-remember-row">
-                        <label class="lft-glass-checkbox-label" for="remember">
-                            <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }} style="accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer;">
-                            <span>تذكر دائماً</span>
-                        </label>
-
-                        @if (Route::has('password.request'))
-                            <a class="lft-glass-forgot-link" href="{{ route('password.request') }}">
-                                نسيت كلمة المرور؟
-                            </a>
-                        @endif
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="lft-glass-submit-btn">
-                        <span>تسجيل الدخول</span>
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-
-                    <div class="lft-glass-divider">
-                        <span>أو</span>
-                    </div>
-
-                    <!-- Footer Link -->
-                    <div class="lft-glass-footer">
-                        ليس لديك حساب؟ <a href="mailto:support@leaderfortrans.com">تواصل مع المسؤول</a>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Security Badge -->
-            <div class="lft-security-badge">
-                <i class="fas fa-shield-alt text-primary"></i>
-                <span>بوابة دخول المسؤولين فقط</span>
-            </div>
+        <div class="lft-glass-footer">
+            ليس لديك حساب؟ تواصل مع مسؤول النظام
         </div>
-    </div>
-
-    <script src="{{ asset('assets/js/admin-ui.js') }}"></script>
-</body>
-</html>
+    </form>
+@endsection

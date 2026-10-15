@@ -286,6 +286,20 @@
 .invoice-divider { border-color: #e8ecf1; margin: 1.5rem 0; }
 .invoice-table-wrap { border-color: #e8ecf1 !important; }
 
+[data-theme="dark"] .invoice-back-btn,
+[data-theme="dark"] .invoice-back-btn:hover { background: var(--bg-card); color: var(--text-primary); }
+[data-theme="dark"] .invoice-section-card { background: var(--bg-card); border-color: var(--border-color); }
+[data-theme="dark"] .invoice-section-head--blue { background: rgba(59, 130, 246, 0.14); }
+[data-theme="dark"] .invoice-section-head--green { background: rgba(52, 211, 153, 0.12); }
+[data-theme="dark"] .invoice-section-head--orange { background: rgba(251, 146, 60, 0.12); }
+[data-theme="dark"] .invoice-info-item { background: var(--bg-card-hover); border-color: var(--border-color); }
+[data-theme="dark"] .invoice-info-label { color: var(--text-secondary); }
+[data-theme="dark"] .invoice-info-value,
+[data-theme="dark"] .invoice-section-title,
+[data-theme="dark"] .invoice-subsection-title { color: var(--text-primary); }
+[data-theme="dark"] .invoice-divider,
+[data-theme="dark"] .invoice-table-wrap { border-color: var(--border-color) !important; }
+
 @media (max-width: 768px) {
     .invoice-header-icon { width: 48px; height: 48px; }
     .invoice-header-icon i { font-size: 1.4rem; }

@@ -422,11 +422,9 @@
 
 <style>
     .card-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
         padding: 1rem 1.5rem;
     }
     .card-header h4 {
-        color: white !important;
         font-weight: bold;
     }
     .card-header .btn-light {

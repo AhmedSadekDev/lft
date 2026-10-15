@@ -193,10 +193,38 @@ class DashbaordController extends Controller
         $bMonths = []; $bData = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $bMonths[] = $date->format('M Y');
+            $bMonths[] = $date->copy()->locale('ar')->translatedFormat('F');
             $bData[] = (int)($bChartRaw[$date->format('Y-m')] ?? 0);
         }
         $bookingsChart = ['labels' => $bMonths, 'data' => $bData];
+
+        // 10. توزيع الحاويات حسب المرحلة — نفس شروط تبويبات الطلبات وبنفس أولوية Booking::stage_info
+        // (فاتورة/تعتيق معتمد > تعتيق > تحميل > انتظار > تخصيص) حتى تُحسب كل حاوية في مرحلة واحدة.
+        $stageRows = BookingContainer::query()
+            ->selectRaw("
+                CASE
+                    WHEN `superagent_unloading_approved` = 1
+                      OR EXISTS (SELECT 1 FROM `invoices` WHERE `invoices`.`booking_id` = `booking_containers`.`booking_id`) THEN 'invoiced'
+                    WHEN `superagent_loading_approved` = 1 THEN 'unloading'
+                    WHEN `superagent_specification_approved` = 1 AND `is_in_loading` = 1 THEN 'loading'
+                    WHEN `superagent_specification_approved` = 1 THEN 'waiting'
+                    ELSE 'assigned'
+                END as stage,
+                COUNT(*) as cnt
+            ")
+            ->groupBy('stage')
+            ->pluck('cnt', 'stage');
+
+        $containerStages = [];
+        foreach (['assigned', 'waiting', 'loading', 'unloading', 'invoiced'] as $stage) {
+            $containerStages[$stage] = (int) ($stageRows[$stage] ?? 0);
+        }
+        $stats['active_containers'] = array_sum($containerStages) - $containerStages['invoiced'];
+
+        $recentBookings = Booking::with(['company', 'invoice', 'bookingContainers'])
+            ->latest('id')
+            ->take(5)
+            ->get();
 
         // 9. بيانات الرسم البياني المالي (5 استعلامات مجمعة بدلاً من 72)
         $aeChart = AgentExpense::where('created_at', '>=', $sixMonthsAgo)
@@ -261,6 +289,6 @@ class DashbaordController extends Controller
         }
         $financialChart = ['labels' => $fMonths, 'expenses' => $fExpenses, 'income' => $fIncome];
 
-        return view('admin.index', compact('stats', 'bookingsChart', 'financialChart'));
+        return view('admin.index', compact('stats', 'bookingsChart', 'financialChart', 'containerStages', 'recentBookings'));
     }
 }
