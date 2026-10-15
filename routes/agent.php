@@ -87,6 +87,10 @@ Route::group(['middleware' => ['localization', \App\Http\Middleware\BlockInvoice
         Route::get('fetch_latest_expenses', [ExpenseController::class, 'fetch_latest_expenses']);
         //delete_expense
         Route::post('delete_expense', [ExpenseController::class, 'delete_expense']);
+        //review_expenses
+        Route::post('review_expenses', [ExpenseController::class, 'review_expenses']);
+        //open_bookings
+        Route::get('open_bookings', [ExpenseController::class, 'open_bookings']);
 
 
 

@@ -7,7 +7,15 @@
         <div class="card-header flex-wrap py-5">
             <div class="card-toolbar">
                 <!--begin::Button-->
-
+                @if ($awaitingReviewIds->isNotEmpty())
+                    <form method="POST" action="{{ route('expenses.agent_expenses.review', $agent) }}"
+                        onsubmit="return confirm('سيتم اعتماد {{ $awaitingReviewIds->count() }} إيصال وإخفاؤها من تطبيق المندوب. متابعة؟')">
+                        @csrf
+                        <button type="submit" class="btn btn-primary font-weight-bolder">
+                            <i class="fas fa-check-double"></i> تمت مراجعة الإيصالات ({{ $awaitingReviewIds->count() }})
+                        </button>
+                    </form>
+                @endif
                 <!--end::Button-->
             </div>
         </div>
@@ -21,6 +29,7 @@
                         <th scope="col">المندوب / المشرف</th>
                         <th scope="col">{{ __('admin.value') }}</th>
                         <th scope="col">{{ __('main.date') }}</th>
+                        <th scope="col">المراجعة</th>
                         <th scope="col">{{ __('admin.actions') }}</th>
                     </tr>
                 </thead>
@@ -35,6 +44,15 @@
                             <td>{{ $allExpense instanceof \App\Models\AgentExpense ? ($allExpense->responsible_name ?: '—') : ($allExpense->transferer?->name ?? '—') }}</td>
                             <td>{{ $allExpense->value ?? "" }}</td>
                             <td>{{ $allExpense->created_at ?? "" }}</td>
+                            <td>
+                                @if ($allExpense instanceof \App\Models\AgentExpense)
+                                    @if ($awaitingReviewIds->has($allExpense->id))
+                                        <span class="badge badge-warning">بانتظار المراجعة</span>
+                                    @else
+                                        <span class="badge badge-success">تمت المراجعة</span>
+                                    @endif
+                                @endif
+                            </td>
                             <td>
                                 @if(isset($allExpense->agent_id) && $allExpense instanceof \App\Models\AgentExpense)
                                     <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"

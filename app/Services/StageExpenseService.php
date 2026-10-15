@@ -100,4 +100,23 @@ class StageExpenseService
             }
         });
     }
+
+    /**
+     * «تمت مراجعة الإيصالات»: تختفي الإيصالات المفتوحة من شاشة المندوب ولا يعدلها بعدها إلا المسؤول.
+     *
+     * @param  int[]|null  $ids  null = كل إيصالات المندوب المفتوحة
+     */
+    public function markReviewed(int $agentId, ?array $ids = null): int
+    {
+        return DB::transaction(function () use ($agentId, $ids) {
+            $reviewIds = AgentExpense::where('agent_id', $agentId)->awaitingReview()
+                ->when($ids !== null, fn ($q) => $q->whereIn('id', $ids))
+                ->lockForUpdate()->pluck('id')->all();
+            if ($reviewIds) {
+                AgentExpense::whereKey($reviewIds)->update(['admin_approval' => 1, 'version' => DB::raw('version + 1')]);
+            }
+
+            return count($reviewIds);
+        });
+    }
 }

@@ -113,4 +113,31 @@ class AgentExpense extends Model
             ->whereDoesntHave('bookingContainer.booking.invoice')
             ->whereDoesntHave('delivery_policy.booking_containers.booking.invoice');
     }
+
+    /**
+     * إيصالات التطبيق التي لم تُراجع بعد. المراجعة = admin_approval، أو إقفال إيصالات المرحلة،
+     * أو تسوية العهدة، أو إصدار فاتورة؛ وهي نفس الحالات التي يُمنع فيها المندوب من التعديل.
+     */
+    public function scopeAwaitingReview($query)
+    {
+        return $query->visibleToAgent()
+            ->whereNull('booking_service_id')
+            ->where(fn ($q) => $q->where('admin_approval', 0)->orWhereNull('admin_approval'))
+            ->whereDoesntHave('delivery_policy', fn ($q) => $q->where('is_settled', 1))
+            ->whereNotExists(function ($q) {
+                $q->selectRaw('1')->from('booking_container_stages')
+                    ->whereColumn('booking_container_stages.booking_container_id', 'agent_expenses.booking_container_id')
+                    ->whereColumn('booking_container_stages.type_id', 'agent_expenses.type_id')
+                    ->whereNotNull('booking_container_stages.receipts_closed_at');
+            });
+    }
+
+    /**
+     * شاشة مصروفات المندوب: إيصالاته تبقى حتى المراجعة، وخصومات الداشبورد تظهر يومها فقط كما كانت.
+     */
+    public function scopeOnAgentScreen($query)
+    {
+        return $query->where(fn ($q) => $q->where(fn ($open) => $open->awaitingReview())
+            ->orWhere(fn ($dashboard) => $dashboard->whereNotNull('booking_service_id')->visibleToAgent()->whereDate('created_at', now())));
+    }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Agent\BookingRequest;
 use App\Http\Requests\Api\Superagent\BookingContainerRequest;
 use App\Http\Requests\Api\Superagent\NoteRequest;
+use App\Http\Requests\Api\Superagent\StageApprovalRequest;
 use App\Http\Resources\Api\Superagent\BookingContainerResource;
 use App\Http\Resources\Api\Superagent\BookingResource;
 use App\Http\Resources\Api\Superagent\NoteResource;
@@ -18,49 +19,45 @@ use Illuminate\Http\Request;
 
 class BookingContainerActionController extends Controller
 {
-    public function done_specification(BookingContainerRequest $request)
+    public function done_specification(StageApprovalRequest $request)
     {
-        try {
-            app(ContainerStageService::class)->approve((int) $request->booking_container_id, 0, auth()->guard('superagent')->id());
-
-            $booking_container = BookingContainer::findOrFail($request->booking_container_id);
-
-            return $this->returnAllData(
-                new BookingContainerResource($booking_container),
-                __('alerts.success')
-            );
-        } catch (\Exception $ex) {
-            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
-        }
+        return $this->approveStage($request, 0);
     }
 
 
-    public function done_loading(BookingContainerRequest $request)
+    public function done_loading(StageApprovalRequest $request)
     {
-        try {
-
-            app(ContainerStageService::class)->approve((int) $request->booking_container_id, 1, auth()->guard('superagent')->id());
-
-            $data = BookingContainerResource::collection(
-                BookingContainer::whereId($request->booking_container_id)->get()
-            );
-
-            return $this->returnAllData($data, __('alerts.success'));
-        } catch (\Exception $ex) {
-            return $this->returnError($ex instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface ? $ex->getStatusCode() : 500, $ex->getMessage());
-        }
+        return $this->approveStage($request, 1);
     }
 
 
-    public function done_unloading(BookingContainerRequest $request)
+    public function done_unloading(StageApprovalRequest $request)
+    {
+        return $this->approveStage($request, 2);
+    }
+
+    /**
+     * Container row: approves that container only. Booking header: approves every ready container.
+     */
+    private function approveStage(StageApprovalRequest $request, int $type)
     {
         try {
+            $service = app(ContainerStageService::class);
+            $superagentId = auth()->guard('superagent')->id();
 
-            app(ContainerStageService::class)->approve((int) $request->booking_container_id, 2, auth()->guard('superagent')->id());
-
-            $data = BookingContainerResource::collection(
-                BookingContainer::whereId($request->booking_container_id)->get()
-            );
+            if ($request->filled('booking_container_id')) {
+                $service->approve((int) $request->booking_container_id, $type, $superagentId);
+                $containers = BookingContainer::whereId($request->booking_container_id)->get();
+                // done_specification has always returned a single container object.
+                $data = $type === 0
+                    ? new BookingContainerResource($containers->first())
+                    : BookingContainerResource::collection($containers);
+            } else {
+                $service->approveBooking((int) $request->booking_id, $type, $superagentId);
+                $data = BookingContainerResource::collection(
+                    BookingContainer::where('booking_id', $request->booking_id)->orderBy('id')->get()
+                );
+            }
 
             return $this->returnAllData($data, __('alerts.success'));
         } catch (\Exception $ex) {

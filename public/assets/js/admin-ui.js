@@ -6,6 +6,11 @@
 (function () {
     'use strict';
 
+    // Arabic-insensitive matching: أ/إ/آ → ا, ة → ه, ى → ي
+    function normalizeSearchText(s) {
+        return s.toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, ' ').trim();
+    }
+
     // 1. Theme Management (Light / Dark)
     // The inline <head> script already resolved saved choice → system preference,
     // so read the attribute instead of imposing a second default.
@@ -201,9 +206,7 @@
         // 7. Sidebar page search (filters menu items by their visible labels).
         var sidebarSearch = document.getElementById('lftSidebarSearch');
         if (asideMenu && sidebarSearch) {
-            var normalize = function (s) {
-                return s.toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, ' ').trim();
-            };
+            var normalize = normalizeSearchText;
             var emptyNote = document.getElementById('lftSidebarEmpty');
             var topItems = asideMenu.querySelectorAll('.menu-nav > .menu-item');
             var filterMenu = function () {
@@ -264,5 +267,158 @@
                 }
             });
         }
+    });
+
+    // 10. Searchable dropdowns: every <select> becomes a bootstrap-select with live search.
+    // Opt a select out with the data-native-select attribute.
+    // Page scripts keep using the native select API; the observer below mirrors their
+    // changes (new selects, cloned blocks, replaced options, .val(), disabled) into the widget.
+    var $ = window.jQuery;
+    if (!$ || !$.fn.selectpicker || !('MutationObserver' in window)) {
+        return;
+    }
+
+    $.fn.selectpicker.defaults = $.extend({}, $.fn.selectpicker.defaults, {
+        liveSearch: true,
+        liveSearchPlaceholder: 'ابحث...',
+        noneResultsText: 'لا توجد نتائج مطابقة لـ {0}',
+        noneSelectedText: 'اختر'
+    });
+
+    var SKIP_SELECTOR = '[data-native-select], .dataTables_length select, .select2-hidden-accessible';
+    var OBSERVE_OPTIONS = { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled', 'selected'] };
+    var pendingRoots = [];
+    var pendingRefresh = [];
+    var flushQueued = false;
+    var observer;
+
+    var isEnhanced = function (sel) {
+        return !!$.data(sel, 'selectpicker');
+    };
+
+    var addSearchTokens = function (sel) {
+        var added = false;
+        Array.prototype.forEach.call(sel.options, function (opt) {
+            if (opt.hasAttribute('data-tokens')) return;
+            var tokens = normalizeSearchText(opt.textContent);
+            if (tokens && tokens !== opt.textContent.toLowerCase().trim()) {
+                opt.setAttribute('data-tokens', tokens);
+                added = true;
+            }
+        });
+        return added;
+    };
+
+    // A cloned block carries the widget markup but not its jQuery data; strip it so the
+    // copy gets its own working widget.
+    var unwrapClonedWidget = function (sel) {
+        var wrap = sel.parentNode;
+        wrap.parentNode.insertBefore(sel, wrap);
+        wrap.parentNode.removeChild(wrap);
+        $(sel).removeClass('bs-select-hidden').find('option.bs-title-option').remove();
+    };
+
+    var enhanceSelect = function (sel) {
+        // .selectpicker elements may already have been initialized by the plugin itself
+        if (isEnhanced(sel)) {
+            if (addSearchTokens(sel)) $(sel).selectpicker('refresh');
+            return;
+        }
+        if ($(sel).is(SKIP_SELECTOR) || parseInt(sel.getAttribute('size'), 10) > 1) return;
+        if (sel.parentNode && $(sel.parentNode).hasClass('bootstrap-select')) {
+            unwrapClonedWidget(sel);
+        }
+        if (!sel.hasAttribute('data-container') && $(sel).closest('table, .table-responsive').length && !$(sel).closest('.modal').length) {
+            sel.setAttribute('data-container', 'body');
+        }
+        addSearchTokens(sel);
+        $(sel).selectpicker();
+    };
+
+    var isTitleOption = function (node) {
+        return node.nodeType === 1 && node.classList.contains('bs-title-option');
+    };
+
+    var queueOnce = function (list, item) {
+        if (list.indexOf(item) === -1) list.push(item);
+    };
+
+    var collectMutations = function (records) {
+        records.forEach(function (record) {
+            var target = record.target;
+            var owner = target.nodeName === 'SELECT' ? target : (target.closest ? target.closest('select') : null);
+
+            if (record.type === 'attributes') {
+                if (owner) queueOnce(pendingRefresh, owner);
+                return;
+            }
+            if (owner) {
+                var onlyTitleOption = Array.prototype.every.call(record.addedNodes, isTitleOption)
+                    && Array.prototype.every.call(record.removedNodes, isTitleOption);
+                if (!onlyTitleOption) queueOnce(pendingRefresh, owner);
+                return;
+            }
+            Array.prototype.forEach.call(record.addedNodes, function (node) {
+                if (node.nodeType === 1 && (node.nodeName === 'SELECT' || node.querySelector('select'))) {
+                    queueOnce(pendingRoots, node);
+                }
+            });
+        });
+    };
+
+    var flush = function () {
+        flushQueued = false;
+        collectMutations(observer.takeRecords());
+        observer.disconnect();
+
+        var roots = pendingRoots.splice(0);
+        var refresh = pendingRefresh.splice(0);
+
+        roots.forEach(function (root) {
+            if (!document.body.contains(root)) return;
+            $(root).find('select').addBack('select').each(function () {
+                enhanceSelect(this);
+            });
+        });
+        refresh.forEach(function (sel) {
+            if (!isEnhanced(sel)) return;
+            addSearchTokens(sel);
+            $(sel).selectpicker('refresh');
+        });
+
+        observer.takeRecords();
+        observer.observe(document.body, OBSERVE_OPTIONS);
+    };
+
+    var queueFlush = function () {
+        if (flushQueued) return;
+        flushQueued = true;
+        Promise.resolve().then(flush);
+    };
+
+    // bootstrap-select resets $.valHooks.select on first use, so value changes are caught at $.fn.val
+    var nativeVal = $.fn.val;
+    $.fn.val = function () {
+        var result = nativeVal.apply(this, arguments);
+        if (arguments.length) {
+            this.each(function () {
+                if (this.nodeName === 'SELECT' && isEnhanced(this)) {
+                    queueOnce(pendingRefresh, this);
+                    queueFlush();
+                }
+            });
+        }
+        return result;
+    };
+
+    observer = new MutationObserver(function (records) {
+        collectMutations(records);
+        queueFlush();
+    });
+
+    // Runs after the page's own ready handlers, which often fill in options first.
+    $(function () {
+        queueOnce(pendingRoots, document.body);
+        flush();
     });
 })();

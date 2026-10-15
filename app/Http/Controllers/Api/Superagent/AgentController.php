@@ -290,6 +290,7 @@ class AgentController extends Controller
             'booking_container_id'  => 'nullable|integer|exists:booking_containers,id',
             'booking_container_ids' => 'nullable|array|min:1',
             'booking_container_ids.*' => 'integer|exists:booking_containers,id',
+            'booking_id' => 'nullable|integer|exists:bookings,id',
             'type_id' => 'required|in:0,1,2',
         ];
 
@@ -299,14 +300,26 @@ class AgentController extends Controller
             return $this->returnError(500, $validator->errors()->first());
         }
 
+        $superagent = auth()->guard("superagent")->user();
+        $typeId = (int) $request->type_id;
+        $stageService = app(\App\Services\ContainerStageService::class);
+
         $containerIds = $request->get('booking_container_ids');
         $containerIds = is_array($containerIds) ? array_values(array_unique(array_filter($containerIds))) : [];
         if (empty($containerIds) && $request->filled('booking_container_id')) {
             $containerIds = [(int) $request->booking_container_id];
         }
 
+        // بدون حاويات محددة + booking_id: تأكيد كل حاويات البوكينج الجاهزة للمرحلة
+        if (empty($containerIds) && $request->filled('booking_id')) {
+            $containerIds = $stageService->bookingContainersAwaitingApproval((int) $request->booking_id, $typeId);
+            if (empty($containerIds)) {
+                return $this->returnAllData('', __('alerts.success'));
+            }
+        }
+
         if (empty($containerIds)) {
-            return $this->returnError(400, 'يجب تحديد حاوية واحدة على الأقل (booking_container_id أو booking_container_ids)');
+            return $this->returnError(400, 'يجب تحديد حاوية واحدة على الأقل (booking_container_id أو booking_container_ids) أو booking_id');
         }
 
         $containers = BookingContainer::whereIn('id', $containerIds)->orderBy('id')->get();
@@ -314,11 +327,6 @@ class AgentController extends Controller
             return $this->returnError(500, __('main.not_found'));
         }
 
-        $superagent = auth()->guard("superagent")->user();
-        $typeId = (int) $request->type_id;
-        $stageService = app(\App\Services\ContainerStageService::class);
-
-        // وحدة العمل = الحاوية (المحددة فقط)، مش كل البوكينج
         $agentIds = BookingContainerAgent::whereIn('booking_container_id', $containerIds)
             ->where('stage_type', $typeId)
             ->pluck('agent_id')

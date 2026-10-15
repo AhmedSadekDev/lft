@@ -158,15 +158,51 @@ class ContainerStageService
             }
             DailyBookingContainer::where('booking_container_id', $containerId)->update($dailyUpdate);
 
-            // انسخ مندوبي التخصيص لمرحلة التحميل إن لم يكونوا مكلفين بها بعد.
-            if ($type === 0) {
-                $agentIds = $this->assignments($containerId, 0)->pluck('agent_id')->all();
-                if ($agentIds) {
-                    $this->assign($containerId, $agentIds, 1);
+            return true;
+        });
+    }
+
+    /**
+     * Containers of the booking that are ready for the stage approval and not yet approved.
+     * Loading only covers containers already moved to loading; unloading needs approved loading.
+     *
+     * @return int[]
+     */
+    public function bookingContainersAwaitingApproval(int $bookingId, int $type): array
+    {
+        abort_unless(isset(self::NAMES[$type]), 422, 'مرحلة غير صحيحة');
+        $flag = 'superagent_'.self::NAMES[$type].'_approved';
+        $query = BookingContainer::where('booking_id', $bookingId)
+            ->where(fn ($q) => $q->where($flag, 0)->orWhereNull($flag));
+        if ($type === 1) {
+            $query->where('superagent_specification_approved', 1)->where('is_in_loading', 1);
+        } elseif ($type === 2) {
+            $query->where('superagent_loading_approved', 1);
+        }
+        $ids = $query->orderBy('id')->pluck('id')->map(fn ($id) => (int) $id)->all();
+
+        // A repeated booking approval is a no-op; a booking with nothing ready is a conflict.
+        abort_if(! $ids && ! BookingContainer::where('booking_id', $bookingId)->where($flag, 1)->exists(), 409, 'لا توجد حاويات جاهزة لهذه المرحلة في البوكينج');
+
+        return $ids;
+    }
+
+    /**
+     * Approve one stage for every ready container of the booking in a single transaction.
+     *
+     * @return int[] ids of the containers this call approved
+     */
+    public function approveBooking(int $bookingId, int $type, ?int $superagentId = null): array
+    {
+        return DB::transaction(function () use ($bookingId, $type, $superagentId) {
+            $approved = [];
+            foreach ($this->bookingContainersAwaitingApproval($bookingId, $type) as $id) {
+                if ($this->approve($id, $type, $superagentId)) {
+                    $approved[] = $id;
                 }
             }
 
-            return true;
+            return $approved;
         });
     }
 

@@ -215,6 +215,55 @@ class ParallelContainerStagesTest extends TestCase
         $this->assertSame(0, (int) BookingContainer::find(1)->status);
     }
 
+    public function test_superagent_approves_one_container_or_the_whole_booking_without_moving_agents(): void
+    {
+        Schema::table('delivery_policy_containers', fn (Blueprint $t) => $t->timestamps());
+        DB::table('booking_container_agents')->delete();
+        DB::table('bookings')->insert(['id' => 2, 'yard_id' => 1, 'shipping_agent_id' => 1]);
+        $pending = ['status' => 0, 'superagent_specification_approved' => false, 'is_in_loading' => false];
+        BookingContainer::find(1)->update($pending);
+        foreach ([2, 3] as $id) {
+            BookingContainer::create(['id' => $id] + $pending);
+        }
+        BookingContainer::create(['id' => 4, 'booking_id' => 2] + $pending);
+        $service = app(ContainerStageService::class);
+        $service->assign(1, [1], 0);
+        $service->assign(2, [2], 0);
+        $superagent = new \App\Models\Superagent;
+        $superagent->forceFill(['id' => 7]);
+        $this->actingAs($superagent, 'superagent');
+        $approved = fn (string $name) => BookingContainer::orderBy('id')->pluck('superagent_'.$name.'_approved', 'id')->map(fn ($v) => (int) $v)->all();
+
+        // Container row: only that container.
+        $this->postJson('/api/superagent/booking/done_specification', ['booking_container_id' => 1])
+            ->assertOk()->assertJsonPath('data.id', 1);
+        $this->assertSame([1 => 1, 2 => 0, 3 => 0, 4 => 0], $approved('specification'));
+
+        // Booking header: the rest of booking 1 only; agents are not carried into loading.
+        $this->postJson('/api/superagent/booking/done_specification', ['booking_id' => 1])->assertOk();
+        $this->assertSame([1 => 1, 2 => 1, 3 => 1, 4 => 0], $approved('specification'));
+        foreach ([1, 2, 3] as $id) {
+            $this->assertSame(0, (int) BookingContainer::find($id)->is_in_loading);
+            $this->assertFalse($service->assignments($id, 1)->exists());
+        }
+        $this->postJson('/api/superagent/booking/done_specification', ['booking_id' => 1])->assertOk();
+
+        // Loading for the booking covers only containers moved out of waiting.
+        $this->postJson('/api/superagent/booking/done_loading', ['booking_id' => 1])->assertStatus(409);
+        $service->moveToLoading([1, 2], true);
+        $this->postJson('/api/superagent/booking/done_loading', ['booking_id' => 1])->assertOk();
+        $this->assertSame([1 => 1, 2 => 1, 3 => 0, 4 => 0], $approved('loading'));
+
+        $this->postJson('/api/superagent/booking/done_unloading', ['booking_container_id' => 2])->assertOk();
+        $this->postJson('/api/superagent/booking/done_unloading', ['booking_id' => 1])->assertOk();
+        $this->assertSame([1 => 1, 2 => 1, 3 => 0, 4 => 0], $approved('unloading'));
+
+        // container-step-approve supports the same booking-level mode.
+        $this->postJson('/api/superagent/container-step-approve', ['booking_id' => 2, 'type_id' => 0])->assertOk();
+        $this->assertSame(1, (int) BookingContainer::find(4)->superagent_specification_approved);
+        $this->postJson('/api/superagent/booking/done_loading', [])->assertStatus(422);
+    }
+
     private function receipt(string $key = 'receipt-1', int $agent = 1, int $type = 1, int $amount = 100): AgentExpense
     {
         return app(StageExpenseService::class)->create($agent, ['booking_container_id' => 1, 'type_id' => $type, 'value' => $amount], $key, hash('sha256', "$type:$amount"), fn () => null);
@@ -223,7 +272,8 @@ class ParallelContainerStagesTest extends TestCase
     public function test_general_expense_cannot_drop_booking_or_stage_context_and_debit_wallet(): void
     {
         $this->actingAs(Agent::find(1), 'agent');
-        foreach ([['type_id' => 2], ['booking_id' => 1], ['booking_id' => 1, 'type_id' => 2]] as $context) {
+        // booking_id alone is a booking-level receipt (covered separately); a stage always needs its container.
+        foreach ([['type_id' => 2], ['booking_id' => 1, 'type_id' => 2]] as $context) {
             $response = $this->postJson('/api/agent/make_general_expenses', $context + [
                 'value' => 100, 'service_id' => 1, 'request_key' => 'missing-container',
             ]);
@@ -869,6 +919,69 @@ class ParallelContainerStagesTest extends TestCase
         $this->postJson('/api/agent/delete_expense', ['id' => $id, 'version' => 1])->assertStatus(409);
         $this->assertSame(880.0, (float) Agent::find(1)->wallet);
         $this->assertSame(1, DB::table('log_activities')->count());
+    }
+
+    private function createExpenseScreenTables(): void
+    {
+        Schema::table('agent_expenses', fn (Blueprint $t) => $t->unsignedBigInteger('booking_service_id')->nullable());
+        Schema::table('delivery_policies', fn (Blueprint $t) => $t->boolean('is_settled')->default(false));
+        Schema::create('money_transfers', function (Blueprint $t) {
+            $t->id();
+            $t->decimal('value', 12, 2)->default(0);
+            $t->morphs('transferer');
+            $t->unsignedBigInteger('delivery_policy_id')->nullable();
+            $t->timestamps();
+        });
+    }
+
+    public function test_agent_receipts_stay_editable_after_midnight_until_reviewed(): void
+    {
+        $this->createExpenseScreenTables();
+        $this->actingAs(Agent::find(1), 'agent');
+        $receipt = ['value' => 100, 'service_id' => 1, 'booking_container_id' => 1, 'type_id' => 1];
+        $id = $this->postJson('/api/agent/make_general_expenses', $receipt + ['request_key' => 'r-1'])->assertOk()->json('data.id');
+
+        $this->travel(1)->days();
+        app(ContainerStageService::class)->approve(1, 1);
+        AgentExpense::create(['agent_id' => 1, 'booking_id' => 1, 'booking_service_id' => 9, 'value' => 5, 'admin_approval' => 1]);
+        $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 2)->assertJsonPath('data.0.id', $id);
+        $this->postJson('/api/agent/update_expense', ['id' => $id, 'value' => 120, 'version' => 1])->assertOk();
+
+        $this->postJson('/api/agent/review_expenses')->assertOk()->assertJsonPath('data.reviewed_count', 1);
+        $dashboardOnly = $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 1);
+        $this->assertEquals(5, $dashboardOnly->json('data.0.value'));
+        $this->postJson('/api/agent/update_expense', ['id' => $id, 'value' => 130, 'version' => 3])->assertStatus(409);
+        $this->postJson('/api/agent/review_expenses')->assertOk()->assertJsonPath('data.reviewed_count', 0);
+
+        // Closing the stage receipts from the supervisor side also removes them from the agent screen.
+        $second = $this->postJson('/api/agent/make_general_expenses', $receipt + ['request_key' => 'r-2'])->assertOk()->json('data.id');
+        $this->travel(1)->days();
+        $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('data.0.id', $second);
+        $version = BookingContainerStage::where(['booking_container_id' => 1, 'type_id' => 1])->value('version');
+        app(ContainerStageService::class)->closeReceipts(1, 1, 7, $version);
+        $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 0);
+        $this->assertSame(0, (int) AgentExpense::find($second)->admin_approval);
+    }
+
+    public function test_agent_can_record_a_receipt_on_any_open_booking(): void
+    {
+        $this->createExpenseScreenTables();
+        DB::table('bookings')->insert([['id' => 2, 'booking_number' => 'INV-2'], ['id' => 3, 'booking_number' => 'OPEN-3']]);
+        DB::table('invoices')->insert(['booking_id' => 2]);
+        $this->actingAs(Agent::find(2), 'agent');
+
+        $this->getJson('/api/agent/open_bookings')->assertOk()
+            ->assertJsonPath('data', [['id' => 3, 'booking_number' => 'OPEN-3'], ['id' => 1, 'booking_number' => 'B-1']])
+            ->assertJsonPath('pagination.total', 2);
+        $this->getJson('/api/agent/open_bookings?word=OPEN')->assertOk()->assertJsonPath('pagination.total', 1);
+
+        $receipt = ['value' => 50, 'service_id' => 1, 'request_key' => 'help-1'];
+        $this->postJson('/api/agent/make_general_expenses', $receipt + ['booking_id' => 3])->assertOk()
+            ->assertJsonPath('data.booking_id', 3)->assertJsonPath('data.booking_container_id', null);
+        $this->postJson('/api/agent/make_general_expenses', ['request_key' => 'help-2', 'booking_id' => 2] + $receipt)->assertStatus(409);
+        $this->postJson('/api/agent/make_general_expenses', ['request_key' => 'help-3', 'booking_id' => 1, 'type_id' => 1] + $receipt)->assertStatus(422);
+        $this->assertSame(950.0, (float) Agent::find(2)->wallet);
+        $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('data.0.booking_number', 'OPEN-3');
     }
 
     public function test_waiting_toggle_cannot_hide_completed_loading(): void

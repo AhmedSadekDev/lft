@@ -266,6 +266,7 @@ class Phase6MobilePaginationTest extends TestCase
             $t->decimal('value', 10, 2)->default(0);
             $t->integer('version')->default(1);
             $t->boolean('is_hidden')->default(false);
+            $t->boolean('admin_approval')->default(false);
             $t->integer('status')->default(0);
             $t->text('notes')->nullable();
             $t->timestamp('voided_at')->nullable();

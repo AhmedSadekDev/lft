@@ -38,7 +38,16 @@ class ExpenseController extends Controller
         $ordered = $merged->sortBy('created_at')->values();
         $allExpenses = $ordered;
         // dd($allExpenses);
-        return view('admin.agents.expenses.index', compact("allExpenses"));
+        $awaitingReviewIds = $agent->expenses()->awaitingReview()->pluck('id')->flip();
+
+        return view('admin.agents.expenses.index', compact("allExpenses", "agent", "awaitingReviewIds"));
+    }
+
+    public function review_agent_expenses(Agent $agent)
+    {
+        $count = app(\App\Services\StageExpenseService::class)->markReviewed($agent->id);
+
+        return back()->with('success', $count ? "تمت مراجعة {$count} إيصال" : 'لا توجد إيصالات بانتظار المراجعة');
     }
 
 

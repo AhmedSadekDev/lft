@@ -2916,6 +2916,50 @@ html:not([data-theme="dark"]) .nav-tabs .nav-link.active {
 [data-theme="dark"] .bootstrap-select > .dropdown-toggle {
     color: var(--text-primary) !important;
 }
+.bootstrap-select .bs-searchbox {
+    padding: 8px 10px;
+}
+.bootstrap-select .bs-searchbox .form-control {
+    height: 38px;
+}
+html body.lft-admin .bootstrap-select .dropdown-menu.inner {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+/* Metronic colors the option text span itself (#3f4254), which is unreadable on dark menus */
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li > a .text,
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li > a .bs-icon {
+    color: var(--text-primary) !important;
+}
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li > a .text small,
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li > a .check-mark,
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li.dropdown-header,
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li.disabled > a .text,
+[data-theme="dark"] .bootstrap-select .no-results {
+    color: var(--text-muted) !important;
+}
+[data-theme="dark"] .bootstrap-select .no-results {
+    background: transparent !important;
+}
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li:hover > a,
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li.selected > a {
+    background: var(--bg-card-hover) !important;
+}
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li.selected > a .text,
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li.selected > a .check-mark {
+    color: var(--primary-hover) !important;
+}
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li.active:not(.selected) > a {
+    background: var(--primary) !important;
+}
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li.active:not(.selected) > a .text {
+    color: #ffffff !important;
+}
+[data-theme="dark"] .bootstrap-select .dropdown-menu.inner > li.divider {
+    border-bottom-color: var(--border-subtle) !important;
+}
 
 /* Solid Metronic alerts → soft, readable alerts in light mode */
 html:not([data-theme="dark"]) .alert.alert-info,

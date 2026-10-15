@@ -20,6 +20,7 @@ class ExpenseResource extends JsonResource
             "version" => $this->version,
             "type_id" => $this->type_id,
             "booking_container_id" => $this->booking_container_id,
+            "booking_id" => $this->booking_id,
             "request_key" => $this->request_key,
             "voided_at" => $this->voided_at,
 			"title" => $this->title ?? "",

@@ -74,6 +74,45 @@ class ExpenseController extends Controller
         } catch (\Throwable $e) { return $this->expenseFailure($e); }
     }
 
+    public function review_expenses(Request $request)
+    {
+        try {
+            $data = $request->validate(['ids' => 'sometimes|array', 'ids.*' => 'integer']);
+            $count = app(\App\Services\StageExpenseService::class)->markReviewed(auth('agent')->id(), $data['ids'] ?? null);
+
+            return $this->returnAllData(['reviewed_count' => $count], __('alerts.success'));
+        } catch (\Throwable $e) { return $this->expenseFailure($e); }
+    }
+
+    public function open_bookings(Request $request)
+    {
+        try {
+            $word = trim((string) $request->word);
+            $bookings = \App\Models\Booking::whereDoesntHave('invoice')
+                ->when($word !== '', fn ($q) => $q->where(fn ($search) => $search
+                    ->where('booking_number', 'LIKE', "%$word%")
+                    ->orWhereHas('bookingContainers', fn ($containers) => $containers->where('container_no', 'LIKE', "%$word%"))))
+                ->orderBy('id', 'desc')
+                ->select(['id', 'booking_number'])
+                ->paginate((int) $request->get('per_page', 20), ['*'], 'page', (int) $request->get('page', 1));
+
+            return response()->json([
+                'status' => true,
+                'errNum' => "0000",
+                'message' => __('alerts.success'),
+                'data' => $bookings->getCollection()->map(fn ($booking) => ['id' => $booking->id, 'booking_number' => $booking->booking_number])->values(),
+                'pagination' => [
+                    'total' => $bookings->total(),
+                    'per_page' => $bookings->perPage(),
+                    'current_page' => $bookings->currentPage(),
+                    'total_pages' => $bookings->lastPage(),
+                ],
+            ], 200);
+        } catch (\Exception $exception) {
+            return $this->returnError(500, $exception->getMessage());
+        }
+    }
+
     public function fetch_financial_custody()
     {
         try {
@@ -116,6 +155,9 @@ class ExpenseController extends Controller
                 $container = BookingContainer::findOrFail($request->booking_container_id);
                 abort_if($request->filled('booking_id') && (int) $request->booking_id !== (int) $container->booking_id, 422, 'Container does not belong to booking');
                 $data['booking_id'] = $container->booking_id;
+            } elseif ($request->filled('booking_id')) {
+                // إيصال على مستوى البوكينج (مساعدة زميل): لا يرتبط بمرحلة، فلا يشترط تكليف المندوب.
+                $data['booking_id'] = (int) $request->booking_id;
             }
             $fingerprintData = $data;
             ksort($fingerprintData);
@@ -171,13 +213,11 @@ class ExpenseController extends Controller
                     ->where("delivery_policy_id", "!=", null)
                     ->whereDate("created_at", now())
                     ->get();
-                $expenses = $agent->expenses()->visibleToAgent()
-                    ->whereDate("created_at", now())
+                $expenses = $agent->expenses()->onAgentScreen()
                     ->where("delivery_policy_id", "!=", null)
                     ->get();
             } elseif ($type == 2) {
-                $expenses = $agent->expenses()->visibleToAgent()
-                    ->whereDate("created_at", now())
+                $expenses = $agent->expenses()->onAgentScreen()
                     ->where("type", 2)
                     ->get();
             } elseif (request()->delivery_policy_id) {
@@ -189,9 +229,7 @@ class ExpenseController extends Controller
                     ->whereDoesntHave('delivery_policy.booking_containers.booking.invoice')
                     ->whereDate("created_at", now())
                     ->get();
-                $expenses = $agent->expenses()->visibleToAgent()
-                    ->whereDate("created_at", now())
-                    ->get();
+                $expenses = $agent->expenses()->onAgentScreen()->get();
             }
 
             $merged = $financial_custodies->concat($expenses);
