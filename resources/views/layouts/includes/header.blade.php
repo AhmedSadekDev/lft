@@ -75,12 +75,12 @@ License: You must have a valid license purchased only from themeforest(the above
     </style>
 
     @stack('css')
-    <link href="{{ asset('assets/css/admin-ui.css') }}?v=4x" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/admin-ui.css') }}?v=5c" rel="stylesheet" type="text/css" />
 </head>
 <!--end::Head-->
 <!--begin::Body-->
 
-<body id="kt_body" class="lft-admin header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
+<body id="kt_body" class="lft-admin header-mobile-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
     <a class="lft-skip-link" href="#kt_content">انتقل إلى المحتوى</a>
     <div class="bs-canvas-overlay bg-dark position-fixed w-100 h-100"></div>
 
@@ -101,7 +101,7 @@ License: You must have a valid license purchased only from themeforest(the above
             </button>
             <!--end::Aside Mobile Toggle-->
             <!--begin::Topbar Mobile Toggle-->
-            <button class="btn btn-hover-text-primary p-0 ml-2" id="kt_header_mobile_topbar_toggle" type="button" aria-label="قائمة الحساب">
+            <a href="{{ route('profile.edit') }}" class="btn btn-hover-text-primary p-0 ml-2" aria-label="{{ __('profile.edit') }}" title="{{ __('profile.edit') }}">
                 <span class="svg-icon svg-icon-xl">
                     <!--begin::Svg Icon | path:assets/media/svg/icons/General/User.svg-->
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -112,7 +112,7 @@ License: You must have a valid license purchased only from themeforest(the above
                         </g>
                     </svg>
                 </span>
-            </button>
+            </a>
             <!--end::Topbar Mobile Toggle-->
         </div>
         <!--end::Toolbar-->

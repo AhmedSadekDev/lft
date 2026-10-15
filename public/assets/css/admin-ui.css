@@ -3,23 +3,31 @@
    Phase 4B Design System · Light & Dark Modes · Arabic RTL Support
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-    /* Semantic Hierarchy Tokens — Light Mode */
-    --bg-app: #f5f7fb;
+    /* Semantic Hierarchy Tokens — Light Mode (KASIB palette) */
+    --bg-app: #f8fafc;
     --bg-sidebar: #ffffff;
     --bg-topbar: #ffffff;
     --bg-card: #ffffff;
-    --bg-card-hover: #f8fafc;
-    --bg-input: #ffffff;
+    --bg-card-hover: #f1f5f9;
+    --bg-input: #f8fafc;
 
     --text-primary: #0f172a;
     --text-secondary: #475569;
-    --text-muted: #5b6b82;
+    --text-muted: #64748b;
 
     --border-color: #e2e8f0;
     --border-subtle: #f1f5f9;
+
+    --k-cyan: #06b6d4;
+    --k-sky: #0284c7;
+    --fill-subtle: #f8fafc;
+    --fill-hover: #f1f5f9;
+    --fill-strong: #e2e8f0;
+    --shadow-card: 0 10px 30px -5px rgba(11, 17, 33, 0.08);
+    --card-radius: 24px;
 
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
@@ -42,9 +50,9 @@
     --sidebar-hover: #f1f5f9;
     --primary-light: var(--primary-soft);
 
-    --radius: 14px;
-    --radius-lg: 18px;
-    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --radius-sm: 10px;
     --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
     --shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
     --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
@@ -53,20 +61,27 @@
 }
 
 [data-theme="dark"] {
-    /* Semantic Hierarchy Tokens — Dark Navy SaaS Theme */
-    --bg-app: #081426;
-    --bg-sidebar: #0d1b30;
-    --bg-topbar: #101f35;
-    --bg-card: #14243c;
-    --bg-card-hover: #1a2d49;
-    --bg-input: #192b46;
+    /* Semantic Hierarchy Tokens — Dark (KASIB palette) */
+    --bg-app: #040914;
+    --bg-sidebar: #0b1221;
+    --bg-topbar: #0b1221;
+    --bg-card: #131b2f;
+    --bg-card-hover: #19243e;
+    --bg-input: #172036;
 
-    --text-primary: #f1f5f9;
-    --text-secondary: #b4c3d8;
+    --text-primary: #ffffff;
+    --text-secondary: #cbd5e1;
     --text-muted: #94a3b8;
 
-    --border-color: #293b55;
-    --border-subtle: #20324a;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+
+    --k-sky: #38bdf8;
+    --fill-subtle: rgba(255, 255, 255, 0.03);
+    --fill-hover: rgba(255, 255, 255, 0.05);
+    --fill-strong: rgba(255, 255, 255, 0.08);
+    --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+    --card-radius: 20px;
 
     --primary: #3b82f6;
     --primary-hover: #60a5fa;
@@ -3164,9 +3179,9 @@ table.table tbody th {
     --sb-icon: #64748b;
     --sb-hover: #f1f5f9;
     --sb-accent: #2563eb;
-    --sb-active-text: #1d4ed8;
-    --sb-active-bg: linear-gradient(to left, rgba(37, 99, 235, 0.14), rgba(37, 99, 235, 0.04));
-    --sb-sub-active-bg: #eff6ff;
+    --sb-active-text: #0f172a;
+    --sb-active-bg: linear-gradient(90deg, rgba(37, 99, 235, 0.18) 0%, transparent 100%);
+    --sb-sub-active-bg: linear-gradient(90deg, rgba(37, 99, 235, 0.12) 0%, transparent 100%);
     background-color: var(--sb-bg) !important;
     border-inline-end: 1px solid var(--sb-line) !important;
     box-shadow: none !important;
@@ -3174,17 +3189,17 @@ table.table tbody th {
     flex-direction: column !important;
 }
 [data-theme="dark"] #kt_aside.lft-sidebar {
-    --sb-bg: #0b1626;
-    --sb-line: #1e2d44;
-    --sb-field: #111f35;
-    --sb-text: #f1f5f9;
-    --sb-text-soft: #b4c3d8;
+    --sb-bg: #0b1221;
+    --sb-line: rgba(255, 255, 255, 0.08);
+    --sb-field: rgba(255, 255, 255, 0.03);
+    --sb-text: #ffffff;
+    --sb-text-soft: #cbd5e1;
     --sb-icon: #94a3b8;
-    --sb-hover: #13233b;
-    --sb-accent: #3b82f6;
+    --sb-hover: rgba(255, 255, 255, 0.05);
+    --sb-accent: #2563eb;
     --sb-active-text: #ffffff;
-    --sb-active-bg: linear-gradient(to left, rgba(59, 130, 246, 0.30), rgba(59, 130, 246, 0.06));
-    --sb-sub-active-bg: rgba(59, 130, 246, 0.14);
+    --sb-active-bg: linear-gradient(90deg, rgba(37, 99, 235, 0.18) 0%, transparent 100%);
+    --sb-sub-active-bg: linear-gradient(90deg, rgba(37, 99, 235, 0.18) 0%, transparent 100%);
 }
 
 /* Brand */
@@ -3640,4 +3655,474 @@ table.table tbody th {
     padding: 0;
     background: transparent;
     border: 0;
+}
+
+/* ==========================================================================
+   KASIB DESIGN LANGUAGE (shell, page topbar, panels, controls)
+   ========================================================================== */
+
+/* Sidebar: KASIB nav rhythm */
+#kt_aside.lft-sidebar .menu-nav > .menu-item > .menu-link {
+    min-height: 46px;
+}
+#kt_aside.lft-sidebar .menu-nav > .menu-item > .menu-link .menu-icon i {
+    font-size: 20px !important;
+}
+#kt_aside.lft-sidebar .menu-nav > .menu-item > .menu-link .menu-text {
+    font-size: 14px !important;
+    color: var(--sb-text-soft) !important;
+}
+#kt_aside.lft-sidebar .menu-nav > .menu-item > .menu-link:hover .menu-text,
+#kt_aside.lft-sidebar .menu-nav > .menu-item.menu-item-open > .menu-link .menu-text,
+#kt_aside.lft-sidebar .menu-nav > .menu-item.menu-item-here > .menu-link .menu-text,
+#kt_aside.lft-sidebar .menu-nav > .menu-item.menu-item-active > .menu-link .menu-text {
+    color: var(--sb-text) !important;
+}
+#kt_aside.lft-sidebar .menu-nav > .menu-item.menu-item-active > .menu-link .menu-icon i,
+[data-theme="dark"] #kt_aside.lft-sidebar .menu-nav > .menu-item.menu-item-active > .menu-link .menu-icon i,
+#kt_aside.lft-sidebar .menu-nav > .menu-item.menu-item-here > .menu-link .menu-icon i {
+    color: #38bdf8 !important;
+}
+#kt_aside.lft-sidebar .menu-subnav > .menu-item.menu-item-active > .menu-link {
+    box-shadow: inset -3px 0 0 var(--sb-accent) !important;
+}
+#kt_aside.lft-sidebar .menu-subnav > .menu-item.menu-item-active > .menu-link .menu-text,
+[data-theme="dark"] #kt_aside.lft-sidebar .menu-subnav > .menu-item.menu-item-active > .menu-link .menu-text {
+    color: var(--sb-text) !important;
+}
+#kt_aside.lft-sidebar .menu-subnav > .menu-item.menu-item-active > .menu-link::before {
+    background-color: #38bdf8;
+}
+#kt_aside.lft-sidebar .lft-sidebar-search input:focus {
+    border-color: rgba(6, 182, 212, 0.55);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+}
+#kt_aside.lft-sidebar .lft-sidebar-user-info,
+#kt_aside.lft-sidebar .lft-sidebar-user-info:hover {
+    text-decoration: none;
+}
+#kt_aside.lft-sidebar .lft-sidebar-user-info:hover .lft-sidebar-user-name {
+    color: #38bdf8;
+}
+#kt_aside.lft-sidebar .lft-sidebar-user-avatar {
+    background: #2563eb;
+    border-radius: 10px;
+}
+html:not([data-theme="dark"]) #kt_aside.lft-sidebar {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+
+/* Shell */
+html body.lft-admin,
+html body.lft-admin #kt_wrapper {
+    background-color: var(--bg-app) !important;
+}
+html body.lft-admin #kt_content {
+    padding: 0 36px 28px !important;
+}
+html body.lft-admin #kt_content > .container,
+html body.lft-admin #kt_content > .container-fluid {
+    max-width: none !important;
+    padding: 0 !important;
+}
+
+/* Page topbar: title, breadcrumb trail and actions above the content */
+html body.lft-admin #kt_header.lft-page-topbar {
+    position: static !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    height: auto !important;
+    margin: 28px 36px;
+    padding: 0 0 20px !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    box-shadow: none !important;
+}
+.lft-page-topbar-title {
+    min-width: 0;
+}
+.lft-page-topbar-title h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 900 !important;
+    line-height: 1.4;
+    color: var(--text-primary) !important;
+}
+.lft-page-topbar-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+.lft-page-topbar-crumbs li + li::before {
+    content: "/";
+    margin-inline-end: 8px;
+    opacity: 0.6;
+}
+.lft-page-topbar-crumbs a {
+    color: var(--text-muted) !important;
+}
+.lft-page-topbar-crumbs a:hover {
+    color: var(--k-sky) !important;
+}
+.lft-page-topbar-crumbs li[aria-current] {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+.lft-page-topbar-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.lft-topbar-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background-color: var(--fill-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+}
+.lft-topbar-chip i {
+    font-size: 16px;
+    color: var(--k-cyan);
+}
+.lft-topbar-btn {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    color: var(--text-secondary);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.lft-topbar-btn:hover,
+.lft-topbar-btn:focus-visible {
+    color: var(--text-primary);
+    background-color: var(--fill-hover);
+    outline: none;
+}
+
+html body.lft-admin #kt_footer {
+    margin: 0 36px;
+    padding: 18px 0 !important;
+    background: transparent !important;
+    border-top: 1px solid var(--border-color);
+}
+html body.lft-admin #kt_footer > .container-fluid {
+    padding: 0 !important;
+}
+html body.lft-admin #kt_footer .text-dark,
+html body.lft-admin #kt_footer .text-dark-75 {
+    color: var(--text-secondary) !important;
+}
+
+@media (max-width: 991.98px) {
+    html body.lft-admin #kt_header.lft-page-topbar {
+        margin: 20px;
+        padding-bottom: 16px !important;
+    }
+    html body.lft-admin #kt_content {
+        padding: 0 20px 20px !important;
+    }
+    html body.lft-admin #kt_footer {
+        margin: 0 20px;
+    }
+}
+@media (max-width: 575.98px) {
+    .lft-page-topbar-title h2 {
+        font-size: 20px;
+    }
+    html body.lft-admin #kt_header.lft-page-topbar {
+        margin: 16px;
+    }
+    html body.lft-admin #kt_content {
+        padding: 0 16px 16px !important;
+    }
+    html body.lft-admin #kt_footer {
+        margin: 0 16px;
+    }
+}
+
+/* Panels */
+html body.lft-admin .card,
+html body.lft-admin .card.card-custom,
+html body.lft-admin .lft-card,
+html body.lft-admin .lft-kpi-card {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--card-radius) !important;
+    box-shadow: var(--shadow-card) !important;
+}
+html body.lft-admin .card .card,
+html body.lft-admin .modal .card {
+    border-radius: 16px !important;
+    box-shadow: none !important;
+}
+html body.lft-admin .card > .card-header,
+html body.lft-admin .lft-card-header {
+    padding: 20px 24px !important;
+    background: transparent !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+html body.lft-admin .card > .card-body {
+    padding: 24px !important;
+}
+html body.lft-admin .card > .card-footer {
+    padding: 16px 24px !important;
+    background-color: var(--fill-subtle) !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-radius: 0 0 var(--card-radius) var(--card-radius) !important;
+}
+html body.lft-admin .card-title,
+html body.lft-admin .card-title h3,
+html body.lft-admin .card-label,
+html body.lft-admin .lft-card-title {
+    font-size: 17px !important;
+    font-weight: 800 !important;
+    color: var(--text-primary) !important;
+}
+
+/* KPI cards: tinted border and soft icon tile */
+html body.lft-admin .lft-kpi-title {
+    font-size: 13px;
+    font-weight: 700;
+}
+html body.lft-admin .lft-kpi-val {
+    font-size: 30px;
+    font-weight: 900;
+}
+html body.lft-admin .lft-kpi-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    font-size: 22px;
+    box-shadow: none !important;
+}
+html body.lft-admin .lft-kpi-icon-box.purple { background: rgba(139, 92, 246, 0.15) !important; }
+html body.lft-admin .lft-kpi-icon-box.blue   { background: rgba(37, 99, 235, 0.15) !important; }
+html body.lft-admin .lft-kpi-icon-box.green  { background: rgba(16, 185, 129, 0.15) !important; }
+html body.lft-admin .lft-kpi-icon-box.orange { background: rgba(245, 158, 11, 0.15) !important; }
+html body.lft-admin .lft-kpi-icon-box.purple i { color: #7c3aed !important; }
+html body.lft-admin .lft-kpi-icon-box.blue i   { color: #2563eb !important; }
+html body.lft-admin .lft-kpi-icon-box.green i  { color: #059669 !important; }
+html body.lft-admin .lft-kpi-icon-box.orange i { color: #d97706 !important; }
+html[data-theme="dark"] body.lft-admin .lft-kpi-icon-box.purple i { color: #a78bfa !important; }
+html[data-theme="dark"] body.lft-admin .lft-kpi-icon-box.blue i   { color: #60a5fa !important; }
+html[data-theme="dark"] body.lft-admin .lft-kpi-icon-box.green i  { color: #34d399 !important; }
+html[data-theme="dark"] body.lft-admin .lft-kpi-icon-box.orange i { color: #fbbf24 !important; }
+html body.lft-admin .lft-kpi-card:has(.lft-kpi-icon-box.purple) { border-color: rgba(139, 92, 246, 0.25) !important; }
+html body.lft-admin .lft-kpi-card:has(.lft-kpi-icon-box.blue)   { border-color: rgba(37, 99, 235, 0.25) !important; }
+html body.lft-admin .lft-kpi-card:has(.lft-kpi-icon-box.green)  { border-color: rgba(16, 185, 129, 0.25) !important; }
+html body.lft-admin .lft-kpi-card:has(.lft-kpi-icon-box.orange) { border-color: rgba(245, 158, 11, 0.25) !important; }
+
+/* Buttons */
+html body.lft-admin .btn {
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+}
+html body.lft-admin .btn.btn-primary {
+    color: #ffffff !important;
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+    box-shadow: none !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+html body.lft-admin .btn.btn-primary:hover,
+html body.lft-admin .btn.btn-primary:focus-visible {
+    background-color: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
+}
+html body.lft-admin .btn.btn-secondary,
+html body.lft-admin .btn.btn-outline-secondary,
+html body.lft-admin .btn.btn-light:not(.btn-icon) {
+    color: var(--text-primary) !important;
+    background-color: var(--fill-subtle) !important;
+    border: 1px solid var(--border-color) !important;
+}
+html body.lft-admin .btn.btn-secondary:hover,
+html body.lft-admin .btn.btn-outline-secondary:hover,
+html body.lft-admin .btn.btn-light:not(.btn-icon):hover {
+    color: var(--text-primary) !important;
+    background-color: var(--fill-hover) !important;
+}
+
+/* Forms */
+html body.lft-admin label,
+html body.lft-admin .col-form-label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+html body.lft-admin .form-control,
+html body.lft-admin .custom-select,
+html body.lft-admin .bootstrap-select > .dropdown-toggle,
+html body.lft-admin .select2-container--default .select2-selection--single,
+html body.lft-admin .select2-container--default .select2-selection--multiple {
+    background-color: var(--bg-input) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    color: var(--text-primary) !important;
+    font-weight: 600;
+}
+html body.lft-admin .form-control:focus,
+html body.lft-admin .custom-select:focus,
+html body.lft-admin .select2-container--focus .select2-selection,
+html body.lft-admin .select2-container--open .select2-selection {
+    background-color: var(--bg-card) !important;
+    border-color: var(--k-cyan) !important;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25) !important;
+}
+html body.lft-admin .form-control::placeholder {
+    color: var(--text-muted) !important;
+    font-weight: 500;
+}
+html body.lft-admin select option,
+html body.lft-admin select optgroup {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+html body.lft-admin .input-group-text {
+    background-color: var(--fill-subtle) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-muted) !important;
+}
+html body.lft-admin .form-text,
+html body.lft-admin .form-text.text-muted {
+    font-size: 12.5px;
+    color: var(--text-muted) !important;
+}
+html body.lft-admin .dataTables_wrapper .dataTables_length select:focus,
+html body.lft-admin .dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--k-cyan) !important;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25) !important;
+}
+
+/* Tables: soft header strip, horizontal row rules */
+html body.lft-admin .card .table-responsive,
+html body.lft-admin .card .lft-table-responsive,
+html body.lft-admin .lft-card .table-responsive {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+}
+html body.lft-admin table.table {
+    background-color: transparent !important;
+}
+html body.lft-admin table.table thead th,
+html body.lft-admin table.table thead.thead-light th,
+html body.lft-admin table.table.table-head-custom thead th {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+    padding-right: 16px !important;
+    font-size: 13.5px !important;
+    font-weight: 800 !important;
+    color: var(--text-muted) !important;
+    background-color: var(--fill-subtle) !important;
+    border: 0 !important;
+    border-bottom: 2px solid var(--border-color) !important;
+}
+html body.lft-admin table.table:not(.table-bordered) tbody td,
+html body.lft-admin table.table:not(.table-bordered) tbody th {
+    padding: 14px 16px !important;
+    font-size: 14px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+html body.lft-admin table.table:not(.table-bordered) tbody tr:last-child > td,
+html body.lft-admin table.table:not(.table-bordered) tbody tr:last-child > th {
+    border-bottom: 0 !important;
+}
+html body.lft-admin table.table-bordered th,
+html body.lft-admin table.table-bordered td {
+    border-color: var(--border-color) !important;
+}
+html body.lft-admin table.table tbody tr:hover > td,
+html body.lft-admin table.table tbody tr:hover > th {
+    background-color: var(--fill-hover) !important;
+}
+
+/* Badges */
+html body.lft-admin .badge,
+html body.lft-admin .label.label-inline {
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    padding: 4px 12px !important;
+}
+html:not([data-theme="dark"]) body.lft-admin .badge-primary,
+html:not([data-theme="dark"]) body.lft-admin .badge-light-primary { border: 1px solid rgba(37, 99, 235, 0.3); }
+html:not([data-theme="dark"]) body.lft-admin .badge-success,
+html:not([data-theme="dark"]) body.lft-admin .badge-light-success { border: 1px solid rgba(16, 185, 129, 0.35); }
+html:not([data-theme="dark"]) body.lft-admin .badge-warning,
+html:not([data-theme="dark"]) body.lft-admin .badge-light-warning { border: 1px solid rgba(245, 158, 11, 0.35); }
+html:not([data-theme="dark"]) body.lft-admin .badge-danger,
+html:not([data-theme="dark"]) body.lft-admin .badge-light-danger { border: 1px solid rgba(239, 68, 68, 0.35); }
+html:not([data-theme="dark"]) body.lft-admin .badge-info,
+html:not([data-theme="dark"]) body.lft-admin .badge-light-info { border: 1px solid rgba(6, 182, 212, 0.35); }
+
+/* Modals & dropdowns */
+html body.lft-admin .modal-content {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 20px !important;
+    box-shadow: var(--shadow-card) !important;
+}
+html body.lft-admin .modal-header {
+    padding: 18px 24px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+html body.lft-admin .modal-title {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+}
+html body.lft-admin .modal-footer {
+    padding: 14px 24px !important;
+    background-color: transparent !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+html body.lft-admin .dropdown-menu {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--shadow-card) !important;
+}
+html body.lft-admin .dropdown-item:hover,
+html body.lft-admin .dropdown-item:focus {
+    background-color: var(--fill-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Pagination & alerts */
+html body.lft-admin .pagination .page-link {
+    min-width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px !important;
+    font-weight: 700;
+}
+html body.lft-admin .alert {
+    border-radius: 14px !important;
 }

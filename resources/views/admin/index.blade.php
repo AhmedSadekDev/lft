@@ -3,7 +3,7 @@
 @section("admin-page-title", "لوحة التحكم")
 
 @section("content")
-<div class="container-fluid px-6 py-6">
+<div class="container-fluid">
 
     @php
         $user = auth()->user();
@@ -340,10 +340,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var palette = function (dark) {
         return {
-            grid: dark ? '#24354e' : '#e2e8f0',
-            axis: dark ? '#b4c3d8' : '#475569',
-            strong: dark ? '#f1f5f9' : '#0f172a',
-            surface: dark ? '#14243c' : '#ffffff',
+            grid: dark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0',
+            axis: dark ? '#cbd5e1' : '#475569',
+            strong: dark ? '#ffffff' : '#0f172a',
+            surface: dark ? '#131b2f' : '#ffffff',
             tooltip: dark ? 'dark' : 'light'
         };
     };

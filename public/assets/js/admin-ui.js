@@ -235,7 +235,22 @@
             });
         }
 
-        // 8. Fullscreen Toggle
+        // 8. Pages without a declared title borrow their first card title for the topbar
+        var fallbackTitle = document.querySelector('#kt_header [data-lft-title-fallback]');
+        if (fallbackTitle) {
+            var cardTitle = document.querySelector('#kt_content .card-header .card-title, #kt_content .card-header .card-label');
+            var titleText = cardTitle ? cardTitle.textContent.replace(/\s+/g, ' ').trim() : '';
+            if (titleText && titleText.length <= 80) {
+                fallbackTitle.textContent = titleText;
+                var currentCrumb = document.querySelector('#kt_header .lft-page-topbar-current');
+                if (currentCrumb) {
+                    currentCrumb.textContent = titleText;
+                }
+                document.title = titleText + ' | Leader for Trans';
+            }
+        }
+
+        // 9. Fullscreen Toggle
         var fullscreenBtn = document.getElementById('lftFullscreenToggle');
         if (fullscreenBtn) {
             fullscreenBtn.addEventListener('click', function (e) {
