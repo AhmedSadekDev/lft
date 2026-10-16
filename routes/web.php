@@ -69,11 +69,18 @@ use App\Services\SendNotification;
 */
 
 Route::get('/index', function () {
-    return to_route('main');
+    return auth()->check()
+        ? redirect()->route('main')
+        : redirect()->route('login');
 });
 
+// Guests get the login form in one response (no / → dashboard → login chain).
 Route::get('/', function () {
-    return to_route('main');
+    if (auth()->check()) {
+        return redirect()->route('main');
+    }
+
+    return view('auth.login');
 });
 Route::get('/termsAgent', function () {
     return view('termsAgent');
@@ -515,8 +522,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 // ----------------- \Dashboard -----------------
 
 
-Route::get('/home', function() {
-    return to_route('main');
+// Keep /home for old bookmarks; send straight to the dashboard route.
+Route::get('/home', function () {
+    return auth()->check()
+        ? redirect()->route('main')
+        : redirect()->route('login');
 })->name('home');
 Route::get('dashboard/get/services/{serviceCategories}', [ServiceController::class, 'getServices'])->name('services.getServices');
 

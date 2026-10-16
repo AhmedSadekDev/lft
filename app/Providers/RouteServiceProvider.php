@@ -17,7 +17,8 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/home';
+    // Land on the dashboard directly after auth (avoid /home → /dashboard hop).
+    public const HOME = '/dashboard';
     public const DASHBOARD = '/dashboard';
 
     /**

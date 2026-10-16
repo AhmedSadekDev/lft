@@ -16,9 +16,11 @@
     <link rel="shortcut icon" href="{{ asset('assets/media/logo.png') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}?v=5k">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    {{-- Load FA without blocking first paint --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}?v=5l">
 </head>
 <body style="margin: 0; padding: 0;">
     <main class="lft-login-page">
@@ -38,7 +40,7 @@
         <div class="lft-login-card-container">
             <div class="lft-login-brand-header">
                 <div class="lft-login-logo-tile">
-                    <img src="{{ asset('assets/media/logo.png') }}" alt="Leader for Trans">
+                    <img src="{{ asset('assets/media/logo.png') }}" alt="Leader for Trans" width="72" height="72" decoding="async">
                 </div>
                 <div class="lft-login-brand-name">Leader for Trans</div>
                 <div class="lft-login-brand-tagline">منظومة التجارة والأعمال الرقمية</div>
@@ -61,6 +63,6 @@
         </div>
     </main>
 
-    <script src="{{ asset('assets/js/admin-ui.js') }}?v=5f"></script>
+    <script defer src="{{ asset('assets/js/admin-ui.js') }}?v=5f"></script>
 </body>
 </html>

@@ -29,8 +29,10 @@ License: You must have a valid license purchased only from themeforest(the above
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Leader for Trans — إدارة النقل والحاويات والحسابات" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <!--begin::Fonts-->
-    {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />  --}}
+    <!--begin::Fonts (parallel with CSS — do not @import fonts inside admin-ui.css)-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!--end::Fonts-->
     <!--begin::Page Vendors Styles(used by this page)-->
     <link href="{{asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css')}}" rel="stylesheet" type="text/css" />
@@ -75,7 +77,7 @@ License: You must have a valid license purchased only from themeforest(the above
     </style>
 
     @stack('css')
-    <link href="{{ asset('assets/css/admin-ui.css') }}?v=5k" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/admin-ui.css') }}?v=5l" rel="stylesheet" type="text/css" />
 </head>
 <!--end::Head-->
 <!--begin::Body-->

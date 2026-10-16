@@ -3,7 +3,8 @@
    Phase 4B Design System · Light & Dark Modes · Arabic RTL Support
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
+/* Cairo is loaded via <link> in layouts (header/auth) so it fetches in parallel with CSS.
+   Avoid @import here — it serializes font CSS behind the stylesheet and slows first paint. */
 
 :root {
     /* Semantic Hierarchy Tokens — Light Mode (KASIB palette) */
