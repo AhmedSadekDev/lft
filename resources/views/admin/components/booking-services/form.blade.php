@@ -5,7 +5,7 @@
     {!! Form::open([
         'url' => $action,
         'method' => $method,
-        'enctype' => 'multipart/form-data',,
+        'enctype' => 'multipart/form-data',
         'class' => 'lft-simple-form',
     ]) !!}
 @elseif ($method == 'PUT')
