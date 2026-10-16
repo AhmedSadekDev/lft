@@ -87,6 +87,7 @@ class MultiCurrencyInvoicingTest extends TestCase
             $t->id();
             $t->string('invoice_number')->nullable();
             $t->string('currency', 3)->default('EGP');
+            $t->decimal('usd_amount', 14, 2)->default(0);
             $t->unsignedBigInteger('booking_id')->nullable();
             $t->json('transportation_json')->nullable();
             $t->json('taxed_services_json')->nullable();
@@ -113,43 +114,49 @@ class MultiCurrencyInvoicingTest extends TestCase
         DB::table('services')->insert(['id' => 1, 'name' => 'أرضيات', 'service_category_id' => 1]);
     }
 
-    public function test_hybrid_egp_invoice_converts_usd_receipt_into_egp_totals(): void
+    public function test_hybrid_egp_invoice_keeps_usd_in_a_separate_bucket(): void
     {
-        $money = InvoiceCurrency::normalizeLine([
-            'currency' => 'USD',
-            'price' => 120,
-            'exchange_rate' => 48.5,
-        ]);
-
         BookingService::create([
             'booking_id' => 1,
             'service_id' => 1,
-            'note' => 'غرامات',
+            'note' => 'مصري',
+            'currency' => 'EGP',
+            'price' => 50000,
+        ]);
+        $money = InvoiceCurrency::normalizeLine([
+            'currency' => 'USD',
+            'price' => 500,
+            'exchange_rate' => 48.5,
+        ]);
+        BookingService::create([
+            'booking_id' => 1,
+            'service_id' => 1,
+            'note' => 'دولار',
         ] + $money);
 
         $booking = Booking::with('bookingContainers')->find(1);
-        $this->assertSame(5820.0, $booking->servicesTotalForCurrency($booking->taxed_services(), 'EGP'));
-
-        // Receipt categories are often untaxed/print receipt — still convert for EGP books.
-        $this->assertSame(5820.0, (float) BookingService::first()->price);
+        $this->assertSame(50000.0, $booking->servicesTotalForCurrency($booking->taxed_services(), 'EGP'));
+        $this->assertSame(500.0, $booking->foreignUsdTotal());
+        $this->assertSame(24250.0, (float) BookingService::where('note', 'دولار')->value('price'));
 
         $invoice = Invoice::create([
             'invoice_number' => '2026-006-001',
             'currency' => 'EGP',
+            'usd_amount' => $booking->foreignUsdTotal(),
             'booking_id' => 1,
-            'transportation_total_before_vat' => 1000,
-            'taxed_services_total_before_vat' => 0,
-            'untaxed_services_total_before_vat' => 5820,
+            'transportation_total_before_vat' => 0,
+            'taxed_services_total_before_vat' => 50000,
+            'untaxed_services_total_before_vat' => 0,
             'value_added_tax' => 0,
             'sales_tax' => 0,
             'discount' => 0,
         ]);
 
         $this->assertFalse($invoice->isUsd());
-        $this->assertSame('ج.م', $invoice->currencySymbol());
+        $this->assertSame(500.0, (float) $invoice->usd_amount);
         $this->assertStringContainsString(
-            '120.00 $',
-            InvoiceCurrency::formatLine(BookingService::first(), 'EGP')
+            '500.00 $',
+            InvoiceCurrency::formatLine(BookingService::where('note', 'دولار')->first(), 'EGP')
         );
     }
 

@@ -237,14 +237,10 @@ class Booking extends Model
 
     /**
      * Sum booking services for invoice creation in the chosen invoice currency.
-     * EGP uses the book `price` (already converted). USD uses foreign_amount on USD lines.
+     * EGP AR = native EGP lines only. USD AR = foreign_amount on USD lines.
      */
     public function servicesTotalForCurrency($query, ?string $currency = \App\Support\InvoiceCurrency::EGP): float
     {
-        if (! \App\Support\InvoiceCurrency::isUsd($currency)) {
-            return (float) $this->getObjectsTotalPrice($query);
-        }
-
         return round(
             (float) $query->get()->sum(
                 fn ($service) => \App\Support\InvoiceCurrency::invoiceLineAmount($service, $currency)
@@ -271,6 +267,24 @@ class Booking extends Model
         );
 
         return round($servicesTotal + (float) $expensesTotal, 2);
+    }
+
+    /**
+     * Company USD receivable from this booking's USD lines (services + standalone expenses).
+     */
+    public function foreignUsdTotal(): float
+    {
+        $servicesTotal = (float) \App\Models\BookingService::query()
+            ->where('booking_id', $this->id)
+            ->get()
+            ->sum(fn ($service) => \App\Support\InvoiceCurrency::foreignUsdAmount($service));
+
+        $expensesTotal = (float) $this->expenses()
+            ->standaloneFromBookingService()
+            ->get()
+            ->sum(fn ($expense) => \App\Support\InvoiceCurrency::foreignUsdAmount($expense));
+
+        return round($servicesTotal + $expensesTotal, 2);
     }
 
     public function getTransportationTotalPriceAttribute()

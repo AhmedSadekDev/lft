@@ -3,19 +3,20 @@
 namespace App\Support;
 
 /**
- * EGP / USD helpers for dashboard invoicing.
+ * EGP / USD helpers for dashboard invoicing and company AR.
  *
- * Rule of thumb:
- * - booking_services.price / agent_expenses.value always store the EGP book amount
- *   (wallet, bank, vault, EGP invoice totals).
- * - When currency is USD, foreign_amount + exchange_rate hold the original dollar
- *   line; price = foreign_amount * exchange_rate.
- * - invoices.currency = USD means a pure international invoice: print/totals use
- *   foreign USD amounts (and container prices entered in USD).
+ * Company AR keeps separate ledgers:
+ * - EGP lines settle only in the EGP bucket
+ * - USD lines settle only in the USD bucket (foreign_amount)
+ *
+ * exchange_rate is optional metadata / internal EGP book for agent cost.
+ * When present, price = foreign_amount * rate for wallet/cost only — it must
+ * not fold into the company's EGP receivable.
  */
 class InvoiceCurrency
 {
     public const EGP = 'EGP';
+
     public const USD = 'USD';
 
     public static function normalize(?string $currency): string
@@ -65,20 +66,19 @@ class InvoiceCurrency
         }
 
         $rate = round((float) ($input['exchange_rate'] ?? 0), 6);
-        if ($rate <= 0) {
-            throw new \InvalidArgumentException('سعر الصرف مطلوب وأكبر من صفر عند اختيار الدولار.');
-        }
 
         return [
             'currency' => self::USD,
             'foreign_amount' => $entered,
-            'exchange_rate' => $rate,
-            'price' => round($entered * $rate, 2),
+            'exchange_rate' => $rate > 0 ? $rate : null,
+            // Internal EGP book only when a rate is provided — not company EGP AR.
+            'price' => $rate > 0 ? round($entered * $rate, 2) : 0.0,
         ];
     }
 
     /**
-     * Amount to show / total on an invoice in the invoice's currency.
+     * Amount to include in an invoice total in the invoice's primary currency.
+     * USD lines never fold into an EGP invoice total (use foreignUsdAmount / usd_amount).
      */
     public static function invoiceLineAmount(object $line, ?string $invoiceCurrency): float
     {
@@ -90,12 +90,28 @@ class InvoiceCurrency
                 return round((float) ($line->foreign_amount ?? $line->price ?? $line->value ?? 0), 2);
             }
 
-            // EGP line on a USD invoice: keep EGP book amount (rare; prefer all-USD lines).
+            // EGP line on a USD invoice: keep EGP book amount (rare).
             return round((float) ($line->price ?? $line->value ?? 0), 2);
         }
 
-        // EGP invoice — always the EGP book amount.
+        // EGP invoice AR — native EGP lines only.
+        if ($lineCurrency === self::USD) {
+            return 0.0;
+        }
+
         return round((float) ($line->price ?? $line->value ?? 0), 2);
+    }
+
+    /**
+     * USD receivable amount for a line (0 when the line is not USD).
+     */
+    public static function foreignUsdAmount(object $line): float
+    {
+        if (! self::isUsd($line->currency ?? null)) {
+            return 0.0;
+        }
+
+        return round((float) ($line->foreign_amount ?? 0), 2);
     }
 
     public static function formatLine(object $line, ?string $invoiceCurrency = self::EGP): string
@@ -115,11 +131,13 @@ class InvoiceCurrency
             return number_format($usd, 2) . ' $';
         }
 
-        if ($rate > 0) {
-            return number_format($usd, 2) . ' $ × ' . rtrim(rtrim(number_format($rate, 6, '.', ''), '0'), '.')
-                . ' = ' . number_format($egp, 2) . ' ج.م';
+        // Hybrid EGP invoice: show USD as its own bucket (rate is optional metadata).
+        if ($rate > 0 && $egp > 0) {
+            return number_format($usd, 2) . ' $ (مرجع × '
+                . rtrim(rtrim(number_format($rate, 6, '.', ''), '0'), '.')
+                . ' ≈ ' . number_format($egp, 2) . ' ج.م)';
         }
 
-        return number_format($usd, 2) . ' $ (' . number_format($egp, 2) . ' ج.م)';
+        return number_format($usd, 2) . ' $';
     }
 }

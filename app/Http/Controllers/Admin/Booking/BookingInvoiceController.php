@@ -38,6 +38,7 @@ class BookingInvoiceController extends Controller
         $transportation_total = $booking->transportation_total_price;
         $taxed_services_total = $booking->servicesTotalForCurrency($booking->taxed_services(), $currency);
         $untaxed_services_total = $booking->untaxedServicesTotalForCurrency($currency);
+        $usd_services_total = InvoiceCurrency::isUsd($currency) ? 0 : $booking->foreignUsdTotal();
         $input = [
             'method'            => 'POST',
             'action'            => route('booking-invoices.store', ['booking' => $booking->id]),
@@ -49,6 +50,7 @@ class BookingInvoiceController extends Controller
             'transportation_total' => $transportation_total,
             'taxed_services_total' => $taxed_services_total,
             'untaxed_services_total' => $untaxed_services_total,
+            'usd_services_total' => $usd_services_total,
         ];
 
 
@@ -85,6 +87,8 @@ class BookingInvoiceController extends Controller
                 [
                     'invoice_number' => $invoice_number,
                     'currency' => $currency,
+                    // Pure USD invoices store totals in the primary columns; EGP invoices keep USD aside.
+                    'usd_amount' => InvoiceCurrency::isUsd($currency) ? 0 : $booking->foreignUsdTotal(),
                     'booking_id' => $booking->id,
 
                     'transportation_json' => $booking->bookingContainers,
@@ -173,7 +177,7 @@ class BookingInvoiceController extends Controller
         $transportation_total = $booking->transportation_total_price;
         $taxed_services_total = $booking->servicesTotalForCurrency($booking->taxed_services(), $currency);
         $untaxed_services_total = $booking->untaxedServicesTotalForCurrency($currency);
-
+        $usd_services_total = InvoiceCurrency::isUsd($currency) ? 0 : $booking->foreignUsdTotal();
 
         $input = [
             'method'            => 'PUT',
@@ -187,6 +191,7 @@ class BookingInvoiceController extends Controller
             'transportation_total' => $transportation_total,
             'taxed_services_total' => $taxed_services_total,
             'untaxed_services_total' => $untaxed_services_total,
+            'usd_services_total' => $usd_services_total,
         ];
 
         return view('admin.bookings.booking-invoices.edit', $input);
@@ -220,6 +225,7 @@ class BookingInvoiceController extends Controller
                 [
                     'booking_id' => $booking->id,
                     'currency' => $currency,
+                    'usd_amount' => InvoiceCurrency::isUsd($currency) ? 0 : $booking->foreignUsdTotal(),
 
                     'transportation_json' => $booking->bookingContainers,
                     'taxed_services_json' => $booking->taxed_services,

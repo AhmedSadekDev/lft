@@ -53,44 +53,46 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="card bg-light border shadow-sm h-100">
-                        <div class="card-body">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-chart-line"></i> ملخص الحساب
-                            </h5>
-
-                            <p>الرصيد الافتتاحي:
-                                <span class="float-left font-weight-bold">
-                                    {{ number_format($company->opening_balance ?? 0,2) }} ج.م
-                                </span>
-                            </p>
-
-                            <p>الرصيد المرحل:
-                                <span class="float-left font-weight-bold">
-                                    {{ number_format($carriedForwardBalance,2) }} ج.م
-                                </span>
-                            </p>
-
-                            <p>إجمالي الفواتير:
-                                <span class="float-left text-danger font-weight-bold">
-                                    {{ number_format($totalInvoices,2) }} ج.م
-                                </span>
-                            </p>
-
-                            <p>إجمالي السداد:
-                                <span class="float-left text-success font-weight-bold">
-                                    {{ number_format($totalPayments,2) }} ج.م
-                                </span>
-                            </p>
-
-                            <hr>
-
-                            <h5>
-                                الرصيد النهائي:
-                                <span class="{{ $finalBalance >= 0 ? 'text-danger' : 'text-success' }}">
-                                    {{ number_format(abs($finalBalance),2) }} ج.م
-                                </span>
-                            </h5>
+                    @php
+                        $cf = $carriedForwardBalances ?? ['EGP' => $carriedForwardBalance ?? 0, 'USD' => 0];
+                        $ti = $totalInvoicesBalances ?? ['EGP' => $totalInvoices ?? 0, 'USD' => 0];
+                        $tp = $totalPaymentsBalances ?? ['EGP' => $totalPayments ?? 0, 'USD' => 0];
+                        $fb = $finalBalances ?? ['EGP' => $finalBalance ?? 0, 'USD' => 0];
+                    @endphp
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light border shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="text-primary mb-3"><i class="fas fa-coins"></i> رصيد الجنيه</h5>
+                                    <p>افتتاحي: <span class="float-left font-weight-bold">{{ number_format($company->opening_balance ?? 0, 2) }} ج.م</span></p>
+                                    <p>مرحّل: <span class="float-left font-weight-bold">{{ number_format($cf['EGP'] ?? 0, 2) }} ج.م</span></p>
+                                    <p>فواتير: <span class="float-left text-danger font-weight-bold">{{ number_format($ti['EGP'] ?? 0, 2) }} ج.م</span></p>
+                                    <p>سداد: <span class="float-left text-success font-weight-bold">{{ number_format($tp['EGP'] ?? 0, 2) }} ج.م</span></p>
+                                    <hr>
+                                    <h5>النهائي:
+                                        <span class="{{ ($fb['EGP'] ?? 0) >= 0 ? 'text-danger' : 'text-success' }}">
+                                            {{ number_format(abs($fb['EGP'] ?? 0), 2) }} ج.م
+                                        </span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light border shadow-sm h-100">
+                                <div class="card-body">
+                                    <h5 class="text-primary mb-3"><i class="fas fa-dollar-sign"></i> رصيد الدولار</h5>
+                                    <p>افتتاحي: <span class="float-left font-weight-bold">{{ number_format($company->opening_balance_usd ?? 0, 2) }} $</span></p>
+                                    <p>مرحّل: <span class="float-left font-weight-bold">{{ number_format($cf['USD'] ?? 0, 2) }} $</span></p>
+                                    <p>فواتير: <span class="float-left text-danger font-weight-bold">{{ number_format($ti['USD'] ?? 0, 2) }} $</span></p>
+                                    <p>سداد: <span class="float-left text-success font-weight-bold">{{ number_format($tp['USD'] ?? 0, 2) }} $</span></p>
+                                    <hr>
+                                    <h5>النهائي:
+                                        <span class="{{ ($fb['USD'] ?? 0) >= 0 ? 'text-danger' : 'text-success' }}">
+                                            {{ number_format(abs($fb['USD'] ?? 0), 2) }} $
+                                        </span>
+                                    </h5>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -131,10 +133,10 @@
                             <th>رقم الطلب</th>
                             <th>رقم الفاتورة</th>
                             <th>نوع العملية</th>
-                            <th>الإجمالي</th>
+                            <th>العملة</th>
+                            <th>ج.م</th>
+                            <th>$</th>
                             <th>تم دفع</th>
-                            <th>مدين</th>
-                            <th>دائن</th>
                             <th>ملاحظات</th>
                             <th>تفاصيل</th>
                             <th>الإجراء</th>
@@ -181,20 +183,29 @@
                                     @endif
                                 </td>
 
+                                <td>{{ $transaction['currency'] ?? 'ج.م' }}</td>
+
                                 <td class="text-danger font-weight-bold">
-                                    {{ number_format($transaction['total'] ?? 0,2) }}
+                                    @if(($transaction['type'] ?? '') === 'payment')
+                                        {{ number_format($transaction['total_egp'] ?? 0, 2) }}
+                                    @else
+                                        {{ number_format($transaction['total_egp'] ?? (($transaction['currency'] ?? '') === '$' ? 0 : ($transaction['total'] ?? 0)), 2) }}
+                                    @endif
+                                </td>
+
+                                <td class="text-danger font-weight-bold">
+                                    @if(($transaction['type'] ?? '') === 'payment')
+                                        {{ number_format($transaction['total_usd'] ?? 0, 2) }}
+                                    @else
+                                        {{ number_format($transaction['total_usd'] ?? 0, 2) }}
+                                    @endif
                                 </td>
 
                                 <td class="text-success font-weight-bold">
                                     {{ number_format($transaction['paid'] ?? 0,2) }}
-                                </td>
-
-                                <td>
-                                    {{ number_format($transaction['current_debit'] ?? 0,2) }}
-                                </td>
-
-                                <td>
-                                    {{ number_format($transaction['current_credit'] ?? 0,2) }}
+                                    @if(($transaction['type'] ?? '') === 'payment')
+                                        {{ $transaction['currency'] ?? '' }}
+                                    @endif
                                 </td>
 
                                 <td>
@@ -246,7 +257,7 @@
                         @empty
                             <tr>
                                 <td colspan="11" class="py-4 text-muted">
-                                    لا توجد بيانات
+                                    لا توجد حركات
                                 </td>
                             </tr>
                         @endforelse

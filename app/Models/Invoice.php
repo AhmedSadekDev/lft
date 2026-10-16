@@ -13,6 +13,7 @@ class Invoice extends Model
     protected $fillable = [
         'invoice_number',
         'currency',
+        'usd_amount',
         'booking_id',
 
         'booking_json',
@@ -31,6 +32,7 @@ class Invoice extends Model
 
     protected $attributes = [
         'currency' => InvoiceCurrency::EGP,
+        'usd_amount' => 0,
     ];
 
     protected $casts = [
@@ -38,6 +40,7 @@ class Invoice extends Model
         'transportation_json' => 'json',
         'taxed_services_json' => 'json',
         'untaxed_services_json' => 'json',
+        'usd_amount' => 'float',
     ];
 
     public function isUsd(): bool

@@ -163,20 +163,25 @@
             @endforelse
 
             @if(isset($transactions) && $transactions->count() > 0)
+                @php
+                    $fb = $finalBalances ?? ['EGP' => $finalBalance ?? 0, 'USD' => 0];
+                    $ti = $totalInvoicesBalances ?? ['EGP' => $totalInvoices ?? 0, 'USD' => 0];
+                    $tp = $totalPaymentsBalances ?? ['EGP' => $totalPayments ?? 0, 'USD' => 0];
+                @endphp
                 <tr class="summary-row">
                     <td colspan="4" style="text-align: right; padding-right: 10px; font-size: 9pt;">ملخص الفترة</td>
-                    <td colspan="2" style="text-align: center; font-size: 8.5pt;">
-                        فواتير: {{ number_format($totalInvoices ?? 0, 2) }} — سداد: {{ number_format($totalPayments ?? 0, 2) }}
-                    </td>
-                    <td colspan="3" style="text-align: center; font-size: 8.5pt;">
-                        الرصيد المرحّل: {{ number_format($carriedForwardBalance ?? 0, 2) }}
+                    <td colspan="5" style="text-align: center; font-size: 8.5pt;">
+                        فواتير ج.م: {{ number_format($ti['EGP'] ?? 0, 2) }} / $: {{ number_format($ti['USD'] ?? 0, 2) }}
+                        —
+                        سداد ج.م: {{ number_format($tp['EGP'] ?? 0, 2) }} / $: {{ number_format($tp['USD'] ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr class="final-balance-row">
-                    <td colspan="7" style="text-align: right; padding-right: 10px; font-size: 9.5pt;">الرصيد النهائي المستحق (يوم {{ $toDate }})</td>
-                    <td colspan="2" class="num final-balance-amount" style="text-align: center; font-size: 10pt;">
-                        {{ number_format(abs($finalBalance ?? 0), 2) }}
-                        <span style="display: inline-block; margin-right: 6px; font-weight: bold; {{ ($finalBalance ?? 0) >= 0 ? 'color: #d32f2f;' : 'color: #388e3c;' }}">{{ ($finalBalance ?? 0) >= 0 ? 'مدين' : 'دائن' }}</span>
+                    <td colspan="5" style="text-align: right; padding-right: 10px; font-size: 9.5pt;">الرصيد النهائي (يوم {{ $toDate }})</td>
+                    <td colspan="4" class="num final-balance-amount" style="text-align: center; font-size: 10pt;">
+                        {{ number_format(abs($fb['EGP'] ?? 0), 2) }} ج.م
+                        +
+                        {{ number_format(abs($fb['USD'] ?? 0), 2) }} $
                     </td>
                 </tr>
             @endif

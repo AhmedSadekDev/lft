@@ -84,7 +84,8 @@
                             <th style="width: 30%;">اسم الشركة</th>
                             <th style="width: 25%;">البريد الإلكتروني</th>
                             <th style="width: 20%;">الهاتف</th>
-                            <th style="width: 15%;">القيمة النهائية</th>
+                            <th style="width: 12%;">مستحق ج.م</th>
+                            <th style="width: 12%;">مستحق $</th>
                             <th style="width: 10%;">الإجراءات</th>
                         </tr>
                     </thead>
@@ -98,6 +99,9 @@
                             <td class="text-center text-danger font-weight-bold" style="font-size: 16px;">
                                 {{ number_format($company['balance'], 2) }} ج.م
                             </td>
+                            <td class="text-center text-danger font-weight-bold" style="font-size: 16px;">
+                                {{ number_format($company['balance_usd'] ?? 0, 2) }} $
+                            </td>
                             <td class="text-center">
                                 <a href="{{ route('accounts.statement', $company['id']) }}?from={{ \Carbon\Carbon::parse($reportDate)->startOfYear()->format('Y-m-d') }}&to={{ $reportDate }}"
                                    class="btn btn-sm btn-primary" title="كشف حساب">
@@ -107,7 +111,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="7" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
                                     <p class="font-weight-bold">لا توجد شركات مدينة في هذا التاريخ</p>
@@ -122,6 +126,9 @@
                             <td colspan="4" class="text-right" style="font-size: 16px;">الإجمالي:</td>
                             <td class="text-center text-danger" style="font-size: 18px;">
                                 {{ number_format($totalDebts, 2) }} ج.م
+                            </td>
+                            <td class="text-center text-danger" style="font-size: 18px;">
+                                {{ number_format($totalDebtsUsd ?? 0, 2) }} $
                             </td>
                             <td></td>
                         </tr>

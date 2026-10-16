@@ -29,6 +29,7 @@ class Company extends Authenticatable implements JWTSubject
         'taxed',
         'private_company_id',
         'opening_balance',
+        'opening_balance_usd',
         'password',
         'session_id',
         'bill_type',
@@ -40,6 +41,7 @@ class Company extends Authenticatable implements JWTSubject
     protected $casts = [
         'attachments' => 'array',
         'opening_balance' => 'double',
+        'opening_balance_usd' => 'double',
     ];
 
     protected $hidden = [

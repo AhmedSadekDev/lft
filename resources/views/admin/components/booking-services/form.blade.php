@@ -88,15 +88,15 @@
 
         <div class="col-md-4 col-sm-12" id="exchange_rate_field">
             <div class="form-group{{ $errors->has('exchange_rate') ? ' has-error' : '' }}">
-                {!! Form::label('exchange_rate', 'سعر الصرف (ج.م لكل $1)') !!}
+                {!! Form::label('exchange_rate', 'سعر الصرف (اختياري — ج.م لكل $1)') !!}
                 {!! Form::number('exchange_rate', $lineRate, [
                     'id' => 'exchange_rate',
                     'class' => 'form-control',
                     'step' => '0.000001',
                     'min' => 0,
-                    'placeholder' => 'مثال: 48.50',
+                    'placeholder' => 'اختياري للمرجع / عهدة المندوب',
                 ]) !!}
-                <small class="text-muted">يُحسب المقابل بالجنيه تلقائياً للدفاتر والعهدة</small>
+                <small class="text-muted">الدولار يتجمع لوحده في كشف الحساب. سعر الصرف اختياري للمرجع أو حساب عهدة المندوب بالمصري.</small>
                 <small class="text-danger d-block">{{ $errors->first('exchange_rate') }}</small>
                 <div class="mt-2 font-weight-bold" id="egp_preview"></div>
             </div>
@@ -307,9 +307,9 @@
             $('#exchange_rate_field').toggle(isUsd);
             $('#price_label').text(isUsd ? 'المبلغ بالدولار' : 'المبلغ بالجنيه');
             $('#price_hint').text(isUsd
-                ? 'أدخل المبلغ بالدولار ثم سعر الصرف'
+                ? 'أدخل المبلغ بالدولار — يُسجّل في رصيد الدولار منفصلًا'
                 : 'أدخل المبلغ بالجنيه المصري');
-            $('#exchange_rate').prop('required', isUsd);
+            $('#exchange_rate').prop('required', false);
             updateEgpPreview();
         }
 
@@ -322,7 +322,9 @@
             var rate = parseFloat($('#exchange_rate').val()) || 0;
             if (amount > 0 && rate > 0) {
                 var egp = (amount * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                $('#egp_preview').text('المقابل في الدفاتر: ' + egp + ' ج.م');
+                $('#egp_preview').text('مرجع عهدة المندوب: ' + egp + ' ج.م (لا يدخل رصيد العميل بالمصري)');
+            } else if (amount > 0) {
+                $('#egp_preview').text('سيُضاف ' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $ لرصيد الدولار');
             } else {
                 $('#egp_preview').text('');
             }

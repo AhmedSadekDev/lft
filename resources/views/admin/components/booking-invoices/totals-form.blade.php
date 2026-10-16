@@ -34,14 +34,14 @@
                     {!! Form::select(
                         'currency',
                         [
-                            'EGP' => 'جنيه مصري — فاتورة محلية (يمكن تضمين إيصالات دولار بسعر صرف)',
+                            'EGP' => 'جنيه مصري — فاتورة محلية (الدولار يتجمع في رصيد منفصل)',
                             'USD' => 'دولار أمريكي — فاتورة دولية كاملة',
                         ],
                         $invoiceCurrency,
                         ['id' => 'invoice_currency', 'class' => 'form-control form-control-solid totals-input', 'required' => 'required']
                     ) !!}
                     <small class="text-muted d-block mt-1">
-                        المحلي: الإيصالات بالدولار تتحول للجنيه بسعر الصرف المسجّل على كل إيصال.
+                        المحلي: بنود الجنيه في رصيد ج.م، وبنود الدولار في رصيد $ منفصل (سعر الصرف اختياري للمرجع فقط).
                         الدولي: كل البنود بالدولار؛ لا تُرسل لمنظومة الفاتورة الإلكترونية المصرية.
                     </small>
                     @error('currency') <small class="text-danger d-block mt-1">{{ $message }}</small> @enderror
@@ -74,6 +74,14 @@
                         <span class="totals-value-number totals-value-number--primary">{{ number_format((float)($transportation_total + $taxed_services_total), 2) }}</span>
                     </div>
                 </div>
+                @if(($invoiceCurrency ?? 'EGP') !== 'USD' && (float) ($usd_services_total ?? 0) > 0)
+                    <div class="col-sm-6 col-lg-4 mb-3">
+                        <div class="totals-value-box">
+                            <span class="totals-value-label">إجمالي بنود الدولار ($)</span>
+                            <span class="totals-value-number">{{ number_format((float) $usd_services_total, 2) }}</span>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
 

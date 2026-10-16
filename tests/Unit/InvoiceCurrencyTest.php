@@ -21,7 +21,7 @@ class InvoiceCurrencyTest extends TestCase
         $this->assertNull($line['exchange_rate']);
     }
 
-    public function test_usd_line_stores_foreign_amount_and_egp_book_price(): void
+    public function test_usd_line_with_rate_keeps_internal_egp_book_only(): void
     {
         $line = InvoiceCurrency::normalizeLine([
             'currency' => 'USD',
@@ -35,13 +35,21 @@ class InvoiceCurrencyTest extends TestCase
         $this->assertSame(5820.0, $line['price']);
     }
 
-    public function test_usd_line_requires_a_positive_exchange_rate(): void
+    public function test_usd_line_without_rate_stores_foreign_amount_only(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        InvoiceCurrency::normalizeLine(['currency' => 'USD', 'price' => 10, 'exchange_rate' => 0]);
+        $line = InvoiceCurrency::normalizeLine([
+            'currency' => 'USD',
+            'price' => 500,
+            'exchange_rate' => 0,
+        ]);
+
+        $this->assertSame(InvoiceCurrency::USD, $line['currency']);
+        $this->assertSame(500.0, $line['foreign_amount']);
+        $this->assertNull($line['exchange_rate']);
+        $this->assertSame(0.0, $line['price']);
     }
 
-    public function test_hybrid_egp_invoice_uses_converted_book_amount(): void
+    public function test_usd_line_does_not_fold_into_egp_invoice_total(): void
     {
         $line = (object) [
             'currency' => 'USD',
@@ -50,10 +58,10 @@ class InvoiceCurrencyTest extends TestCase
             'price' => 5000,
         ];
 
-        $this->assertSame(5000.0, InvoiceCurrency::invoiceLineAmount($line, 'EGP'));
+        $this->assertSame(0.0, InvoiceCurrency::invoiceLineAmount($line, 'EGP'));
         $this->assertSame(100.0, InvoiceCurrency::invoiceLineAmount($line, 'USD'));
+        $this->assertSame(100.0, InvoiceCurrency::foreignUsdAmount($line));
         $this->assertStringContainsString('100.00 $', InvoiceCurrency::formatLine($line, 'EGP'));
-        $this->assertStringContainsString('ج.م', InvoiceCurrency::formatLine($line, 'EGP'));
         $this->assertSame('100.00 $', InvoiceCurrency::formatLine($line, 'USD'));
     }
 }

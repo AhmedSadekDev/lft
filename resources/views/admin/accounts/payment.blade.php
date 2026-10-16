@@ -50,10 +50,21 @@
                 </div>
                 <div class="col-md-6">
                     <h5 class="font-weight-bold">معلومات الحساب</h5>
-                    <p><strong>الرصيد المستحق:</strong>
+                    @php $cb = $currentBalances ?? ['EGP' => $currentBalance ?? 0, 'USD' => 0]; @endphp
+                    <p><strong>المستحق ج.م:</strong>
                         <span class="text-danger font-weight-bold" style="font-size: 1.2em">
-                            {{ number_format($currentBalance, 2) }} جنيه
+                            {{ number_format($cb['EGP'] ?? 0, 2) }} ج.م
                         </span>
+                    </p>
+                    <p><strong>المستحق $:</strong>
+                        <span class="text-danger font-weight-bold" style="font-size: 1.2em">
+                            {{ number_format($cb['USD'] ?? 0, 2) }} $
+                        </span>
+                    </p>
+                    <p class="text-muted mb-0">
+                        افتتاحي ج.م: {{ number_format($company->opening_balance ?? 0, 2) }}
+                        —
+                        افتتاحي $: {{ number_format($company->opening_balance_usd ?? 0, 2) }}
                     </p>
                 </div>
             </div>
@@ -73,9 +84,8 @@
                                         <th>رقم الفاتورة</th>
                                         <th>رقم الطلب</th>
                                         <th>التاريخ</th>
-                                        <th>إجمالي الفاتورة</th>
-                                        <th>المسدد</th>
-                                        <th>المتبقي</th>
+                                        <th>متبقي ج.م</th>
+                                        <th>متبقي $</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -86,21 +96,24 @@
                                                        name="invoice_ids[]"
                                                        class="invoice-checkbox"
                                                        value="{{ $invoice['id'] }}"
-                                                       data-remaining="{{ $invoice['remaining'] }}">
+                                                       data-remaining-egp="{{ $invoice['remaining_egp'] ?? $invoice['remaining'] }}"
+                                                       data-remaining-usd="{{ $invoice['remaining_usd'] ?? 0 }}"
+                                                       data-remaining="{{ $invoice['remaining_egp'] ?? $invoice['remaining'] }}">
                                             </td>
                                             <td>{{ $invoice['invoice_number'] }}</td>
                                             <td>{{ $invoice['booking_number'] }}</td>
                                             <td>{{ \Carbon\Carbon::parse($invoice['date'])->format('Y-m-d') }}</td>
-                                            <td class="font-weight-bold">{{ number_format($invoice['total'], 2) }} ج.م</td>
-                                            <td class="text-success">{{ number_format($invoice['paid'], 2) }} ج.م</td>
-                                            <td class="text-danger font-weight-bold">{{ number_format($invoice['remaining'], 2) }} ج.م</td>
+                                            <td class="text-danger font-weight-bold">{{ number_format($invoice['remaining_egp'] ?? $invoice['remaining'], 2) }} ج.م</td>
+                                            <td class="text-danger font-weight-bold">{{ number_format($invoice['remaining_usd'] ?? 0, 2) }} $</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                         <div class="alert alert-info mt-3">
-                            <strong>المجموع المحدد:</strong> <span id="selected_total" class="font-weight-bold">0.00</span> ج.م
+                            <strong>المجموع المحدد حسب عملة السداد:</strong>
+                            <span id="selected_total" class="font-weight-bold">0.00</span>
+                            <span id="selected_currency_label">ج.م</span>
                             <span id="selected_count" class="ml-3">(0 فاتورة)</span>
                         </div>
                     </div>
@@ -118,23 +131,19 @@
                         <i class="fas fa-info-circle mr-2"></i>
                         سداد الرصيد الافتتاحي
                     </h5>
-                    @if($company->opening_balance && $company->opening_balance > 0)
-                        <p class="mb-2">
-                            <strong>الرصيد الافتتاحي الحالي:</strong>
-                            <span class="text-danger font-weight-bold" style="font-size: 1.2em">
-                                {{ number_format($company->opening_balance, 2) }} ج.م
-                            </span>
-                        </p>
-                        <p class="mb-0">
-                            <small class="text-muted">
-                                سيتم خصم المبلغ المدفوع من الرصيد الافتتاحي فقط، وليس من الفواتير.
-                            </small>
-                        </p>
-                    @else
-                        <p class="mb-0">
-                            <span class="text-muted">لا يوجد رصيد افتتاحي حالياً</span>
-                        </p>
-                    @endif
+                    <p class="mb-2">
+                        <strong>افتتاحي ج.م:</strong>
+                        <span class="text-danger font-weight-bold">{{ number_format($company->opening_balance ?? 0, 2) }} ج.م</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>افتتاحي $:</strong>
+                        <span class="text-danger font-weight-bold">{{ number_format($company->opening_balance_usd ?? 0, 2) }} $</span>
+                    </p>
+                    <p class="mb-0">
+                        <small class="text-muted">
+                            اختر عملة السداد؛ يُخصم من الرصيد الافتتاحي لنفس العملة فقط.
+                        </small>
+                    </p>
                 </div>
             </div>
 
@@ -184,6 +193,19 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
+                            <label class="font-weight-bold required-field">عملة السداد <span class="text-danger">*</span></label>
+                            <select name="currency" id="payment_currency" class="form-control @error('currency') is-invalid @enderror" required>
+                                <option value="EGP" {{ old('currency', 'EGP') === 'EGP' ? 'selected' : '' }}>جنيه مصري (ج.م)</option>
+                                <option value="USD" {{ old('currency') === 'USD' ? 'selected' : '' }}>دولار أمريكي ($)</option>
+                            </select>
+                            @error('currency')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">السداد يخصم فقط من مستحقات نفس العملة.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
                             <label class="font-weight-bold required-field">المبلغ <span class="text-danger">*</span></label>
                             <input type="number"
                                    name="amount"
@@ -197,11 +219,9 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <small class="text-muted" id="amount_hint">
-                                @if($company->opening_balance && $company->opening_balance > 0)
-                                    الرصيد الافتتاحي: {{ number_format($company->opening_balance, 2) }} جنيه
-                                @else
-                                    الرصيد المستحق: {{ number_format($currentBalance, 2) }} جنيه
-                                @endif
+                                المستحق ج.م: {{ number_format(($currentBalances['EGP'] ?? $currentBalance), 2) }}
+                                —
+                                المستحق $: {{ number_format(($currentBalances['USD'] ?? 0), 2) }}
                             </small>
                         </div>
                     </div>
@@ -380,18 +400,23 @@
             var total = 0;
             var count = 0;
             var selectedIds = [];
+            var currency = $('#payment_currency').val() || 'EGP';
+            var attr = currency === 'USD' ? 'remainingUsd' : 'remainingEgp';
 
             $('.invoice-checkbox:checked').each(function() {
-                total += parseFloat($(this).data('remaining')) || 0;
+                total += parseFloat($(this).data(attr)) || 0;
                 count++;
                 selectedIds.push($(this).val());
             });
 
             $('#selected_total').text(total.toFixed(2));
+            $('#selected_currency_label').text(currency === 'USD' ? '$' : 'ج.م');
             $('#selected_count').text('(' + count + ' فاتورة)');
             $('#invoice_ids_input').val(selectedIds.join(','));
             $('#amount_input').val(total > 0 ? total.toFixed(2) : '');
         }
+
+        $('#payment_currency').on('change', updateSelectedTotal);
 
         // تحديث نوع السداد
         $('#payment_type').on('change', function() {

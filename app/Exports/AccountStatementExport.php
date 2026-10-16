@@ -30,6 +30,7 @@ class AccountStatementExport implements WithMultipleSheets
         $this->company = $company;
         $this->fromDate = $fromDate;
         $this->toDate = $toDate;
+        // Accept scalar (legacy) or ['EGP'=>x,'USD'=>y] pairs.
         $this->carriedForwardBalance = $carriedForwardBalance;
         $this->totalInvoices = $totalInvoices;
         $this->totalPayments = $totalPayments;
@@ -42,8 +43,10 @@ class AccountStatementExport implements WithMultipleSheets
 
     public function sheets(): array
     {
+        $finalEgp = is_array($this->finalBalance) ? ($this->finalBalance['EGP'] ?? 0) : $this->finalBalance;
+
         return [
-            new AccountStatementTransactionsSheet($this->company, $this->fromDate, $this->toDate, $this->transactions, $this->finalBalance, $this->mode),
+            new AccountStatementTransactionsSheet($this->company, $this->fromDate, $this->toDate, $this->transactions, $finalEgp, $this->mode),
             new AccountStatementSummarySheet($this->company, $this->fromDate, $this->toDate, $this->carriedForwardBalance, $this->totalInvoices, $this->totalPayments, $this->finalBalance, $this->mode),
         ];
     }
@@ -231,14 +234,24 @@ class AccountStatementSummarySheet implements FromCollection, WithHeadings, Shou
             ['إلى تاريخ', $this->toDate],
         ];
 
-        if ($this->company->opening_balance && $this->company->opening_balance != 0) {
-            $data[] = ['الرصيد الافتتاحي', number_format($this->company->opening_balance, 2)];
-        }
+        $pair = function ($value, string $key = 'EGP') {
+            if (is_array($value)) {
+                return (float) ($value[$key] ?? 0);
+            }
 
-        $data[] = ['الرصيد المرحّل', number_format($this->carriedForwardBalance, 2)];
-        $data[] = ['إجمالي الفواتير', number_format($this->totalInvoices, 2)];
-        $data[] = ['إجمالي السداد', number_format($this->totalPayments, 2)];
-        $data[] = ['الرصيد النهائي المستحق', number_format($this->finalBalance, 2)];
+            return $key === 'EGP' ? (float) $value : 0.0;
+        };
+
+        $data[] = ['الرصيد الافتتاحي ج.م', number_format((float) ($this->company->opening_balance ?? 0), 2)];
+        $data[] = ['الرصيد الافتتاحي $', number_format((float) ($this->company->opening_balance_usd ?? 0), 2)];
+        $data[] = ['الرصيد المرحّل ج.م', number_format($pair($this->carriedForwardBalance, 'EGP'), 2)];
+        $data[] = ['الرصيد المرحّل $', number_format($pair($this->carriedForwardBalance, 'USD'), 2)];
+        $data[] = ['إجمالي الفواتير ج.م', number_format($pair($this->totalInvoices, 'EGP'), 2)];
+        $data[] = ['إجمالي الفواتير $', number_format($pair($this->totalInvoices, 'USD'), 2)];
+        $data[] = ['إجمالي السداد ج.م', number_format($pair($this->totalPayments, 'EGP'), 2)];
+        $data[] = ['إجمالي السداد $', number_format($pair($this->totalPayments, 'USD'), 2)];
+        $data[] = ['الرصيد النهائي ج.م', number_format($pair($this->finalBalance, 'EGP'), 2)];
+        $data[] = ['الرصيد النهائي $', number_format($pair($this->finalBalance, 'USD'), 2)];
 
         return collect($data);
     }
