@@ -26,7 +26,19 @@ class SendNotification
             return true;
         }
 
-        $job = new SendPushNotificationJob((string) $token, (string) $title, (string) $text, (array) $data, $eventId);
-        return $job->handle();
+        try {
+            $job = new SendPushNotificationJob((string) $token, (string) $title, (string) $text, (array) $data, $eventId);
+
+            return $job->handle();
+        } catch (\Throwable $e) {
+            // Never let push failures break business APIs (approve/assign/etc.).
+            Log::critical('SendNotification: push failed and was swallowed', [
+                'error' => $e->getMessage(),
+                'title' => $title,
+                'eventId' => $eventId,
+            ]);
+
+            return false;
+        }
     }
 }

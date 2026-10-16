@@ -128,6 +128,17 @@ class SendPushNotificationJob implements ShouldQueue
                 throw $e;
             }
 
+            // Missing/invalid server credentials: permanent config error — do not fail the API caller.
+            if ($this->isPermanentCredentialError($e)) {
+                Log::critical('SendPushNotificationJob: Firebase credentials unavailable; push skipped', [
+                    'error' => $e->getMessage(),
+                    'eventId' => $this->eventId,
+                    'credentials_path' => config('services.firebase.credentials', storage_path('app/firebase.json')),
+                ]);
+
+                return false;
+            }
+
             // Connection or cURL error — retry if within attempts limit
             if ($this->attempts() < $this->tries) {
                 Log::error('SendPushNotificationJob: Network or unexpected exception, retrying', [
@@ -144,5 +155,15 @@ class SendPushNotificationJob implements ShouldQueue
 
             return false;
         }
+    }
+
+    private function isPermanentCredentialError(\Throwable $e): bool
+    {
+        $message = $e->getMessage();
+
+        return str_contains($message, 'Firebase credentials file')
+            || str_contains($message, 'Firebase authentication failed')
+            || str_contains($message, 'Firebase credentials file is not valid JSON')
+            || str_contains($message, 'Firebase authentication returned no access token');
     }
 }
