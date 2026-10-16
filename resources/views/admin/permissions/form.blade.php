@@ -29,6 +29,7 @@
         'services' => 'الخدمات',
         'shippingAgents' => 'التوكيلات الملاحية',
         'transportations' => 'النقل',
+        'shipments' => 'الشحنات',
         'yards' => 'الساحات',
         'vaults' => 'الخزن',
         'banks' => 'البنوك',
@@ -47,8 +48,42 @@
         'reviews' => 'التقييمات',
         'contactUs' => 'اتصل بنا',
         'accounts' => 'الحسابات',
+        'receipts' => 'الإيصالات',
         'other' => 'أخرى',
     ];
+
+    $actionLabels = [
+        'index' => 'عرض',
+        'create' => 'إنشاء',
+        'update' => 'تحديث',
+        'udpate' => 'تحديث',
+        'edit' => 'تعديل',
+        'delete' => 'حذف',
+        'show' => 'عرض',
+        'store' => 'حفظ',
+    ];
+
+    $resolvePermLabel = function (string $name) use ($groupLabels, $actionLabels): string {
+        $translated = __('admin.' . $name);
+        if ($translated !== 'admin.' . $name) {
+            return $translated;
+        }
+
+        $parts = explode('.', $name);
+        $groupKey = $parts[0] ?? $name;
+        $actionKey = $parts[1] ?? '';
+        $group = $groupLabels[$groupKey] ?? $groupKey;
+        $action = $actionLabels[$actionKey] ?? $actionKey;
+
+        if ($actionKey === 'index') {
+            return 'عرض ' . $group;
+        }
+        if ($action !== '') {
+            return $action . ' — ' . $group;
+        }
+
+        return $group;
+    };
 @endphp
 
 <form action="{{ $action }}" method="post" class="lft-simple-form lft-perm-form" id="lftPermForm">
@@ -114,10 +149,8 @@
         <div class="lft-perm-groups" id="lftPermGroups">
             @foreach ($grouped as $groupKey => $groupPermissions)
                 @php
-                    $groupTitle = $groupLabels[$groupKey] ?? __('admin.' . $groupKey);
-                    if ($groupTitle === 'admin.' . $groupKey) {
-                        $groupTitle = $groupKey;
-                    }
+                    $groupTitle = $groupLabels[$groupKey]
+                        ?? ((__('admin.' . $groupKey) !== 'admin.' . $groupKey) ? __('admin.' . $groupKey) : $groupKey);
                     $groupChecked = $groupPermissions->filter(fn ($p) => in_array((int) $p->id, $selectedIds, true))->count();
                     $groupTotal = $groupPermissions->count();
                 @endphp
@@ -140,16 +173,14 @@
                     <div class="lft-perm-grid">
                         @foreach ($groupPermissions as $permission)
                             @php
-                                $label = __('admin.' . $permission->name);
-                                if ($label === 'admin.' . $permission->name) {
-                                    $label = $permission->name;
-                                }
+                                $label = $resolvePermLabel($permission->name);
                                 $action = str_contains($permission->name, '.')
                                     ? last(explode('.', $permission->name))
                                     : $permission->name;
+                                $actionAr = $actionLabels[$action] ?? $action;
                             @endphp
                             <label class="lft-perm-item @if(in_array((int) $permission->id, $selectedIds, true)) is-checked @endif"
-                                   data-search="{{ strtolower($label . ' ' . $permission->name . ' ' . $groupTitle) }}">
+                                   data-search="{{ mb_strtolower($label . ' ' . $groupTitle . ' ' . $actionAr, 'UTF-8') }}">
                                 <input id="permission{{ $permission->id }}"
                                        class="lft-perm-checkbox"
                                        type="checkbox"
@@ -160,7 +191,7 @@
                                        data-native-select>
                                 <span class="lft-perm-item-body">
                                     <span class="lft-perm-item-label">{{ $label }}</span>
-                                    <span class="lft-perm-item-action lft-perm-item-action--{{ $action }}">{{ $action }}</span>
+                                    <span class="lft-perm-item-action lft-perm-item-action--{{ $action }}">{{ $actionAr }}</span>
                                 </span>
                             </label>
                         @endforeach
