@@ -20,7 +20,7 @@
     {{-- Load FA without blocking first paint --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}?v=5l">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}?v=5m">
 </head>
 <body style="margin: 0; padding: 0;">
     <main class="lft-login-page">

@@ -4587,3 +4587,228 @@ html[data-theme="dark"] .select2-container--default .select2-search--dropdown .s
     border: 1px solid var(--border-color) !important;
     color: var(--text-primary) !important;
 }
+
+/* ==========================================================================
+   Permissions create / edit
+   ========================================================================== */
+html body.lft-admin .lft-perm-card > .card-header .card-title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+html body.lft-admin .lft-perm-subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+html body.lft-admin .lft-perm-name-block {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem 1.5rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+html body.lft-admin .lft-perm-name-block .form-group {
+    flex: 1 1 280px;
+    max-width: 480px;
+}
+html body.lft-admin .lft-perm-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: 0.35rem;
+}
+html body.lft-admin .lft-perm-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    background: var(--primary-soft);
+    color: var(--primary-hover, var(--primary));
+}
+html body.lft-admin .lft-perm-meta-chip--muted {
+    background: var(--fill-subtle);
+    color: var(--text-muted);
+}
+html body.lft-admin .lft-perm-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+html body.lft-admin .lft-perm-search {
+    position: relative;
+    flex: 1 1 260px;
+    max-width: 420px;
+}
+html body.lft-admin .lft-perm-search > i {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+html body.lft-admin .lft-perm-search .form-control {
+    padding-right: 2.4rem !important;
+    border-radius: 10px !important;
+}
+html body.lft-admin .lft-perm-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+html body.lft-admin .lft-perm-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+html body.lft-admin .lft-perm-group {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--fill-subtle);
+    overflow: hidden;
+}
+html body.lft-admin .lft-perm-group.is-filtered-out,
+html body.lft-admin .lft-perm-item.is-filtered-out {
+    display: none !important;
+}
+html body.lft-admin .lft-perm-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+}
+html body.lft-admin .lft-perm-group-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    justify-content: space-between;
+}
+html body.lft-admin .lft-perm-group-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    margin: 0;
+}
+html body.lft-admin .lft-perm-group-check input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+html body.lft-admin .lft-perm-group-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--fill-strong);
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+}
+html body.lft-admin .lft-perm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.65rem;
+    padding: 0.85rem;
+}
+html body.lft-admin .lft-perm-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+html body.lft-admin .lft-perm-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-soft);
+}
+html body.lft-admin .lft-perm-item.is-checked {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+html body.lft-admin .lft-perm-checkbox {
+    width: 1.05rem;
+    height: 1.05rem;
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+html body.lft-admin .lft-perm-item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+html body.lft-admin .lft-perm-item-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.35;
+}
+html body.lft-admin .lft-perm-item-action {
+    align-self: flex-start;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: lowercase;
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    background: var(--fill-strong);
+    color: var(--text-muted);
+}
+html body.lft-admin .lft-perm-item-action--index,
+html body.lft-admin .lft-perm-item-action--show {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+}
+html body.lft-admin .lft-perm-item-action--create {
+    background: rgba(52, 211, 153, 0.15);
+    color: #34d399;
+}
+html body.lft-admin .lft-perm-item-action--update,
+html body.lft-admin .lft-perm-item-action--udpate,
+html body.lft-admin .lft-perm-item-action--edit {
+    background: rgba(251, 191, 36, 0.16);
+    color: #fbbf24;
+}
+html body.lft-admin .lft-perm-item-action--delete {
+    background: rgba(251, 113, 133, 0.16);
+    color: #fb7185;
+}
+html body.lft-admin .lft-perm-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--text-muted);
+}
+html body.lft-admin .lft-perm-empty i {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.7;
+}
+html body.lft-admin .lft-perm-footer-count {
+    font-size: 13px;
+    font-weight: 700;
+    margin-inline-end: auto;
+}
+html body.lft-admin .lft-simple-form-footer.card-footer {
+    justify-content: flex-start;
+}
