@@ -25,4 +25,7 @@ return [
     "old_password_incorrect" => "Old password is incorrect",
     'password_updated'       => 'Password updated successfully',
     'user_not_found'         => 'User not found',
+    'invalid_reset_token'    => 'Invalid password reset token',
+    'expired_reset_token'    => 'Password reset token has expired',
+    'used_reset_token'       => 'Password reset token has already been used',
 ];

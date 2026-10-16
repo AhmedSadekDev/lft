@@ -7,7 +7,9 @@ use App\Models\Employee;
 use App\Models\OTP;
 use Carbon\Carbon;
 
-trait GenerateOtpTrait{
+trait GenerateOtpTrait
+{
+    abstract protected function clearResetTokenFields(): array;
 
     public function generateOtp($email)
     {
@@ -29,17 +31,17 @@ trait GenerateOtpTrait{
 
             if ($companyOtp) {
                 // تحديث OTP موجود
-                $companyOtp->update([
+                $companyOtp->update(array_merge([
                     'otp' => OTPAggregator::generateOTP(),
-                    'expire_at' => Carbon::now()->addMinutes(10)
-                ]);
+                    'expire_at' => Carbon::now()->addMinutes(10),
+                ], $this->clearResetTokenFields()));
                 return $companyOtp;
             } else {
                 // إنشاء OTP جديد
                 $otp = OTP::create([
                     'company_id' => $company->id,
                     'otp' => OTPAggregator::generateOTP(),
-                    'expire_at' => Carbon::now()->addMinutes(10)
+                    'expire_at' => Carbon::now()->addMinutes(10),
                 ]);
                 return $otp;
             }
@@ -63,17 +65,17 @@ trait GenerateOtpTrait{
 
             if ($employeeOtp) {
                 // تحديث OTP موجود
-                $employeeOtp->update([
+                $employeeOtp->update(array_merge([
                     'otp' => OTPAggregator::generateOTP(),
-                    'expire_at' => Carbon::now()->addMinutes(10)
-                ]);
+                    'expire_at' => Carbon::now()->addMinutes(10),
+                ], $this->clearResetTokenFields()));
                 return $employeeOtp;
             } else {
                 // إنشاء OTP جديد
                 $otp = OTP::create([
                     'employee_id' => $employee->id,
                     'otp' => OTPAggregator::generateOTP(),
-                    'expire_at' => Carbon::now()->addMinutes(10)
+                    'expire_at' => Carbon::now()->addMinutes(10),
                 ]);
                 return $otp;
             }

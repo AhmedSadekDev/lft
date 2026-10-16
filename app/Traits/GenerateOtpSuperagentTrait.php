@@ -8,7 +8,9 @@ use App\Models\Superagent;
 
 use Carbon\Carbon;
 
-trait GenerateOtpSuperagentTrait{
+trait GenerateOtpSuperagentTrait
+{
+    abstract protected function clearResetTokenFields(): array;
 
     public function generateOtp($email)
     {
@@ -19,26 +21,25 @@ trait GenerateOtpSuperagentTrait{
 
         $now = Carbon::now();
 
-        if($verificationCode && $now->isBefore($verificationCode->expire_at)){
+        if ($verificationCode && $now->isBefore($verificationCode->expire_at)) {
             return $verificationCode;
         }
 
-        // Create a New OTP
-        $superagentOtp = OTP::whereAgentId($superagent->id)->first();
-        if($superagentOtp){
-            $superagentOtp->update([
+        // Create a New OTP (fix: was incorrectly querying whereAgentId)
+        $superagentOtp = OTP::where('superagent_id', $superagent->id)->first();
+        if ($superagentOtp) {
+            $superagentOtp->update(array_merge([
                 'otp' => OTPAggregator::generateOTP(),
                 'superagent_id' => $superagent->id,
-                'expire_at' => Carbon::now()->addMinutes(10)
-            ]);
+                'expire_at' => Carbon::now()->addMinutes(10),
+            ], $this->clearResetTokenFields()));
             return $superagentOtp;
-        }else{
-            return OTP::create([
-                'superagent_id' => $superagent->id,
-                'otp' => OTPAggregator::generateOTP(),
-                'expire_at' => Carbon::now()->addMinutes(10)
-            ]);
         }
 
+        return OTP::create([
+            'superagent_id' => $superagent->id,
+            'otp' => OTPAggregator::generateOTP(),
+            'expire_at' => Carbon::now()->addMinutes(10),
+        ]);
     }
 }

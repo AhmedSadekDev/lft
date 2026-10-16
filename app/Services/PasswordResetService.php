@@ -1,106 +1,128 @@
 <?php
+
 namespace App\Services;
 
 use App\Http\Resources\Api\OtpResource;
 use App\Models\Company;
-use App\Notifications\Api\Auth\ResetPassword;
-use App\Notifications\Api\Auth\EmployeeResetPassword;
-use App\Traits\GenerateOtpTrait;
 use App\Models\Employee;
 use App\Models\OTP;
+use App\Notifications\Api\Auth\EmployeeResetPassword;
+use App\Notifications\Api\Auth\ResetPassword;
+use App\Traits\GenerateOtpTrait;
+use App\Traits\IssuesPasswordResetToken;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 
-Class PasswordResetService{
-
+class PasswordResetService
+{
     use GenerateOtpTrait;
+    use IssuesPasswordResetToken;
 
     public function forgetPassword($email)
     {
-        // We will send the password reset link to this company. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the company. Finally, we'll send out a proper response.
         if ($email) {
             $otp = $this->generateOtp($email);
-            if($otp->employee_id){
+            if (!$otp instanceof OTP) {
+                abort(404, __('auth.invalid_email'));
+            }
+
+            if ($otp->employee_id) {
                 $otp->employee->notify(new EmployeeResetPassword($otp->otp));
-            } else{
+            } else {
                 $otp->company->notify(new ResetPassword($otp->otp));
             }
+
             return new OtpResource($otp);
         }
 
         abort(404, __('auth.invalid_email'));
     }
 
-    public function verifyOtp($request)
-{
-    $now = Carbon::now();
+    public function verifyOtp($request): array
+    {
+        $email = $request->email;
+        $now = Carbon::now();
 
-    // التحقق إذا كان OTP يخص شركة
-    $verificationCode = OTP::where('company_id', $request->company_id)
-        ->where('otp', $request->otp)
-        ->first();
-
-    if ($verificationCode) {
-        if ($now->isAfter($verificationCode->expire_at)) {
-            abort(404, __('auth.expired_otp'));
-        }
-
-        $company = Company::find($request->company_id);
+        // Same preference as GenerateOtpTrait: company before employee when emails collide.
+        $company = Company::where('email', $email)->first();
         if ($company) {
-            $verificationCode->update([
-                'expire_at' => $now,
-            ]);
-            return response()->json(['message' => __('auth.verified')], 200);
+            $verificationCode = OTP::where('company_id', $company->id)
+                ->where('otp', $request->otp)
+                ->latest('id')
+                ->first();
+
+            if ($verificationCode) {
+                if ($now->isAfter($verificationCode->expire_at)) {
+                    abort(404, __('auth.expired_otp'));
+                }
+
+                $resetToken = $this->issueResetToken($verificationCode);
+
+                return [
+                    'message' => __('auth.verified'),
+                    'reset_token' => $resetToken,
+                    'account_type' => self::ACCOUNT_COMPANY,
+                ];
+            }
         }
-    }
 
-    // التحقق إذا كان OTP يخص موظف
-    $verificationCodeEmployee = OTP::where('employee_id', $request->company_id)
-        ->where('otp', $request->otp)
-        ->first();
-
-    if ($verificationCodeEmployee) {
-        if ($now->isAfter($verificationCodeEmployee->expire_at)) {
-            abort(404, __('auth.expired_otp'));
-        }
-
-        $employee = Employee::find($request->company_id);
+        $employee = Employee::where('email', $email)->first();
         if ($employee) {
-            $verificationCodeEmployee->update([
-                'expire_at' => $now,
-            ]);
-            return response()->json(['message' => __('auth.verified')], 200);
+            $verificationCode = OTP::where('employee_id', $employee->id)
+                ->where('otp', $request->otp)
+                ->latest('id')
+                ->first();
+
+            if ($verificationCode) {
+                if ($now->isAfter($verificationCode->expire_at)) {
+                    abort(404, __('auth.expired_otp'));
+                }
+
+                $resetToken = $this->issueResetToken($verificationCode);
+
+                return [
+                    'message' => __('auth.verified'),
+                    'reset_token' => $resetToken,
+                    'account_type' => self::ACCOUNT_EMPLOYEE,
+                ];
+            }
         }
+
+        abort(404, __('alerts.failed'));
     }
-
-    // لم يتم التحقق
-    abort(404, __('alerts.failed'));
-}
-
 
     public function resetPassword($request)
-{
-    // أولاً نحاول نلاقي شركة بالإيميل
-    $company = Company::where('email', $request['email'])->first();
+    {
+        $email = is_array($request) ? ($request['email'] ?? null) : $request->email;
+        $password = is_array($request) ? ($request['password'] ?? null) : $request->password;
+        $resetToken = is_array($request) ? ($request['reset_token'] ?? null) : $request->reset_token;
 
-    if ($company) {
-        $company->update(['password' => $request['password']]);
-        return response()->json(['message' => __('auth.password_updated')], 200);
+        if (!$resetToken) {
+            abort(403, __('auth.invalid_reset_token'));
+        }
+
+        // Bind by account type using the same company-first rule as OTP generation.
+        $company = Company::where('email', $email)->first();
+        if ($company) {
+            return $this->consumeResetToken(
+                $resetToken,
+                $email,
+                $password,
+                self::ACCOUNT_COMPANY,
+                Company::class
+            );
+        }
+
+        $employee = Employee::where('email', $email)->first();
+        if ($employee) {
+            return $this->consumeResetToken(
+                $resetToken,
+                $email,
+                $password,
+                self::ACCOUNT_EMPLOYEE,
+                Employee::class
+            );
+        }
+
+        abort(404, __('auth.user_not_found'));
     }
-
-    // لو ملقيناش شركة، نجرب نلاقي موظف
-    $employee = Employee::where('email', $request['email'])->first();
-
-    if ($employee) {
-        $employee->update(['password' => $request['password']]);
-        return response()->json(['message' => __('auth.password_updated')], 200);
-    }
-
-    // لو لا شركة ولا موظف موجودين
-    return response()->json(['message' => __('auth.user_not_found')], 404);
-}
-
-
 }

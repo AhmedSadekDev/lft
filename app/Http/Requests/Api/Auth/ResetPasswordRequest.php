@@ -28,38 +28,40 @@ class ResetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'email'     => [
+            'email' => [
                 'required',
                 'email:rfc,dns',
                 function ($attribute, $value, $fail) {
                     $companyExists = \App\Models\Company::where('email', $value)->exists();
                     $employeeExists = \App\Models\Employee::where('email', $value)->exists();
-                    
-                    if (! $companyExists && ! $employeeExists) {
+
+                    if (!$companyExists && !$employeeExists) {
                         $fail(__('validation.exists'));
                     }
-                }
+                },
             ],
-            'password'              => ['required', 'min:6', 'confirmed'],
-            'password_confirmation' => ['required', 'min:6']
+            'reset_token' => ['required', 'string', 'min:32'],
+            'password' => ['required', 'min:6', 'confirmed'],
+            'password_confirmation' => ['required', 'min:6'],
         ];
     }
 
     public function messages()
     {
         return [
-            'email.required'                => ':attribute is required',
-            'password.required'             => ':attribute is required',
-            'password_confirmation.required'=> ':attribute is required',
-
+            'email.required' => ':attribute is required',
+            'reset_token.required' => ':attribute is required',
+            'password.required' => ':attribute is required',
+            'password_confirmation.required' => ':attribute is required',
         ];
     }
 
     public function attributes()
     {
         return [
-            'email'                 => __('main.email'),
-            'password'              => __('main.password'),
+            'email' => __('main.email'),
+            'reset_token' => 'reset token',
+            'password' => __('main.password'),
             'password_confirmation' => __('main.cnf_password'),
         ];
     }

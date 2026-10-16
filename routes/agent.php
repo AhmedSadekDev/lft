@@ -38,10 +38,10 @@ Route::group(['middleware' => ['localization', \App\Http\Middleware\BlockInvoice
     //set password
     Route::post('set_password', [SetPasswordController::class, 'set_password']);
 
-    //OTP
-    Route::post('sendOtp', [OtpController::class, 'sendOtp']);
-    Route::post('verifyOtp', [OtpController::class, 'verifyOtp']);
-    Route::post('resetPassword', [OtpController::class, 'resetPassword']);
+    //OTP (RESET-01: throttle OTP + reset attempts)
+    Route::post('sendOtp', [OtpController::class, 'sendOtp'])->middleware('throttle:password-reset-otp');
+    Route::post('verifyOtp', [OtpController::class, 'verifyOtp'])->middleware('throttle:password-reset-otp');
+    Route::post('resetPassword', [OtpController::class, 'resetPassword'])->middleware('throttle:password-reset');
 
     Route::group(['middleware' => 'auth:agent'], function () {
 

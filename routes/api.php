@@ -48,10 +48,10 @@ Route::group(['middleware' => 'localization'], function(){
 
     // ------------------ Auth ------------------
     Route::post('login', [LoginController::class, 'login']);
-    //Reset Password
-    Route::post('forget-password', [PasswordResetController::class, 'forgetPassword']);
-    Route::post('verify-otp', [PasswordResetController::class, 'verifyOtp']);
-    Route::post('reset-password', [PasswordResetController::class, 'resetPassword']);
+    //Reset Password (RESET-01: throttle OTP + reset attempts)
+    Route::post('forget-password', [PasswordResetController::class, 'forgetPassword'])->middleware('throttle:password-reset-otp');
+    Route::post('verify-otp', [PasswordResetController::class, 'verifyOtp'])->middleware('throttle:password-reset-otp');
+    Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])->middleware('throttle:password-reset');
     Route::post('set-password', [SetPasswordController::class, 'setPassword']);
     Route::post('logout', [LoginController::class, 'logout']);
 

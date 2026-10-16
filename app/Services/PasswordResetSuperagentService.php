@@ -1,35 +1,33 @@
 <?php
+
 namespace App\Services;
 
 use App\Http\Resources\Api\Superagent\OtpResource;
-use App\Models\Agent;
-use App\Notifications\Api\Auth\ResetPassword;
 use App\Models\OTP;
 use App\Models\Superagent;
+use App\Notifications\Api\Auth\ResetPassword;
 use App\Traits\GenerateOtpSuperagentTrait;
+use App\Traits\IssuesPasswordResetToken;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 
-Class PasswordResetSuperagentService{
-
+class PasswordResetSuperagentService
+{
     use GenerateOtpSuperagentTrait;
+    use IssuesPasswordResetToken;
 
     public function sendOtp($email)
     {
-        // We will send the password reset link to this agent. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the agent. Finally, we'll send out a proper response.
         if ($email) {
             $otp = $this->generateOtp($email);
-
             $otp->superagent->notify(new ResetPassword($otp->otp));
+
             return new OtpResource($otp);
         }
 
         abort(404, __('auth.invalid_email'));
     }
 
-    public function verifyOtp($request)
+    public function verifyOtp($request): array
     {
         $superagent = Superagent::whereEmail($request->email)->first();
 
@@ -37,29 +35,45 @@ Class PasswordResetSuperagentService{
             abort(404, __('alerts.failed'));
         }
 
-        $verificationCode = OTP::where('superagent_id', $superagent->id)->where('otp', $request->otp)->first();
+        $verificationCode = OTP::where('superagent_id', $superagent->id)
+            ->where('otp', $request->otp)
+            ->latest('id')
+            ->first();
         $now = Carbon::now();
 
-        if($verificationCode && $now->isAfter($verificationCode->expire_at)){
+        if ($verificationCode && $now->isAfter($verificationCode->expire_at)) {
             abort(404, __('auth.expired_otp'));
         }
 
-        if($verificationCode){
-            // Expire The OTP
-            $verificationCode->update([
-                'expire_at' => Carbon::now()
-            ]);
+        if ($verificationCode) {
+            $resetToken = $this->issueResetToken($verificationCode);
 
-            return response()->json([ 'message' => __('auth.verified')], 200);
+            return [
+                'message' => __('auth.verified'),
+                'reset_token' => $resetToken,
+                'account_type' => self::ACCOUNT_SUPERAGENT,
+            ];
         }
 
         abort(404, __('alerts.failed'));
     }
 
-    public function resetPassword($request){
-        $superagent = Superagent::whereEmail($request->email)->first();
-        $superagent->update(['password' => $request['password']]);
-        return $superagent;
-    }
+    public function resetPassword($request)
+    {
+        $email = is_array($request) ? ($request['email'] ?? null) : $request->email;
+        $password = is_array($request) ? ($request['password'] ?? null) : $request->password;
+        $resetToken = is_array($request) ? ($request['reset_token'] ?? null) : $request->reset_token;
 
+        if (!$resetToken) {
+            abort(403, __('auth.invalid_reset_token'));
+        }
+
+        return $this->consumeResetToken(
+            $resetToken,
+            $email,
+            $password,
+            self::ACCOUNT_SUPERAGENT,
+            Superagent::class
+        );
+    }
 }

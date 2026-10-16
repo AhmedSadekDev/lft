@@ -30,9 +30,9 @@ Route::group(['middleware' => 'localization'], function () {
         //set password
         Route::post('set_password', [SetPasswordController::class, 'set_password']);
 
-        Route::post('sendOtp', [OtpController::class, 'sendOtp']);
-        Route::post('verifyOtp', [OtpController::class, 'verifyOtp']);
-        Route::post('resetPassword', [OtpController::class, 'resetPassword']);
+        Route::post('sendOtp', [OtpController::class, 'sendOtp'])->middleware('throttle:password-reset-otp');
+        Route::post('verifyOtp', [OtpController::class, 'verifyOtp'])->middleware('throttle:password-reset-otp');
+        Route::post('resetPassword', [OtpController::class, 'resetPassword'])->middleware('throttle:password-reset');
     // });
 
     Route::get("booking/details", [BookingContainerController::class, "details"]);

@@ -24,9 +24,10 @@ class ResetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'email'     => 'required|exists:superagents,email',
-            'password'     => 'required|min:8',
-            'confirm_password'  => 'required||min:8|same:password',
+            'email' => 'required|exists:superagents,email',
+            'reset_token' => 'required|string|min:32',
+            'password' => 'required|min:8',
+            'confirm_password' => 'required|min:8|same:password',
         ];
     }
 

@@ -61,5 +61,19 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // RESET-01: OTP send / verify
+        RateLimiter::for('password-reset-otp', function (Request $request) {
+            $email = strtolower((string) $request->input('email', ''));
+
+            return Limit::perMinute(5)->by($email.'|'.$request->ip());
+        });
+
+        // RESET-01: password change with reset_token
+        RateLimiter::for('password-reset', function (Request $request) {
+            $email = strtolower((string) $request->input('email', ''));
+
+            return Limit::perMinute(5)->by($email.'|'.$request->ip());
+        });
     }
 }

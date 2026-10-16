@@ -21,7 +21,21 @@ class OTP extends Model
         'superagent_id',
         'otp',
         'expire_at',
-        'employee_id'
+        'employee_id',
+        'reset_token_hash',
+        'reset_token_expires_at',
+        'reset_token_used_at',
+    ];
+
+    protected $casts = [
+        'expire_at' => 'datetime',
+        'reset_token_expires_at' => 'datetime',
+        'reset_token_used_at' => 'datetime',
+    ];
+
+    protected $hidden = [
+        'otp',
+        'reset_token_hash',
     ];
 
     public const  AddToPermission = false;
