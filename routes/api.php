@@ -27,11 +27,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/user', function (Request $request) {
-    dd('test');
-});
+Route::group(['middleware' => 'localization'], function () {
+    Route::get('/user', function (Request $request) {
+        return response()->json([
+            'locale' => app()->getLocale(),
+            'user' => $request->user(),
+        ]);
+    });
 
-Route::group(['middleware' => 'localization'], function(){
     // ------------------ Dashboard ------------------
     Route::group(['namespace' => 'App\Http\Controllers\Api', 'prefix' => 'booking', 'middleware' => 'throttle:60,1'], function() {
         Route::get('track', [BookingController::class, 'getBooking']);
