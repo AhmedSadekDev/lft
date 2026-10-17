@@ -35,6 +35,7 @@ class ProfileEmployeesAuthorizationTest extends TestCase
             $t->string('name')->default('Company');
             $t->string('email')->nullable();
             $t->string('password')->nullable();
+            $t->string('session_id')->nullable();
             $t->timestamps();
         });
 
@@ -44,6 +45,7 @@ class ProfileEmployeesAuthorizationTest extends TestCase
             $t->string('name')->default('Employee');
             $t->string('email')->nullable();
             $t->string('password')->nullable();
+            $t->string('session_id')->nullable();
             $t->timestamps();
         });
 
@@ -114,7 +116,7 @@ class ProfileEmployeesAuthorizationTest extends TestCase
             'email' => 'other-staff@example.test',
         ]);
 
-        $this->actingAs($company, 'api');
+        $this->withToken(\Tymon\JWTAuth\Facades\JWTAuth::fromUser($company));
 
         $response = $this->getJson('/api/profile/employees');
 
@@ -149,7 +151,7 @@ class ProfileEmployeesAuthorizationTest extends TestCase
             'email' => 'caller@example.test',
         ]);
 
-        $this->actingAs($employee, 'employees');
+        $this->withToken(\Tymon\JWTAuth\Facades\JWTAuth::fromUser($employee));
 
         $response = $this->getJson('/api/profile/employees');
 
@@ -185,7 +187,7 @@ class ProfileEmployeesAuthorizationTest extends TestCase
             'booking_number' => 'BK-CO-1',
         ]);
 
-        $this->actingAs($employee, 'employees');
+        $this->withToken(\Tymon\JWTAuth\Facades\JWTAuth::fromUser($employee));
 
         $response = $this->getJson('/api/profile/bookings');
 

@@ -123,10 +123,7 @@ class Company extends Authenticatable implements JWTSubject
      *
      * @return array
      */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
+    use \App\Traits\BindsJwtToPassword;
 
     public function getCreatedAtAttribute($value)
     {

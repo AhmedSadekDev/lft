@@ -12,6 +12,14 @@ class Authenticate extends Middleware
      * @param  \Illuminate\Http\Request  $request
      * @return string|null
      */
+    protected function authenticate($request, array $guards)
+    {
+        parent::authenticate($request, $guards);
+        if (in_array(auth()->getDefaultDriver(), ['api', 'employees'], true)) {
+            (new VerifyCustomerSession)->handle($request, function () {});
+        }
+    }
+
     protected function redirectTo($request)
     {
         // if (!$request->expectsJson()) {

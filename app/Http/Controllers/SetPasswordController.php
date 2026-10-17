@@ -58,9 +58,7 @@ class SetPasswordController extends Controller
         if (!$company) {
             return redirect()->back()->withErrors(['token' => 'Invalid token.']);
         } 
-        $company->update([
-            'password' => $request->password
-        ]);
+        app(\App\Services\CustomerPasswordInvitation::class)->setPassword(\App\Models\Company::class, $request->token, $request->password);
 
 
         return redirect("https://leaderfortrans.com")->with('status', 'Password updated successfully!');
@@ -77,9 +75,7 @@ class SetPasswordController extends Controller
         if (!$employee) {
             return redirect()->back()->withErrors(['token' => 'Invalid token.']);
         }   
-        $employee->update([
-            'password' => $request->password
-        ]);
+        app(\App\Services\CustomerPasswordInvitation::class)->setPassword(\App\Models\Employee::class, $request->token, $request->password);
 
 
         return redirect("https://leaderfortrans.com")->with('status', 'Password updated successfully!');

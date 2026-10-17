@@ -53,10 +53,7 @@ class Employee extends Authenticatable implements JWTSubject
      *
      * @return array
      */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
+    use \App\Traits\BindsJwtToPassword;
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = !is_null($password) ? Hash::make($password) : (!is_null($this->password) ? $this->password : null);

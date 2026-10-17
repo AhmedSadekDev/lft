@@ -17,7 +17,7 @@ class SetPasswordController extends Controller
         $company = Company::where('session_id', $token)->first();
 
         if(!is_null($company)){
-            $company->update($request->only('password'));
+            $company = app(\App\Services\CustomerPasswordInvitation::class)->setPassword(Company::class, $token, $request->password);
             return $this->returnAllData(new CompanyResource($company), __('alerts.success'));
         }else{
             return $this->returnError(400, __('alerts.no_data_found'));
