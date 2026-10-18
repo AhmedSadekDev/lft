@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Session;
 class Localization
 {
     /**
-     * Resolve locale from Accept-Language (API) or session (dashboard), then set app locale.
+     * API: locale from Accept-Language (ar/en).
+     * Web/dashboard: session locale, otherwise app default (ar).
+     * Browser Accept-Language must NOT override the Arabic admin UI.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
@@ -27,21 +29,33 @@ class Localization
         $supported = $this->supportedLocales();
         $default = config('app.locale', 'ar');
 
-        // API / mobile: Accept-Language wins when present.
-        if ($request->hasHeader('Accept-Language')) {
-            $fromHeader = $this->localeFromAcceptLanguage((string) $request->header('Accept-Language'), $supported);
-            if ($fromHeader !== null) {
-                return $fromHeader;
+        if ($this->isApiRequest($request)) {
+            if ($request->hasHeader('Accept-Language')) {
+                $fromHeader = $this->localeFromAcceptLanguage((string) $request->header('Accept-Language'), $supported);
+                if ($fromHeader !== null) {
+                    return $fromHeader;
+                }
             }
+
+            return in_array($default, $supported, true) ? $default : 'ar';
         }
 
-        // Dashboard: session locale from /language/{locale}.
+        // Dashboard / web: session from /language/{locale}, else Arabic default.
         $fromSession = Session::get('locale');
         if (is_string($fromSession) && in_array($fromSession, $supported, true)) {
             return $fromSession;
         }
 
         return in_array($default, $supported, true) ? $default : 'ar';
+    }
+
+    private function isApiRequest(Request $request): bool
+    {
+        return $request->is('api')
+            || $request->is('api/*')
+            || $request->is('agent/*')
+            || $request->is('superagent/*')
+            || $request->is('desktop/*');
     }
 
     /**
