@@ -7,6 +7,7 @@
 -- INVENTORY
 -- ---------
 -- A) Feature schema (columns) — currency + dual AR + password-reset tokens
+--    + booking_containers currency (USD trip price)
 -- B) Phase 1 performance indexes (ADD INDEX only)
 -- C) Phase 6: duplicate of bookings.booking_number index (already in Phase 1)
 -- D) Phase 7 queue tables (jobs / failed_jobs / job_batches) — only if queues enabled
@@ -21,6 +22,7 @@
 --   docs/sql/2026-10-16-multi-currency-invoicing.sql
 --   docs/sql/2026-10-16-dual-currency-ledgers.sql
 --   docs/sql/2026-10-16-reset-01-password-reset-tokens.sql
+--   docs/sql/2026-10-18-booking-containers-currency.sql
 --   docs/modernization/phase-1-performance-indexes.sql
 --   docs/modernization/phase-6-performance-indexes.sql
 --   docs/modernization/phase-7-queue-infrastructure.sql
@@ -111,6 +113,20 @@ SET @col := (
 SET @sql := IF(@col = 0,
   'ALTER TABLE `bank_trnsactions` ADD COLUMN `currency` VARCHAR(3) NOT NULL DEFAULT ''EGP'' AFTER `amount`',
   'SELECT ''bank_trnsactions.currency already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- A7b) booking_containers currency fields (USD transport like receipts)
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'booking_containers' AND COLUMN_NAME = 'currency'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `booking_containers`
+     ADD COLUMN `currency` VARCHAR(3) NOT NULL DEFAULT ''EGP'' AFTER `price`,
+     ADD COLUMN `foreign_amount` DECIMAL(14,2) NULL AFTER `currency`,
+     ADD COLUMN `exchange_rate` DECIMAL(14,6) NULL AFTER `foreign_amount`',
+  'SELECT ''booking_containers.currency already exists'''
 );
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 

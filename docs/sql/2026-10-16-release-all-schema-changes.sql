@@ -8,11 +8,13 @@
 --   1) Multi-currency invoicing (EGP + USD line fields)
 --   2) Dual-currency company ledgers (separate EGP / USD AR)
 --   3) RESET-01 password-reset tokens on otps
+--   4) booking_containers currency (USD transport)
 --
 -- Source files (same content, split):
 --   docs/sql/2026-10-16-multi-currency-invoicing.sql
 --   docs/sql/2026-10-16-dual-currency-ledgers.sql
 --   docs/sql/2026-10-16-reset-01-password-reset-tokens.sql
+--   docs/sql/2026-10-18-booking-containers-currency.sql
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
@@ -130,5 +132,22 @@ SET @idx := (
 SET @sql := IF(@idx = 0,
   'ALTER TABLE `otps` ADD INDEX `otps_reset_token_hash_index` (`reset_token_hash`)',
   'SELECT ''otps_reset_token_hash_index already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- -----------------------------------------------------------------------------
+-- 4) booking_containers: USD trip price (same semantics as receipts)
+-- -----------------------------------------------------------------------------
+
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'booking_containers' AND COLUMN_NAME = 'currency'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `booking_containers`
+     ADD COLUMN `currency` VARCHAR(3) NOT NULL DEFAULT ''EGP'' AFTER `price`,
+     ADD COLUMN `foreign_amount` DECIMAL(14,2) NULL AFTER `currency`,
+     ADD COLUMN `exchange_rate` DECIMAL(14,6) NULL AFTER `foreign_amount`',
+  'SELECT ''booking_containers.currency already exists'''
 );
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;

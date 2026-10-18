@@ -27,6 +27,16 @@ class BookingContainerRequest extends FormRequest
         return $booking?->factory_id ? (int) $booking->factory_id : null;
     }
 
+    protected function prepareForValidation()
+    {
+        $currency = strtoupper((string) ($this->input('currency') ?: 'EGP'));
+        $this->merge(['currency' => in_array($currency, ['EGP', 'USD'], true) ? $currency : 'EGP']);
+
+        if ($this->input('currency') !== 'USD') {
+            $this->merge(['exchange_rate' => null]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -93,6 +103,15 @@ class BookingContainerRequest extends FormRequest
                 'numeric',
                 'min:0'
             ],
+            'currency' => [
+                'required',
+                'in:EGP,USD',
+            ],
+            'exchange_rate' => [
+                'nullable',
+                'numeric',
+                'gt:0',
+            ],
         ];
     }
 
@@ -107,6 +126,8 @@ class BookingContainerRequest extends FormRequest
             'loading_id'    => __('admin.loading_location'),
             'aging_id'      => __('admin.aging_location'),
             'price'         => __('admin.price'),
+            'currency'      => 'العملة',
+            'exchange_rate' => 'سعر الصرف',
         ];
     }
 

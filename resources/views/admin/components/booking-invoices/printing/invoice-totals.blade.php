@@ -29,10 +29,16 @@
             <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الفاتورة ({{ $invoice->currencyLabel() }}):</span>
             <span style="font-weight: 700; color: #fff; font-size: 16px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format($invoice->invoice_total_after_discount ?? 0, 2) }} {{ $invoice->currencySymbol() }}</span>
         </div>
-        @if(! $invoice->isUsd() && (float) ($invoice->usd_amount ?? 0) > 0)
+        @php
+            $usdSummary = (float) ($invoice->usd_amount ?? 0);
+            if ($usdSummary <= 0 && isset($printData['usd_total'])) {
+                $usdSummary = (float) $printData['usd_total'];
+            }
+        @endphp
+        @if(! $invoice->isUsd() && $usdSummary > 0)
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
                 <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي بنود الدولار:</span>
-                <span style="font-weight: 700; color: #fff; font-size: 14px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format((float) $invoice->usd_amount, 2) }} $</span>
+                <span style="font-weight: 700; color: #fff; font-size: 14px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format($usdSummary, 2) }} $</span>
             </div>
         @endif
     </div>

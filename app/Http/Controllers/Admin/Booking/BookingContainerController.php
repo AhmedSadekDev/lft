@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Booking;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\BookingContainerRequest;
+use App\Support\InvoiceCurrency;
 use App\Mappers\BookingContainerStatusMapper;
 use App\Models\Booking;
 use App\Models\CitiesAndRegions;
@@ -104,6 +105,9 @@ class BookingContainerController extends Controller
             $validatedData = $request->validated();
             unset($validatedData['factory_id']);
 
+            $money = InvoiceCurrency::normalizeLine($request->only(['currency', 'price', 'exchange_rate']));
+            $validatedData = array_merge($validatedData, $money);
+
             // Insert booking container record
             $op = BookingContainer::create(
                 array_merge(
@@ -170,6 +174,9 @@ class BookingContainerController extends Controller
             // Get validated data and exclude factory_id (not stored in booking_containers table)
             $validatedData = $request->validated();
             unset($validatedData['factory_id']);
+
+            $money = InvoiceCurrency::normalizeLine($request->only(['currency', 'price', 'exchange_rate']));
+            $validatedData = array_merge($validatedData, $money);
 
             $booking_container = BookingContainer::lockForUpdate()->findOrFail($booking_container->id);
             $targetStatus = isset($validatedData['status']) ? (int) $validatedData['status'] : (int) $booking_container->status;

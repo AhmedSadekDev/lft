@@ -69,7 +69,16 @@
                         <td>{{ $container->loading->title ?? '' }}</td>
                         <td>{{ $container->aging->title ?? '' }}</td>
 
-                        <td class="prices">{{ $container->price }}</td>
+                        <td class="prices">
+                            @if(($container->currency ?? 'EGP') === 'USD' && $container->foreign_amount)
+                                <span class="d-block">{{ number_format((float) $container->foreign_amount, 2) }} $</span>
+                                @if($container->exchange_rate && (float) $container->price > 0)
+                                    <small class="text-muted">مرجع {{ number_format((float) $container->price, 2) }} ج.م</small>
+                                @endif
+                            @else
+                                {{ number_format((float) ($container->price ?? 0), 2) }} ج.م
+                            @endif
+                        </td>
 
                         <td>
                             <div class="d-flex">

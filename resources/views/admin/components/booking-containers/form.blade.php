@@ -161,11 +161,54 @@
                 <small class="text-danger">{{ $errors->first('aging_id') }}</small>
             </div>
         </div>
-        <div class="col-md-6 col-sm-12">
+        @php
+            $lineCurrency = old('currency', isset($booking_container) ? ($booking_container->currency ?? 'EGP') : 'EGP');
+            $lineAmount = old('price', isset($booking_container)
+                ? (($booking_container->currency ?? 'EGP') === 'USD' ? $booking_container->foreign_amount : $booking_container->price)
+                : null);
+            $lineRate = old('exchange_rate', isset($booking_container) ? $booking_container->exchange_rate : null);
+        @endphp
+
+        <div class="col-md-4 col-sm-12">
+            <div class="form-group{{ $errors->has('currency') ? ' has-error' : '' }}">
+                {!! Form::label('currency', 'العملة') !!}
+                {!! Form::select(
+                    'currency',
+                    ['EGP' => 'جنيه مصري (ج.م)', 'USD' => 'دولار أمريكي ($)'],
+                    $lineCurrency,
+                    ['id' => 'currency', 'class' => 'form-control', 'required' => 'required']
+                ) !!}
+                <small class="text-danger">{{ $errors->first('currency') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-12">
             <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
-                {!! Form::label('price', __('admin.price')) !!}
-                {!! Form::number('price', old('price', isset($booking_container) ? $booking_container->price : null), ['class' => 'form-control', 'id' => 'price']) !!}
-                <small class="text-danger">{{ $errors->first('price') }}</small>
+                {!! Form::label('price', 'المبلغ', ['id' => 'price_label']) !!}
+                {!! Form::number('price', $lineAmount, [
+                    'class' => 'form-control',
+                    'id' => 'price',
+                    'step' => '0.01',
+                    'min' => 0,
+                ]) !!}
+                <small class="text-muted" id="price_hint">أدخل سعر النقلة بالجنيه المصري</small>
+                <small class="text-danger d-block">{{ $errors->first('price') }}</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-12" id="exchange_rate_field">
+            <div class="form-group{{ $errors->has('exchange_rate') ? ' has-error' : '' }}">
+                {!! Form::label('exchange_rate', 'سعر الصرف (اختياري — ج.م لكل $1)') !!}
+                {!! Form::number('exchange_rate', $lineRate, [
+                    'id' => 'exchange_rate',
+                    'class' => 'form-control',
+                    'step' => '0.000001',
+                    'min' => 0,
+                    'placeholder' => 'اختياري للمرجع',
+                ]) !!}
+                <small class="text-muted">الدولار يتجمع لوحده في كشف الحساب. سعر الصرف اختياري للمرجع الداخلي فقط.</small>
+                <small class="text-danger d-block">{{ $errors->first('exchange_rate') }}</small>
+                <div class="mt-2 font-weight-bold" id="egp_preview"></div>
             </div>
         </div>
     </div>
@@ -241,8 +284,38 @@
             }
         }
 
+        function toggleCurrencyFields() {
+            var isUsd = $('#currency').val() === 'USD';
+            $('#exchange_rate_field').toggle(isUsd);
+            $('#price_label').text(isUsd ? 'المبلغ بالدولار' : 'المبلغ بالجنيه');
+            $('#price_hint').text(isUsd
+                ? 'أدخل سعر النقلة بالدولار — يُسجّل في رصيد الدولار منفصلًا'
+                : 'أدخل سعر النقلة بالجنيه المصري');
+            updateEgpPreview();
+        }
+
+        function updateEgpPreview() {
+            if ($('#currency').val() !== 'USD') {
+                $('#egp_preview').text('');
+                return;
+            }
+            var amount = parseFloat($('#price').val()) || 0;
+            var rate = parseFloat($('#exchange_rate').val()) || 0;
+            if (amount > 0 && rate > 0) {
+                var egp = (amount * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                $('#egp_preview').text('مرجع داخلي: ' + egp + ' ج.م (لا يدخل رصيد العميل بالمصري)');
+            } else if (amount > 0) {
+                $('#egp_preview').text('سيُضاف ' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $ لرصيد الدولار');
+            } else {
+                $('#egp_preview').text('');
+            }
+        }
+
         $(function () {
             $('#container_id, #departure_id, #loading_id, #aging_id').on('change', updatePrice);
+            toggleCurrencyFields();
+            $('#currency').on('change', toggleCurrencyFields);
+            $('#price, #exchange_rate').on('input', updateEgpPreview);
 
             var pv = $('#price').val();
             if (pv === '' || pv === null || parseFloat(String(pv).replace(',', '.')) === 0) {

@@ -74,11 +74,11 @@
                         <span class="totals-value-number totals-value-number--primary">{{ number_format((float)($transportation_total + $taxed_services_total), 2) }}</span>
                     </div>
                 </div>
-                @if(($invoiceCurrency ?? 'EGP') !== 'USD' && (float) ($usd_services_total ?? 0) > 0)
+                @if(($invoiceCurrency ?? 'EGP') !== 'USD')
                     <div class="col-sm-6 col-lg-4 mb-3">
                         <div class="totals-value-box">
                             <span class="totals-value-label">إجمالي بنود الدولار ($)</span>
-                            <span class="totals-value-number">{{ number_format((float) $usd_services_total, 2) }}</span>
+                            <span class="totals-value-number">{{ number_format((float) ($usd_services_total ?? 0), 2) }}</span>
                         </div>
                     </div>
                 @endif

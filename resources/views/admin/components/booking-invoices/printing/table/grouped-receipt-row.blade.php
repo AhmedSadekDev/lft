@@ -12,6 +12,18 @@
         $displayName = 'إيصالات ' . trim($displayName);
     }
     $displayName = trim(preg_replace('/\s+/', ' ', $displayName));
+
+    $egpTotal = (float) ($groupedService->total_price ?? 0);
+    $usdTotal = (float) ($groupedService->usd_total ?? 0);
+    $invoiceCurrency = $invoice->currency ?? ($printData['currency'] ?? 'EGP');
+    if ($usdTotal > 0 && $egpTotal > 0) {
+        $amountDisplay = number_format($egpTotal, 2) . ' ج.م + ' . number_format($usdTotal, 2) . ' $';
+    } elseif ($usdTotal > 0) {
+        $amountDisplay = number_format($usdTotal, 2) . ' $';
+    } else {
+        $symbol = $printData['currency_symbol'] ?? \App\Support\InvoiceCurrency::symbol($invoiceCurrency);
+        $amountDisplay = number_format($egpTotal, 2) . ' ' . $symbol;
+    }
 @endphp
 <tr style="border-bottom: 1px solid #e9ecef;">
     <td style="padding: 4px 6px; text-align: center; border-right: 1px solid #e9ecef; font-weight: 700; color: #495057; background: #f8f9fa; vertical-align: top; font-size: 11px;">{{ $key }}</td>
@@ -30,5 +42,5 @@
             @endif
         </div>
     </td>
-    <td style="padding: 4px 6px; text-align: center; font-weight: 700; color: #28a745; font-size: 12px; background: #f8f9fa; vertical-align: top;">{{ number_format($groupedService->total_price ?? 0, 2) }} {{ ($printData['currency_symbol'] ?? (($invoice->currency ?? 'EGP') === 'USD' ? '$' : 'ج.م')) }}</td>
+    <td style="padding: 4px 6px; text-align: center; font-weight: 700; color: #28a745; font-size: 12px; background: #f8f9fa; vertical-align: top;">{{ $amountDisplay }}</td>
 </tr>

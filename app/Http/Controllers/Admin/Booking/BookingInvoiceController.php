@@ -35,7 +35,8 @@ class BookingInvoiceController extends Controller
         $invoice_number = Invoice::getNextInvoiceNumberForCompany($company->id);
         $currency = InvoiceCurrency::normalize($request->get('currency', InvoiceCurrency::EGP));
 
-        $transportation_total = $booking->transportation_total_price;
+        $booking->loadMissing('bookingContainers');
+        $transportation_total = $booking->transportationTotalForCurrency($currency);
         $taxed_services_total = $booking->servicesTotalForCurrency($booking->taxed_services(), $currency);
         $untaxed_services_total = $booking->untaxedServicesTotalForCurrency($currency);
         $usd_services_total = InvoiceCurrency::isUsd($currency) ? 0 : $booking->foreignUsdTotal();
@@ -83,6 +84,7 @@ class BookingInvoiceController extends Controller
             );
 
             $currency = InvoiceCurrency::normalize($request->input('currency', InvoiceCurrency::EGP));
+            $booking->loadMissing('bookingContainers');
             $invoice_data = array_merge(
                 [
                     'invoice_number' => $invoice_number,
@@ -95,7 +97,7 @@ class BookingInvoiceController extends Controller
                     'taxed_services_json' => $booking->taxed_services,
                     'untaxed_services_json' => $booking->untaxed_services,
 
-                    'transportation_total_before_vat' => $booking->transportation_total_price,
+                    'transportation_total_before_vat' => $booking->transportationTotalForCurrency($currency),
                     'taxed_services_total_before_vat' => $booking->servicesTotalForCurrency($booking->taxed_services(), $currency),
                     'untaxed_services_total_before_vat' => $booking->untaxedServicesTotalForCurrency($currency),
                 ],
@@ -174,7 +176,8 @@ class BookingInvoiceController extends Controller
         $currency = InvoiceCurrency::normalize(
             request()->get('currency', $booking_invoice->currency ?? InvoiceCurrency::EGP)
         );
-        $transportation_total = $booking->transportation_total_price;
+        $booking->loadMissing('bookingContainers');
+        $transportation_total = $booking->transportationTotalForCurrency($currency);
         $taxed_services_total = $booking->servicesTotalForCurrency($booking->taxed_services(), $currency);
         $untaxed_services_total = $booking->untaxedServicesTotalForCurrency($currency);
         $usd_services_total = InvoiceCurrency::isUsd($currency) ? 0 : $booking->foreignUsdTotal();
@@ -221,6 +224,7 @@ class BookingInvoiceController extends Controller
             }
 
             $currency = InvoiceCurrency::normalize($request->input('currency', $booking_invoice->currency ?? InvoiceCurrency::EGP));
+            $booking->loadMissing('bookingContainers');
             $invoice_data = array_merge(
                 [
                     'booking_id' => $booking->id,
@@ -231,7 +235,7 @@ class BookingInvoiceController extends Controller
                     'taxed_services_json' => $booking->taxed_services,
                     'untaxed_services_json' => $booking->untaxed_services,
 
-                    'transportation_total_before_vat' => $booking->transportation_total_price,
+                    'transportation_total_before_vat' => $booking->transportationTotalForCurrency($currency),
                     'taxed_services_total_before_vat' => $booking->servicesTotalForCurrency($booking->taxed_services(), $currency),
                     'untaxed_services_total_before_vat' => $booking->untaxedServicesTotalForCurrency($currency),
                     'invoice_number' => $invoice_number !== '' ? $invoice_number : $booking_invoice->invoice_number,

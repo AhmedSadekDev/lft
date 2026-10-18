@@ -270,7 +270,8 @@ class Booking extends Model
     }
 
     /**
-     * Company USD receivable from this booking's USD lines (services + standalone expenses).
+     * Company USD receivable from this booking's USD lines
+     * (services + standalone expenses + USD transport containers).
      */
     public function foreignUsdTotal(): float
     {
@@ -284,23 +285,39 @@ class Booking extends Model
             ->get()
             ->sum(fn ($expense) => \App\Support\InvoiceCurrency::foreignUsdAmount($expense));
 
-        return round($servicesTotal + $expensesTotal, 2);
+        $containers = $this->relationLoaded('bookingContainers')
+            ? $this->bookingContainers
+            : $this->bookingContainers()->get();
+
+        $transportUsd = (float) $containers->sum(
+            fn ($container) => \App\Support\InvoiceCurrency::foreignUsdAmount($container)
+        );
+
+        return round($servicesTotal + $expensesTotal + $transportUsd, 2);
+    }
+
+    /**
+     * Transport total in the invoice's primary currency.
+     * EGP invoice: EGP containers only. USD invoice: USD foreign_amount (or EGP price if rare).
+     */
+    public function transportationTotalForCurrency(?string $currency = \App\Support\InvoiceCurrency::EGP): float
+    {
+        $containers = $this->relationLoaded('bookingContainers')
+            ? $this->bookingContainers
+            : $this->bookingContainers()->get();
+
+        return round(
+            (float) $containers->sum(
+                fn ($container) => \App\Support\InvoiceCurrency::invoiceLineAmount($container, $currency)
+            ),
+            2
+        );
     }
 
     public function getTransportationTotalPriceAttribute()
     {
-        // $x = $this->expenses->sum('value') ;
-        // $y = 0;
-
-        // foreach($this->bookingContainers as $container) {
-        //     foreach($container->delivery_policies as $policy) {
-        //         $y += $policy->money_transfer->value;
-        //     }
-        // }
-
-        // return $x + $y;
-
-        return $this->bookingContainers->sum('price');
+        // Default EGP AR view: native EGP container prices only (USD trips sit in foreignUsdTotal).
+        return $this->transportationTotalForCurrency(\App\Support\InvoiceCurrency::EGP);
     }
 
     public function getTaxedServicesTotalPriceAttribute()

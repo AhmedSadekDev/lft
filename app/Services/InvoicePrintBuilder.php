@@ -104,13 +104,16 @@ class InvoicePrintBuilder
         $receiptItems = $this->groupReceiptServices($receiptItems, $invoiceCurrency);
 
         $taxSubtotal = $this->sumItems($taxItems, $invoiceCurrency);
+        $taxUsdSubtotal = $this->sumUsdItems($taxItems);
         // Tax block uses invoice VAT/discount already calculated for tax base
         $vat = (float) ($invoice->value_added_tax_amount ?? 0);
         $discount = (float) ($invoice->discount_amount ?? 0);
         $taxTotal = (float) ($invoice->invoice_total_after_discount ?? max(0, $taxSubtotal + $vat - $discount));
 
         $receiptSubtotal = $this->sumItems($receiptItems, $invoiceCurrency);
+        $receiptUsdSubtotal = $this->sumUsdItems($receiptItems);
         $additionalSubtotal = $this->sumItems($additionalItems, $invoiceCurrency);
+        $additionalUsdSubtotal = $this->sumUsdItems($additionalItems);
 
         $taxGroup = $this->makeGroup(
             InvoicePrintSectionMapper::TAX,
@@ -119,21 +122,30 @@ class InvoicePrintBuilder
             $taxSubtotal,
             $vat,
             $discount,
-            $taxTotal
+            $taxTotal,
+            $taxUsdSubtotal
         );
 
         $receiptGroup = $this->makeGroup(
             InvoicePrintSectionMapper::RECEIPT,
             $baseNumber,
             $receiptItems,
-            $receiptSubtotal
+            $receiptSubtotal,
+            0,
+            0,
+            null,
+            $receiptUsdSubtotal
         );
 
         $additionalGroup = $this->makeGroup(
             InvoicePrintSectionMapper::ADDITIONAL,
             $baseNumber,
             $additionalItems,
-            $additionalSubtotal
+            $additionalSubtotal,
+            0,
+            0,
+            null,
+            $additionalUsdSubtotal
         );
 
         $combinedItems = $taxItems
@@ -141,10 +153,15 @@ class InvoicePrintBuilder
             ->concat($additionalItems)
             ->values();
 
+        $usdCombined = round($taxUsdSubtotal + $receiptUsdSubtotal + $additionalUsdSubtotal, 2);
+
         return [
             'invoice_number' => $baseNumber,
             'currency' => $invoiceCurrency,
             'currency_symbol' => InvoiceCurrency::symbol($invoiceCurrency),
+            'usd_total' => $invoiceCurrency === InvoiceCurrency::EGP
+                ? round((float) ($invoice->usd_amount ?? $usdCombined), 2)
+                : 0.0,
             'tax' => $taxGroup,
             'receipt' => $receiptGroup,
             'additional' => $additionalGroup,
@@ -234,6 +251,7 @@ class InvoicePrintBuilder
                 $this->initReceiptGroupBucket($groups, $key);
                 $groups[$key]['services']->push($item);
                 $groups[$key]['total'] += InvoiceCurrency::invoiceLineAmount($item, $invoiceCurrency);
+                $groups[$key]['usd_total'] += InvoiceCurrency::foreignUsdAmount($item);
                 if (filled($item->note)) {
                     $groups[$key]['notes']->push(trim((string) $item->note));
                 }
@@ -247,6 +265,7 @@ class InvoicePrintBuilder
                 $this->initReceiptGroupBucket($groups, $key);
                 $groups[$key]['expenses']->push($expense);
                 $groups[$key]['total'] += InvoiceCurrency::invoiceLineAmount($expense, $invoiceCurrency);
+                $groups[$key]['usd_total'] += InvoiceCurrency::foreignUsdAmount($expense);
                 if (filled($expense->notes)) {
                     $groups[$key]['notes']->push(trim((string) $expense->notes));
                 }
@@ -266,13 +285,17 @@ class InvoicePrintBuilder
                 continue;
             }
 
+            $egpTotal = round((float) $bucket['total'], 2);
+            $usdTotal = round((float) $bucket['usd_total'], 2);
+
             $grouped->push((object) [
                 'type' => 'grouped_receipt',
                 'group_key' => $groupKey,
                 'services' => $bucket['services'],
                 'expenses' => $bucket['expenses'],
-                'total_price' => $bucket['total'],
-                'price' => $bucket['total'],
+                'total_price' => $egpTotal,
+                'price' => $egpTotal,
+                'usd_total' => $usdTotal,
                 'notes' => $bucket['notes']->filter()->unique()->values()->all(),
                 'count' => $bucket['services']->count() + $bucket['expenses']->count(),
             ]);
@@ -291,6 +314,7 @@ class InvoicePrintBuilder
                 'expenses' => collect(),
                 'notes' => collect(),
                 'total' => 0.0,
+                'usd_total' => 0.0,
             ];
         }
     }
@@ -317,6 +341,9 @@ class InvoicePrintBuilder
             if ($item instanceof BookingService) {
                 return InvoiceCurrency::invoiceLineAmount($item, $invoiceCurrency);
             }
+            if ($item instanceof \App\Models\BookingContainer) {
+                return InvoiceCurrency::invoiceLineAmount($item, $invoiceCurrency);
+            }
             if (is_object($item) && isset($item->type) && $item->type === 'grouped_receipt') {
                 return (float) ($item->total_price ?? 0);
             }
@@ -327,9 +354,31 @@ class InvoicePrintBuilder
                 return (float) $item->price;
             }
 
-            // BookingContainer — amount already in invoice currency for pure USD invoices
             return (float) ($item->price ?? 0);
         });
+    }
+
+    /**
+     * USD bucket total for hybrid EGP invoices (0 contribution on pure-USD invoices).
+     */
+    private function sumUsdItems(Collection $items): float
+    {
+        return round((float) $items->sum(function ($item) {
+            if ($item instanceof BookingService) {
+                return InvoiceCurrency::foreignUsdAmount($item);
+            }
+            if ($item instanceof \App\Models\BookingContainer) {
+                return InvoiceCurrency::foreignUsdAmount($item);
+            }
+            if (is_object($item) && ($item->type ?? null) === 'grouped_receipt') {
+                return (float) ($item->usd_total ?? 0);
+            }
+            if (is_object($item) && ($item->type ?? null) === 'agent_expense_attachment') {
+                return InvoiceCurrency::foreignUsdAmount($item->expense ?? $item);
+            }
+
+            return 0.0;
+        }), 2);
     }
 
     private function makeGroup(
@@ -339,7 +388,8 @@ class InvoicePrintBuilder
         float $subtotal,
         float $vat = 0,
         float $discount = 0,
-        ?float $total = null
+        ?float $total = null,
+        float $usdSubtotal = 0
     ): array {
         $suffix = InvoicePrintSectionMapper::suffix($section);
 
@@ -350,6 +400,7 @@ class InvoicePrintBuilder
             'number' => $baseNumber !== '' ? $baseNumber . '-' . $suffix : $suffix,
             'items' => $items->values(),
             'subtotal' => $subtotal,
+            'usd_subtotal' => $usdSubtotal,
             'vat' => $vat,
             'discount' => $discount,
             'total' => $total ?? $subtotal,
