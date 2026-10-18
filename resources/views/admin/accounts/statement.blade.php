@@ -136,7 +136,9 @@
                             <th>العملة</th>
                             <th>ج.م</th>
                             <th>$</th>
-                            <th>تم دفع</th>
+                            <th>عناية</th>
+                            <th>رقم الشهادة</th>
+                            <th>تاريخ السداد</th>
                             <th>ملاحظات</th>
                             <th>تفاصيل</th>
                             <th>الإجراء</th>
@@ -148,6 +150,12 @@
                                 $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
                                 $paymentDetails = $transaction['payment_details'] ?? [];
                                 $hasPaymentDetails = isset($transaction['payment_details']) && is_array($paymentDetails) && count($paymentDetails) > 0;
+                                $settledAt = $transaction['payment_settled_at'] ?? null;
+                                if ($settledAt && !($settledAt instanceof \Carbon\Carbon)) {
+                                    $settledAt = \Carbon\Carbon::parse($settledAt);
+                                }
+                                $egpAmount = (float) ($transaction['total_egp'] ?? (($transaction['currency'] ?? '') === '$' ? 0 : ($transaction['total'] ?? 0)));
+                                $usdAmount = (float) ($transaction['total_usd'] ?? 0);
                             @endphp
 
                             <tr>
@@ -175,7 +183,7 @@
                                             <span class="badge badge-danger">فاتورة</span>
                                         @endif
                                     @elseif($transaction['type'] == 'payment')
-                                        <span class="badge badge-success">سداد</span>
+                                        <span class="badge badge-success">{{ $transaction['type_label'] ?? 'سداد' }}</span>
                                     @else
                                         <span class="badge badge-secondary">
                                             {{ $transaction['type_label'] ?? '-' }}
@@ -185,28 +193,17 @@
 
                                 <td>{{ $transaction['currency'] ?? 'ج.م' }}</td>
 
-                                <td class="text-danger font-weight-bold">
-                                    @if(($transaction['type'] ?? '') === 'payment')
-                                        {{ number_format($transaction['total_egp'] ?? 0, 2) }}
-                                    @else
-                                        {{ number_format($transaction['total_egp'] ?? (($transaction['currency'] ?? '') === '$' ? 0 : ($transaction['total'] ?? 0)), 2) }}
-                                    @endif
+                                <td class="{{ $egpAmount < 0 ? 'text-success' : 'text-danger' }} font-weight-bold">
+                                    {{ number_format($egpAmount, 2) }}
                                 </td>
 
-                                <td class="text-danger font-weight-bold">
-                                    @if(($transaction['type'] ?? '') === 'payment')
-                                        {{ number_format($transaction['total_usd'] ?? 0, 2) }}
-                                    @else
-                                        {{ number_format($transaction['total_usd'] ?? 0, 2) }}
-                                    @endif
+                                <td class="{{ $usdAmount < 0 ? 'text-success' : 'text-danger' }} font-weight-bold">
+                                    {{ number_format($usdAmount, 2) }}
                                 </td>
 
-                                <td class="text-success font-weight-bold">
-                                    {{ number_format($transaction['paid'] ?? 0,2) }}
-                                    @if(($transaction['type'] ?? '') === 'payment')
-                                        {{ $transaction['currency'] ?? '' }}
-                                    @endif
-                                </td>
+                                <td>{{ $transaction['attention'] ?? '-' }}</td>
+                                <td>{{ $transaction['certificate_number'] ?? '-' }}</td>
+                                <td>{{ $settledAt ? $settledAt->format('Y-m-d') : '-' }}</td>
 
                                 <td>
                                     {{ $transaction['notes'] ?? '-' }}

@@ -80,7 +80,6 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
             $this->company->name,
             '',
             '',
-            '',
             $modeTitle,
             '',
             '',
@@ -88,35 +87,34 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
             '',
             '',
             '',
-            '',
             "من {$this->fromDate} الى {$this->toDate}",
-            '',
-            '',
         ]);
 
         $data->push([
-            '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+            '', '', '', '', '', '', '', '', '', '', '',
         ]);
 
         foreach ($this->transactions as $transaction) {
             $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
+            $settledAt = $transaction['payment_settled_at'] ?? null;
+            if ($settledAt && ! ($settledAt instanceof \Carbon\Carbon)) {
+                $settledAt = \Carbon\Carbon::parse($settledAt);
+            }
+            $egp = (float) ($transaction['total_egp'] ?? (($transaction['type'] ?? '') === 'payment' ? 0 : ($transaction['total'] ?? 0)));
+            $usd = (float) ($transaction['total_usd'] ?? 0);
 
             $data->push([
                 $date->format('Y-m-d'),
-                $transaction['previous_debit'] > 0 ? number_format($transaction['previous_debit'], 2) : '',
-                $transaction['previous_credit'] > 0 ? number_format($transaction['previous_credit'], 2) : '',
                 $transaction['booking_number'] ?: '',
                 $transaction['invoice_number'] ?: '',
-                $transaction['type_label'],
-                $transaction['discount'] > 0 ? number_format($transaction['discount'], 2) : '',
-                $transaction['tax'] > 0 ? number_format($transaction['tax'], 2) : '',
-                $transaction['attachment_statement'] ?: '',
-                $transaction['transportation'] > 0 ? number_format($transaction['transportation'], 2) : '',
-                $transaction['total'] > 0 ? number_format($transaction['total'], 2) : '',
-                $transaction['paid'] > 0 ? number_format($transaction['paid'], 2) : '',
+                $transaction['type_label'] ?? '',
+                $transaction['currency'] ?? '',
+                $egp != 0.0 ? number_format($egp, 2) : '',
+                $usd != 0.0 ? number_format($usd, 2) : '',
+                $transaction['attention'] ?? '',
+                $transaction['certificate_number'] ?? '',
+                $settledAt ? $settledAt->format('Y-m-d') : '',
                 $transaction['notes'] ?: '',
-                $transaction['current_debit'] > 0 ? number_format($transaction['current_debit'], 2) : '',
-                $transaction['current_credit'] > 0 ? number_format($transaction['current_credit'], 2) : '',
             ]);
         }
 
@@ -127,25 +125,21 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
             $totalCurrentCredit = $this->transactions->sum('current_credit');
 
             $data->push([
-                '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+                '', '', '', '', '', '', '', '', '', '', '',
             ]);
 
             $data->push([
                 "الحساب النهائي يوم {$this->toDate}",
-                number_format($totalPreviousDebit, 2),
-                number_format($totalPreviousCredit, 2),
                 '',
                 '',
                 '',
                 '',
+                number_format($totalCurrentDebit - $totalCurrentCredit, 2),
                 '',
                 '',
                 '',
                 '',
-                '',
-                '',
-                number_format($totalCurrentDebit, 2),
-                number_format($totalCurrentCredit, 2),
+                'مدين: ' . number_format($totalCurrentDebit, 2) . ' / دائن: ' . number_format($totalCurrentCredit, 2),
             ]);
 
             $data->push([
@@ -154,15 +148,11 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
                 '',
                 '',
                 '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
                 number_format(abs($this->finalBalance), 2),
+                '',
+                '',
+                '',
+                '',
                 '',
             ]);
         }
@@ -174,20 +164,16 @@ class AccountStatementTransactionsSheet implements FromCollection, WithHeadings,
     {
         return [
             'التاريخ',
-            'حساب سابق - مدين',
-            'حساب سابق - دائن',
             'رقم الطلب',
             'رقم الفاتورة',
             'نوع العملية',
-            'خصم على الفاتورة',
-            'الضريبة',
-            'بيان ملحق',
-            'فاتورة النقل',
-            'القيمة الاجمالية',
-            'تم دفع',
+            'العملة',
+            'ج.م',
+            '$',
+            'عناية',
+            'رقم الشهادة',
+            'تاريخ السداد',
             'ملاحظات',
-            'مدين',
-            'دائن',
         ];
     }
 

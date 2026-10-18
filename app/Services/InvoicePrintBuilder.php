@@ -170,6 +170,31 @@ class InvoicePrintBuilder
         ];
     }
 
+    /**
+     * Section gross totals used for payment allocation and statement remaining.
+     *
+     * @return array{tax: float, receipt: float, additional: float, usd: float}
+     */
+    public function getInvoiceSectionTotals(Invoice $invoice): array
+    {
+        $print = $this->build($invoice);
+        $tax = round((float) ($print['tax']['total'] ?? 0), 2);
+        $receipt = round((float) ($print['receipt']['total'] ?? 0), 2);
+        $additional = round((float) ($print['additional']['total'] ?? 0), 2);
+
+        $usd = 0.0;
+        if (! InvoiceCurrency::isUsd($invoice->currency ?? null)) {
+            $usd = round((float) ($invoice->usd_amount ?? $print['usd_total'] ?? 0), 2);
+        }
+
+        return [
+            'tax' => $tax,
+            'receipt' => $receipt,
+            'additional' => $additional,
+            'usd' => $usd,
+        ];
+    }
+
     public function resolveServiceSection(BookingService $bookingService): string
     {
         $category = $bookingService->service?->serviceCategory;

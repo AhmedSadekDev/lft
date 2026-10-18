@@ -28,8 +28,10 @@ use App\Models\Booking;
 use App\Models\BookingContainer;
 use App\Models\Invoice;
 use App\Services\InvoicePrintBuilder;
+use App\Services\InvoiceSectionPaymentService;
 use App\Support\CompanyCurrencyLedger;
 use App\Support\InvoiceCurrency;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Mpdf\Mpdf;
 
@@ -230,6 +232,8 @@ class AccountController extends Controller
                     'booking.bookingContainers',
                     'booking.bookingServices.service.serviceCategory',
                     'booking.expenses.service.serviceCategory',
+                    'booking.employee',
+                    'invoicePayments',
                 ])->find($invoiceId);
 
                 if (!$invoiceObj) {
@@ -240,6 +244,11 @@ class AccountController extends Controller
                 $bookingNumber = is_array($invoice) ? ($invoice['booking_number'] ?? '') : ($invoice->booking_number ?? '');
                 $invoiceNumber = is_array($invoice) ? ($invoice['invoice_number'] ?? '') : ($invoice->invoice_number ?? '');
                 $legacyTotal = (float) (is_array($invoice) ? ($invoice['total'] ?? 0) : ($invoice->total ?? 0));
+                $attention = $invoiceObj->booking?->employee?->name;
+                $certificateNumber = $invoiceObj->booking?->certificate_number;
+                $latestPaymentDate = $invoiceObj->invoicePayments
+                    ->filter(fn ($p) => CompanyCurrencyLedger::paymentCountsTowardBalance($p))
+                    ->max('created_at');
 
                 $invoiceBuckets = CompanyCurrencyLedger::invoiceTotals(
                     $invoiceObj,
@@ -262,9 +271,26 @@ class AccountController extends Controller
                             ? [InvoiceCurrency::EGP => 0.0, InvoiceCurrency::USD => $sectionTotal]
                             : [InvoiceCurrency::EGP => $sectionTotal, InvoiceCurrency::USD => 0.0];
                         $runningBalances = CompanyCurrencyLedger::add($runningBalances, $sectionBuckets);
+                        $sectionKey = $sectionRow['section'] ?? null;
+                        $sectionLatest = $invoiceObj->invoicePayments
+                            ->filter(function ($p) use ($sectionKey) {
+                                if (! CompanyCurrencyLedger::paymentCountsTowardBalance($p)) {
+                                    return false;
+                                }
+                                if (! $sectionKey || $sectionKey === 'combined') {
+                                    return true;
+                                }
+
+                                return ($p->section ?? null) === $sectionKey || ($p->section ?? null) === null;
+                            })
+                            ->max('created_at');
+
                         $sectionRow['currency'] = $this->formatDualCurrencyLabel($sectionBuckets);
                         $sectionRow['total_egp'] = $sectionBuckets[InvoiceCurrency::EGP];
                         $sectionRow['total_usd'] = $sectionBuckets[InvoiceCurrency::USD];
+                        $sectionRow['attention'] = $attention;
+                        $sectionRow['certificate_number'] = $certificateNumber;
+                        $sectionRow['payment_settled_at'] = $sectionLatest ?: $latestPaymentDate;
                         $sectionRow['running_balance'] = $runningBalances[InvoiceCurrency::EGP];
                         $sectionRow['running_balance_egp'] = $runningBalances[InvoiceCurrency::EGP];
                         $sectionRow['running_balance_usd'] = $runningBalances[InvoiceCurrency::USD];
@@ -276,6 +302,11 @@ class AccountController extends Controller
                     ) {
                         $usdOnly = [InvoiceCurrency::EGP => 0.0, InvoiceCurrency::USD => $invoiceBuckets[InvoiceCurrency::USD]];
                         $runningBalances = CompanyCurrencyLedger::add($runningBalances, $usdOnly);
+                        $usdLatest = $invoiceObj->invoicePayments
+                            ->filter(fn ($p) => CompanyCurrencyLedger::paymentCountsTowardBalance($p)
+                                && (($p->section ?? null) === 'usd' || ($p->section ?? null) === null)
+                                && InvoiceCurrency::normalize($p->currency ?? InvoiceCurrency::EGP) === InvoiceCurrency::USD)
+                            ->max('created_at');
                         $transactions->push([
                             'date' => $invoiceDate,
                             'type' => 'invoice',
@@ -294,6 +325,9 @@ class AccountController extends Controller
                             'total_usd' => $invoiceBuckets[InvoiceCurrency::USD],
                             'paid' => 0,
                             'notes' => 'إيصالات/خدمات بالدولار',
+                            'attention' => $attention,
+                            'certificate_number' => $certificateNumber,
+                            'payment_settled_at' => $usdLatest ?: $latestPaymentDate,
                             'current_debit' => $invoiceBuckets[InvoiceCurrency::USD],
                             'current_credit' => 0,
                             'running_balance' => $runningBalances[InvoiceCurrency::EGP],
@@ -327,6 +361,9 @@ class AccountController extends Controller
                         'total_usd' => $invoiceBuckets[InvoiceCurrency::USD],
                         'paid' => 0,
                         'notes' => '',
+                        'attention' => $attention,
+                        'certificate_number' => $certificateNumber,
+                        'payment_settled_at' => $latestPaymentDate,
                         'current_debit' => $invoiceBuckets[InvoiceCurrency::EGP] + $invoiceBuckets[InvoiceCurrency::USD],
                         'current_credit' => 0,
                         'running_balance' => $runningBalances[InvoiceCurrency::EGP],
@@ -402,10 +439,23 @@ class AccountController extends Controller
                 $firstInvNo = 'شيك ' . $firstPayment->check_number;
             }
 
+            $sectionLabels = $dayPayments
+                ->pluck('section')
+                ->filter()
+                ->unique()
+                ->map(fn ($s) => InvoiceSectionPaymentService::SECTION_LABELS[$s] ?? $s)
+                ->values();
+            $typeLabel = 'سداد';
+            if ($sectionLabels->count() === 1) {
+                $typeLabel = 'سداد - ' . $sectionLabels->first();
+            } elseif ($sectionLabels->count() > 1) {
+                $typeLabel = 'سداد - أقسام متعددة';
+            }
+
             $transactions->push([
                 'date' => Carbon::parse($date),
                 'type' => 'payment',
-                'type_label' => 'قام العميل بسداد',
+                'type_label' => $typeLabel,
                 'booking_number' => '',
                 'invoice_number' => $dayPayments->count() > 1 ? 'متعدد (' . $dayPayments->count() . ' فاتورة)' : $firstInvNo,
                 'currency' => InvoiceCurrency::label($payCurrency),
@@ -416,10 +466,18 @@ class AccountController extends Controller
                 'attachment_statement' => '',
                 'transportation' => 0,
                 'total' => 0,
-                'total_egp' => $paymentBuckets[InvoiceCurrency::EGP],
-                'total_usd' => $paymentBuckets[InvoiceCurrency::USD],
+                // Display as negative in money columns (no separate "paid" column).
+                'total_egp' => $paymentBuckets[InvoiceCurrency::EGP] > 0
+                    ? -abs($paymentBuckets[InvoiceCurrency::EGP])
+                    : 0.0,
+                'total_usd' => $paymentBuckets[InvoiceCurrency::USD] > 0
+                    ? -abs($paymentBuckets[InvoiceCurrency::USD])
+                    : 0.0,
                 'paid' => $totalPaymentValue,
                 'notes' => $notes,
+                'attention' => $firstInv?->booking?->employee?->name,
+                'certificate_number' => $firstInv?->booking?->certificate_number,
+                'payment_settled_at' => Carbon::parse($date),
                 'current_debit' => 0,
                 'current_credit' => $totalPaymentValue,
                 'running_balance' => $runningBalances[InvoiceCurrency::EGP],
@@ -809,7 +867,13 @@ class AccountController extends Controller
         $unpaidInvoices = collect();
         $bookings = $company->bookings()
             ->whereHas('invoice')
-            ->with(['invoice.invoicePayments'])
+            ->with([
+                'invoice.invoicePayments',
+                'invoice.booking.bookingContainers',
+                'invoice.booking.bookingServices.service.serviceCategory',
+                'invoice.booking.expenses.service.serviceCategory',
+                'employee',
+            ])
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -827,10 +891,19 @@ class AccountController extends Controller
             if ($remaining[InvoiceCurrency::EGP] > 0 || $remaining[InvoiceCurrency::USD] > 0) {
                 $totals = CompanyCurrencyLedger::invoiceTotals($invoice, fn ($inv) => $this->calculateInvoiceTotal($inv));
                 $paid = CompanyCurrencyLedger::invoicePaid($invoice);
+                $breakdown = InvoiceSectionPaymentService::getSectionsBreakdown($invoice);
+                $sections = collect($breakdown)
+                    ->filter(fn ($row) => ($row['remaining'] ?? 0) > 0)
+                    ->map(fn ($row, $key) => array_merge($row, ['key' => $key]))
+                    ->values()
+                    ->all();
+
                 $unpaidInvoices->push([
                     'id' => $invoice->id,
                     'invoice_number' => $invoice->invoice_number,
                     'booking_number' => $booking->booking_number ?? '-',
+                    'attention' => $booking->employee?->name,
+                    'certificate_number' => $booking->certificate_number,
                     'date' => $invoice->created_at,
                     'currency' => InvoiceCurrency::normalize($invoice->currency ?? InvoiceCurrency::EGP),
                     'total' => $totals[InvoiceCurrency::EGP] ?: $totals[InvoiceCurrency::USD],
@@ -842,6 +915,7 @@ class AccountController extends Controller
                     'remaining' => $remaining[InvoiceCurrency::EGP] + $remaining[InvoiceCurrency::USD],
                     'remaining_egp' => $remaining[InvoiceCurrency::EGP],
                     'remaining_usd' => $remaining[InvoiceCurrency::USD],
+                    'sections' => $sections,
                 ]);
             }
         }
@@ -874,6 +948,10 @@ class AccountController extends Controller
             'notes' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'invoice_ids' => 'nullable|string',
+            'allocations' => 'nullable|array',
+            'allocations.*.invoice_id' => 'required_with:allocations|exists:invoices,id',
+            'allocations.*.section' => 'required_with:allocations|in:tax,receipt,additional,usd',
+            'allocations.*.amount' => 'required_with:allocations|numeric|min:0.01',
         ]);
 
         $company = Company::findOrFail($companyId);
@@ -939,6 +1017,106 @@ class AccountController extends Controller
                     ->with('success', 'تم تسجيل الشيك بقيمته الإجمالية. سيُضاف المبلغ للحساب البنكي عند الضغط على «تم الاستحقاق» من صفحة الشيكات.');
             }
 
+            $allocations = collect($request->input('allocations', []))
+                ->filter(fn ($row) => is_array($row) && ! empty($row['invoice_id']) && ! empty($row['section']) && (float) ($row['amount'] ?? 0) > 0)
+                ->values();
+
+            if ($allocations->isNotEmpty()) {
+                $allocSum = round($allocations->sum(fn ($row) => (float) $row['amount']), 2);
+                if (abs($allocSum - $paymentAmount) > 0.009) {
+                    DB::rollBack();
+
+                    return redirect()->back()->with(
+                        'error',
+                        'مجموع مبالغ الأقسام (' . number_format($allocSum, 2) . ') يجب أن يساوي مبلغ السداد (' . number_format($paymentAmount, 2) . ')'
+                    );
+                }
+
+                $bankTransactionId = null;
+                if ($request->bank_id) {
+                    $bankTransactionId = $this->recordCompanyBankDeposit(
+                        (int) $request->bank_id,
+                        $company,
+                        $paymentAmount,
+                        $currency,
+                        'سداد فواتير - ' . $company->name,
+                        $request->payment_date ?? now()->format('Y-m-d')
+                    );
+                }
+
+                $processedInvoices = [];
+                $invoiceCount = 0;
+
+                foreach ($allocations as $alloc) {
+                    $invoice = Invoice::where('id', (int) $alloc['invoice_id'])
+                        ->whereHas('booking', fn ($q) => $q->where('company_id', $companyId))
+                        ->with([
+                            'invoicePayments',
+                            'booking.bookingContainers',
+                            'booking.bookingServices.service.serviceCategory',
+                            'booking.expenses.service.serviceCategory',
+                        ])
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (! $invoice) {
+                        throw ValidationException::withMessages([
+                            'allocations' => 'فاتورة غير صالحة ضمن التخصيصات.',
+                        ]);
+                    }
+
+                    $section = (string) $alloc['section'];
+                    $amount = round((float) $alloc['amount'], 2);
+                    $expectedCurrency = ($section === 'usd' || InvoiceCurrency::isUsd($invoice->currency ?? null))
+                        ? InvoiceCurrency::USD
+                        : InvoiceCurrency::EGP;
+
+                    if ($expectedCurrency !== $currency) {
+                        throw ValidationException::withMessages([
+                            'allocations' => 'قسم ' . $section . ' لا يطابق عملة السداد المختارة.',
+                        ]);
+                    }
+
+                    $sectionRemaining = InvoiceSectionPaymentService::sectionRemaining($invoice, $section);
+                    if ($amount > $sectionRemaining + 0.009) {
+                        throw ValidationException::withMessages([
+                            'allocations' => 'المبلغ المدخل (' . number_format($amount, 2) . ') للقسم ('
+                                . (InvoiceSectionPaymentService::SECTION_LABELS[$section] ?? $section)
+                                . ') بالفاتورة #' . $invoice->invoice_number
+                                . ' يتجاوز المتبقي (' . number_format($sectionRemaining, 2) . ').',
+                        ]);
+                    }
+
+                    $invoiceRemaining = CompanyCurrencyLedger::invoiceRemaining(
+                        $invoice,
+                        fn ($inv) => $this->calculateInvoiceTotal($inv)
+                    );
+                    if ($amount > ($invoiceRemaining[$currency] ?? 0) + 0.009) {
+                        throw ValidationException::withMessages([
+                            'allocations' => 'المبلغ يتجاوز متبقي الفاتورة #' . $invoice->invoice_number . ' بعملة السداد.',
+                        ]);
+                    }
+
+                    $paymentData = $this->preparePaymentData($request, $company, $invoice, $amount, $bankTransactionId);
+                    $paymentData['currency'] = $currency;
+                    $paymentData['section'] = $section;
+                    $payment = InvoicePayment::create($paymentData);
+                    if ($request->payment_date) {
+                        $payment->created_at = $request->payment_date;
+                        $payment->save();
+                    }
+
+                    $processedInvoices[] = $invoice->invoice_number . '-' . strtoupper($section === 'additional' ? 'S' : ($section === 'tax' ? 'I' : ($section === 'receipt' ? 'R' : 'USD')));
+                    $invoiceCount++;
+                }
+
+                DB::commit();
+
+                return redirect()->route('accounts.statement', $companyId)
+                    ->with('success', 'تم تسجيل السداد بنجاح (' . $currencyLabel . ') (' . $invoiceCount . ' بند: ' . implode(', ', $processedInvoices) . ')');
+            }
+
+            // Fallback legacy: FIFO across selected invoices without section allocations
             $remainingPayment = $paymentAmount;
             $processedInvoices = [];
             $invoiceCount = 0;
@@ -1039,6 +1217,10 @@ class AccountController extends Controller
 
             return redirect()->route('accounts.statement', $companyId)
                 ->with('success', $message);
+        } catch (ValidationException $e) {
+            DB::rollBack();
+
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -1702,7 +1884,7 @@ class AccountController extends Controller
         return InvoicePayment::query()
             ->tap(fn ($q) => $this->applyCompanyInvoicePaymentsScope($q, (int) $company->id))
             ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
-            ->with(['invoice.booking', 'bank'])
+            ->with(['invoice.booking.employee', 'bank'])
             ->orderBy('created_at', 'desc')
             ->get();
     }

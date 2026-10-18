@@ -73,7 +73,7 @@
             <div id="invoices_section">
                 @if($unpaidInvoices->count() > 0)
                     <div class="mb-4">
-                        <h5 class="font-weight-bold mb-3">الفواتير غير المسددة</h5>
+                        <h5 class="font-weight-bold mb-3">الفواتير غير المسددة (بالأقسام)</h5>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
                                 <thead style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff;">
@@ -81,31 +81,84 @@
                                         <th>
                                             <input type="checkbox" id="select_all" title="تحديد الكل">
                                         </th>
-                                        <th>رقم الفاتورة</th>
+                                        <th>رقم الفاتورة / القسم</th>
                                         <th>رقم الطلب</th>
                                         <th>التاريخ</th>
-                                        <th>متبقي ج.م</th>
-                                        <th>متبقي $</th>
+                                        <th>متبقي</th>
+                                        <th>مبلغ السداد</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($unpaidInvoices as $invoice)
-                                        <tr>
+                                    @foreach($unpaidInvoices as $invoiceIndex => $invoice)
+                                        <tr class="invoice-parent-row table-light" data-invoice-id="{{ $invoice['id'] }}">
                                             <td>
                                                 <input type="checkbox"
-                                                       name="invoice_ids[]"
-                                                       class="invoice-checkbox"
+                                                       class="invoice-checkbox parent-invoice-checkbox"
                                                        value="{{ $invoice['id'] }}"
+                                                       data-invoice-id="{{ $invoice['id'] }}"
                                                        data-remaining-egp="{{ $invoice['remaining_egp'] ?? $invoice['remaining'] }}"
-                                                       data-remaining-usd="{{ $invoice['remaining_usd'] ?? 0 }}"
-                                                       data-remaining="{{ $invoice['remaining_egp'] ?? $invoice['remaining'] }}">
+                                                       data-remaining-usd="{{ $invoice['remaining_usd'] ?? 0 }}">
                                             </td>
-                                            <td>{{ $invoice['invoice_number'] }}</td>
+                                            <td class="font-weight-bold">{{ $invoice['invoice_number'] }}</td>
                                             <td>{{ $invoice['booking_number'] }}</td>
                                             <td>{{ \Carbon\Carbon::parse($invoice['date'])->format('Y-m-d') }}</td>
-                                            <td class="text-danger font-weight-bold">{{ number_format($invoice['remaining_egp'] ?? $invoice['remaining'], 2) }} ج.م</td>
-                                            <td class="text-danger font-weight-bold">{{ number_format($invoice['remaining_usd'] ?? 0, 2) }} $</td>
+                                            <td class="text-danger font-weight-bold">
+                                                {{ number_format($invoice['remaining_egp'] ?? $invoice['remaining'], 2) }} ج.م
+                                                @if(($invoice['remaining_usd'] ?? 0) > 0)
+                                                    <br>{{ number_format($invoice['remaining_usd'], 2) }} $
+                                                @endif
+                                            </td>
+                                            <td class="text-muted small">اختر الأقسام بالأسفل</td>
                                         </tr>
+                                        @foreach(($invoice['sections'] ?? []) as $section)
+                                            @php
+                                                $secKey = $section['key'] ?? '';
+                                                $secCurrency = $section['currency'] ?? 'EGP';
+                                                $secRemaining = (float) ($section['remaining'] ?? 0);
+                                                $secLabel = $section['label'] ?? $secKey;
+                                            @endphp
+                                            <tr class="section-row child-of-{{ $invoice['id'] }}"
+                                                data-invoice-id="{{ $invoice['id'] }}"
+                                                data-section="{{ $secKey }}"
+                                                data-currency="{{ $secCurrency }}">
+                                                <td class="ps-4">
+                                                    <input type="checkbox"
+                                                           class="section-checkbox"
+                                                           data-invoice-id="{{ $invoice['id'] }}"
+                                                           data-section="{{ $secKey }}"
+                                                           data-currency="{{ $secCurrency }}"
+                                                           data-remaining="{{ $secRemaining }}">
+                                                    <input type="hidden"
+                                                           class="alloc-invoice-id"
+                                                           name="allocations[{{ $invoiceIndex }}_{{ $secKey }}][invoice_id]"
+                                                           value="{{ $invoice['id'] }}"
+                                                           disabled>
+                                                    <input type="hidden"
+                                                           class="alloc-section"
+                                                           name="allocations[{{ $invoiceIndex }}_{{ $secKey }}][section]"
+                                                           value="{{ $secKey }}"
+                                                           disabled>
+                                                </td>
+                                                <td class="ps-4">↳ {{ $secLabel }}</td>
+                                                <td>{{ $invoice['booking_number'] }}</td>
+                                                <td></td>
+                                                <td class="text-danger">
+                                                    {{ number_format($secRemaining, 2) }}
+                                                    {{ $secCurrency === 'USD' ? '$' : 'ج.م' }}
+                                                </td>
+                                                <td style="max-width: 140px;">
+                                                    <input type="number"
+                                                           step="0.01"
+                                                           min="0.01"
+                                                           max="{{ $secRemaining }}"
+                                                           class="form-control form-control-sm section-amount-input"
+                                                           name="allocations[{{ $invoiceIndex }}_{{ $secKey }}][amount]"
+                                                           value="{{ number_format($secRemaining, 2, '.', '') }}"
+                                                           data-remaining="{{ $secRemaining }}"
+                                                           disabled>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     @endforeach
                                 </tbody>
                             </table>
@@ -114,7 +167,7 @@
                             <strong>المجموع المحدد حسب عملة السداد:</strong>
                             <span id="selected_total" class="font-weight-bold">0.00</span>
                             <span id="selected_currency_label">ج.م</span>
-                            <span id="selected_count" class="ml-3">(0 فاتورة)</span>
+                            <span id="selected_count" class="ml-3">(0 بند)</span>
                         </div>
                     </div>
                 @else
@@ -383,40 +436,102 @@
 
 @push('js')
 <script>
-    $(document).ready(function() {
-        // تحديد/إلغاء تحديد الكل
-        $('#select_all').on('change', function() {
-            $('.invoice-checkbox').prop('checked', $(this).prop('checked'));
-            updateSelectedTotal();
-        });
+    function setSectionEnabled($row, enabled) {
+        var $cb = $row.find('.section-checkbox');
+        var $amount = $row.find('.section-amount-input');
+        var $hidInvoice = $row.find('.alloc-invoice-id');
+        var $hidSection = $row.find('.alloc-section');
+        var remaining = parseFloat($amount.data('remaining')) || 0;
 
-        // تحديث المجموع عند تغيير الاختيار
-        $('.invoice-checkbox').on('change', function() {
-            updateSelectedTotal();
-            $('#select_all').prop('checked', $('.invoice-checkbox:checked').length === $('.invoice-checkbox').length);
-        });
-
-        function updateSelectedTotal() {
-            var total = 0;
-            var count = 0;
-            var selectedIds = [];
-            var currency = $('#payment_currency').val() || 'EGP';
-            var attr = currency === 'USD' ? 'remainingUsd' : 'remainingEgp';
-
-            $('.invoice-checkbox:checked').each(function() {
-                total += parseFloat($(this).data(attr)) || 0;
-                count++;
-                selectedIds.push($(this).val());
-            });
-
-            $('#selected_total').text(total.toFixed(2));
-            $('#selected_currency_label').text(currency === 'USD' ? '$' : 'ج.م');
-            $('#selected_count').text('(' + count + ' فاتورة)');
-            $('#invoice_ids_input').val(selectedIds.join(','));
-            $('#amount_input').val(total > 0 ? total.toFixed(2) : '');
+        $cb.prop('checked', enabled);
+        $amount.prop('disabled', !enabled);
+        $hidInvoice.prop('disabled', !enabled);
+        $hidSection.prop('disabled', !enabled);
+        if (enabled) {
+            $amount.val(remaining.toFixed(2));
         }
+    }
 
-        $('#payment_currency').on('change', updateSelectedTotal);
+    function updateSelectedTotal() {
+        var total = 0;
+        var count = 0;
+        var selectedIds = {};
+        var currency = $('#payment_currency').val() || 'EGP';
+
+        $('.section-checkbox:checked').each(function() {
+            var $row = $(this).closest('tr');
+            var rowCurrency = $(this).data('currency') || 'EGP';
+            if (rowCurrency !== currency) {
+                return;
+            }
+            var amount = parseFloat($row.find('.section-amount-input').val()) || 0;
+            total += amount;
+            count++;
+            selectedIds[$(this).data('invoice-id')] = true;
+        });
+
+        $('#selected_total').text(total.toFixed(2));
+        $('#selected_currency_label').text(currency === 'USD' ? '$' : 'ج.م');
+        $('#selected_count').text('(' + count + ' بند)');
+        $('#invoice_ids_input').val(Object.keys(selectedIds).join(','));
+        $('#amount_input').val(total > 0 ? total.toFixed(2) : '');
+    }
+
+    $(document).ready(function() {
+        $('#select_all').on('change', function() {
+            var checked = $(this).prop('checked');
+            var currency = $('#payment_currency').val() || 'EGP';
+            $('.parent-invoice-checkbox').prop('checked', checked);
+            $('.section-row').each(function() {
+                var rowCurrency = $(this).data('currency') || 'EGP';
+                setSectionEnabled($(this), checked && rowCurrency === currency);
+            });
+            updateSelectedTotal();
+        });
+
+        $('.parent-invoice-checkbox').on('change', function() {
+            var invoiceId = $(this).data('invoice-id');
+            var checked = $(this).prop('checked');
+            var currency = $('#payment_currency').val() || 'EGP';
+            $('.section-row.child-of-' + invoiceId).each(function() {
+                var rowCurrency = $(this).data('currency') || 'EGP';
+                setSectionEnabled($(this), checked && rowCurrency === currency);
+            });
+            updateSelectedTotal();
+        });
+
+        $(document).on('change', '.section-checkbox', function() {
+            var $row = $(this).closest('tr');
+            setSectionEnabled($row, $(this).prop('checked'));
+            var invoiceId = $(this).data('invoice-id');
+            var anyChecked = $('.section-row.child-of-' + invoiceId + ' .section-checkbox:checked').length > 0;
+            $('.parent-invoice-checkbox[data-invoice-id="' + invoiceId + '"]').prop('checked', anyChecked);
+            updateSelectedTotal();
+        });
+
+        $(document).on('input', '.section-amount-input', function() {
+            var max = parseFloat($(this).data('remaining')) || 0;
+            var val = parseFloat($(this).val()) || 0;
+            if (val > max) {
+                $(this).val(max.toFixed(2));
+            }
+            updateSelectedTotal();
+        });
+
+        $('#payment_currency').on('change', function() {
+            var currency = $(this).val() || 'EGP';
+            $('.section-checkbox:checked').each(function() {
+                if (($(this).data('currency') || 'EGP') !== currency) {
+                    setSectionEnabled($(this).closest('tr'), false);
+                }
+            });
+            $('.parent-invoice-checkbox').each(function() {
+                var invoiceId = $(this).data('invoice-id');
+                var any = $('.section-row.child-of-' + invoiceId + ' .section-checkbox:checked').length > 0;
+                $(this).prop('checked', any);
+            });
+            updateSelectedTotal();
+        });
 
         // تحديث نوع السداد
         $('#payment_type').on('change', function() {

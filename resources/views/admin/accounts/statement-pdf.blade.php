@@ -119,46 +119,46 @@
     <table class="main-table">
         <thead>
             <tr>
-                <th class="date-cell" style="width: 9%;">التاريخ</th>
-                <th class="num" style="width: 11%;">الرصيد</th>
-                <th style="width: 10%;">رقم الفاتورة</th>
-                <th style="width: 10%;">نوع العملية</th>
-                <th class="num" style="width: 8%;">خصم على الفاتورة</th>
-                <th class="num" style="width: 8%;">الضريبة</th>
-                <th style="width: 10%;">بيان ملحق</th>
-                <th class="num" style="width: 9%;">فاتورة النقل</th>
-                <th class="num" style="width: 9%;">القيمة الاجمالية</th>
+                <th class="date-cell">التاريخ</th>
+                <th>رقم الطلب</th>
+                <th>رقم الفاتورة</th>
+                <th>نوع العملية</th>
+                <th>العملة</th>
+                <th class="num">ج.م</th>
+                <th class="num">$</th>
+                <th>عناية</th>
+                <th>رقم الشهادة</th>
+                <th>تاريخ السداد</th>
+                <th>ملاحظات</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($transactions ?? [] as $transaction)
                 @php
                     $date = $transaction['date'] instanceof \Carbon\Carbon ? $transaction['date'] : \Carbon\Carbon::parse($transaction['date']);
-                    $invNo = trim((string) ($transaction['invoice_number'] ?? ''));
-                    $bookNo = trim((string) ($transaction['booking_number'] ?? ''));
-                    $displayRef = $invNo !== '' ? $invNo : ($bookNo !== '' ? $bookNo : '-');
-                    $rb = (float) ($transaction['running_balance'] ?? 0);
+                    $settledAt = $transaction['payment_settled_at'] ?? null;
+                    if ($settledAt && !($settledAt instanceof \Carbon\Carbon)) {
+                        $settledAt = \Carbon\Carbon::parse($settledAt);
+                    }
+                    $egp = (float) ($transaction['total_egp'] ?? (($transaction['type'] ?? '') === 'payment' ? 0 : ($transaction['total'] ?? 0)));
+                    $usd = (float) ($transaction['total_usd'] ?? 0);
                 @endphp
                 <tr>
                     <td class="date-cell">{{ $date->format('Y-m-d') }}</td>
-                    <td class="num">
-                        @if($rb >= 0)
-                            <span class="text-danger">مدين {{ number_format(abs($rb), 2) }}</span>
-                        @else
-                            <span class="text-success">دائن {{ number_format(abs($rb), 2) }}</span>
-                        @endif
-                    </td>
-                    <td class="text-wrap">{{ $displayRef }}</td>
+                    <td class="text-wrap">{{ $transaction['booking_number'] ?: '-' }}</td>
+                    <td class="text-wrap">{{ $transaction['invoice_number'] ?: '-' }}</td>
                     <td class="text-wrap">{{ $transaction['type_label'] }}</td>
-                    <td class="num">{{ ($transaction['discount'] ?? 0) > 0 ? number_format($transaction['discount'], 2) : '-' }}</td>
-                    <td class="num">{{ ($transaction['tax'] ?? 0) > 0 ? number_format($transaction['tax'], 2) : '-' }}</td>
-                    <td class="text-wrap">{{ $transaction['attachment_statement'] ?: '-' }}</td>
-                    <td class="num">{{ ($transaction['transportation'] ?? 0) > 0 ? number_format($transaction['transportation'], 2) : '-' }}</td>
-                    <td class="num">{{ ($transaction['total'] ?? 0) > 0 ? number_format($transaction['total'], 2) : '-' }}</td>
+                    <td>{{ $transaction['currency'] ?? '-' }}</td>
+                    <td class="num {{ $egp < 0 ? 'text-success' : 'text-danger' }}">{{ $egp != 0.0 ? number_format($egp, 2) : '-' }}</td>
+                    <td class="num {{ $usd < 0 ? 'text-success' : 'text-danger' }}">{{ $usd != 0.0 ? number_format($usd, 2) : '-' }}</td>
+                    <td class="text-wrap">{{ $transaction['attention'] ?? '-' }}</td>
+                    <td class="text-wrap">{{ $transaction['certificate_number'] ?? '-' }}</td>
+                    <td class="date-cell">{{ $settledAt ? $settledAt->format('Y-m-d') : '-' }}</td>
+                    <td class="text-wrap">{{ $transaction['notes'] ?: '-' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" style="text-align: center; padding: 20px;">لا توجد حركات في هذه الفترة</td>
+                    <td colspan="11" style="text-align: center; padding: 20px;">لا توجد حركات في هذه الفترة</td>
                 </tr>
             @endforelse
 
@@ -169,8 +169,8 @@
                     $tp = $totalPaymentsBalances ?? ['EGP' => $totalPayments ?? 0, 'USD' => 0];
                 @endphp
                 <tr class="summary-row">
-                    <td colspan="4" style="text-align: right; padding-right: 10px; font-size: 9pt;">ملخص الفترة</td>
-                    <td colspan="5" style="text-align: center; font-size: 8.5pt;">
+                    <td colspan="5" style="text-align: right; padding-right: 10px; font-size: 9pt;">ملخص الفترة</td>
+                    <td colspan="6" style="text-align: center; font-size: 8.5pt;">
                         فواتير ج.م: {{ number_format($ti['EGP'] ?? 0, 2) }} / $: {{ number_format($ti['USD'] ?? 0, 2) }}
                         —
                         سداد ج.م: {{ number_format($tp['EGP'] ?? 0, 2) }} / $: {{ number_format($tp['USD'] ?? 0, 2) }}
@@ -178,7 +178,7 @@
                 </tr>
                 <tr class="final-balance-row">
                     <td colspan="5" style="text-align: right; padding-right: 10px; font-size: 9.5pt;">الرصيد النهائي (يوم {{ $toDate }})</td>
-                    <td colspan="4" class="num final-balance-amount" style="text-align: center; font-size: 10pt;">
+                    <td colspan="6" class="num final-balance-amount" style="text-align: center; font-size: 10pt;">
                         {{ number_format(abs($fb['EGP'] ?? 0), 2) }} ج.م
                         +
                         {{ number_format(abs($fb['USD'] ?? 0), 2) }} $

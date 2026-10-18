@@ -23,6 +23,7 @@
 --   docs/sql/2026-10-16-dual-currency-ledgers.sql
 --   docs/sql/2026-10-16-reset-01-password-reset-tokens.sql
 --   docs/sql/2026-10-18-booking-containers-currency.sql
+--   docs/sql/2026-10-18-invoice-payments-section.sql
 --   docs/modernization/phase-1-performance-indexes.sql
 --   docs/modernization/phase-6-performance-indexes.sql
 --   docs/modernization/phase-7-queue-infrastructure.sql
@@ -127,6 +128,27 @@ SET @sql := IF(@col = 0,
      ADD COLUMN `foreign_amount` DECIMAL(14,2) NULL AFTER `currency`,
      ADD COLUMN `exchange_rate` DECIMAL(14,6) NULL AFTER `foreign_amount`',
   'SELECT ''booking_containers.currency already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- A7c) invoice_payments.section (I/R/S/USD payment allocation)
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'invoice_payments' AND COLUMN_NAME = 'section'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `invoice_payments` ADD COLUMN `section` VARCHAR(20) NULL DEFAULT NULL COMMENT ''tax | receipt | additional | usd'' AFTER `invoice_id`',
+  'SELECT ''invoice_payments.section already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @idx := (
+  SELECT COUNT(*) FROM information_schema.STATISTICS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'invoice_payments' AND INDEX_NAME = 'idx_invoice_payments_invoice_section'
+);
+SET @sql := IF(@idx = 0,
+  'ALTER TABLE `invoice_payments` ADD INDEX `idx_invoice_payments_invoice_section` (`invoice_id`, `section`)',
+  'SELECT ''idx_invoice_payments_invoice_section already exists'''
 );
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
