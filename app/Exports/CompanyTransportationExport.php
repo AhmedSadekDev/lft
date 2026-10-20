@@ -4,8 +4,8 @@ namespace App\Exports;
 
 use App\Models\CompanyTransportation;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class CompanyTransportationExport implements FromCollection, WithHeadings, ShouldAutoSize
 {
@@ -27,11 +27,11 @@ class CompanyTransportationExport implements FromCollection, WithHeadings, Shoul
             $query->where('company_id', $this->companyId);
         }
 
+        // Same English keys + container full_name as the import template expects.
         return $query->get()->map(function ($transportation) {
             return [
-                'id' => $transportation->id,
-                'company_name' => $transportation->company?->name ?? '',
-                'container_type' => $transportation->container?->full_name ?? '',
+                'company' => $transportation->company?->name ?? '',
+                'container' => $transportation->container?->full_name ?? '',
                 'departure' => $transportation->Departure?->title ?? '',
                 'loading' => $transportation->Loading?->title ?? '',
                 'aging' => $transportation->Aging?->title ?? '',
@@ -43,13 +43,12 @@ class CompanyTransportationExport implements FromCollection, WithHeadings, Shoul
     public function headings(): array
     {
         return [
-            '#',
-            __('main.company'),
-            __('main.container'),
-            __('admin.departure_location'),
-            __('admin.loading_location'),
-            __('admin.aging_location'),
-            __('admin.price'),
+            'company',
+            'container',
+            'departure',
+            'loading',
+            'aging',
+            'price',
         ];
     }
 }

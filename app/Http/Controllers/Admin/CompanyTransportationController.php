@@ -159,8 +159,40 @@ class CompanyTransportationController extends Controller
      */
     public function import(Request $request)
     {
-        Excel::import(new TransportationsImport(), $request->file);
-        return redirect()->back()->with(['success' => __('alerts.added_successfully')]);
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv'],
+        ]);
+
+        try {
+            $import = new TransportationsImport();
+            Excel::import($import, $request->file('file'));
+
+            if ($import->created === 0) {
+                $detail = $import->skipped !== []
+                    ? implode("\n", array_slice($import->skipped, 0, 8))
+                    : 'لم يتم إنشاء أي صف. تأكد من رؤوس الأعمدة: company, container, departure, loading, aging, price';
+
+                return redirect()->back()->with('error', "فشل رفع عروض الأسعار.\n" . $detail);
+            }
+
+            $message = 'تم إضافة ' . $import->created . ' عرض سعر بنجاح.';
+            if ($import->skipped !== []) {
+                $message .= ' تُخطّي ' . count($import->skipped) . ' صف: ' . implode(' | ', array_slice($import->skipped, 0, 5));
+            }
+
+            return redirect()->back()->with('success', $message);
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failure = $e->failures()[0] ?? null;
+            $error = $failure ? ($failure->errors()[0] ?? 'بيانات الملف غير صحيحة') : 'بيانات الملف غير صحيحة';
+
+            return redirect()->back()->with(
+                'error',
+                'خطأ في صف ' . ($failure?->row() ?? '?') . ': ' . $error
+                . ' — استخدم رؤوس الأعمدة الإنجليزية: company, container, departure, loading, aging, price'
+            );
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'فشل رفع الملف: ' . $e->getMessage());
+        }
     }
 
     /**
