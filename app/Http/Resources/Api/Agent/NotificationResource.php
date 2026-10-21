@@ -25,7 +25,8 @@ class NotificationResource extends JsonResource
             "type_id" => $typeId,
             "booking_id" => $notification->bookingContainer?->booking_id,
             "booking_container_id" => $notification->getAttribute('booking_container_id'),
-            "is_read" => $notification->getAttribute('is_read'),
+            // 0/1 for mobile clients that treat boolean loosely
+            "is_read" => (int) (bool) $notification->getAttribute('is_read'),
             "date" => $date ?? "",
             "time" => $time ?? "",
             'action_type' => match ($typeId) {

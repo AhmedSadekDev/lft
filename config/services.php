@@ -33,7 +33,8 @@ return [
 
     'firebase' => [
         'credentials' => env('FIREBASE_CREDENTIALS', storage_path('app/firebase.json')),
-        'project_id' => env('FIREBASE_PROJECT_ID', 'amani-32c87'),
+        // Prefer credentials JSON project_id; never default to an unrelated project.
+        'project_id' => env('FIREBASE_PROJECT_ID') ?: null,
     ],
 
 ];

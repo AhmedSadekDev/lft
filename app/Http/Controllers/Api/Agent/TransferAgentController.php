@@ -96,7 +96,10 @@ class TransferAgentController extends Controller
             ]);
 
             SaveNotification::create($title, $text, $moneyTransfer->transfered_id, Agent::class, AppNotification::specific);
-            SendNotification::send($agent->device_token ?? "", $title, $text);
+            // Push to the recipient agent (transfered), not the sender.
+            if ($transAgent) {
+                SendNotification::send($transAgent->device_token ?? '', $title, $text);
+            }
 
             return $this->returnResponseSuccessMessage(__('alerts.success'));
         } catch (\Exception $Exception) {

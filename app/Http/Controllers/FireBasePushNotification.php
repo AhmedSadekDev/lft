@@ -17,8 +17,43 @@ class FireBasePushNotification extends Controller
 
     public function __construct()
     {
-        $projectId = config('services.firebase.project_id', 'leaderfortrans-779a4');
+        $projectId = $this->resolveProjectId();
         $this->url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
+    }
+
+    private function resolveProjectId(): string
+    {
+        $configured = trim((string) config('services.firebase.project_id', ''));
+        $fromFile = '';
+
+        try {
+            $credentials = $this->loadServiceAccountCredentials();
+            $fromFile = trim((string) ($credentials['project_id'] ?? ''));
+        } catch (\Throwable $e) {
+            Log::warning('Firebase credentials unavailable while resolving project_id', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        // Credentials file is source of truth when env points at a different/legacy project.
+        if ($fromFile !== '' && $configured !== '' && $configured !== $fromFile) {
+            Log::warning('FIREBASE_PROJECT_ID mismatches firebase.json; using credentials project_id', [
+                'env_project_id' => $configured,
+                'credentials_project_id' => $fromFile,
+            ]);
+
+            return $fromFile;
+        }
+
+        if ($configured !== '') {
+            return $configured;
+        }
+
+        if ($fromFile !== '') {
+            return $fromFile;
+        }
+
+        return 'leaderfortrans-779a4';
     }
 
     private function getAccessToken(): string
@@ -138,8 +173,27 @@ class FireBasePushNotification extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
 
         $result = curl_exec($ch);
+        $curlError = curl_error($ch);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
+
+        if ($result === false || $result === '') {
+            Log::error('Firebase FCM HTTP request failed', [
+                'curl_error' => $curlError,
+                'http_code' => $httpCode,
+                'url' => $this->url,
+            ]);
+
+            return json_encode([
+                'error' => [
+                    'status' => 'UNAVAILABLE',
+                    'message' => $curlError !== '' ? $curlError : 'Empty FCM response',
+                ],
+            ]);
+        }
+
         info($result);
+
         return $result;
     }
 

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Api\Agent;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\Agent\CarResource;
 use App\Http\Resources\Api\Agent\NotificationResource;
 use App\Models\Agent;
 use App\Models\AppNotification;
-use App\Models\Car;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -19,19 +17,12 @@ class NotificationController extends Controller
             $perPage = (int) $request->get('per_page', 20);
             $page = (int) $request->get('page', 1);
 
-            $notifications = AppNotification::with('bookingContainer:id,booking_id')
-                ->whereDoesntHave('bookingContainer.booking.invoice')
-                ->where(function ($query) use ($agent) {
-                    $query->where('type', AppNotification::all)
-                        ->orWhere(function ($q) use ($agent) {
-                            $q->where("notificationable_id", $agent->id)->where("notificationable_type", Agent::class);
-                        });
-                })
+            $notifications = $this->agentNotificationsQuery($agent)
                 ->when($request->date, function ($query) use ($request) {
                     $formattedDate = \Carbon\Carbon::parse($request->date)->format('Y-m-d');
                     $query->whereDate('created_at', '=', $formattedDate);
                 })
-                ->orderBy("id", "desc")
+                ->orderBy('id', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);
 
             $data = NotificationResource::collection($notifications->items());
@@ -44,7 +35,7 @@ class NotificationController extends Controller
 
             return response()->json([
                 'status' => true,
-                'errNum' => "0000",
+                'errNum' => '0000',
                 'message' => __('alerts.success'),
                 'data' => $data,
                 'pagination' => $pagination,
@@ -57,30 +48,38 @@ class NotificationController extends Controller
     public function mark_as_read(Request $request)
     {
         try {
-            $user = auth('agent')->user() ?: auth('superagent')->user();
-            $class = auth('agent')->check() ? \App\Models\Agent::class : \App\Models\Superagent::class;
-
-            if (!$user) {
+            $agent = auth('agent')->user();
+            if (! $agent) {
                 return $this->returnError(401, 'Unauthorized');
             }
 
-            $query = AppNotification::where(function ($q) use ($user, $class) {
-                $q->where('type', AppNotification::all)
-                    ->orWhere(function ($sub) use ($user, $class) {
-                        $sub->where("notificationable_id", $user->id)
-                            ->where("notificationable_type", $class);
-                    });
-            });
+            // Same scope as the list, so "read all" clears what the app shows as unread.
+            $query = $this->agentNotificationsQuery($agent);
 
             if ($request->filled('id')) {
                 $query->where('id', $request->id);
             }
 
-            $query->update(['is_read' => true]);
+            $updated = $query->update(['is_read' => true]);
 
-            return $this->returnSuccessMessage(__('alerts.success'));
+            return $this->returnAllData([
+                'updated_count' => (int) $updated,
+            ], __('alerts.success'));
         } catch (\Exception $Exception) {
             return $this->returnError(401, $Exception->getMessage());
         }
+    }
+
+    private function agentNotificationsQuery(Agent $agent)
+    {
+        return AppNotification::with('bookingContainer:id,booking_id')
+            ->whereDoesntHave('bookingContainer.booking.invoice')
+            ->where(function ($query) use ($agent) {
+                $query->where('type', AppNotification::all)
+                    ->orWhere(function ($q) use ($agent) {
+                        $q->where('notificationable_id', $agent->id)
+                            ->where('notificationable_type', Agent::class);
+                    });
+            });
     }
 }
