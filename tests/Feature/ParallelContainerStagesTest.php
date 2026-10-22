@@ -135,7 +135,11 @@ class ParallelContainerStagesTest extends TestCase
             $t->string('image_agent_expenses')->nullable();
             $t->string('notes')->nullable();
             $t->unsignedBigInteger('service_id')->nullable();
+            $t->unsignedBigInteger('booking_service_id')->nullable();
+            $t->unsignedBigInteger('user_id')->nullable();
             $t->boolean('admin_approval')->default(false);
+            $t->timestamp('reviewed_at')->nullable();
+            $t->timestamp('wallet_debited_at')->nullable();
             $t->timestamps();
         });
         (require database_path('migrations/2026_09_13_000001_add_parallel_container_stages.php'))->up();
@@ -273,19 +277,29 @@ class ParallelContainerStagesTest extends TestCase
     public function test_general_expense_cannot_drop_booking_or_stage_context_and_debit_wallet(): void
     {
         $this->actingAs(Agent::find(1), 'agent');
-        // booking_id alone is a booking-level receipt (covered separately); a stage always needs its container.
-        foreach ([['type_id' => 2], ['booking_id' => 1, 'type_id' => 2]] as $context) {
-            $response = $this->postJson('/api/agent/make_general_expenses', $context + [
-                'value' => 100, 'service_id' => 1, 'request_key' => 'missing-container',
-            ]);
-            $this->assertFalse($response->json('status'));
-            $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
-            $this->assertDatabaseCount('agent_expenses', 0);
-        }
+        // Stray type_id without container (mobile quirk) is ignored → pure general expense.
+        $this->postJson('/api/agent/make_general_expenses', [
+            'value' => 50, 'service_id' => 1, 'type_id' => 1, 'request_key' => 'stray-type',
+        ])->assertOk()->assertJsonPath('status', true);
+        $this->assertNull(AgentExpense::where('request_key', 'stray-type')->value('type_id'));
+        $this->assertNull(AgentExpense::where('request_key', 'stray-type')->value('booking_container_id'));
+
+        // booking_id + type_id without container is incomplete stage context → reject.
+        $response = $this->postJson('/api/agent/make_general_expenses', [
+            'value' => 100, 'service_id' => 1, 'booking_id' => 1, 'type_id' => 2, 'request_key' => 'missing-container',
+        ]);
+        $this->assertFalse($response->json('status'));
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(1, AgentExpense::count());
+
         $this->postJson('/api/agent/make_general_expenses', [
             'value' => 100, 'service_id' => 1, 'request_key' => 'general-only',
         ])->assertOk()->assertJsonPath('status', true);
-        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(2, app(StageExpenseService::class)->markReviewed(1, null, 9));
+        $this->assertSame(850.0, (float) Agent::find(1)->wallet);
+        $this->assertNotNull(AgentExpense::where('request_key', 'general-only')->value('wallet_debited_at'));
+        $this->assertSame(9, (int) AgentExpense::where('request_key', 'general-only')->value('user_id'));
     }
 
     public function test_multiple_unloading_receipts_remain_visible_with_their_images_after_approval(): void
@@ -300,6 +314,8 @@ class ParallelContainerStagesTest extends TestCase
             ], 'unloading-'.$number, hash('sha256', (string) $number), fn () => 'receipt-'.$number.'.jpg'));
         }
         $service->approve(1, 2);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+        app(StageExpenseService::class)->markReviewed(1);
         $this->assertSame(700.0, (float) Agent::find(1)->wallet);
         $this->assertSame($expenses->pluck('id')->all(), AgentExpense::forBooking(1)->orderBy('id')->pluck('id')->all());
         $superagent = new \App\Models\Superagent;
@@ -792,7 +808,7 @@ class ParallelContainerStagesTest extends TestCase
         }
         $this->assertSame(1, AgentExpense::count());
         $this->assertSame(100.0, (float) $expense->fresh()->value);
-        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
         $this->assertSame(0, DB::table('notes')->count());
         $this->assertSame(0, AgentExpense::visibleToAgent()->count());
         $this->assertConflict(fn () => $this->receipt('after-invoice'));
@@ -834,7 +850,7 @@ class ParallelContainerStagesTest extends TestCase
         $service->complete(1, 2, 2);
         $this->receipt();
         $this->assertSame(3, (int) BookingContainer::find(1)->status);
-        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
         $this->assertSame(1000.0, (float) Agent::find(2)->wallet);
         $this->assertFalse($service->complete(1, 1, 1));
         $this->assertSame(3, (int) BookingContainer::find(1)->status);
@@ -850,6 +866,8 @@ class ParallelContainerStagesTest extends TestCase
         $this->assertSame(1, $service->visibleContainers(1, 2)->count());
         $this->receipt('loading');
         $this->receipt('unloading', 1, 2);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+        app(StageExpenseService::class)->markReviewed(1);
         $this->assertSame(800.0, (float) Agent::find(1)->wallet);
     }
 
@@ -867,7 +885,7 @@ class ParallelContainerStagesTest extends TestCase
         $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 1, ['value' => 120]));
         $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 1, null));
         $this->assertSame(1, AgentExpense::count());
-        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
     }
 
     public function test_retries_are_idempotent_even_after_closure(): void
@@ -878,7 +896,7 @@ class ParallelContainerStagesTest extends TestCase
         app(ContainerStageService::class)->approve(1, 1);
         app(ContainerStageService::class)->closeReceipts(1, 1, 7, 2);
         $this->assertSame($first->id, $this->receipt()->id);
-        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
     }
 
     public function test_stale_edits_and_deletes_do_not_overwrite_or_refund_twice(): void
@@ -952,13 +970,14 @@ class ParallelContainerStagesTest extends TestCase
         $this->postJson('/api/agent/update_expense', ['id' => $id, 'value' => 120, 'version' => 1, 'type_id' => 2])->assertStatus(422);
         $this->postJson('/api/agent/update_expense', ['id' => $id, 'value' => 120, 'version' => 1])->assertOk()->assertJsonPath('data.version', 2);
         $this->postJson('/api/agent/delete_expense', ['id' => $id, 'version' => 1])->assertStatus(409);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+        app(StageExpenseService::class)->markReviewed(1);
         $this->assertSame(880.0, (float) Agent::find(1)->wallet);
         $this->assertSame(1, DB::table('log_activities')->count());
     }
 
     private function createExpenseScreenTables(): void
     {
-        Schema::table('agent_expenses', fn (Blueprint $t) => $t->unsignedBigInteger('booking_service_id')->nullable());
         Schema::table('delivery_policies', fn (Blueprint $t) => $t->boolean('is_settled')->default(false));
         Schema::create('money_transfers', function (Blueprint $t) {
             $t->id();
@@ -981,12 +1000,15 @@ class ParallelContainerStagesTest extends TestCase
         AgentExpense::create(['agent_id' => 1, 'booking_id' => 1, 'booking_service_id' => 9, 'value' => 5, 'admin_approval' => 1]);
         $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 2)->assertJsonPath('data.0.id', $id);
         $this->postJson('/api/agent/update_expense', ['id' => $id, 'value' => 120, 'version' => 1])->assertOk();
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
 
-        $this->postJson('/api/agent/review_expenses')->assertOk()->assertJsonPath('data.reviewed_count', 1);
+        $this->postJson('/api/agent/review_expenses')->assertStatus(403);
+        $this->assertSame(1, app(StageExpenseService::class)->markReviewed(1, null, 9));
+        $this->assertSame(880.0, (float) Agent::find(1)->wallet);
         $dashboardOnly = $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 1);
         $this->assertEquals(5, $dashboardOnly->json('data.0.value'));
         $this->postJson('/api/agent/update_expense', ['id' => $id, 'value' => 130, 'version' => 3])->assertStatus(409);
-        $this->postJson('/api/agent/review_expenses')->assertOk()->assertJsonPath('data.reviewed_count', 0);
+        $this->assertSame(0, app(StageExpenseService::class)->markReviewed(1));
 
         // Closing the stage receipts from the supervisor side also removes them from the agent screen.
         $second = $this->postJson('/api/agent/make_general_expenses', $receipt + ['request_key' => 'r-2'])->assertOk()->json('data.id');
@@ -1015,8 +1037,11 @@ class ParallelContainerStagesTest extends TestCase
             ->assertJsonPath('data.booking_id', 3)->assertJsonPath('data.booking_container_id', null);
         $this->postJson('/api/agent/make_general_expenses', ['request_key' => 'help-2', 'booking_id' => 2] + $receipt)->assertStatus(409);
         $this->postJson('/api/agent/make_general_expenses', ['request_key' => 'help-3', 'booking_id' => 1, 'type_id' => 1] + $receipt)->assertStatus(422);
-        $this->assertSame(950.0, (float) Agent::find(2)->wallet);
+        $this->assertSame(1000.0, (float) Agent::find(2)->wallet);
         $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('data.0.booking_number', 'OPEN-3');
+        app(StageExpenseService::class)->markReviewed(2);
+        $this->assertSame(950.0, (float) Agent::find(2)->wallet);
+        $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 0);
     }
 
     private function createWorkflowBooking(int $id, int $type, $createdAt = null): void
@@ -1229,8 +1254,8 @@ class ParallelContainerStagesTest extends TestCase
     public function test_approved_expenses_cannot_be_edited_by_the_agent(): void
     {
         $expense = $this->receipt();
-        $expense->update(['admin_approval' => 1]);
-        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 1, ['value' => 50]));
+        app(StageExpenseService::class)->markReviewed(1);
+        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 2, ['value' => 50]));
         $this->assertSame(900.0, (float) Agent::find(1)->wallet);
     }
 
@@ -1323,27 +1348,42 @@ class ParallelContainerStagesTest extends TestCase
         $service->closeReceipts(1, 1, 7, 2);
         $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 1, ['value' => 200], null, true));
         $this->assertSame(100.0, (float) $expense->fresh()->value);
-        $this->assertSame(900.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
     }
 
     public function test_admin_can_delete_a_wrong_receipt_after_stage_closure_and_refund_the_agent(): void
     {
         $expense = $this->receipt();
+        app(StageExpenseService::class)->markReviewed(1);
         $service = app(ContainerStageService::class);
         $service->approve(1, 1);
         $service->closeReceipts(1, 1, 7, 2);
 
-        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 1, null));
+        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 2, null));
         $this->assertSame(900.0, (float) Agent::find(1)->wallet);
 
-        app(StageExpenseService::class)->change(1, $expense->id, 1, null, null, true);
+        app(StageExpenseService::class)->change(1, $expense->id, 2, null, null, true);
         $this->assertNull(AgentExpense::find($expense->id));
         $this->assertNotNull(AgentExpense::withTrashed()->find($expense->id)->voided_at);
         $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
         $this->assertNotNull(BookingContainerStage::where('booking_container_id', 1)->where('type_id', 1)->first()->receipts_closed_at);
 
-        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 2, null, null, true));
+        $this->assertConflict(fn () => app(StageExpenseService::class)->change(1, $expense->id, 3, null, null, true));
         $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+    }
+
+    public function test_deferred_debit_holds_spendable_balance_until_dashboard_review(): void
+    {
+        $this->receipt('a', 1, 1, 600);
+        $this->assertSame(1000.0, (float) Agent::find(1)->wallet);
+        $this->assertConflict(fn () => $this->receipt('b', 1, 1, 500), 422);
+        $this->receipt('c', 1, 1, 400);
+        $this->assertSame(1000.0, (float) AgentExpense::where('agent_id', 1)->whereNull('wallet_debited_at')->sum('value'));
+        app(StageExpenseService::class)->markReviewed(1, null, 9);
+        $this->assertSame(0.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(0.0, (float) AgentExpense::where('agent_id', 1)->whereNull('wallet_debited_at')->sum('value'));
+        $this->assertSame(9, (int) AgentExpense::where('agent_id', 1)->value('user_id'));
+        $this->assertNotNull(AgentExpense::where('agent_id', 1)->value('reviewed_at'));
     }
 
     public function test_used_migration_cannot_discard_receipt_history(): void

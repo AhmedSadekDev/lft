@@ -57,7 +57,7 @@ class ConatinerStatus extends Notification implements ShouldQueue
         $booking = $this->container->booking ?? null;
 
         // رابط تتبع الحجز إن وجد
-        $trackId = $booking?->booking_number;
+        $trackId = $booking?->trackCode();
         $url = $trackId ? 'https://leaderfortrans.com/book/?track=' . urlencode($trackId) : null;
 
         // الحصول على البريد من notifiable أولاً (employee أو company)
@@ -74,7 +74,7 @@ class ConatinerStatus extends Notification implements ShouldQueue
             'url' => $url,
             'details' => [
                 'الشركة' => $booking?->company?->name ?? '-',
-                'رقم الحجز' => $booking?->booking_number ?? '-',
+                'الرقم الداخلي' => $trackId ?? '-',
                 'رقم الحاوية' => $this->container->container_no ?? '-',
                 'رقم السيل الملاحي' => $this->container->sail_of_number ?? '-',
                 'نوع الحاوية' => $this->container->container?->full_name ?? '-',

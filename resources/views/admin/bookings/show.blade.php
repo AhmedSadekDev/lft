@@ -306,7 +306,11 @@
                     
                     <div class="mr-3">
                         <h1 class="booking-page-title">{{ __('main.company') }}: {{ $booking->company->name ?? '-' }}</h1>
-                        <p class="booking-page-subtitle">{{ __('admin.booking_number') }}: {{ $booking->booking_number ?? '-' }}</p>
+                        <p class="booking-page-subtitle">{{ __('admin.booking_number') }}: {{ $booking->booking_number ?? '-' }}
+                            @if($booking->public_code)
+                                <span class="text-muted">| {{ __('admin.public_code') }}: <strong>{{ $booking->public_code }}</strong></span>
+                            @endif
+                        </p>
                     </div>
                 </div>
                 <div class="booking-header-actions">
@@ -340,6 +344,13 @@
                     <div class="booking-info-text">
                         <span class="booking-info-label">{{ __('admin.booking_number') }}</span>
                         <span class="booking-info-value">{{ $booking->booking_number ?? __('main.not_found') }}</span>
+                    </div>
+                </div>
+                <div class="booking-info-item">
+                    <span class="booking-info-icon booking-info-icon--purple"><i class="fas fa-key"></i></span>
+                    <div class="booking-info-text">
+                        <span class="booking-info-label">{{ __('admin.public_code') }}</span>
+                        <span class="booking-info-value">{{ $booking->public_code ?? __('main.not_found') }}</span>
                     </div>
                 </div>
                 <div class="booking-info-item">
@@ -436,7 +447,9 @@
                                     <th>{{ __('admin.loading') }}</th>
                                     <th>{{ __('admin.aging') }}</th>
                                     <th>{{ __('admin.value') }}</th>
+                                    <th>{{ __('admin.custody_usd') }}</th>
                                     <th>{{ __('main.date') }}</th>
+                                    <th>{{ __('admin.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -456,7 +469,21 @@
                                                 {{ number_format($policy->money_transfer->value ?? 0, 2) }} {{ __('main.currency') }}
                                             </span>
                                         </td>
+                                        <td>
+                                            @if($policy->custody_usd !== null)
+                                                {{ number_format((float) $policy->custody_usd, 2) }} USD
+                                            @else
+                                                —
+                                            @endif
+                                        </td>
                                         <td>{{ $policy->money_transfer->date ?? __('main.not_found') }}</td>
+                                        <td>
+                                            <a href="{{ route('bookings.delivery_policy_land_bol', $policy->id) }}"
+                                               target="_blank"
+                                               class="btn btn-sm btn-light-primary">
+                                                <i class="fas fa-print"></i> {{ __('main.land_bill_of_lading') }}
+                                            </a>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

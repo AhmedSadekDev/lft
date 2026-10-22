@@ -251,6 +251,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get("booking_notes/{booking}", [BookingController::class, "booking_notes"])->name("bookings.booking_notes");
     Route::get("booking_container_papers/{booking}", [BookingController::class, "booking_container_papers"])->name("bookings.booking_container_papers");
     Route::get("booking_container_policies/{booking}", [BookingController::class, "booking_container_policies"])->name("bookings.booking_container_policies");
+    Route::get("delivery-policies/{deliveryPolicy}/land-bol", [BookingController::class, "print_land_bol"])->name("bookings.delivery_policy_land_bol");
     Route::delete("delete_delivery_policy/{id}", [BookingController::class, "delete_delivery_policy"])->name("bookings.delete_delivery_policy");
     Route::delete("deletePaper/{booking}", [BookingController::class, "deletePaper"])->name("admin.papers.delete");
     // ----------------- Booking Containers -----------------
@@ -469,6 +470,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     // تم إلغاء التقارير اليومية ودمجها في المصروفات العامة
     Route::get('/export_excel', [ReportController::class, 'exportExcel'])->name('reports.export_excel');
     Route::get('/general_expenses', [ReportController::class, 'general_expenses'])->name('reports.general_expenses');
+    Route::post('/general_expenses/review', [ReportController::class, 'general_expenses_review'])->name('reports.general_expenses.review');
     Route::get('/general_expenses_export', [ReportController::class, 'general_expenses_export'])->name('reports.general_expenses.export');
 
     // ----------------- Suppliers -----------------

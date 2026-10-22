@@ -366,6 +366,7 @@ class Booking extends Model
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('booking_number', 'like', '%' . $search . '%')
+                    ->orWhere('public_code', 'like', '%' . $search . '%')
                     ->orWhere('employee_name', 'like', '%' . $search . '%')
                     ->orWhereHas('bookingContainers', function($container) use($search){
                         $container->where('container_no', 'like', '%' . $search . '%');
@@ -612,12 +613,47 @@ class Booking extends Model
         ];
     }
 
+    /**
+     * Random 5-digit code for customer tracking links / invoice middle segment (not sequential).
+     */
+    public static function generateUniquePublicCode(): string
+    {
+        for ($i = 0; $i < 80; $i++) {
+            $code = (string) random_int(10000, 99999);
+            if (! static::where('public_code', $code)->exists()) {
+                return $code;
+            }
+        }
+
+        throw new \RuntimeException('تعذر توليد الرقم الداخلي');
+    }
+
+    public function ensurePublicCode(): string
+    {
+        if (filled($this->public_code) && preg_match('/^\d{5}$/', (string) $this->public_code)) {
+            return (string) $this->public_code;
+        }
+
+        $code = static::generateUniquePublicCode();
+        $this->forceFill(['public_code' => $code])->saveQuietly();
+
+        return $code;
+    }
+
+    /** Code used in WhatsApp/email track URLs and customer-facing copy. */
+    public function trackCode(): string
+    {
+        return $this->ensurePublicCode();
+    }
+
     protected static function booted()
     {
-        static::creating(function ($post) {
-            // Set the user_id to the authenticated user's ID
+        static::creating(function ($booking) {
             if (Auth::check()) {
-                $post->user_id = Auth::id();
+                $booking->user_id = Auth::id();
+            }
+            if (empty($booking->public_code)) {
+                $booking->public_code = static::generateUniquePublicCode();
             }
         });
     }

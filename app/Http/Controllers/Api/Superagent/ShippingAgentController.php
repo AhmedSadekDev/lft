@@ -9,6 +9,7 @@ use App\Http\Resources\Api\Superagent\BookingContainerResource;
 use App\Http\Resources\Api\Superagent\LoadingYardResource;
 use App\Http\Resources\Api\Superagent\SpecificationShippingAgentResource;
 use App\Http\Resources\Api\Superagent\SuperagentAssignmentResource;
+use App\Http\Resources\Api\Superagent\UnloadingAgingPortResource;
 use App\Http\Resources\Api\Superagent\UnloadingShippingAgentResource;
 use App\Models\Booking;
 use App\Models\BookingContainer;
@@ -243,9 +244,14 @@ class ShippingAgentController extends Controller
     }
 
 
-    public function unloading_assignments()
+    public function unloading_assignments(Request $request)
     {
         // try {
+
+            // Optional: group_by=aging → chip groups by ميناء التعتيق (from delivery policy / container.aging_id)
+            if ($request->get('group_by') === 'aging') {
+                return $this->unloading_aging_assignments($request);
+            }
 
             $superagent = auth()->guard('superagent')->user();
             $superagent_booking_containers = $superagent->superagent_booking_containers()->wherePivot("created_at", ">=", now()->startOfDay())
@@ -278,6 +284,69 @@ class ShippingAgentController extends Controller
 
         //     return $this->returnError(500, $ex->getMessage());
         // }
+    }
+
+    /**
+     * Unloading chip groups by aging port (ميناء التعتيق) set on the container via the agent's delivery policy.
+     * Same envelope as shipping-agent chips: data[] = { id, title, booking_containers }.
+     * Optional ?aging_id= to return a single chip group (like tapping ZIM).
+     */
+    public function unloading_aging_assignments(Request $request)
+    {
+        try {
+            $containers = BookingContainer::query()
+                ->withoutInvoicedBooking()
+                ->where('superagent_loading_approved', 1)
+                ->where('superagent_specification_approved', 1)
+                ->where('superagent_unloading_approved', 0)
+                ->when($request->filled('aging_id'), function ($q) use ($request) {
+                    $q->where('aging_id', (int) $request->aging_id);
+                })
+                ->with([
+                    'aging',
+                    'departure',
+                    'loading',
+                    'booking.company',
+                    'booking.factory',
+                    'booking.yard',
+                    'booking.shippingAgent',
+                    'branch.factory',
+                    'container',
+                    'notes',
+                    'agents',
+                    'delivery_policies.money_transfer',
+                    'delivery_policies.driver',
+                    'delivery_policies.car',
+                    'bookingPapers.image',
+                ])
+                ->orderByDesc('id')
+                ->get();
+
+            $groups = $containers
+                ->groupBy(fn (BookingContainer $c) => (int) ($c->aging_id ?: 0))
+                ->sortKeysDesc()
+                ->map(function ($group, $agingId) {
+                    /** @var BookingContainer $first */
+                    $first = $group->first();
+                    $title = $agingId
+                        ? ($first->aging?->title ?? __('main.not_found'))
+                        : __('main.aging_port_unset');
+
+                    return [
+                        'id' => (int) $agingId,
+                        'title' => $title,
+                        'booking_containers' => $group->values(),
+                    ];
+                })
+                ->values();
+
+            return $this->returnAllData(
+                UnloadingAgingPortResource::collection($groups),
+                __('alerts.success')
+            );
+        } catch (\Exception $ex) {
+            return $this->returnError(500, $ex->getMessage());
+        }
     }
 
     public function loading_assignments()

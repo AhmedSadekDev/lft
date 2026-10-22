@@ -584,6 +584,31 @@ class BookingController extends Controller
         return view('admin.bookings.container_policies', $input);
     }
 
+    public function print_land_bol(DeliveryPolicy $deliveryPolicy)
+    {
+        $deliveryPolicy->load([
+            'driver',
+            'car',
+            'money_transfer',
+            'reeferTripLegs.images',
+            'booking_containers.booking.company',
+            'booking_containers.departure',
+            'booking_containers.loading',
+            'booking_containers.aging',
+            'booking_containers.container',
+        ]);
+
+        $isReefer = app(\App\Services\ReeferTripTrackingService::class)->policyIsReefer($deliveryPolicy);
+
+        return view('admin.bookings.land_bol_print', [
+            'policy' => $deliveryPolicy,
+            'isReefer' => $isReefer,
+            'timeline' => $isReefer
+                ? app(\App\Services\ReeferTripTrackingService::class)->buildTimeline($deliveryPolicy)
+                : [],
+        ]);
+    }
+
     public function delete_delivery_policy($id)
     {
         try {

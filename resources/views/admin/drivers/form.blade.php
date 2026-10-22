@@ -34,7 +34,27 @@
                 </div>
                 <!-- For loop this div -->
 
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        {!! Form::label("input_national_id", __('admin.national_id')) !!}
+                        <small class="text-muted d-block mb-1">{{ __('admin.optional') }}</small>
+                        {!! Form::text('national_id', old('national_id'), ["class" => "form-control", "id" => "input_national_id", "placeholder"=> __('admin.national_id')]) !!}
+                        @error('national_id')
+                            <small class="aleart text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
 
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        {!! Form::label("input_passport_number", __('admin.passport_number')) !!}
+                        <small class="text-muted d-block mb-1">{{ __('admin.optional') }}</small>
+                        {!! Form::text('passport_number', old('passport_number'), ["class" => "form-control", "id" => "input_passport_number", "placeholder"=> __('admin.passport_number')]) !!}
+                        @error('passport_number')
+                            <small class="aleart text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
 
             </div>
         </div>

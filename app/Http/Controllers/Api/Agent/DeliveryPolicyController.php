@@ -11,12 +11,14 @@ use App\Http\Resources\Api\Agent\DeliveryPolicyResource;
 use App\Http\Resources\Api\Agent\MoneyTransferResource;
 use App\Models\Agent;
 use App\Models\BookingContainer;
-use App\Models\CompanyTransportation;
 use App\Models\DeliveryPolicy;
 use App\Models\CitiesAndRegions;
 use App\Models\Image;
 use App\Models\MoneyTransfer;
 use App\Services\AgentImageUploadService;
+use App\Services\CompanyTransportationPriceResolver;
+use App\Services\ReeferTripTrackingService;
+use App\Services\ShipmentWorkflow;
 use App\Traits\HandlesAgentImageUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,11 +39,18 @@ class DeliveryPolicyController extends Controller
             // dd($request->all());
             $agent = auth()->guard('agent')->user();
 
-            $bookingContainer = BookingContainer::find($request->booking_container_ids[0]);
+            $bookingContainer = BookingContainer::with('booking')->find($request->booking_container_ids[0]);
+
+            if (! $bookingContainer) {
+                return $this->returnError(422, __('validation.exists', ['attribute' => 'booking_container_ids']));
+            }
 
             if ($bookingContainer->delivery_policies->count() > 0) {
                 return $this->returnResponseSuccessMessage(__('This Container Alread Has Delivery Plicy'), 200);
             }
+
+            $isReefer = $bookingContainer->booking
+                && ShipmentWorkflow::of($bookingContainer->booking) === ShipmentWorkflow::REEFER;
 
             $officeCommission = $request->office_commission ?? 0;
             $actualDeduction = $request->value - $officeCommission; // المبلغ الفعلي المخصوم
@@ -61,6 +70,10 @@ class DeliveryPolicyController extends Controller
             $delivery_policy_data["date"] = $request->date;
             $delivery_policy_data["address"] = $city->address . " " . $city->city;
             $delivery_policy_data["office_commission"] = $officeCommission;
+            // USD: record-only on reefer policies; never debits wallet / settlement.
+            if ($isReefer) {
+                $delivery_policy_data['custody_usd'] = $request->custody_usd;
+            }
             $delivery_policy = DeliveryPolicy::create($delivery_policy_data);
 
             $delivery_policy->booking_containers()->attach($request->booking_container_ids);
@@ -85,17 +98,9 @@ class DeliveryPolicyController extends Controller
                 }
             }
 
-            if ($bookingContainer->departure_id && $bookingContainer->loading_id && $bookingContainer->aging_id) {
-                $check = CompanyTransportation::where('container_id', $bookingContainer->container_id)
-                    ->where('departure_id', $bookingContainer->departure_id)
-                    ->where('loading_id', $bookingContainer->loading_id)
-                    ->where('aging_id', $bookingContainer->aging_id)
-                    ->first();
-
-                if ($check) {
-                    $bookingContainer->update(['price' => $check->price]);
-                }
-            }
+            // Price must be company-scoped (النساجون ≠ تشيك بوينت on the same route).
+            $bookingContainer->refresh();
+            app(CompanyTransportationPriceResolver::class)->applyToContainer($bookingContainer);
 
             // إنشاء معاملة العهدة للسائق (type 3)
             $data["value"] = $request->value;
@@ -300,6 +305,7 @@ class DeliveryPolicyController extends Controller
                 'id' => 'required|exists:delivery_policies,id',
                 'value' => 'sometimes|numeric',
                 'office_commission' => 'nullable|numeric|min:0',
+                'custody_usd' => 'sometimes|nullable|numeric|min:0',
                 'car_id'  => 'sometimes|exists:cars,id',
                 'driver_id'  => 'sometimes|exists:drivers,id',
                 'booking_container_ids' => 'sometimes|array',
@@ -312,7 +318,7 @@ class DeliveryPolicyController extends Controller
             ]);
 
             $agent = auth()->guard('agent')->user();
-            $delivery_policy = DeliveryPolicy::findOrFail($request->id);
+            $delivery_policy = DeliveryPolicy::with(['money_transfer', 'booking_containers.booking'])->findOrFail($request->id);
 
             if ($delivery_policy->is_settled == 1) {
                 return $this->returnError(200, __('main.delivery_policy is settled'));
@@ -320,6 +326,11 @@ class DeliveryPolicyController extends Controller
 
             if (($delivery_policy->money_transfer?->transferer_id) !== $agent->id) {
                 return $this->returnError(403, __('main.not_allowed'));
+            }
+
+            $isReefer = app(ReeferTripTrackingService::class)->policyIsReefer($delivery_policy);
+            if ($request->has('custody_usd') && ! $isReefer) {
+                return $this->returnError(422, __('main.custody_usd_reefer_only'));
             }
 
             $oldValue = (float) ($delivery_policy->money_transfer?->value ?? 0);
@@ -357,10 +368,31 @@ class DeliveryPolicyController extends Controller
             if ($request->has('office_commission')) {
                 $delivery_policy->office_commission = $newCommission;
             }
+            // USD record-only: update field without wallet / MoneyTransfer side effects.
+            if ($isReefer && $request->has('custody_usd')) {
+                $delivery_policy->custody_usd = $request->input('custody_usd');
+            }
             $delivery_policy->save();
 
             if ($request->filled('booking_container_ids')) {
                 $delivery_policy->booking_containers()->sync($request->booking_container_ids);
+            }
+
+            // Keep container route + company-scoped price in sync when cities change.
+            if ($request->filled('departure_id') || $request->filled('loading_id') || $request->filled('aging_id')) {
+                $routeContainer = $delivery_policy->booking_containers()->with('booking')->first();
+                if ($routeContainer) {
+                    $routePatch = array_filter([
+                        'departure_id' => $request->input('departure_id'),
+                        'loading_id' => $request->input('loading_id'),
+                        'aging_id' => $request->input('aging_id'),
+                    ], fn ($v) => $v !== null);
+                    if ($routePatch !== []) {
+                        $routeContainer->update($routePatch);
+                        $routeContainer->refresh();
+                        app(CompanyTransportationPriceResolver::class)->applyToContainer($routeContainer);
+                    }
+                }
             }
 
             // تحديث معاملة العهدة (type 3)

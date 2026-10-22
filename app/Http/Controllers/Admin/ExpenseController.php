@@ -45,9 +45,9 @@ class ExpenseController extends Controller
 
     public function review_agent_expenses(Agent $agent)
     {
-        $count = app(\App\Services\StageExpenseService::class)->markReviewed($agent->id);
+        $count = app(\App\Services\StageExpenseService::class)->markReviewed($agent->id, null, auth()->id());
 
-        return back()->with('success', $count ? "تمت مراجعة {$count} إيصال" : 'لا توجد إيصالات بانتظار المراجعة');
+        return back()->with('success', $count ? "تمت مراجعة {$count} إيصال وخصم العهدة" : 'لا توجد إيصالات بانتظار المراجعة');
     }
 
 

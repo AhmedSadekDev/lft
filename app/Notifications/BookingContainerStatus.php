@@ -51,7 +51,7 @@ class BookingContainerStatus extends Notification
         $booking = $this->bookingContainer->booking;
 
         // رابط تتبع الحجز
-        $trackId = $booking?->booking_number;
+        $trackId = $booking?->trackCode();
         $url = $trackId
             ? 'https://leaderfortrans.com/book/?track=' . urlencode($trackId)
             : null;
@@ -62,7 +62,7 @@ class BookingContainerStatus extends Notification
             'الشركة' => $booking?->company?->name ?? '-',
             'الموظف' => $booking?->employee?->name ?? '-',
             'المصنع' => $booking?->factory?->name ?? '-',
-            'رقم الحجز' => $booking?->booking_number ?? '-',
+            'الرقم الداخلي' => $trackId ?? '-',
         ];
 
         $containers = [];

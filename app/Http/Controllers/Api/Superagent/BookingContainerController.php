@@ -173,13 +173,21 @@ class BookingContainerController extends Controller
         $request->merge(['stage' => is_int($slot) ? ($slot === 0 ? 'specification' : ContainerStageService::NAMES[$slot]) : $slot]);
         $constrain = fn ($q) => ShipmentWorkflow::constrainSlot($q, $slot);
 
+        $agingId = $request->filled('aging_id') ? (int) $request->aging_id : null;
+        $containerConstraint = function ($q) use ($constrain, $agingId) {
+            $constrain($q);
+            if ($agingId) {
+                $q->where('aging_id', $agingId);
+            }
+        };
+
         return Booking::query()
             ->withoutInvoice()
             ->when($workflows !== null, fn ($q) => ShipmentWorkflow::constrainBookings($q, $workflows))
-            ->whereHas('bookingContainers', $constrain)
+            ->whereHas('bookingContainers', $containerConstraint)
             ->with([
-                'bookingContainers' => function ($query) use ($constrain) {
-                    $constrain($query);
+                'bookingContainers' => function ($query) use ($containerConstraint) {
+                    $containerConstraint($query);
                     $query->orderByDesc('id');
                 },
                 'bookingContainers.booking.company',
@@ -189,7 +197,12 @@ class BookingContainerController extends Controller
                 'bookingContainers.container',
                 'bookingContainers.notes',
                 'bookingContainers.agents',
+                'bookingContainers.aging',
+                'bookingContainers.departure',
+                'bookingContainers.loading',
                 'bookingContainers.delivery_policies.money_transfer',
+                'bookingContainers.delivery_policies.driver',
+                'bookingContainers.delivery_policies.car',
                 'bookingContainers.bookingPapers.image',
             ])
             ->orderByDesc('id')

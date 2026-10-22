@@ -31,8 +31,7 @@ class BookingInvoiceController extends Controller
     public function create(Request $request, Booking $booking)
     {
         $booking->loadExpensesForDisplay();
-        $company = $booking->company;
-        $invoice_number = Invoice::getNextInvoiceNumberForCompany($company->id);
+        $invoice_number = Invoice::getNextInvoiceNumberForBooking($booking);
         $currency = InvoiceCurrency::normalize($request->get('currency', InvoiceCurrency::EGP));
 
         $booking->loadMissing('bookingContainers');
@@ -77,9 +76,8 @@ class BookingInvoiceController extends Controller
                     ->with('error', 'هذا الحجز لديه فاتورة بالفعل');
             }
 
-            $company = $booking->company;
             $invoice_number = Invoice::allocateUniqueInvoiceNumber(
-                (int) $company->id,
+                $booking,
                 $request->invoice_number
             );
 

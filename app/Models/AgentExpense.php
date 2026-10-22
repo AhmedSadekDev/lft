@@ -19,7 +19,12 @@ class AgentExpense extends Model
 
     protected $attributes = ['version' => 1];
 
-    protected $casts = ['version' => 'integer', 'type_id' => 'integer'];
+    protected $casts = [
+        'version' => 'integer',
+        'type_id' => 'integer',
+        'reviewed_at' => 'datetime',
+        'wallet_debited_at' => 'datetime',
+    ];
 
     protected $imageFolder = 'agent_expenses';
 

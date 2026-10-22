@@ -119,6 +119,8 @@ class ReceiptController extends Controller
                                     'notes'              => $transactionName,
                                     'user_id'            => auth()->id(),
                                     'admin_approval'     => 1,
+                                    'reviewed_at'        => now(),
+                                    'wallet_debited_at'  => now(),
                                 ]);
                             }
                         }

@@ -20,6 +20,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LogActivityExport;
 use App\Exports\GeneralExpensesExport;
 use App\Models\MoneyTransfer;
+use App\Services\StageExpenseService;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -88,6 +90,8 @@ class ReportController extends Controller
         // تطبيق Pagination
         $paginatedExpenses = $this->paginateCollection($expenses, $request);
 
+        $awaitingReviewIds = AgentExpense::awaitingReview()->pluck('id')->flip();
+
         return view('admin.reports.general_expenses', [
             'expenses' => $paginatedExpenses,
             'totalExpenses' => $totals['expenses'],
@@ -96,7 +100,38 @@ class ReportController extends Controller
             'from' => $request->from,
             'to' => $request->to,
             'perPage' => $request->get('per_page', 15),
+            'awaitingReviewIds' => $awaitingReviewIds,
         ]);
+    }
+
+    /**
+     * اعتماد إيصالات المندوب من تقرير المصروفات العامة (خصم العهدة النهائي).
+     */
+    public function general_expenses_review(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:agent_expenses,id',
+        ]);
+
+        try {
+            $total = 0;
+            DB::transaction(function () use ($data, &$total) {
+                $grouped = AgentExpense::whereIn('id', $data['ids'])
+                    ->get(['id', 'agent_id'])
+                    ->groupBy('agent_id');
+                $service = app(StageExpenseService::class);
+                foreach ($grouped as $agentId => $rows) {
+                    $total += $service->markReviewed((int) $agentId, $rows->pluck('id')->all(), auth()->id());
+                }
+            });
+
+            return back()->with('success', $total
+                ? "تمت مراجعة {$total} إيصال وخصم العهدة"
+                : 'لا توجد إيصالات قابلة للمراجعة ضمن التحديد');
+        } catch (\Throwable $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     /**

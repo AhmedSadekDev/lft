@@ -36,7 +36,7 @@
                                 </span>
                             </div>
                             <input type="text" name="search" class="form-control form-control-solid"
-                                    placeholder="ابحث عن الاسم أو رقم الهاتف..."
+                                    placeholder="ابحث عن الاسم أو الهاتف أو الرقم القومي أو الجواز..."
                                     value="{{ request('search') }}">
                         </div>
                     </div>
@@ -71,6 +71,8 @@
                             <th scope="col" style="width: 80px;">#</th>
                             <th scope="col">{{ __('admin.name') }}</th>
                             <th scope="col">{{ __('admin.phone') }}</th>
+                            <th scope="col">{{ __('admin.national_id') }}</th>
+                            <th scope="col">{{ __('admin.passport_number') }}</th>
                             <th scope="col">{{ __('admin.created_at') }}</th>
                             <th scope="col" style="width: 120px;">الإجراءات</th>
                         </tr>
@@ -90,6 +92,12 @@
                                     <span class="text-muted">
                                         <i class="fas fa-phone mr-1"></i>{{ $driver->phone }}
                                     </span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-muted">{{ $driver->national_id ?: '—' }}</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-muted">{{ $driver->passport_number ?: '—' }}</span>
                                 </td>
                                 <td class="text-center align-middle">
                                     <small class="text-muted">
@@ -117,7 +125,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="fas fa-user-tie fa-3x mb-3"></i>
                                         <p class="font-weight-bold">لا توجد سائقين</p>

@@ -8,6 +8,10 @@
 -- ---------
 -- A) Feature schema (columns) — currency + dual AR + password-reset tokens
 --    + booking_containers currency (USD trip price)
+--    + drivers national_id / passport_number (optional)
+--    + reefer delivery_policies.custody_usd + reefer_trip_legs
+--    + bookings.public_code (random 5-digit customer track / invoice middle)
+--    + agent_expenses.reviewed_at / wallet_debited_at (deferred expense review)
 -- B) Phase 1 performance indexes (ADD INDEX only)
 -- C) Phase 6: duplicate of bookings.booking_number index (already in Phase 1)
 -- D) Phase 7 queue tables (jobs / failed_jobs / job_batches) — only if queues enabled
@@ -24,6 +28,10 @@
 --   docs/sql/2026-10-16-reset-01-password-reset-tokens.sql
 --   docs/sql/2026-10-18-booking-containers-currency.sql
 --   docs/sql/2026-10-18-invoice-payments-section.sql
+--   docs/sql/2026-10-22-drivers-national-id-passport.sql
+--   docs/sql/2026-10-22-reefer-delivery-policy-tracking.sql
+--   docs/sql/2026-10-22-bookings-public-code.sql
+--   docs/sql/2026-10-22-agent-expenses-deferred-review.sql
 --   docs/modernization/phase-1-performance-indexes.sql
 --   docs/modernization/phase-6-performance-indexes.sql
 --   docs/modernization/phase-7-queue-infrastructure.sql
@@ -173,6 +181,105 @@ SET @idx := (
 SET @sql := IF(@idx = 0,
   'ALTER TABLE `otps` ADD INDEX `otps_reset_token_hash_index` (`reset_token_hash`)',
   'SELECT ''otps_reset_token_hash_index already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- A9) drivers optional identity fields
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'drivers' AND COLUMN_NAME = 'national_id'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `drivers` ADD COLUMN `national_id` VARCHAR(20) NULL DEFAULT NULL COMMENT ''Egyptian national ID (optional)'' AFTER `phone`',
+  'SELECT ''drivers.national_id already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'drivers' AND COLUMN_NAME = 'passport_number'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `drivers` ADD COLUMN `passport_number` VARCHAR(50) NULL DEFAULT NULL COMMENT ''Passport number (optional)'' AFTER `national_id`',
+  'SELECT ''drivers.passport_number already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- A10) reefer outbound: custody_usd (record-only) + trip legs
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'delivery_policies' AND COLUMN_NAME = 'custody_usd'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `delivery_policies` ADD COLUMN `custody_usd` DECIMAL(14,2) NULL DEFAULT NULL COMMENT ''USD custody record only — not wallet debit'' AFTER `office_commission`',
+  'SELECT ''delivery_policies.custody_usd already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @tbl := (
+  SELECT COUNT(*) FROM information_schema.TABLES
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'reefer_trip_legs'
+);
+SET @sql := IF(@tbl = 0,
+  'CREATE TABLE `reefer_trip_legs` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `delivery_policy_id` BIGINT UNSIGNED NOT NULL,
+    `booking_container_id` BIGINT UNSIGNED NULL DEFAULT NULL,
+    `stage` TINYINT UNSIGNED NOT NULL COMMENT ''1-10 timed stages; 11 notes-only'',
+    `occurred_at` DATETIME NULL DEFAULT NULL,
+    `notes` TEXT NULL,
+    `recorded_by_agent_id` BIGINT UNSIGNED NULL DEFAULT NULL,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `reefer_trip_legs_policy_stage_unique` (`delivery_policy_id`, `stage`),
+    KEY `reefer_trip_legs_policy_id_index` (`delivery_policy_id`),
+    KEY `reefer_trip_legs_container_id_index` (`booking_container_id`),
+    KEY `reefer_trip_legs_agent_id_index` (`recorded_by_agent_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+  'SELECT ''reefer_trip_legs already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- A11) bookings.public_code — see docs/sql/2026-10-22-bookings-public-code.sql
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND COLUMN_NAME = 'public_code'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `bookings` ADD COLUMN `public_code` CHAR(5) NULL DEFAULT NULL COMMENT ''Random 5-digit customer tracking code'' AFTER `booking_number`',
+  'SELECT ''bookings.public_code already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @idx := (
+  SELECT COUNT(*) FROM information_schema.STATISTICS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bookings' AND INDEX_NAME = 'uq_bookings_public_code'
+);
+SET @sql := IF(@idx = 0,
+  'ALTER TABLE `bookings` ADD UNIQUE INDEX `uq_bookings_public_code` (`public_code`)',
+  'SELECT ''uq_bookings_public_code already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- A12) agent_expenses deferred review — see docs/sql/2026-10-22-agent-expenses-deferred-review.sql
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'agent_expenses' AND COLUMN_NAME = 'reviewed_at'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `agent_expenses` ADD COLUMN `reviewed_at` TIMESTAMP NULL DEFAULT NULL COMMENT ''Dashboard review timestamp'' AFTER `admin_approval`',
+  'SELECT ''agent_expenses.reviewed_at already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'agent_expenses' AND COLUMN_NAME = 'wallet_debited_at'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `agent_expenses` ADD COLUMN `wallet_debited_at` TIMESTAMP NULL DEFAULT NULL COMMENT ''When agent wallet was decremented'' AFTER `reviewed_at`',
+  'SELECT ''agent_expenses.wallet_debited_at already exists'''
 );
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 

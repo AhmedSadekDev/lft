@@ -76,12 +76,7 @@ class ExpenseController extends Controller
 
     public function review_expenses(Request $request)
     {
-        try {
-            $data = $request->validate(['ids' => 'sometimes|array', 'ids.*' => 'integer']);
-            $count = app(\App\Services\StageExpenseService::class)->markReviewed(auth('agent')->id(), $data['ids'] ?? null);
-
-            return $this->returnAllData(['reviewed_count' => $count], __('alerts.success'));
-        } catch (\Throwable $e) { return $this->expenseFailure($e); }
+        return $this->returnError(403, 'مراجعة المصروفات متاحة من لوحة التحكم فقط');
     }
 
     public function open_bookings(Request $request)
@@ -119,14 +114,24 @@ class ExpenseController extends Controller
 
             $agent = auth()->guard('agent')->user();
 
+            $underReviewAmount = (float) AgentExpense::where('agent_id', $agent->id)
+                ->whereNull('wallet_debited_at')
+                ->whereNull('delivery_policy_id')
+                ->sum('value');
+            $confirmedSpentToday = (float) $agent->sended_financial_custodies()->whereDate('created_at', now())->sum('value')
+                + (float) $agent->expenses()->whereNotNull('wallet_debited_at')->whereDate('wallet_debited_at', now())->sum('value');
+
             $total_financial_custody  = (int)$agent->total_wallet;
             $spented_financial_custody  = $agent->spented_financial_custody;
-            $remaining_financial_custody  = (int)$agent->wallet;
+            // Spendable balance: wallet not yet reduced for pending holds.
+            $remaining_financial_custody  = (int) round((float) $agent->wallet - $underReviewAmount);
 
             //reponse
             $data["total_financial_custody"] = $total_financial_custody;
             $data["spented_financial_custody"] = $spented_financial_custody;
             $data["remaining_financial_custody"] = $remaining_financial_custody;
+            $data["under_review_amount"] = $underReviewAmount;
+            $data["confirmed_spent_today"] = $confirmedSpentToday;
 
 
             return $this->returnAllData((object) $data, __('alerts.success'));

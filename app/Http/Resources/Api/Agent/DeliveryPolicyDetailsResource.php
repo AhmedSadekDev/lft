@@ -14,6 +14,8 @@ class DeliveryPolicyDetailsResource extends JsonResource
             "car" => $this->car ? new CarResource($this->car) : null,
             "driver" => $this->driver ? new DriverResource($this->driver) : null,
             "value" => $this?->money_transfer->value ?? "",
+            "custody_usd" => $this->custody_usd !== null ? (float) $this->custody_usd : null,
+            "custody_usd_is_record_only" => true,
             "booking_containers" => SimpleBookingContainerResource::collection($this->booking_containers),
             "booking_number" => $this?->booking_containers?->first()?->booking?->booking_number ?? "",
             "date" => $this->created_at ?? "",

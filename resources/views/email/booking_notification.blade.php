@@ -150,7 +150,7 @@
                 </table>
             @endif
 
-            <a class="btn" href="https://leaderfortrans.com/book/?track={{ $booking->booking_number }}">عرض تفاصيل الحجز</a>
+            <a class="btn" href="https://leaderfortrans.com/book/?track={{ $booking->trackCode() }}">عرض تفاصيل الحجز</a>
         </div>
 
         <!-- Footer -->

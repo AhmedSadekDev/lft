@@ -12,7 +12,9 @@ class DriverResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name ?? "",
-            "phone" => $this->phone ?? ""
+            "phone" => $this->phone ?? "",
+            "national_id" => $this->national_id ?? "",
+            "passport_number" => $this->passport_number ?? "",
         ];
     }
 }

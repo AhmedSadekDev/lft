@@ -20,6 +20,7 @@
                         <th scope="col">#</th>
                         <th scope="col">{{ __('main.drivers') }}</th>
                         <th scope="col">{{ __('admin.value') }}</th>
+                        <th scope="col">{{ __('admin.custody_usd') }}</th>
                         <th scope="col">{{ __('admin.car_number') }}</th>
                         <th scope="col">{{ __('main.date') }}</th>
                         <th scope="col">{{ __('admin.actions') }}</th>
@@ -32,9 +33,22 @@
 
                             <td>{{ $allExpense->driver->name ?? "" }}</td>
                             <td>{{ $allExpense->money_transfer->value ?? "" }}</td>
+                            <td>
+                                @if($allExpense->custody_usd !== null)
+                                    {{ number_format((float) $allExpense->custody_usd, 2) }} USD
+                                @else
+                                    —
+                                @endif
+                            </td>
                             <td>{{ $allExpense->car->car_number ?? "" }}</td>
                             <td>{{ $allExpense->created_at ?? "" }}</td>
                             <td>
+                                <a href="{{ route('bookings.delivery_policy_land_bol', $allExpense->id) }}"
+                                   target="_blank"
+                                   class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                   title="{{ __('main.land_bill_of_lading') }}">
+                                    <i class="fas fa-print text-primary"></i>
+                                </a>
                                 @if($allExpense->is_settled != 1)
                                     <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
                                         onclick="deleteDeliveryPolicy('{{ $allExpense->id }}')">

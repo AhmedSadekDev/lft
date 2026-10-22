@@ -86,74 +86,72 @@ class Invoice extends Model
     }
 
     /**
-     * الجزء الأوسط في رقم الفاتورة (ثلاثة أرقام): private_company_id إن وُجد، وإلا معرف الشركة.
+     * أعلى مسلسل فاتورة (الجزء الأخير ###) في السنة — عبر كل الشركات/الأكواد.
+     * يضم التنسيق القديم YYYY-XXX-### والتنسيق الجديد YYYY-XXXXX-###.
      */
-    protected static function companyInvoiceSerialSegment(int $company_id): string
+    protected static function maxInvoiceSequenceForYear(string $year): int
     {
-        $company = Company::query()->find($company_id);
-        if ($company !== null) {
-            $key = $company->private_company_id ?? $company->id;
+        $max = 0;
+        self::where('invoice_number', 'like', $year . '-%')
+            ->select(['id', 'invoice_number'])
+            ->orderBy('id')
+            ->chunkById(500, function ($rows) use (&$max) {
+                foreach ($rows as $row) {
+                    if (preg_match('/-(\d{3})$/', (string) $row->invoice_number, $matches)) {
+                        $max = max($max, (int) $matches[1]);
+                    }
+                }
+            });
 
-            return invoiceNumberTrim((int) $key);
-        }
-
-        return invoiceNumberTrim($company_id);
+        return $max;
     }
 
     /**
-     * أعلى تسلسل فاتورة (الجزء الأخير) لنفس السنة YYYY والجزء الأوسط XXX في تنسيق YYYY-XXX-###.
+     * تنسيق رقم الفاتورة: YYYY-{public_code}-###  
+     * السنة + الرقم الداخلي العشوائي للحجز (5 أرقام) + مسلسل عام حسب ترتيب إنشاء الفواتير في السنة.
+     * مثال: 2026-48291-015
      */
-    protected static function maxInvoiceSequenceForSegment(string $companyTrim, string $year): int
+    public static function getNextInvoiceNumberForBooking(Booking $booking): string
     {
-        $pattern = '^' . $year . '-' . $companyTrim . '-[0-9]{3}$';
+        $year = date('Y');
+        $publicCode = $booking->ensurePublicCode();
+        $nextSequence = self::maxInvoiceSequenceForYear($year) + 1;
 
-        $lastNumber = self::whereRaw('invoice_number REGEXP ?', [$pattern])
-            ->orderByRaw('CAST(SUBSTRING_INDEX(invoice_number, "-", -1) AS UNSIGNED) DESC')
-            ->value('invoice_number');
-
-        if (!empty($lastNumber) && preg_match('/^' . preg_quote($year, '/') . '-' . preg_quote($companyTrim, '/') . '-(\d{3})$/', $lastNumber, $matches)) {
-            return (int) $matches[1];
-        }
-
-        return 0;
+        return $year . '-' . $publicCode . '-' . str_pad((string) $nextSequence, 3, '0', STR_PAD_LEFT);
     }
 
     /**
-     * أعلى تسلسل فاتورة لهذه الشركة في السنة الحالية (الجزء الأخير من YYYY-XXX-###).
-     * لا يطابق الفواتير القديمة ذات تنسيق آخر.
-     */
-    public static function getMaxCompanyInvoiceNumber($company_id): int
-    {
-        return self::maxInvoiceSequenceForSegment(
-            self::companyInvoiceSerialSegment($company_id),
-            date('Y')
-        );
-    }
-
-    /**
-     * تنسيق رقم الفاتورة: YYYY-XXX-### (سنة، ثم معرف الشركة بثلاثة أرقام، ثم مسلسل الفاتورة بثلاثة أرقام لكل شركة في السنة).
-     * مثال: 2026-006-001، 2026-006-002.
+     * @deprecated Use getNextInvoiceNumberForBooking()
      */
     public static function getNextInvoiceNumberForCompany(int $company_id): string
     {
-        $year = date('Y');
-        $companyTrim = self::companyInvoiceSerialSegment($company_id);
-        $nextSequence = self::maxInvoiceSequenceForSegment($companyTrim, $year) + 1;
+        $booking = Booking::query()->where('company_id', $company_id)->latest('id')->first();
+        if ($booking) {
+            return self::getNextInvoiceNumberForBooking($booking);
+        }
 
-        return $year . '-' . $companyTrim . '-' . str_pad((string) $nextSequence, 3, '0', STR_PAD_LEFT);
+        $year = date('Y');
+        $nextSequence = self::maxInvoiceSequenceForYear($year) + 1;
+
+        return $year . '-00000-' . str_pad((string) $nextSequence, 3, '0', STR_PAD_LEFT);
     }
 
     /**
-     * يخصص رقم فاتورة فريد داخل المعاملة الحالية.
-     * يستخدم الرقم المفضّل إن كان متاحًا، وإلا يأخذ التالي تلقائيًا (يتجنب رقم فورم قديم).
+     * يخصص رقم فاتورة فريد داخل المعاملة الحالية للحجز.
      */
-    public static function allocateUniqueInvoiceNumber(int $company_id, ?string $preferred = null): string
+    public static function allocateUniqueInvoiceNumber(Booking|int $bookingOrCompanyId, ?string $preferred = null): string
     {
-        $year = date('Y');
-        $companyTrim = self::companyInvoiceSerialSegment($company_id);
+        $booking = $bookingOrCompanyId instanceof Booking
+            ? $bookingOrCompanyId
+            : Booking::query()->where('company_id', $bookingOrCompanyId)->latest('id')->first();
 
-        // قفل صفوف نفس المقطع لتفادي تزامن طلبين بنفس الرقم
-        self::where('invoice_number', 'like', $year . '-' . $companyTrim . '-%')
+        abort_unless($booking, 422, 'الحجز مطلوب لتوليد رقم الفاتورة');
+
+        $year = date('Y');
+        $publicCode = $booking->ensurePublicCode();
+
+        // قفل فواتير السنة لتفادي تزامن مسلسلين متطابقين
+        self::where('invoice_number', 'like', $year . '-%')
             ->lockForUpdate()
             ->get(['id', 'invoice_number']);
 
@@ -162,9 +160,9 @@ class Invoice extends Model
             return $preferred;
         }
 
-        $sequence = self::maxInvoiceSequenceForSegment($companyTrim, $year) + 1;
+        $sequence = self::maxInvoiceSequenceForYear($year) + 1;
         for ($i = 0; $i < 1000; $i++, $sequence++) {
-            $candidate = $year . '-' . $companyTrim . '-' . str_pad((string) $sequence, 3, '0', STR_PAD_LEFT);
+            $candidate = $year . '-' . $publicCode . '-' . str_pad((string) $sequence, 3, '0', STR_PAD_LEFT);
             if (! self::where('invoice_number', $candidate)->exists()) {
                 return $candidate;
             }

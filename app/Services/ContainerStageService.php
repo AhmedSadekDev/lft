@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Booking;
 use App\Models\BookingContainer;
 use App\Models\BookingContainerAgent;
 use App\Models\BookingContainerStage;
@@ -140,6 +141,66 @@ class ContainerStageService
 
             return true;
         });
+    }
+
+    /**
+     * Agent completes one stage for every unfinished container on the booking.
+     * Used for specification so a multi-container booking moves together.
+     * Agent must already be assigned to at least one container on that stage;
+     * missing per-container assignments are attached (without removing other agents).
+     *
+     * @return int[] completed container ids
+     */
+    public function completeBooking(int $bookingId, int $type, int $agentId): array
+    {
+        return DB::transaction(function () use ($bookingId, $type, $agentId) {
+            abort_unless(isset(self::NAMES[$type]), 422, 'مرحلة غير صحيحة');
+            $booking = Booking::query()->lockForUpdate()->findOrFail($bookingId);
+            abort_if($booking->invoice()->exists(), 409, 'تم إصدار فاتورة لهذا الطلب، ولم يعد متاحاً للمندوب.');
+
+            $containers = BookingContainer::where('booking_id', $bookingId)->orderBy('id')->lockForUpdate()->get();
+            abort_if($containers->isEmpty(), 404, 'لا توجد حاويات لهذا الحجز');
+
+            $assignedAny = $containers->contains(
+                fn (BookingContainer $c) => (bool) $this->assignments($c->id, $type)->where('agent_id', $agentId)->first()
+            );
+            abort_unless($assignedAny, 403, 'المندوب غير مكلف بهذه المرحلة');
+
+            $completed = [];
+            foreach ($containers as $container) {
+                $this->assertInWorkflow($container, $type);
+                if (! $this->assignments($container->id, $type)->where('agent_id', $agentId)->first()) {
+                    $this->ensureAgentAssignment($container, $type, $agentId);
+                }
+                if ($this->complete($container->id, $type, $agentId)) {
+                    $completed[] = (int) $container->id;
+                }
+            }
+
+            return $completed;
+        });
+    }
+
+    /**
+     * Attach agent to a stage without replacing existing assignees.
+     */
+    private function ensureAgentAssignment(BookingContainer $container, int $type, int $agentId): void
+    {
+        $existing = $this->assignments($container->id, $type)->where('agent_id', $agentId)->first();
+        if ($existing) {
+            return;
+        }
+
+        BookingContainerAgent::create([
+            'booking_container_id' => $container->id,
+            'agent_id' => $agentId,
+            'stage_type' => $type,
+            'booking_container_status' => $type,
+            'superagent_specification_approved' => (int) $container->superagent_specification_approved,
+            'superagent_loading_approved' => (int) $container->superagent_loading_approved,
+            'superagent_unloading_approved' => (int) $container->superagent_unloading_approved,
+            'is_in_loading' => (int) $container->is_in_loading,
+        ]);
     }
 
     public function approve(int $containerId, int $type, ?int $superagentId = null): bool

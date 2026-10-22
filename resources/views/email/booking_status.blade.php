@@ -169,7 +169,7 @@
         </table>
 
         <div class="button-wrapper">
-            <a href="https://leaderfortrans.com/book/?track={{ $container->booking->booking_number }}" class="btn">تفاصيل الطلب</a>
+            <a href="https://leaderfortrans.com/book/?track={{ $container->booking?->trackCode() }}" class="btn">تفاصيل الطلب</a>
         </div>
 
         <p class="footer">شكراً لاستخدامك تطبيقنا!</p>

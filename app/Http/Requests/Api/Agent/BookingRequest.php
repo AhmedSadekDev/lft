@@ -24,7 +24,9 @@ class BookingRequest extends FormRequest
     public function rules()
     {
         return [
-            'booking_container_id'   => 'nullable|exists:booking_containers,id',
+            // Specification done is booking-wide; either id is accepted (container resolves to its booking).
+            'booking_id' => 'required_without:booking_container_id|nullable|integer|exists:bookings,id',
+            'booking_container_id' => 'required_without:booking_id|nullable|integer|exists:booking_containers,id',
         ];
     }
 

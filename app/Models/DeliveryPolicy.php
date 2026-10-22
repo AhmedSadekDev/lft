@@ -41,6 +41,16 @@ class DeliveryPolicy extends Model
     {
         return $this->morphOne(Image::class, 'imageable');
     }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function reeferTripLegs(): HasMany
+    {
+        return $this->hasMany(ReeferTripLeg::class, 'delivery_policy_id')->orderBy('stage');
+    }
     
     public function car_expenses(): HasMany
     {

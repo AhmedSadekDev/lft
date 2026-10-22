@@ -550,13 +550,15 @@ class AgentController extends Controller
     {
         $booking = $container->booking;
 
+        $trackCode = $booking?->trackCode();
+
         return implode("\n", array_filter([
             $message,
-            'رقم الحجز: '.($booking->booking_number ?? '-'),
+            'الرقم الداخلي: '.($trackCode ?? '-'),
             'رقم الحاوية: '.($container->container_no ?? '-'),
             'الشركة: '.($booking?->company?->name ?? '-'),
-            $booking?->booking_number
-                ? 'التتبع: https://leaderfortrans.com/book/?track='.urlencode($booking->booking_number)
+            $trackCode
+                ? 'التتبع: https://leaderfortrans.com/book/?track='.urlencode($trackCode)
                 : null,
         ]));
     }

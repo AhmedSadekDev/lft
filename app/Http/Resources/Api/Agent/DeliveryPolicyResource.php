@@ -21,6 +21,8 @@ class DeliveryPolicyResource extends JsonResource
             "value" => $value,
             "office_commission" => $officeCommission,
             "actual_deduction" => $actualDeduction,
+            "custody_usd" => $this->custody_usd !== null ? (float) $this->custody_usd : null,
+            "custody_usd_is_record_only" => true,
             "container_nos" => $this->booking_containers->pluck("container_no")->filter()->values()->toArray(),
             "booking_number" => $firstContainer?->booking?->booking_number ?? "",
             "branch_address" => $firstContainer?->branch?->address ?? "",

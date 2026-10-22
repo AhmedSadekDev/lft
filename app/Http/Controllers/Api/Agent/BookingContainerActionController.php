@@ -32,19 +32,23 @@ class BookingContainerActionController extends Controller
 
 
             $agent = auth()->guard("agent")->user();
-            $booking = Booking::whereId($request->booking_id)->first();
 
-            $booking_container_ids =  $booking->bookingContainers()->where("booking_containers.status", 0)->pluck("id")->toArray();
+            // Prefer booking_id; if only a container id is sent, confirm the whole booking of that container.
+            $bookingId = $request->booking_id
+                ? (int) $request->booking_id
+                : (int) BookingContainer::whereKey($request->booking_container_id)->value('booking_id');
 
-            $changed = \Illuminate\Support\Facades\DB::transaction(function () use ($booking_container_ids, $agent) {
-                $changed = false;
-                sort($booking_container_ids);
-                foreach ($booking_container_ids as $id) {
-                    $changed = app(\App\Services\ContainerStageService::class)->complete($id, 0, $agent->id) || $changed;
-                }
-                return $changed;
-            });
-            if (!$changed) { return $this->returnSuccessMessage(__('alerts.success')); }
+            $booking = Booking::whereId($bookingId)->first();
+            if (! $booking) {
+                return $this->returnError(404, __('alerts.not_found'));
+            }
+
+            $completedIds = app(\App\Services\ContainerStageService::class)
+                ->completeBooking((int) $booking->id, 0, (int) $agent->id);
+
+            if ($completedIds === []) {
+                return $this->returnSuccessMessage(__('alerts.success'));
+            }
 
             $title = __('new_notification');
             $text = __('booking_specification', [
@@ -52,13 +56,14 @@ class BookingContainerActionController extends Controller
                 'agent' => $agent->name
             ]);
 
-            $first_container_id = !empty($booking_container_ids) ? $booking_container_ids[0] : ($booking->bookingContainers()->first()?->id ?? null);
+            $first_container_id = $completedIds[0] ?? ($booking->bookingContainers()->orderBy('id')->value('id'));
             SaveNotification::create($title, $text, null, null, AppNotification::all, $first_container_id, 0);
             // SendNotification::send($agent->device_token ?? "", $title, $text);
 
             $superAgents = Superagent::get();
             \Illuminate\Support\Facades\Log::info('done_specification: Sending notification to all superagents', [
                 'booking_id' => $booking->id,
+                'completed_container_ids' => $completedIds,
                 'superagents_count' => $superAgents->count(),
             ]);
 
@@ -66,6 +71,7 @@ class BookingContainerActionController extends Controller
                 $notificationData = [
                     'booking_id' => $booking->id,
                     'booking_container_id' => $first_container_id,
+                    'booking_container_ids' => $completedIds,
                     'type_id' => 0,
                     'action_type' => 'specification' // تخصيص
                 ];
@@ -80,7 +86,11 @@ class BookingContainerActionController extends Controller
 
 
             //response
-            return $this->returnSuccessMessage(__('Wait For Superagent approval'));
+            return $this->returnAllData([
+                'booking_id' => $booking->id,
+                'completed_container_ids' => $completedIds,
+                'completed_count' => count($completedIds),
+            ], __('Wait For Superagent approval'));
         } catch (\Exception $ex) {
 
 

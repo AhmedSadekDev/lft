@@ -26,8 +26,10 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'required|string|max:255',
-            'phone'     =>  'required|digits_between:9,12|numeric|unique:drivers,phone,'. $this->driver->id,
+            'name'             => 'required|string|max:255',
+            'phone'            => 'required|digits_between:9,12|numeric|unique:drivers,phone,'. $this->driver->id,
+            'national_id'      => 'nullable|string|max:20',
+            'passport_number'  => 'nullable|string|max:50',
         ];
     }
 
@@ -39,8 +41,10 @@ class UpdateRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name'       => __('admin.name'),
-            'phone'      => __('admin.phone'),
+            'name'             => __('admin.name'),
+            'phone'            => __('admin.phone'),
+            'national_id'      => __('admin.national_id'),
+            'passport_number'  => __('admin.passport_number'),
         ];
     }
 

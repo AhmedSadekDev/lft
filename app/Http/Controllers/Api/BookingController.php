@@ -17,7 +17,11 @@ class BookingController extends Controller
 {
     public function getBooking(Request $request)
     {
-        $booking = Booking::where('booking_number', $request->order_number)->first();
+        $orderNumber = trim((string) $request->order_number);
+        // Customer tracking: random 5-digit public_code only (not sequential booking_number).
+        $booking = preg_match('/^\d{5}$/', $orderNumber)
+            ? Booking::where('public_code', $orderNumber)->first()
+            : null;
         if (is_null($booking)) {
             return response()->json(['status' => false, 'message' => __('admin.not_found')]);
         }
@@ -80,7 +84,10 @@ class BookingController extends Controller
     }
     public function booking_papers(Request $request)
     {
-        $booking = Booking::where('booking_number', $request->booking_number)->first();
+        $bookingNumber = trim((string) $request->booking_number);
+        $booking = preg_match('/^\d{5}$/', $bookingNumber)
+            ? Booking::where('public_code', $bookingNumber)->first()
+            : null;
         if (is_null($booking)) {
             return response()->json(['status' => false, 'errNum' => '404', 'message' => __('admin.not_found'), 'data' => []], 200);
         }

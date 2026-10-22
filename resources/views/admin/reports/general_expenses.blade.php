@@ -15,6 +15,10 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex gap-2 flex-wrap">
+                    <button type="submit" form="reviewExpensesForm" class="btn btn-warning font-weight-bold shadow-sm"
+                            onclick="return lftConfirmForm(document.getElementById('reviewExpensesForm'), { title: '{{ __('alerts.are_you_sure') }}', text: 'سيتم اعتماد الإيصالات المحددة وخصم قيمتها من عهدة المندوب. متابعة؟', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });">
+                        <i class="fas fa-check-double"></i> اعتماد المحدد
+                    </button>
                     <!-- زر الفلتر -->
                     <button type="button" class="btn btn-primary font-weight-bold shadow-sm" data-toggle="modal" data-target="#filterModal">
                         <i class="fas fa-filter"></i> فلتر
@@ -134,10 +138,15 @@
             </div>
 
             <!-- الجدول -->
+            <form id="reviewExpensesForm" method="POST" action="{{ route('reports.general_expenses.review') }}">
+                @csrf
             <div class="table-responsive">
                 <table class="table table-hover table-bordered table-head-custom table-vertical-center no-datatable" id="expensesTable">
                     <thead class="thead-light">
                         <tr class="text-center">
+                            <th scope="col" style="width: 40px;">
+                                <input type="checkbox" id="reviewSelectAll" title="تحديد الكل القابل للمراجعة">
+                            </th>
                             <th scope="col" style="width: 80px;">الصورة</th>
                             <th scope="col">الفئة</th>
                             <th scope="col">الخدمة</th>
@@ -147,6 +156,7 @@
                             <th scope="col">التاريخ</th>
                             <th scope="col">المندوب / المشرف</th>
                             <th scope="col">الملاحظات</th>
+                            <th scope="col">المراجعة</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -431,7 +441,15 @@
                                 $notes = $item->notes ?? '';
                             }
                         @endphp
+                        @php
+                            $canReview = $isExpense && isset($awaitingReviewIds) && $awaitingReviewIds->has($item->id);
+                        @endphp
                         <tr>
+                            <td class="text-center align-middle">
+                                @if($canReview)
+                                    <input type="checkbox" class="review-expense-cb" name="ids[]" value="{{ $item->id }}">
+                                @endif
+                            </td>
                             <td class="text-center align-middle">
                                 @if($imageUrl)
                                     @php
@@ -492,10 +510,23 @@
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
+                            <td class="text-center align-middle">
+                                @if($isExpense)
+                                    @if($canReview)
+                                        <span class="badge badge-warning">بانتظار المراجعة</span>
+                                    @elseif($item->admin_approval)
+                                        <span class="badge badge-success">تمت المراجعة</span>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="9" class="text-center py-5">
+                            <td colspan="11" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="fas fa-inbox fa-3x mb-3"></i>
                                     <p class="font-weight-bold">لا توجد بيانات</p>
@@ -506,7 +537,7 @@
                     </tbody>
                     <tfoot class="bg-light font-weight-bold">
                         <tr>
-                            <td colspan="3" class="text-right align-middle">
+                            <td colspan="4" class="text-right align-middle">
                                 <strong>الإجمالي:</strong>
                             </td>
                             <td class="text-center text-danger align-middle">
@@ -515,7 +546,7 @@
                             <td class="text-center text-success align-middle">
                                 <strong>{{ number_format($totalIncome ?? 0, 2) }}</strong>
                             </td>
-                            <td colspan="4" class="text-right align-middle">
+                            <td colspan="5" class="text-right align-middle">
                                 <span class="text-muted">الصافي: </span>
                                 <strong class="{{ (($totalIncome ?? 0) - ($totalExpenses ?? 0)) >= 0 ? 'text-success' : 'text-danger' }}">
                                     {{ number_format(($totalIncome ?? 0) - ($totalExpenses ?? 0), 2) }}
@@ -525,6 +556,7 @@
                     </tfoot>
                 </table>
             </div>
+            </form>
 
             <!-- Pagination -->
             @if($expenses->hasPages())
@@ -556,5 +588,10 @@
             url.searchParams.set('page', '1'); // العودة للصفحة الأولى عند تغيير عدد العناصر
             window.location.href = url.toString();
         }
+        document.getElementById('reviewSelectAll')?.addEventListener('change', function () {
+            document.querySelectorAll('.review-expense-cb').forEach(function (cb) {
+                cb.checked = this.checked;
+            }.bind(this));
+        });
     </script>
 @endpush

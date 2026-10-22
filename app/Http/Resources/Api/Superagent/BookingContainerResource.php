@@ -37,6 +37,21 @@ class BookingContainerResource extends JsonResource
             // إضافات مطلوبة: بوليصة المكتب وتاريخ الخروج
             'office_policy'     => optional($this->delivery_policies->first()?->money_transfer)->value ?? "",
             'exit_date'         => $this->delivery_policies->first()->date ?? "",
+            // ميناء التعتيق من بوليصة السيارة (يُسجَّل على الحاوية عند إنشاء البوليصة)
+            'aging_id' => $this->aging_id,
+            'aging_port' => $this->aging?->title ?? '',
+            'departure' => $this->departure?->title ?? '',
+            'loading' => $this->loading?->title ?? '',
+            'delivery_policy' => ($policy = $this->delivery_policies->first()) ? [
+                'id' => $policy->id,
+                'driver_name' => $policy->driver?->name ?? '',
+                'car_number' => $policy->car?->car_number ?? '',
+                'value' => $policy->money_transfer?->value ?? '',
+                'custody_usd' => $policy->custody_usd !== null ? (float) $policy->custody_usd : null,
+                'date' => $policy->date ?? '',
+                'is_settled' => $policy->is_settled,
+                'agent_id' => $policy->money_transfer?->transferer_id,
+            ] : null,
             "yard_title" => $this?->booking?->yard?->title ?? "",
             "yard_id" => $this?->booking?->yard?->id ?? "",
             "notes" => NoteResource::collection($this->notes),

@@ -34,7 +34,7 @@ class NewBooking extends Notification
 
     public function toMail($notifiable)
     {
-        $track_id = $this->booking->booking_number;
+        $track_id = $this->booking->trackCode();
         return (new MailMessage)
             ->subject('إشعار حجز جديد')
             ->action('عرض تفاصيل الحجز', "https://leaderfortrans.com/book/?track=$track_id");
@@ -42,7 +42,7 @@ class NewBooking extends Notification
 
     public function toPhpMail($notifiable)
     {
-        $trackId = $this->booking->booking_number;
+        $trackId = $this->booking->trackCode();
         $url = 'https://leaderfortrans.com/book/?track=' . urlencode($trackId);
         $subject = 'إشعار حجز جديد';
         $count = (string) $this->booking->bookingContainers->count();
@@ -69,7 +69,7 @@ class NewBooking extends Notification
             'bookingNumber' => $trackId,
             'url' => $url,
             'details' => [
-                'رقم الحجز' => $trackId,
+                'الرقم الداخلي' => $trackId,
                 'اسم المصنع' => $factoryName,
                 'اسم الموظف المسؤول' => $employeeName,
                 'وكيل الشحن' => $shippingAgentTitle,

@@ -37,7 +37,7 @@ class ListingProfilesTest extends TestCase
     {
         $profiles = [Company::class => ['name', 'email', 'phone', 'tax_no'],
             PrivateCompany::class => ['name', 'tax_no', 'commercial_register'],
-            Car::class => ['car_number'], Driver::class => ['name', 'phone']];
+            Car::class => ['car_number'], Driver::class => ['name', 'phone', 'national_id', 'passport_number']];
         foreach ($profiles as $model => $fields) {
             foreach (['0', 'شركة', 'a%b_c', "O'Reilly", '   ', ''] as $term) {
                 $actual = (new $model)->newQueryWithoutScopes()->where('id', '>', 10)->searchListing($term);

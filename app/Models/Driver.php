@@ -21,7 +21,9 @@ class Driver extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
-                ->orWhere('phone', 'like', "%{$search}%");
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('national_id', 'like', "%{$search}%")
+                ->orWhere('passport_number', 'like', "%{$search}%");
         });
     }
 }

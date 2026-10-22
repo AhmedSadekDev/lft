@@ -135,6 +135,9 @@ class Phase6MobilePaginationTest extends TestCase
         Schema::create('drivers', function (Blueprint $t) {
             $t->increments('id');
             $t->string('name')->default('Driver');
+            $t->string('phone')->nullable();
+            $t->string('national_id', 20)->nullable();
+            $t->string('passport_number', 50)->nullable();
             $t->timestamps();
         });
 
@@ -161,6 +164,7 @@ class Phase6MobilePaginationTest extends TestCase
         Schema::create('bookings', function (Blueprint $t) {
             $t->increments('id');
             $t->string('booking_number')->default('BK-001');
+            $t->string('public_code', 5)->nullable()->unique();
             $t->unsignedInteger('company_id')->nullable();
             $t->unsignedInteger('yard_id')->nullable();
             $t->unsignedInteger('shipping_agent_id')->nullable();
@@ -679,6 +683,7 @@ class Phase6MobilePaginationTest extends TestCase
     {
         $booking = Booking::create([
             'booking_number' => 'BK-TRACK-999',
+            'public_code' => '48291',
             'discharge_date' => now()->toDateString(),
         ]);
 
@@ -696,7 +701,12 @@ class Phase6MobilePaginationTest extends TestCase
             ]);
         }
 
-        $response = $this->getJson('/api/booking/track?order_number=BK-TRACK-999');
+        // Sequential booking_number must not work for public track.
+        $this->getJson('/api/booking/track?order_number=BK-TRACK-999')
+            ->assertStatus(200)
+            ->assertJson(['status' => false]);
+
+        $response = $this->getJson('/api/booking/track?order_number=48291');
         $response->assertStatus(200);
         $response->assertJson([
             'status' => true,
@@ -712,7 +722,7 @@ class Phase6MobilePaginationTest extends TestCase
 
     public function test_public_tracking_not_found_returns_error_response(): void
     {
-        $response = $this->getJson('/api/booking/track?order_number=NON-EXISTENT-BOOKING');
+        $response = $this->getJson('/api/booking/track?order_number=99999');
         $response->assertStatus(200);
         $this->assertFalse($response->json('status'));
         $this->assertEquals(__('admin.not_found'), $response->json('message'));

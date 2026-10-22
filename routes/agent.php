@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Agent\Auth\SetPasswordController;
 use App\Http\Controllers\Api\Agent\CarController;
 use App\Http\Controllers\Api\Agent\CarExpenseController;
 use App\Http\Controllers\Api\Agent\DeliveryPolicyController;
+use App\Http\Controllers\Api\Agent\ReeferTripController;
 use App\Http\Controllers\Api\Agent\DriverController;
 use App\Http\Controllers\Api\Agent\ExpenseController;
 use App\Http\Controllers\Api\Agent\NotificationController;
@@ -123,6 +124,11 @@ Route::group(['middleware' => ['localization', \App\Http\Middleware\BlockInvoice
         //delete_delivery_policy
         Route::post('delete_delivery_policy', [DeliveryPolicyController::class, 'delete_delivery_policy']);
 
+        // reefer trip tracking (صادر برادات only)
+        Route::get('fetch_reefer_trip_list', [ReeferTripController::class, 'fetch_reefer_trip_list']);
+        Route::post('reefer_trip_details', [ReeferTripController::class, 'reefer_trip_details']);
+        Route::post('save_reefer_trip_stage', [ReeferTripController::class, 'save_reefer_trip_stage']);
+        Route::post('upload_reefer_trip_document', [ReeferTripController::class, 'upload_reefer_trip_document']);
 
         //make_car_expenses
         Route::post('make_car_expenses', [CarExpenseController::class, 'make_car_expenses']);

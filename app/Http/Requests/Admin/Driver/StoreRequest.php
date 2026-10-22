@@ -26,8 +26,10 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'required|string|max:255',
-            'phone'     =>  'required|unique:drivers,phone|numeric|digits_between:9,12',
+            'name'             => 'required|string|max:255',
+            'phone'            => 'required|unique:drivers,phone|numeric|digits_between:9,12',
+            'national_id'      => 'nullable|string|max:20',
+            'passport_number'  => 'nullable|string|max:50',
         ];
     }
 
@@ -39,8 +41,10 @@ class StoreRequest extends FormRequest
     public function attributes()
     {
         return [
-            'phone'       => __('admin.phone'),
-            'name'       => __('admin.name'),
+            'phone'            => __('admin.phone'),
+            'name'             => __('admin.name'),
+            'national_id'      => __('admin.national_id'),
+            'passport_number'  => __('admin.passport_number'),
         ];
     }
 

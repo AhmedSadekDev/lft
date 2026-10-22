@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Superagent\Auth\SetPasswordController;
 use App\Http\Controllers\Api\Superagent\BookingContainerActionController;
 use App\Http\Controllers\Api\Superagent\BookingContainerController;
 use App\Http\Controllers\Api\Superagent\HomeController;
+use App\Http\Controllers\Api\Superagent\DeliveryPolicyController;
 use App\Http\Controllers\Api\Superagent\ShippingAgentController;
 use App\Http\Controllers\Api\Superagent\YardController;
 use Illuminate\Http\Request;
@@ -118,11 +119,16 @@ Route::group(['middleware' => 'localization'], function () {
             Route::get("booking/specification_assignments", "specification_assignments");
 
             Route::get("booking/unloading_assignments", "unloading_assignments");
+            Route::get("booking/unloading_aging_assignments", "unloading_aging_assignments");
 
             Route::get("booking/loading_assignments", "loading_assignments");
 
             Route::post("booking/save_loading_booking_container", "save_loading_booking_container");
         });
+
+        // Delivery policies created by agents — visible to manager
+        Route::get('fetch_delivery_policies', [DeliveryPolicyController::class, 'fetch_delivery_policies']);
+        Route::post('delivery_policy_details', [DeliveryPolicyController::class, 'delivery_policy_details']);
 
         Route::group(['controller' => NotificationController::class], function () {
 
