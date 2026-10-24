@@ -29,7 +29,7 @@ class ExpenseController extends Controller
             ->get();
         // dd($financial_custodies);
         $expenses = $agent->expenses()
-            ->with(['agent', 'bookingService.agent', 'bookingService.creator'])
+            ->with(['agent', 'booking', 'bookingService.agent', 'bookingService.creator'])
             ->orderBy("id", "desc")
             ->get();
         // dd($expenses);
