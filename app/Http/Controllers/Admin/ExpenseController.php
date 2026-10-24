@@ -50,6 +50,44 @@ class ExpenseController extends Controller
         return back()->with('success', $count ? "تمت مراجعة {$count} إيصال وخصم العهدة" : 'لا توجد إيصالات بانتظار المراجعة');
     }
 
+    /**
+     * موافقة على إيصال واحد من صفحة مصروفات المندوب.
+     */
+    public function approve($id)
+    {
+        try {
+            $expense = AgentExpense::findOrFail($id);
+            $count = app(\App\Services\StageExpenseService::class)->markReviewed(
+                (int) $expense->agent_id,
+                [$expense->id],
+                auth()->id()
+            );
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $count ? 'تمت الموافقة على الإيصال' : 'الإيصال غير بانتظار المراجعة',
+                ], 200);
+            }
+
+            return back()->with('success', $count ? 'تمت الموافقة على الإيصال' : 'الإيصال غير بانتظار المراجعة');
+        } catch (\Exception $Exception) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $Exception->getMessage(),
+                ], $Exception instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
+                    ? $Exception->getStatusCode()
+                    : 500);
+            }
+
+            return back()->with('error', $Exception->getMessage());
+        }
+    }
 
     public function booking_container_expenses($id)
     {

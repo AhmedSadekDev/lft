@@ -55,12 +55,25 @@
                                     @endif
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-nowrap">
                                 @if(isset($allExpense->agent_id) && $allExpense instanceof \App\Models\AgentExpense)
-                                    <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
-                                        onclick="DeleteExpense('{{ $allExpense->id }}', '{{ $allExpense->version }}')">
-                                        <i class="fas fa-trash text-danger"></i>
-                                    </button>
+                                    @if ($awaitingReviewIds->has($allExpense->id))
+                                        <button type="button" class="btn btn-sm btn-success mr-1"
+                                            onclick="ApproveExpense('{{ $allExpense->id }}')">
+                                            <i class="fas fa-check"></i> موافقة
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            onclick="RejectExpense('{{ $allExpense->id }}', '{{ $allExpense->version }}')">
+                                            <i class="fas fa-times"></i> رفض
+                                        </button>
+                                    @else
+                                        <span class="text-muted small mr-1">معتمد</span>
+                                        <button type="button" class="btn btn-icon btn-light btn-hover-danger btn-sm"
+                                            title="حذف"
+                                            onclick="RejectExpense('{{ $allExpense->id }}', '{{ $allExpense->version }}')">
+                                            <i class="fas fa-trash text-danger"></i>
+                                        </button>
+                                    @endif
                                 @endif
                             </td>
                         </tr>
@@ -74,64 +87,81 @@
 @endsection
 @push('js')
     <script>
-        function DeleteExpense(id, version) {
+        function ajaxHeaders() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            });
+        }
+
+        function ApproveExpense(id) {
             Swal.fire({
-                title: "{{ __('alerts.are_you_sure') }}",
-                text: "سيتم حذف الإيصال وإرجاع قيمته إلى عهدة المندوب، حتى لو تم إقفال إيصالات المرحلة. {{ __('alerts.not_revert_information') }}",
-                icon: 'warning',
+                title: 'تأكيد الموافقة؟',
+                text: 'سيتم اعتماد الإيصال وخصم العهدة وإخفاؤه من شاشة المندوب.',
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: "{{ __('alerts.confirm') }}",
+                confirmButtonText: 'موافقة',
                 cancelButtonText: "{{ __('alerts.cancel') }}",
                 buttonsStyling: false,
                 customClass: {
-                    confirmButton: 'btn btn-primary mx-1',
+                    confirmButton: 'btn btn-success mx-1',
                     cancelButton: 'btn btn-secondary mx-1',
                 },
-                didOpen: function () {
-                    if (typeof destroySwalSelectpickers === 'function') {
-                        // no-op; cleanup lives in admin-ui.js
-                    }
-                    var popup = document.querySelector('.swal2-popup');
-                    if (popup) {
-                        popup.querySelectorAll('select, .bootstrap-select').forEach(function (el) {
-                            el.style.setProperty('display', 'none', 'important');
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                ajaxHeaders();
+                $.ajax({
+                    url: '{{ route("expenses.approve", ":id") }}'.replace(':id', id),
+                    type: 'POST',
+                    success: function () {
+                        Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 2000 });
+                        location.reload();
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: "{{ __('alerts.error') }}",
+                            text: xhr.responseJSON?.message || "{{ __('alerts.error_occurred') }}",
+                            icon: 'error',
                         });
                     }
+                });
+            });
+        }
+
+        function RejectExpense(id, version) {
+            Swal.fire({
+                title: 'رفض الإيصال؟',
+                text: "سيتم إلغاء الإيصال وإرجاع قيمته إلى عهدة المندوب. {{ __('alerts.not_revert_information') }}",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'رفض',
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
                 },
             }).then((result) => {
-                if (result.isConfirmed) {
-                    var url = '{{ route("expenses.destroy", ":id") }}';
-                    url = url.replace(':id', id);
-                    var token = '{{ csrf_token() }}';
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': token,
-                            'X-Requested-With': 'XMLHttpRequest',
-                        }
-                    });
-                    $.ajax({
-                        url: url,
-                        data: { version: version },
-                        type: 'delete',
-                        success: function(response, textStatus, xhr) {
-                            Swal.fire({
-                                title: "{{ __('alerts.done') }}",
-                                icon: 'success',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                            });
-                            location.reload();
-                        },
-                        error: function(xhr) {
-                            Swal.fire({
-                                title: "{{ __('alerts.error') }}",
-                                text: xhr.responseJSON?.message || "{{ __('alerts.error_occurred') }}",
-                                icon: 'error',
-                            });
-                        }
-                    });
-                }
+                if (!result.isConfirmed) return;
+                ajaxHeaders();
+                $.ajax({
+                    url: '{{ route("expenses.destroy", ":id") }}'.replace(':id', id),
+                    data: { version: version },
+                    type: 'delete',
+                    success: function () {
+                        Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 2000 });
+                        location.reload();
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: "{{ __('alerts.error') }}",
+                            text: xhr.responseJSON?.message || "{{ __('alerts.error_occurred') }}",
+                            icon: 'error',
+                        });
+                    }
+                });
             });
         }
     </script>
