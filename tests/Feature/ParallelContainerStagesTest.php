@@ -57,8 +57,14 @@ class ParallelContainerStagesTest extends TestCase
                 $t->timestamps();
             });
         }
+        Schema::create('service_categories', function (Blueprint $t) {
+            $t->id();
+            $t->string('title')->nullable();
+            $t->timestamps();
+        });
         Schema::create('services', function (Blueprint $t) {
             $t->id();
+            $t->unsignedBigInteger('service_category_id')->nullable();
             $t->string('name')->nullable();
             $t->timestamps();
         });

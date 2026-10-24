@@ -86,7 +86,18 @@ class AgentExpense extends Model
     }
     public function getTitleAttribute()
     {
-        return ($this->service?->serviceCategory?->title ?? "") . "  -  " . ($this->service?->name ?? "");
+        $service = $this->service;
+        if (! $service) {
+            return '  -  ';
+        }
+        $categoryTitle = '';
+        if ($service->relationLoaded('serviceCategory')) {
+            $categoryTitle = $service->serviceCategory?->title ?? '';
+        } elseif (array_key_exists('service_category_id', $service->getAttributes()) && $service->service_category_id) {
+            $categoryTitle = $service->serviceCategory?->title ?? '';
+        }
+
+        return $categoryTitle . '  -  ' . ($service->name ?? '');
     }
     public function delivery_policy()
     {

@@ -577,30 +577,37 @@ class AgentController extends Controller
         }
 
 
-        $xpenses = AgentExpense::where('booking_container_id', $request->booking_container_id)->where('type_id', $request->type_id)->get()->map(function ($ex) {
-            return [
-                'id' => $ex->id,
-                'agent_id' => $ex->agent_id ?? 0,
-                'agent_name' => $ex->agent ? $ex->agent->name : '',
-                'image' => $ex->image_agent_expenses ? asset('Admin/images/expenses/' . $ex->image_agent_expenses) : '',
-                'value' => $ex->value
-            ];
-        });
+        $xpenses = AgentExpense::query()
+            ->with(['agent:id,name'])
+            ->where('booking_container_id', $request->booking_container_id)
+            ->where('type_id', $request->type_id)
+            ->get()
+            ->map(function ($ex) {
+                return [
+                    'id' => $ex->id,
+                    'agent_id' => $ex->agent_id ?? 0,
+                    'agent_name' => $ex->agent?->name ?? '',
+                    'image' => $ex->image_agent_expenses ? asset('Admin/images/expenses/' . $ex->image_agent_expenses) : '',
+                    'value' => $ex->value,
+                ];
+            });
         if ($request->type_id == 0 || $request->type_id == 1) {
             $types = [$request->type_id];
         } else {
             $types = [4, 5];
         }
 
-        $papers = BookingPaper::where('booking_container_id', $request->booking_container_id)
+        $papers = BookingPaper::query()
+            ->with(['agent:id,name', 'image'])
+            ->where('booking_container_id', $request->booking_container_id)
             ->whereIn('type', $types)
             ->get()
             ->map(function ($paper) {
                 return [
                     'id'         => $paper->id,
-                    'image'      => $paper->image->image,
+                    'image'      => $paper->image?->image ?? '',
                     'agent_id'   => $paper->agent_id ?? 0,
-                    'agent_name' => $paper->agent ? $paper->agent->name : '',
+                    'agent_name' => $paper->agent?->name ?? '',
                 ];
             });
 
