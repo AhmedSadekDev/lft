@@ -174,6 +174,21 @@ Base agent: `/api/agent/` — Superagent: `/api/superagent/` — Public: `/api/b
 
 ---
 
+## 9) إعادة تعيين كلمة المرور (Agent / Superagent) — بدون `reset_token`
+
+التدفق:
+
+1. `POST .../sendOtp` — `email`
+2. `POST .../verifyOtp` — `email` + `otp` → نجاح فقط (`account_type`)؛ **مفيش** `reset_token` في الرد
+3. `POST .../resetPassword` — `email` + `password` + `confirm_password`  
+   (يقبل كمان `password_confirmation` بدل `confirm_password`)
+
+- **متبعتش** `reset_token`.
+- لازم `verifyOtp` ينجح قبل `resetPassword` (نافذة ~15 دقيقة على السيرفر).
+- Company/Employee لسه على مسار `reset_token` القديم.
+
+---
+
 ## Checklist سريع للتطبيق
 
 1. [ ] مصروف عام: متبعتش `type_id` / `booking_container_id`
@@ -184,3 +199,4 @@ Base agent: `/api/agent/` — Superagent: `/api/superagent/` — Public: `/api/b
 6. [ ] بوليصة براد: ابعت `custody_usd`؛ اعرض `custody_usd_is_record_only`
 7. [ ] شاشة تتبّع رحلة البراد: الـ 4 endpoints + 11 مرحلة
 8. [ ] مصروفات: استخدم `date` / `time` / `registered_at` لو هتعرض وقت التسجيل
+9. [ ] reset password مندوب/سوبر: بعد verifyOtp ابعت `email` + `password` + `confirm_password` فقط (من غير `reset_token`)

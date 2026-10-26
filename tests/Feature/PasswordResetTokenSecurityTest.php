@@ -298,7 +298,7 @@ class PasswordResetTokenSecurityTest extends TestCase
         $this->assertTrue(Hash::check('employee-new', $employee->fresh()->password));
     }
 
-    public function test_agent_and_superagent_flows_require_bound_tokens(): void
+    public function test_agent_and_superagent_reset_after_otp_without_reset_token(): void
     {
         $agent = Agent::create([
             'name' => 'Agent',
@@ -316,12 +316,16 @@ class PasswordResetTokenSecurityTest extends TestCase
             'email' => $agent->email,
             'otp' => '666666',
         ]));
+        $this->assertSame('agent', $agentVerified['account_type']);
+        $this->assertArrayNotHasKey('reset_token', $agentVerified);
+        $this->assertNotNull(OTP::where('agent_id', $agent->id)->first()->reset_token_hash);
+
         $agentService->resetPassword([
             'email' => $agent->email,
             'password' => 'agent-new',
-            'reset_token' => $agentVerified['reset_token'],
         ]);
         $this->assertTrue(Hash::check('agent-new', $agent->fresh()->password));
+        $this->assertNotNull(OTP::where('agent_id', $agent->id)->first()->reset_token_used_at);
 
         $superagent = Superagent::create([
             'name' => 'Super',
@@ -339,15 +343,41 @@ class PasswordResetTokenSecurityTest extends TestCase
             'email' => $superagent->email,
             'otp' => '777777',
         ]));
+        $this->assertSame('superagent', $superVerified['account_type']);
+        $this->assertArrayNotHasKey('reset_token', $superVerified);
+
         $superService->resetPassword([
             'email' => $superagent->email,
             'password' => 'super-new',
-            'reset_token' => $superVerified['reset_token'],
         ]);
         $this->assertTrue(Hash::check('super-new', $superagent->fresh()->password));
     }
 
-    public function test_agent_token_cannot_reset_another_agent(): void
+    public function test_agent_reset_without_prior_otp_verify_is_rejected(): void
+    {
+        $agent = Agent::create([
+            'name' => 'Owner',
+            'email' => 'owner-agent@example.com',
+            'password' => 'owner-old',
+        ]);
+
+        OTP::create([
+            'agent_id' => $agent->id,
+            'otp' => '888888',
+            'expire_at' => Carbon::now()->addMinutes(10),
+        ]);
+
+        $service = app(PasswordResetAgentService::class);
+
+        $this->expectException(HttpException::class);
+
+        $service->resetPassword([
+            'email' => $agent->email,
+            'password' => 'hijack-password',
+        ]);
+    }
+
+    public function test_agent_verified_session_cannot_reset_another_agent(): void
     {
         $owner = Agent::create([
             'name' => 'Owner',
@@ -367,7 +397,7 @@ class PasswordResetTokenSecurityTest extends TestCase
         ]);
 
         $service = app(PasswordResetAgentService::class);
-        $verified = $service->verifyOtp(Request::create('/', 'POST', [
+        $service->verifyOtp(Request::create('/', 'POST', [
             'email' => $owner->email,
             'otp' => '888888',
         ]));
@@ -377,7 +407,6 @@ class PasswordResetTokenSecurityTest extends TestCase
         $service->resetPassword([
             'email' => $victim->email,
             'password' => 'victim-hijack',
-            'reset_token' => $verified['reset_token'],
         ]);
     }
 

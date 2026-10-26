@@ -45,7 +45,6 @@ class OtpController extends Controller
             $result = $this->passwordResetSuperagentService->verifyOtp($request);
 
             return $this->returnAllData([
-                'reset_token' => $result['reset_token'],
                 'account_type' => $result['account_type'],
             ], $result['message']);
         } catch (\Throwable $th) {

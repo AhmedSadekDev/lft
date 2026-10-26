@@ -16,8 +16,15 @@ class ResetPasswordRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->filled('password_confirmation') && ! $this->filled('confirm_password')) {
+            $this->merge(['confirm_password' => $this->input('password_confirmation')]);
+        }
+    }
+
     /**
-     * Get the validation rules that apply to the request.
+     * Agent mobile reset after verifyOtp: email + password only (no reset_token).
      *
      * @return array<string, mixed>
      */
@@ -25,13 +32,22 @@ class ResetPasswordRequest extends FormRequest
     {
         return [
             'email' => 'required|exists:agents,email',
-            'reset_token' => 'required|string|min:32',
             'password' => 'required|min:8',
             'confirm_password' => 'required|min:8|same:password',
         ];
     }
 
-    protected function failedValidation(Validator $validator){
+    public function attributes()
+    {
+        return [
+            'password' => 'كلمة المرور',
+            'confirm_password' => 'تأكيد كلمة المرور',
+            'email' => 'البريد الإلكتروني',
+        ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
         $response = $this->validationError($validator->errors()->first());
         throw new ValidationException($validator, $response);
     }

@@ -33,6 +33,68 @@ trait IssuesPasswordResetToken
     }
 
     /**
+     * Agent/Superagent mobile: after OTP verify, open a short server-side reset window
+     * without returning a reset_token to the client.
+     */
+    protected function markOtpVerifiedForPasswordReset(OTP $otp): void
+    {
+        $this->invalidateSiblingResetTokens($otp);
+
+        $otp->update([
+            'expire_at' => Carbon::now(),
+            'reset_token_hash' => hash('sha256', 'otp-verified:'.$otp->id.':'.bin2hex(random_bytes(16))),
+            'reset_token_expires_at' => Carbon::now()->addMinutes(self::RESET_TOKEN_TTL_MINUTES),
+            'reset_token_used_at' => null,
+        ]);
+    }
+
+    /**
+     * Consume the latest verified (unreturned) reset window for an account.
+     *
+     * @param  class-string<Model>  $accountClass
+     */
+    protected function consumeVerifiedOtpPasswordReset(
+        string $email,
+        string $password,
+        string $accountType,
+        string $accountClass
+    ): Model {
+        return DB::transaction(function () use ($email, $password, $accountType, $accountClass) {
+            /** @var Model|null $account */
+            $account = $accountClass::where('email', $email)->lockForUpdate()->first();
+            if (! $account) {
+                abort(404, __('auth.user_not_found'));
+            }
+
+            $fk = $this->resetTokenForeignKey($accountType);
+
+            /** @var OTP|null $otp */
+            $otp = OTP::where($fk, $account->id)
+                ->whereNotNull('reset_token_hash')
+                ->whereNull('reset_token_used_at')
+                ->where('reset_token_expires_at', '>', Carbon::now())
+                ->latest('id')
+                ->lockForUpdate()
+                ->first();
+
+            if (! $otp) {
+                abort(403, __('auth.expired_otp'));
+            }
+
+            // Mutator hashes once — do not Hash::make here.
+            $account->update(['password' => $password]);
+
+            $otp->update(array_merge($this->clearResetTokenFields(), [
+                'reset_token_used_at' => Carbon::now(),
+            ]));
+
+            $this->invalidateSiblingResetTokens($otp);
+
+            return $account->fresh();
+        });
+    }
+
+    /**
      * @param  class-string<Model>  $accountClass
      */
     protected function consumeResetToken(

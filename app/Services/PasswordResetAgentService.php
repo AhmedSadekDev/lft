@@ -27,11 +27,14 @@ class PasswordResetAgentService
         abort(404, __('auth.invalid_email'));
     }
 
+    /**
+     * Validate OTP and open a short server-side reset window (no reset_token returned).
+     */
     public function verifyOtp($request): array
     {
         $agent = Agent::whereEmail($request->email)->first();
 
-        if (!$agent) {
+        if (! $agent) {
             abort(404, __('alerts.failed'));
         }
 
@@ -46,11 +49,10 @@ class PasswordResetAgentService
         }
 
         if ($verificationCode) {
-            $resetToken = $this->issueResetToken($verificationCode);
+            $this->markOtpVerifiedForPasswordReset($verificationCode);
 
             return [
                 'message' => __('auth.verified'),
-                'reset_token' => $resetToken,
                 'account_type' => self::ACCOUNT_AGENT,
             ];
         }
@@ -62,14 +64,12 @@ class PasswordResetAgentService
     {
         $email = is_array($request) ? ($request['email'] ?? null) : $request->email;
         $password = is_array($request) ? ($request['password'] ?? null) : $request->password;
-        $resetToken = is_array($request) ? ($request['reset_token'] ?? null) : $request->reset_token;
 
-        if (!$resetToken) {
-            abort(403, __('auth.invalid_reset_token'));
+        if (! $email || ! $password) {
+            abort(422, __('alerts.failed'));
         }
 
-        return $this->consumeResetToken(
-            $resetToken,
+        return $this->consumeVerifiedOtpPasswordReset(
             $email,
             $password,
             self::ACCOUNT_AGENT,
