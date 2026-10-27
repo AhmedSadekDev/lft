@@ -1142,6 +1142,54 @@ class ParallelContainerStagesTest extends TestCase
         $this->getJson('/api/superagent/booking/workflow_stage?stage=unknown')->assertStatus(422);
     }
 
+    public function test_inbound_release_auto_completes_for_superagent_when_agent_work_is_ready(): void
+    {
+        $this->actAsWorkflowSuperagent();
+        Schema::table('booking_containers', function (Blueprint $t) {
+            $t->string('container_no')->nullable();
+        });
+        $this->createWorkflowBooking(50, \App\Services\ShipmentWorkflow::INBOUND);
+        $this->postJson('/api/superagent/booking/done_specification', ['booking_container_id' => 50])->assertOk();
+
+        $service = app(ContainerStageService::class);
+        $service->assign(50, [2], 1);
+        $this->assertFalse($service->completeInboundReleaseIfReady(50, 2));
+
+        BookingContainer::find(50)->update(['container_no' => 'MRSU8374410']);
+        DB::table('booking_papers')->insert([
+            'booking_container_id' => 50,
+            'booking_id' => 50,
+            'agent_id' => 2,
+            'type' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $this->assertFalse($service->completeInboundReleaseIfReady(50, 2));
+
+        DB::table('delivery_policies')->insert(['id' => 9]);
+        DB::table('delivery_policy_containers')->insert([
+            'delivery_policy_id' => 9,
+            'booking_container_id' => 50,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->assertTrue($service->completeInboundReleaseIfReady(50, 2));
+        $container = BookingContainer::find(50);
+        $this->assertNotNull($container->loading_completed_at);
+        $this->assertSame(2, (int) $container->status);
+        // Superagent Confirm depends on this flag (is_loading_done).
+        $this->assertTrue($container->isStageCompleted(1));
+
+        // Second call is a no-op once the agent side is marked done.
+        $this->assertFalse($service->completeInboundReleaseIfReady(50, 2));
+
+        $this->assertTrue($service->approve(50, 1, 7));
+        $approved = BookingContainer::find(50);
+        $this->assertSame(1, (int) $approved->superagent_loading_approved);
+        $this->assertSame(0, (int) $approved->superagent_unloading_approved);
+    }
+
     public function test_waiting_toggle_cannot_hide_completed_loading(): void
     {
         app(ContainerStageService::class)->complete(1, 1, 1);

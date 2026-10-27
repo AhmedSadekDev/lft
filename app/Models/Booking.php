@@ -567,12 +567,14 @@ class Booking extends Model
             ];
         }
 
-        if ($containers->every(fn($c) => $c->superagent_unloading_approved == 1)) {
+        // Ops finished (incl. short paths like clearance that auto-close unused slots)
+        // but no invoice yet — do not label as "فواتير منتهية".
+        if ($containers->every(fn ($c) => (int) $c->superagent_unloading_approved === 1)) {
             return [
                 'key'   => 'invoiced',
-                'label' => 'فواتير منتهية',
-                'badge' => 'badge-dark',
-                'icon'  => 'fas fa-check-double',
+                'label' => 'بانتظار الفاتورة',
+                'badge' => 'badge-warning text-dark',
+                'icon'  => 'fas fa-file-invoice',
             ];
         }
 

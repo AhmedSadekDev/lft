@@ -189,6 +189,18 @@ Base agent: `/api/agent/` — Superagent: `/api/superagent/` — Public: `/api/b
 
 ---
 
+## 10) صرف وارد — اكتمال المندوب يظهر للمسؤول
+
+بعد ما المندوب يحفظ **رقم الحاوية + صورة الحاوية + بوليصة التسليم** على مسار الوارد (`inbound_release`):
+
+- السيرفر يعلّم التحميل مكتمل تلقائياً (`loading_completed_at`) من غير ما يشترط **جواب التحميل**.
+- قائمة المسؤول (`is_loading_done = 1`) تتفعّل عشان يأكد وتنتقل لتعتيق فارغ.
+- حقول جديدة في `BookingContainerResource` للمندوب: `requires_loading_answer`, `has_delivery_policy`, `ready_to_complete_stage`.
+
+للتصدير/البراد: جواب التحميل لسه مطلوب من التطبيق قبل الإكمال اليدوي.
+
+---
+
 ## Checklist سريع للتطبيق
 
 1. [ ] مصروف عام: متبعتش `type_id` / `booking_container_id`
@@ -200,3 +212,4 @@ Base agent: `/api/agent/` — Superagent: `/api/superagent/` — Public: `/api/b
 7. [ ] شاشة تتبّع رحلة البراد: الـ 4 endpoints + 11 مرحلة
 8. [ ] مصروفات: استخدم `date` / `time` / `registered_at` لو هتعرض وقت التسجيل
 9. [ ] reset password مندوب/سوبر: بعد verifyOtp ابعت `email` + `password` + `confirm_password` فقط (من غير `reset_token`)
+10. [ ] صرف وارد: متطلبش جواب التحميل؛ اعتمد `requires_loading_answer=false` و`is_loading_done` عند المسؤول

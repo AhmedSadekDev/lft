@@ -135,11 +135,62 @@ class ContainerStageService
                 return false;
             }
             $now = now();
-            $container->update(['status' => max((int) $container->status, $type + 1), $field => $now]);
-            $this->assignments($containerId, $type)->update([$field => $now]);
-            DailyBookingContainer::where('booking_container_id', $containerId)->update(['booking_container_status' => $container->status]);
+            $newStatus = max((int) $container->status, $type + 1);
+            $container->update(['status' => $newStatus, $field => $now]);
+            // Keep pivot status aligned so superagent lists still resolve the responsible agent.
+            $this->assignments($containerId, $type)->update([
+                $field => $now,
+                'booking_container_status' => $newStatus,
+            ]);
+            DailyBookingContainer::where('booking_container_id', $containerId)->update(['booking_container_status' => $newStatus]);
 
             return true;
+        });
+    }
+
+    /**
+     * Inbound "صرف وارد" often finishes operationally (number + photo + delivery policy)
+     * without a separate loading-letter upload. Mark the loading slot complete so the
+     * superagent list flips is_loading_done and can approve into التعتيق.
+     */
+    public function isInboundReleaseReady(BookingContainer $container): bool
+    {
+        if (ShipmentWorkflow::of($container->booking) !== ShipmentWorkflow::INBOUND) {
+            return false;
+        }
+        if ($container->isStageCompleted(1) || (int) $container->superagent_loading_approved === 1) {
+            return false;
+        }
+        if (! $container->superagent_specification_approved || ! $container->is_in_loading) {
+            return false;
+        }
+        if (! filled($container->container_no)) {
+            return false;
+        }
+        // Type 1 = صورة الحاوية (paper row is created when the agent uploads).
+        if (! $container->bookingPapers()->where('type', 1)->exists()) {
+            return false;
+        }
+
+        return $container->delivery_policies()->exists();
+    }
+
+    /**
+     * @return bool true when this call newly completed the loading stage
+     */
+    public function completeInboundReleaseIfReady(int $containerId, ?int $agentId = null): bool
+    {
+        return DB::transaction(function () use ($containerId, $agentId) {
+            $container = BookingContainer::with('booking')->lockForUpdate()->findOrFail($containerId);
+            if (! $this->isInboundReleaseReady($container)) {
+                return false;
+            }
+            // If this agent is not on the loading assignment, still mark complete for the superagent sync.
+            if ($agentId !== null && ! $this->assignments($container->id, 1)->where('agent_id', $agentId)->exists()) {
+                $agentId = null;
+            }
+
+            return $this->complete($container->id, 1, $agentId);
         });
     }
 

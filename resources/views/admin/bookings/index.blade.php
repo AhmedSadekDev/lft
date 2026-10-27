@@ -588,26 +588,18 @@
                                         <td>{{ $booking->created_at ? \Carbon\Carbon::parse($booking->created_at)->format('Y-m-d') : '__' }}</td>
                                         <td>
                                             @if (is_null($booking->invoice?->invoice_number))
-                                                @if ($booking->type_of_action != 2)
-                                                    <a class="btn btn-sm btn-primary" href="{{ route('booking-invoices.create', $booking->id) }}">
-                                                        <i class="fas fa-plus"></i> إنشاء فاتورة
-                                                    </a>
-                                                @else
-                                                    <span class="text-muted">-</span>
-                                                @endif
+                                                <a class="btn btn-sm btn-primary" href="{{ route('booking-invoices.create', $booking->id) }}">
+                                                    <i class="fas fa-plus"></i> إنشاء فاتورة
+                                                </a>
                                             @else
-                                                @if ($booking->type_of_action != 2)
-                                                    <div class="d-flex flex-column gap-1">
-                                                        <a href="{{ route('booking-invoices.edit', $booking->invoice->id) }}" class="btn btn-sm btn-warning">
-                                                            <i class="fas fa-edit"></i> تعديل
-                                                        </a>
-                                                        <a href="{{ route('booking-invoices.show', ['booking_invoice' => $booking->invoice->id]) }}" class="btn btn-sm btn-info">
-                                                            <i class="fas fa-eye"></i> عرض
-                                                        </a>
-                                                    </div>
-                                                @else
-                                                    <span class="text-muted">-</span>
-                                                @endif
+                                                <div class="d-flex flex-column gap-1">
+                                                    <a href="{{ route('booking-invoices.edit', $booking->invoice->id) }}" class="btn btn-sm btn-warning">
+                                                        <i class="fas fa-edit"></i> تعديل
+                                                    </a>
+                                                    <a href="{{ route('booking-invoices.show', ['booking_invoice' => $booking->invoice->id]) }}" class="btn btn-sm btn-info">
+                                                        <i class="fas fa-eye"></i> عرض
+                                                    </a>
+                                                </div>
                                             @endif
                                         </td>
                                         <td>

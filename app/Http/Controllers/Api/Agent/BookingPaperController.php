@@ -107,8 +107,13 @@ class BookingPaperController extends Controller
                 $this->savePaperImage($request, 'specification_latter', 0, $booking_container);
                 $this->savePaperImage($request, 'loading_answer', 6, $booking_container);
 
+                // صرف وارد: رقم + صورة + بوليصة كافية لإظهار اكتمال المندوب عند المسؤول.
+                $service->completeInboundReleaseIfReady($booking_container->id, auth('agent')->id());
+
                 return $this->returnAllData(
-                    new BookingContainerResource($booking_container->fresh(['bookingPapers.image'])),
+                    (new BookingContainerResource(
+                        $booking_container->fresh(['bookingPapers.image', 'booking', 'stages', 'delivery_policies'])
+                    ))->forStage(1),
                     __('alerts.success')
                 );
             });

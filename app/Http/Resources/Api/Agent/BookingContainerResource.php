@@ -94,6 +94,22 @@ class BookingContainerResource extends JsonResource
             ? \App\Services\ShipmentWorkflow::stageKey($workflow, $contextType)
             : null;
 
+        $hasContainerImage = (bool) optional($this->bookingPapers->where('type', 1)->last()?->image)->image;
+        $hasLoadingAnswer = (bool) optional($this->bookingPapers->where('type', 6)->last()?->image)->image;
+        $hasDeliveryPolicy = $this->relationLoaded('delivery_policies')
+            ? $this->delivery_policies->isNotEmpty()
+            : $this->delivery_policies()->exists();
+        // جواب التحميل مطلوب في التصدير/البراد فقط — صرف الوارد يكتفي بالصورة + الرقم + البوليصة.
+        $requiresLoadingAnswer = in_array($workflow, [
+            \App\Services\ShipmentWorkflow::EXPORT,
+            \App\Services\ShipmentWorkflow::REEFER,
+        ], true);
+        $readyToComplete = $canComplete
+            && filled($this->container_no)
+            && $hasContainerImage
+            && $hasDeliveryPolicy
+            && (! $requiresLoadingAnswer || $hasLoadingAnswer);
+
         return [
             "id" => $this->id,
             'company_name' => $this->booking->company->name ?? "",
@@ -120,6 +136,9 @@ class BookingContainerResource extends JsonResource
             "card_header_color" => $statusColor,
             "can_upload_receipts" => $canUpload,
             "can_complete_stage" => $canComplete,
+            "requires_loading_answer" => $requiresLoadingAnswer,
+            "has_delivery_policy" => $hasDeliveryPolicy,
+            "ready_to_complete_stage" => $readyToComplete,
             "operational_stage" => $operationalStage,
             "type_id" => $contextType === false ? null : $contextType,
             "workflow_type" => $workflow,

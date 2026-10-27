@@ -152,6 +152,12 @@ class DeliveryPolicyController extends Controller
                 'wallet' => $agent->wallet - $actualDeduction
             ]);
 
+            // صرف وارد: بعد إنشاء البوليصة، لو الرقم والصورة موجودين → علّم التحميل مكتمل للمسؤول.
+            foreach ($request->booking_container_ids as $containerId) {
+                app(\App\Services\ContainerStageService::class)
+                    ->completeInboundReleaseIfReady((int) $containerId, (int) $agent->id);
+            }
+
             DB::commit();
 
             return $this->returnResponseSuccessMessage(__('alerts.success'), 200);
