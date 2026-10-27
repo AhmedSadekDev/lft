@@ -35,6 +35,8 @@ class BookingInvoiceController extends Controller
         $currency = InvoiceCurrency::normalize($request->get('currency', InvoiceCurrency::EGP));
 
         $booking->loadMissing('bookingContainers');
+        // Pull latest company Excel/tariff prices onto containers before showing totals.
+        app(\App\Services\CompanyTransportationPriceResolver::class)->applyToBooking($booking);
         $transportation_total = $booking->transportationTotalForCurrency($currency);
         $taxed_services_total = $booking->servicesTotalForCurrency($booking->taxed_services(), $currency);
         $untaxed_services_total = $booking->untaxedServicesTotalForCurrency($currency);
@@ -83,6 +85,7 @@ class BookingInvoiceController extends Controller
 
             $currency = InvoiceCurrency::normalize($request->input('currency', InvoiceCurrency::EGP));
             $booking->loadMissing('bookingContainers');
+            app(\App\Services\CompanyTransportationPriceResolver::class)->applyToBooking($booking);
             $invoice_data = array_merge(
                 [
                     'invoice_number' => $invoice_number,
@@ -175,6 +178,7 @@ class BookingInvoiceController extends Controller
             request()->get('currency', $booking_invoice->currency ?? InvoiceCurrency::EGP)
         );
         $booking->loadMissing('bookingContainers');
+        app(\App\Services\CompanyTransportationPriceResolver::class)->applyToBooking($booking);
         $transportation_total = $booking->transportationTotalForCurrency($currency);
         $taxed_services_total = $booking->servicesTotalForCurrency($booking->taxed_services(), $currency);
         $untaxed_services_total = $booking->untaxedServicesTotalForCurrency($currency);
@@ -223,6 +227,7 @@ class BookingInvoiceController extends Controller
 
             $currency = InvoiceCurrency::normalize($request->input('currency', $booking_invoice->currency ?? InvoiceCurrency::EGP));
             $booking->loadMissing('bookingContainers');
+            app(\App\Services\CompanyTransportationPriceResolver::class)->applyToBooking($booking);
             $invoice_data = array_merge(
                 [
                     'booking_id' => $booking->id,

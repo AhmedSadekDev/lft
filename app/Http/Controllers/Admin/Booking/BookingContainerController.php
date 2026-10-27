@@ -115,6 +115,10 @@ class BookingContainerController extends Controller
                     ['booking_id' => $booking->id]
                 )
             );
+            // Fill from company Excel tariff only when the form left price empty.
+            if ((float) ($op->price ?? 0) <= 0 && (float) ($op->foreign_amount ?? 0) <= 0) {
+                app(\App\Services\CompanyTransportationPriceResolver::class)->applyToContainer($op);
+            }
 
             // Commit the transaction
             DB::commit();
@@ -189,6 +193,11 @@ class BookingContainerController extends Controller
             $booking_container->update($validatedData);
             for ($type = $oldStatus; $type < $targetStatus; $type++) {
                 app(\App\Services\ContainerStageService::class)->approve($booking_container->id, $type);
+            }
+            $booking_container->refresh();
+            // Fill from company Excel tariff only when price is still empty after save.
+            if ((float) ($booking_container->price ?? 0) <= 0 && (float) ($booking_container->foreign_amount ?? 0) <= 0) {
+                app(\App\Services\CompanyTransportationPriceResolver::class)->applyToContainer($booking_container);
             }
 
             DB::commit();

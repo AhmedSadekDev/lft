@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Booking;
 use App\Models\BookingContainer;
 use App\Models\CompanyTransportation;
 
@@ -52,8 +53,64 @@ class CompanyTransportationPriceResolver
         }
 
         $price = (float) $tariff->price;
+        if ((float) $container->price === $price) {
+            return $price;
+        }
+
         $container->update(['price' => $price]);
 
         return $price;
+    }
+
+    /**
+     * Sync every container on a booking from company tariffs (used before invoicing).
+     *
+     * @return int number of containers that received a tariff price
+     */
+    public function applyToBooking(Booking $booking): int
+    {
+        $booking->loadMissing('bookingContainers');
+        $applied = 0;
+        foreach ($booking->bookingContainers as $container) {
+            if ($this->applyToContainer($container) !== null) {
+                $applied++;
+            }
+        }
+        if ($applied > 0) {
+            $booking->unsetRelation('bookingContainers');
+            $booking->load('bookingContainers');
+        }
+
+        return $applied;
+    }
+
+    /**
+     * After Excel import: fill prices on open (uninvoiced) containers for this company.
+     *
+     * @return int number of containers updated
+     */
+    public function applyToOpenBookingsForCompany(int $companyId): int
+    {
+        $updated = 0;
+        BookingContainer::query()
+            ->whereHas('booking', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId)->whereDoesntHave('invoice');
+            })
+            ->whereNotNull('container_id')
+            ->whereNotNull('departure_id')
+            ->whereNotNull('loading_id')
+            ->whereNotNull('aging_id')
+            ->orderBy('id')
+            ->chunkById(100, function ($containers) use (&$updated) {
+                foreach ($containers as $container) {
+                    $before = (float) $container->price;
+                    $applied = $this->applyToContainer($container);
+                    if ($applied !== null && $applied !== $before) {
+                        $updated++;
+                    }
+                }
+            });
+
+        return $updated;
     }
 }

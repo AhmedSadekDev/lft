@@ -35,7 +35,12 @@ class CompanyTransportationPriceResolverTest extends TestCase
         Schema::create('bookings', function (Blueprint $t) {
             $t->id();
             $t->unsignedBigInteger('company_id')->nullable();
+            $t->string('public_code', 5)->nullable();
             $t->timestamps();
+        });
+        Schema::create('invoices', function (Blueprint $t) {
+            $t->id();
+            $t->unsignedBigInteger('booking_id');
         });
         Schema::create('booking_containers', function (Blueprint $t) {
             $t->id();
@@ -138,5 +143,31 @@ class CompanyTransportationPriceResolverTest extends TestCase
 
         $this->assertNull($applied);
         $this->assertSame(0.0, (float) $container->fresh()->price);
+    }
+
+    public function test_apply_to_booking_fills_zero_prices_before_invoice(): void
+    {
+        $booking = Booking::create(['company_id' => $this->checkpointId]);
+        $zero = BookingContainer::create([
+            'booking_id' => $booking->id,
+            'container_id' => $this->containerTypeId,
+            'departure_id' => 10,
+            'loading_id' => 20,
+            'aging_id' => 30,
+            'price' => 0,
+        ]);
+        BookingContainer::create([
+            'booking_id' => $booking->id,
+            'container_id' => $this->containerTypeId,
+            'departure_id' => 99,
+            'loading_id' => 20,
+            'aging_id' => 30,
+            'price' => 0,
+        ]);
+
+        $count = app(CompanyTransportationPriceResolver::class)->applyToBooking($booking->fresh());
+
+        $this->assertSame(1, $count);
+        $this->assertSame(18000.0, (float) $zero->fresh()->price);
     }
 }

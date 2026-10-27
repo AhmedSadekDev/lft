@@ -30,6 +30,10 @@ New zeros: no matching company-scoped row (or no policy yet) → price left at 0
   - `orderByDesc('id')` for deterministic latest row  
   - Does **not** force 0 when no match  
 - Wired into agent `DeliveryPolicyController` create + update (when cities change).
+- **2026-10-27:** Also apply tariffs when opening/saving a booking invoice, and after Excel import for that company (uninvoiced containers). Import upserts same route instead of duplicating rows.
+
+Match keys must be identical: `company_id + container_id + departure_id + loading_id + aging_id`.  
+If the booking route is دمياط→أكتوبر→التفريعة but the Excel only has دمياط→…→دمياط, price stays 0 until that exact route exists in the file.
 
 ## Tests
 

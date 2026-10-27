@@ -15,6 +15,8 @@ class TransportationsImport implements ToCollection, WithHeadingRow, WithValidat
 {
     public int $created = 0;
 
+    public int $updated = 0;
+
     /** @var list<string> */
     public array $skipped = [];
 
@@ -68,7 +70,7 @@ class TransportationsImport implements ToCollection, WithHeadingRow, WithValidat
                 continue;
             }
 
-            CompanyTransportation::create([
+            $payload = [
                 'container_id' => $container->id,
                 'container_data' => $container->full_name,
                 'company_id' => $company->id,
@@ -80,8 +82,24 @@ class TransportationsImport implements ToCollection, WithHeadingRow, WithValidat
                 'aging' => $agingLabel,
                 'aging_id' => $aging->id,
                 'price' => $row['price'] ?? 0,
-            ]);
-            $this->created++;
+            ];
+
+            $existing = CompanyTransportation::query()
+                ->where('company_id', $company->id)
+                ->where('container_id', $container->id)
+                ->where('departure_id', $departure->id)
+                ->where('loading_id', $loading->id)
+                ->where('aging_id', $aging->id)
+                ->orderByDesc('id')
+                ->first();
+
+            if ($existing) {
+                $existing->update($payload);
+                $this->updated++;
+            } else {
+                CompanyTransportation::create($payload);
+                $this->created++;
+            }
         }
     }
 

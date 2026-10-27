@@ -167,7 +167,7 @@ class CompanyTransportationController extends Controller
             $import = new TransportationsImport();
             Excel::import($import, $request->file('file'));
 
-            if ($import->created === 0) {
+            if ($import->created === 0 && $import->updated === 0) {
                 $detail = $import->skipped !== []
                     ? implode("\n", array_slice($import->skipped, 0, 8))
                     : 'لم يتم إنشاء أي صف. تأكد من رؤوس الأعمدة: company, container, departure, loading, aging, price';
@@ -176,8 +176,22 @@ class CompanyTransportationController extends Controller
             }
 
             $message = 'تم إضافة ' . $import->created . ' عرض سعر بنجاح.';
+            if ($import->updated > 0) {
+                $message .= ' وتحديث ' . $import->updated . ' عرض موجود.';
+            }
             if ($import->skipped !== []) {
                 $message .= ' تُخطّي ' . count($import->skipped) . ' صف: ' . implode(' | ', array_slice($import->skipped, 0, 5));
+            }
+
+            $companyId = $request->filled('company_id')
+                ? (int) $request->company_id
+                : null;
+            if ($companyId) {
+                $synced = app(\App\Services\CompanyTransportationPriceResolver::class)
+                    ->applyToOpenBookingsForCompany($companyId);
+                if ($synced > 0) {
+                    $message .= ' وتم تطبيق السعر على ' . $synced . ' حاوية بدون فاتورة.';
+                }
             }
 
             return redirect()->back()->with('success', $message);
