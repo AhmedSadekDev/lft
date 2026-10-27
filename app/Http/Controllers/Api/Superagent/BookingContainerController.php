@@ -457,6 +457,9 @@ class BookingContainerController extends Controller
                 'bookingContainers.notes',
                 'bookingContainers.agents',
                 'bookingContainers.delivery_policies.money_transfer',
+                'bookingContainers.delivery_policies.driver',
+                'bookingContainers.delivery_policies.car',
+                'bookingContainers.delivery_policies.image',
                 'bookingContainers.bookingPapers.image',
             ]);
 

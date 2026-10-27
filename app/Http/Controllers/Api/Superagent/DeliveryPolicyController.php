@@ -78,10 +78,11 @@ class DeliveryPolicyController extends Controller
     {
         try {
             $request->validate([
-                'delivery_policy_id' => 'required|exists:delivery_policies,id',
+                'delivery_policy_id' => 'required_without:booking_container_id|nullable|exists:delivery_policies,id',
+                'booking_container_id' => 'required_without:delivery_policy_id|nullable|exists:booking_containers,id',
             ]);
 
-            $policy = DeliveryPolicy::with([
+            $policyQuery = DeliveryPolicy::with([
                 'car',
                 'driver',
                 'money_transfer.transferer',
@@ -92,11 +93,23 @@ class DeliveryPolicyController extends Controller
                 'booking_containers.aging',
                 'booking_containers.branch',
                 'reeferTripLegs.images',
-            ])->findOrFail($request->delivery_policy_id);
+            ]);
+
+            if ($request->filled('delivery_policy_id')) {
+                $policy = $policyQuery->findOrFail($request->delivery_policy_id);
+            } else {
+                $policy = $policyQuery
+                    ->whereHas('booking_containers', fn ($q) => $q->where('booking_containers.id', (int) $request->booking_container_id))
+                    ->orderByDesc('id')
+                    ->first();
+                if (! $policy) {
+                    return $this->returnError(404, 'لا توجد بوليصة تحميل لهذه الحاوية');
+                }
+            }
 
             return $this->returnAllData(new DeliveryPolicyResource($policy), __('alerts.success'));
         } catch (\Exception $e) {
-            return $this->returnError(500, $e->getMessage());
+            return $this->returnError($e instanceof \Illuminate\Validation\ValidationException ? 422 : 500, $e->getMessage());
         }
     }
 }

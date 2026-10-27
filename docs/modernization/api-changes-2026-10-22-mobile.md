@@ -201,6 +201,28 @@ Base agent: `/api/agent/` — Superagent: `/api/superagent/` — Public: `/api/b
 
 ---
 
+## 11) مسؤول — عرض بوليصة التحميل جنب الإيصالات
+
+في شاشة تفاصيل الحاوية / مراجعة إيصالات التحميل:
+
+| مفتاح | المعنى |
+|--------|--------|
+| `has_delivery_policy` | `1` لو المندوب أنشأ بوليصة، `0` لو لأ |
+| `delivery_policy_id` | معرّف البوليصة (أو null) |
+| `delivery_policy` | ملخص: سائق، سيارة، قيمة، تاريخ، `image` |
+
+المصادر:
+- `GET /api/superagent/booking/details?...` → داخل كل حاوية
+- `GET /api/superagent/booking/stage_receipts?booking_container_id=&type_id=1`
+- `GET /api/superagent/booking/pending_stage_receipts?type_id=1`
+
+عرض التفاصيل الكاملة:
+`POST /api/superagent/delivery_policy_details` بـ `delivery_policy_id` **أو** `booking_container_id`.
+
+التطبيق: زر **عرض البوليصة** جنب **عرض الإيصالات**؛ لو `has_delivery_policy=0` عطّل الزر أو أظهر تنبيه إن المندوب لم ينشئ بوليصة.
+
+---
+
 ## Checklist سريع للتطبيق
 
 1. [ ] مصروف عام: متبعتش `type_id` / `booking_container_id`
@@ -213,3 +235,4 @@ Base agent: `/api/agent/` — Superagent: `/api/superagent/` — Public: `/api/b
 8. [ ] مصروفات: استخدم `date` / `time` / `registered_at` لو هتعرض وقت التسجيل
 9. [ ] reset password مندوب/سوبر: بعد verifyOtp ابعت `email` + `password` + `confirm_password` فقط (من غير `reset_token`)
 10. [ ] صرف وارد: متطلبش جواب التحميل؛ اعتمد `requires_loading_answer=false` و`is_loading_done` عند المسؤول
+11. [ ] مسؤول تحميل: زر «عرض البوليصة» جنب الإيصالات عبر `has_delivery_policy` / `delivery_policy_details`

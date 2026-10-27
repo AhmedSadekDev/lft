@@ -7,6 +7,7 @@ use App\Http\Resources\Api\Agent\ExpenseResource;
 use App\Models\AgentExpense;
 use App\Models\BookingContainer;
 use App\Models\BookingContainerStage;
+use App\Models\DeliveryPolicy;
 use App\Services\ContainerStageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,11 @@ class ContainerStageController extends Controller
                     ->whereColumn('booking_container_id', 'booking_containers.id')
                     ->where('type_id', $type)
                     ->limit(1),
+                'delivery_policy_id_sub' => DB::table('delivery_policy_containers')
+                    ->select('delivery_policy_id')
+                    ->whereColumn('booking_container_id', 'booking_containers.id')
+                    ->orderByDesc('delivery_policy_id')
+                    ->limit(1),
             ])
             ->orderBy('booking_containers.id')
             ->paginate(50);
@@ -44,6 +50,8 @@ class ContainerStageController extends Controller
             'type_id' => $type,
             'agent_ids' => $container->agents->pluck('id')->unique()->values(),
             'receipts_version' => (int) ($container->receipts_version_sub ?? 1),
+            'has_delivery_policy' => (int) ((int) ($container->delivery_policy_id_sub ?? 0) > 0),
+            'delivery_policy_id' => $container->delivery_policy_id_sub ? (int) $container->delivery_policy_id_sub : null,
         ]);
 
         $pagination = [
@@ -88,6 +96,13 @@ class ContainerStageController extends Controller
                 ->where('type_id', $data['type_id'])
                 ->get();
 
+            // Avoid pivot withTimestamps() (legacy DBs / test schemas may lack pivot timestamps).
+            $policy = DeliveryPolicy::query()
+                ->whereHas('booking_containers', fn ($q) => $q->where('booking_containers.id', $container->id))
+                ->with(['driver', 'car', 'money_transfer', 'image'])
+                ->orderByDesc('id')
+                ->first();
+
             return $this->returnAllData([
                 'booking_container_id' => $container->id,
                 'type_id' => (int) $data['type_id'],
@@ -95,6 +110,19 @@ class ContainerStageController extends Controller
                 'receipts_closed_at' => $stage->receipts_closed_at,
                 'receipts_closed_by' => $stage->receipts_closed_by,
                 'expenses' => ExpenseResource::collection($expenses)->resolve(),
+                // جنب «عرض الإيصالات»: المدير يراجع بوليصة التحميل قبل التأكيد.
+                'has_delivery_policy' => (int) ($policy !== null),
+                'delivery_policy_id' => $policy?->id,
+                'delivery_policy' => $policy ? [
+                    'id' => $policy->id,
+                    'driver_name' => $policy->driver?->name ?? '',
+                    'car_number' => $policy->car?->car_number ?? '',
+                    'value' => $policy->money_transfer?->value ?? '',
+                    'date' => $policy->date ?? '',
+                    'address' => $policy->address ?? '',
+                    'is_settled' => $policy->is_settled,
+                    'image' => $policy->image?->image ?? '',
+                ] : null,
             ], __('alerts.success'));
         });
     }

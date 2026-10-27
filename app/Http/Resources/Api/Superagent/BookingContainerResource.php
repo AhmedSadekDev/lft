@@ -42,6 +42,9 @@ class BookingContainerResource extends JsonResource
             'aging_port' => $this->aging?->title ?? '',
             'departure' => $this->departure?->title ?? '',
             'loading' => $this->loading?->title ?? '',
+            // زر «عرض البوليصة» جنب الإيصالات — null = المندوب لسه ما عملش بوليصة.
+            'has_delivery_policy' => (int) $this->delivery_policies->isNotEmpty(),
+            'delivery_policy_id' => $this->delivery_policies->first()?->id,
             'delivery_policy' => ($policy = $this->delivery_policies->first()) ? [
                 'id' => $policy->id,
                 'driver_name' => $policy->driver?->name ?? '',
@@ -49,8 +52,10 @@ class BookingContainerResource extends JsonResource
                 'value' => $policy->money_transfer?->value ?? '',
                 'custody_usd' => $policy->custody_usd !== null ? (float) $policy->custody_usd : null,
                 'date' => $policy->date ?? '',
+                'address' => $policy->address ?? '',
                 'is_settled' => $policy->is_settled,
                 'agent_id' => $policy->money_transfer?->transferer_id,
+                'image' => $policy->image?->image ?? '',
             ] : null,
             "yard_title" => $this?->booking?->yard?->title ?? "",
             "yard_id" => $this?->booking?->yard?->id ?? "",

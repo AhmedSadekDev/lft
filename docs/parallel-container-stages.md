@@ -160,7 +160,7 @@ POST /api/superagent/container-step-approve
 ### مراجعة وإقفال الإيصالات
 
 1. `GET /api/superagent/booking/pending_stage_receipts?type_id=1` يعرض الحاويات المكلّف بها مندوبون والمتاحة للتحميل التي ما زالت إيصالات تحميلها مفتوحة، قبل اعتماد التشغيل أو بعده، في صفحات من 50 عنصرًا. استخدم `2` للتعتيق بعد اعتماد التحميل.
-2. `GET /api/superagent/booking/stage_receipts?booking_container_id=100&type_id=1` يعيد قائمة المصروفات وإصدارها المتسق `receipts_version` وحالة الإقفال.
+2. `GET /api/superagent/booking/stage_receipts?booking_container_id=100&type_id=1` يعيد قائمة المصروفات وإصدارها المتسق `receipts_version` وحالة الإقفال، مع `has_delivery_policy` / `delivery_policy` لمراجعة بوليصة التحميل جنب الإيصالات.
 3. بعد مراجعة هذه القائمة، أرسل:
 
 ```http
