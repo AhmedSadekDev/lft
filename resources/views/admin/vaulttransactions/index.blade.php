@@ -41,7 +41,10 @@
                 </button>
                 <!-- زر تصدير Excel -->
                 <div class="p-2">
-                    <button class="btn btn-primary" type="button" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> تصدير إلى Excel</button>
+                    <a class="btn btn-primary"
+                       href="{{ route('vaultransactions.export', array_filter(['from' => request('from'), 'to' => request('to'), 'ids' => $vaulttransactions->pluck('id')->implode(',')])) }}">
+                        <i class="fas fa-file-excel"></i> تصدير إلى Excel
+                    </a>
                 </div>
             </div>
         </div>
@@ -102,7 +105,10 @@
                             <td class="text-center">{{ $item->bank?->name ?? '-' }}</td>
                             <td>{{ $item->name ?? '-' }}</td>
                             <td class="text-center">
-                                <strong class="text-danger">{{ number_format($item->amount ?? 0, 2) }} جنيه</strong>
+                                <strong class="{{ (int) $item->type === 1 ? 'text-success' : 'text-danger' }}">
+                                    {{ number_format($item->amount ?? 0, 2) }} جنيه
+                                    <small>({{ (int) $item->type === 1 ? 'وارد' : 'صرف' }})</small>
+                                </strong>
                             </td>
                             <td>{{ $item->agient?->name ?? '-' }}</td>
                             <td class="text-center">{{ $item->created_at ?? '-' }}</td>
@@ -188,36 +194,5 @@
         }
 
 
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script>
-        function exportToExcel() {
-            // الحصول على البيانات من الجدول
-            let table = document.getElementById("vaultTransactionsTable");
-            let wb = XLSX.utils.book_new();
-
-            // تحويل الجدول إلى ورقة عمل
-            let ws = XLSX.utils.table_to_sheet(table, {
-                raw: false,
-                dateNF: 'dd/mm/yyyy'
-            });
-
-            // تنسيق الأعمدة
-            ws['!cols'] = [
-                { wch: 10 },  // #
-                { wch: 20 },  // البنك
-                { wch: 30 },  // الاسم
-                { wch: 15 },  // المبلغ
-                { wch: 20 },  // المندوب
-                { wch: 15 },  // التاريخ
-                { wch: 15 }   // الإجراءات
-            ];
-
-            // إضافة الورقة إلى المصنف
-            XLSX.utils.book_append_sheet(wb, ws, "معاملات الخزنة");
-
-            // تصدير الملف
-            XLSX.writeFile(wb, "معاملات_الخزنة_" + new Date().toISOString().split('T')[0] + ".xlsx");
-        }
     </script>
 @endpush

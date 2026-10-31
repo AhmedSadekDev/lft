@@ -24,16 +24,20 @@ class VaultTransactionController extends Controller
             $vaulttransactionsQuery->where('created_at', '<=', $request->to);
         }
 
-        $vaulttransactions = $vaulttransactionsQuery->where('type', 0)->latest()->get();
+        // type 0 = صرف / type 1 = وارد (مثل إرجاع مندوب بعد الموافقة)
+        $vaulttransactions = $vaulttransactionsQuery->latest()->get();
 
         return view('admin.vaulttransactions.index', compact('vaulttransactions'));
     }
 
     public function export(Request $request)
     {
+        $ids = $request->filled('ids') ? explode(',', $request->ids) : null;
 
-        $ids = explode(',', $request->ids);
-        return Excel::download(new VaultTransactionExport($ids), 'transactions.xlsx');
+        return Excel::download(
+            new VaultTransactionExport($ids, $request),
+            'vault-transactions-' . now()->format('Y-m-d') . '.xlsx'
+        );
     }
 
     public function edit($id)

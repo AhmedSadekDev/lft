@@ -78,12 +78,12 @@ class MoneyTransferController extends Controller
         
         $vault->update(['amount' => $vault->amount - $value]);
 
-        // log vault deduction
+        // log vault deduction — column is agient_id (legacy spelling), not agent_id
         VaultTransaction::create([
             'name' => 'صرف عهدة للمندوب: ' . ($agent->name ?? ''),
             'amount' => $value,
             'type' => 0,
-            'agent_id' => $agent->id,
+            'agient_id' => $agent->id,
         ]);
 
         SaveNotification::create($title, $text, $agent->id, Agent::class,AppNotification::specific);

@@ -2,45 +2,59 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\AgentAccountExport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Agent\StoreRequest;
-use App\Http\Requests\Admin\Agent\UpdateRequest;
 use App\Models\Agent;
-use App\Models\LogActivity;
 use App\Models\AgentExpense;
-use App\Notifications\AssignAgentPasswordNotification;
-use App\Notifications\AssignPasswordNotification;
-use App\Services\PasswordResetAgentService;
+use App\Models\MoneyTransfer;
+use App\Services\AgentVaultReturnService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class ExpenseController extends Controller
 {
-
     public function agent_expenses(Agent $agent)
     {
-        $financial_custodies = collect();
-        $expenses = collect();
-
-        $financial_custodies = $agent->sended_financial_custodies()
+        $incoming = $agent->financial_custodies()
             ->with('transferer')
-            ->orderBy("id", "desc")
+            ->orderBy('id', 'desc')
             ->get();
-        // dd($financial_custodies);
+
+        $outgoing = $agent->sended_financial_custodies()
+            ->with(['transferer', 'transfered'])
+            ->orderBy('id', 'desc')
+            ->get();
+
         $expenses = $agent->expenses()
             ->with(['agent', 'booking', 'bookingService.agent', 'bookingService.creator'])
-            ->orderBy("id", "desc")
+            ->orderBy('id', 'desc')
             ->get();
-        // dd($expenses);
-        $merged = $financial_custodies->concat($expenses);
 
-        $ordered = $merged->sortBy('created_at')->values();
-        $allExpenses = $ordered;
-        // dd($allExpenses);
+        // Unique by id — incoming/outgoing can overlap if transferer == transfered historically
+        $transfers = $incoming->concat($outgoing)->unique('id')->values();
+
+        $allExpenses = $transfers->concat($expenses)->sortBy('created_at')->values();
         $awaitingReviewIds = $agent->expenses()->awaitingReview()->pluck('id')->flip();
+        $pendingVaultReturnIds = $agent->sended_financial_custodies()
+            ->where('type', MoneyTransfer::vaultReturnPending)
+            ->pluck('id')
+            ->flip();
 
-        return view('admin.agents.expenses.index', compact("allExpenses", "agent", "awaitingReviewIds"));
+        return view('admin.agents.expenses.index', compact(
+            'allExpenses',
+            'agent',
+            'awaitingReviewIds',
+            'pendingVaultReturnIds'
+        ));
+    }
+
+    public function export_agent_expenses(Agent $agent)
+    {
+        $filename = 'agent-account-' . $agent->id . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        return Excel::download(new AgentAccountExport($agent), $filename);
     }
 
     public function review_agent_expenses(Agent $agent)
@@ -80,7 +94,7 @@ class ExpenseController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => $Exception->getMessage(),
-                ], $Exception instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
+                ], $Exception instanceof HttpExceptionInterface
                     ? $Exception->getStatusCode()
                     : 500);
             }
@@ -89,11 +103,64 @@ class ExpenseController extends Controller
         }
     }
 
+    public function approve_vault_return($id)
+    {
+        try {
+            app(AgentVaultReturnService::class)->approve((int) $id);
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => true, 'message' => 'تمت الموافقة على التحويل للخزنة'], 200);
+            }
+
+            return back()->with('success', 'تمت الموافقة على التحويل للخزنة');
+        } catch (\Exception $e) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], $e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500);
+            }
+
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function reject_vault_return($id)
+    {
+        try {
+            app(AgentVaultReturnService::class)->reject((int) $id);
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => true, 'message' => 'تم رفض التحويل وإعادة المبلغ للمندوب'], 200);
+            }
+
+            return back()->with('success', 'تم رفض التحويل وإعادة المبلغ للمندوب');
+        } catch (\Exception $e) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], $e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500);
+            }
+
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
     public function booking_container_expenses($id)
     {
         $allExpenses = AgentExpense::with(['agent', 'bookingService.agent', 'bookingService.creator'])
             ->where('booking_container_id', $id)->get();
-        return view('admin.bookings.booking-containers.expenses', compact("allExpenses"));
+
+        return view('admin.bookings.booking-containers.expenses', compact('allExpenses'));
     }
 
     public function destroy($id)
@@ -106,7 +173,7 @@ class ExpenseController extends Controller
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => __('alerts.deleted_successfully')
+                    'message' => __('alerts.deleted_successfully'),
                 ], 200);
             }
 
@@ -119,12 +186,11 @@ class ExpenseController extends Controller
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => $Exception->getMessage()
+                    'message' => $Exception->getMessage(),
                 ], 500);
             }
 
             return back()->with('error', $Exception->getMessage());
         }
     }
-
 }

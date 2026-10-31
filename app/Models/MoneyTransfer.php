@@ -15,8 +15,12 @@ class MoneyTransfer extends Model
     const deliveryPolicy = 3;
     const settle = 4;
     const officeCommission = 5; // دخان المكتب
+    /** إرجاع مندوب → خزنة بانتظار موافقة الحسابات (بدون عمود approval — type فقط). */
+    const vaultReturnPending = 6;
     const carPayment = 7; // سداد سيارة
     const supplierPayment = 8; // سداد مورد
+    /** إرجاع مندوب → خزنة بعد موافقة الحسابات. */
+    const vaultReturnApproved = 9;
 
     protected $guarded = [];
 
@@ -50,6 +54,24 @@ class MoneyTransfer extends Model
 
         if ($this->type == self::deliveryPolicy) {
             return __('main.custody_transfer') . '   -   ' . ($this->transfered?->name ?? "");
+        }
+
+        if ((int) $this->type === self::vaultReturnPending) {
+            $title = __('main.transfer_to_vault') . '   -   ' . ($this->transferer?->name ?? '') . ' (بانتظار المراجعة)';
+            if ($this->notes) {
+                $title .= '   -   ' . $this->notes;
+            }
+
+            return $title;
+        }
+
+        if ((int) $this->type === self::vaultReturnApproved) {
+            $title = __('main.transfer_to_vault') . '   -   ' . ($this->transferer?->name ?? '');
+            if ($this->notes) {
+                $title .= '   -   ' . $this->notes;
+            }
+
+            return $title;
         }
 
         if ($this->type == self::transferAgent) {

@@ -52,7 +52,7 @@
 
                     <div class="form-group">
                         <label for="valueInput">{{ __('main.amount') }}</label>
-                        <input class="form-control" id="valueInput" type="number" name="amount"
+                        <input class="form-control" id="valueInput" type="number" step="0.01" min="0.01" name="amount"
                             value="{{ old('amount') }}" required>
                         @error('amount')
                             <div class="text-danger">{{ $message }}</div>
@@ -60,13 +60,11 @@
                     </div>
                     <div class="form-group">
                         <label for="typeSelect">{{ __('admin.type') }}</label>
-                        <select id="typeSelect" class="form-control" name="type">
-                            <option value="0" @if (old('type') == 0 || (isset($vault) && $vault->type == 0)) selected @endif>
-                                {{ __('main.debit') }}</option>
-                            <option value="1" @if (old('type') == 1 || (isset($vault) && $vault->type == 1)) selected @endif>
-                                {{ __('main.credit') }}</option>
-                            <option value="2" @if (old('type') == 2 || (isset($vault) && $vault->type == 2)) selected @endif>
-                                {{ __('main.transfer') }}</option>
+                        <select id="typeSelect" class="form-control" name="type" required>
+                            <option value="0" @selected(old('type') == '0')>{{ __('main.debit_to_vault') }} (بنك ← خزنة)</option>
+                            <option value="1" @selected(old('type') == '1')>{{ __('main.credit') }} (من عميل)</option>
+                            <option value="2" @selected(old('type') == '2')>{{ __('main.transfer') }} (بنك ← بنك)</option>
+                            <option value="3" @selected(old('type', '3') == '3')>{{ __('main.transfer_from_vault') }} (خزنة ← بنك)</option>
                         </select>
                         @error('type')
                             <div class="text-danger">{{ $message }}</div>
@@ -82,7 +80,7 @@
                                 </option>
                             @endforeach
                         </select>
-                        @error('trans_bacompany_idnk_id')
+                        @error('company_id')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
@@ -90,15 +88,27 @@
                     <div class="form-group bankSelectDiv d-none">
                         <label for="bankSelect">{{ __('main.bank_tranferd') }}</label>
                         <select id="bankSelect" class="form-control" name="trans_bank_id">
-                            @foreach ($banks as $bank)
-                                <option value="{{ $bank->id }}" @if (old('trans_bank_id') == $bank->id) selected @endif>
-                                    {{ $bank->name }}
+                            @foreach ($banks as $otherBank)
+                                <option value="{{ $otherBank->id }}" @if (old('trans_bank_id') == $otherBank->id) selected @endif>
+                                    {{ $otherBank->name }}
                                 </option>
                             @endforeach
                         </select>
                         @error('trans_bank_id')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
+                    </div>
+
+                    <div class="form-group vaultInfoDiv d-none">
+                        <div class="alert alert-info mb-0">
+                            <strong>{{ __('main.vault') }}:</strong>
+                            {{ number_format((float) ($vault->amount ?? 0), 2) }} {{ __('main.currency') }}
+                            <br>
+                            <small>{{ __('main.select_transfer_from_vault_hint') }}</small>
+                        </div>
+                        @unless($vault)
+                            <div class="alert alert-danger mt-2 mb-0">لا توجد خزنة في النظام — أضف خزنة أولاً.</div>
+                        @endunless
                     </div>
 
 
@@ -126,20 +136,15 @@
 
 @push('js')
     <script>
-        $(document).on('change', '#typeSelect', function() {
-            let value = $(this).val();
+        function syncTypeFields() {
+            let value = $('#typeSelect').val();
 
-            if (value == 2) {
-                $('.bankSelectDiv').removeClass('d-none');
-            } else {
-                $('.bankSelectDiv').addClass('d-none');
-            }
+            $('.bankSelectDiv').toggleClass('d-none', value != 2);
+            $('.companySelectDiv').toggleClass('d-none', value != 1);
+            $('.vaultInfoDiv').toggleClass('d-none', value != 3);
+        }
 
-            if (value == 1) {
-                $('.companySelectDiv').removeClass('d-none');
-            } else {
-                $('.companySelectDiv').addClass('d-none');
-            }
-        });
+        $(document).on('change', '#typeSelect', syncTypeFields);
+        $(document).ready(syncTypeFields);
     </script>
 @endpush

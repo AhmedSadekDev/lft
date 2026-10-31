@@ -88,6 +88,17 @@ class BankTransactionServiceTest extends TestCase
         return $this->bankRow(['type' => 0, 'name' => 'سحب', 'amount' => (string) $amount]);
     }
 
+    /** Vault → bank (bank_trnsactions.type = 3); vault_transactions.type stays 0 (صرف). */
+    private function vaultDeposit(float $amount = 200): BankTrnsaction
+    {
+        DB::table('vault_transactions')->insert([
+            'bank_id' => 1, 'name' => 'تحويل من الخزنة', 'amount' => (string) $amount, 'type' => 0,
+            'created_at' => self::AT, 'updated_at' => self::AT,
+        ]);
+
+        return $this->bankRow(['type' => 3, 'name' => 'تحويل من الخزنة', 'amount' => (string) $amount]);
+    }
+
     private function bankRow(array $values): BankTrnsaction
     {
         $id = DB::table('bank_trnsactions')->insertGetId($values + [
@@ -169,6 +180,52 @@ class BankTransactionServiceTest extends TestCase
 
         $service->delete($transaction->id);
         $this->assertSame(['bank1' => 800.0, 'bank2' => 200.0, 'vault' => 300.0], $this->balances());
+    }
+
+    public function test_deleting_a_vault_to_bank_deposit_returns_the_money_to_the_vault(): void
+    {
+        // Balances as if 200 already moved vault→bank: vault 100, bank1 900
+        DB::table('vaults')->update(['amount' => '100']);
+        DB::table('banks')->where('id', 1)->update(['amount' => '900']);
+        $transaction = $this->vaultDeposit(200);
+
+        app(BankTransactionService::class)->delete($transaction->id);
+
+        $this->assertSame(['bank1' => 700.0, 'bank2' => 300.0, 'vault' => 300.0], $this->balances());
+        $this->assertDatabaseCount('bank_trnsactions', 0);
+        $this->assertDatabaseCount('vault_transactions', 0);
+    }
+
+    public function test_vault_deposit_is_not_deleted_when_the_bank_already_spent_the_money(): void
+    {
+        DB::table('vaults')->update(['amount' => '100']);
+        DB::table('banks')->where('id', 1)->update(['amount' => '50']);
+        $transaction = $this->vaultDeposit(200);
+
+        $this->assertRejected(fn () => app(BankTransactionService::class)->delete($transaction->id));
+
+        $this->assertSame(['bank1' => 50.0, 'bank2' => 300.0, 'vault' => 100.0], $this->balances());
+        $this->assertDatabaseCount('bank_trnsactions', 1);
+        $this->assertDatabaseCount('vault_transactions', 1);
+    }
+
+    public function test_editing_a_vault_deposit_amount_moves_the_difference_on_both_sides(): void
+    {
+        DB::table('vaults')->update(['amount' => '100']);
+        DB::table('banks')->where('id', 1)->update(['amount' => '900']);
+        $transaction = $this->vaultDeposit(200);
+        $service = app(BankTransactionService::class);
+
+        // Increase deposit by 50: more from vault → bank
+        $service->update($transaction->id, ['name' => 'تحويل من الخزنة', 'date' => '2026-10-01', 'amount' => 250]);
+        $this->assertSame(['bank1' => 950.0, 'bank2' => 300.0, 'vault' => 50.0], $this->balances());
+
+        // Decrease deposit by 100: return to vault
+        $service->update($transaction->id, ['name' => 'تحويل من الخزنة', 'date' => '2026-10-01', 'amount' => 150]);
+        $this->assertSame(['bank1' => 850.0, 'bank2' => 300.0, 'vault' => 150.0], $this->balances());
+
+        $service->delete($transaction->id);
+        $this->assertSame(['bank1' => 700.0, 'bank2' => 300.0, 'vault' => 300.0], $this->balances());
     }
 
     public function test_service_payment_of_a_booking_is_not_removed_from_the_bank_screen(): void

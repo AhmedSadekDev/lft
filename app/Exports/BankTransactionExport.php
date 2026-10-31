@@ -23,18 +23,21 @@ class BankTransactionExport implements FromCollection, ShouldAutoSize, WithHeadi
     */
     public function collection()
     {
-        return BankTrnsaction::whereIn('id', $this->ids)->get()->map(function($item) {
-            return [
-                'id' => $item->id,
-                'name' => $item->name,
-                'date' => $item->date,
-                'amount' => $item->amount,
-                'type' => $item->type_name,
-                'image' => $item->image ? asset($item->image) : '',
-                'bank' => $item->bank->name,
-                'addedby' => $item->user ? $item->user->name : ''
-            ];
-        });
+        return BankTrnsaction::with(['bank', 'user', 'transBank', 'company'])
+            ->whereIn('id', $this->ids)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'date' => $item->date,
+                    'amount' => $item->amount,
+                    'type' => $item->typeText(),
+                    'image' => $item->image ? asset($item->image) : '',
+                    'bank' => $item->bank?->name ?? '',
+                    'addedby' => $item->user?->name ?? '',
+                ];
+            });
     }
 
     public function headings(): array

@@ -42,12 +42,12 @@ class BankTrnsaction extends Model
     }
     public function typeText()
     {
-        if($this->type == 0){
-            return __('main.debit');
-        } elseif($this->type == 1){
-            return __('main.credit');
-        } else{
-            return __('main.transfer');
-        }
+        return match ((int) $this->type) {
+            0 => __('main.debit_to_vault'),
+            1 => __('main.credit'),
+            2 => __('main.transfer'),
+            3 => __('main.transfer_from_vault'),
+            default => __('main.transfer'),
+        };
     }
 }

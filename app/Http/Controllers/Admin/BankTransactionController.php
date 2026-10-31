@@ -59,8 +59,9 @@ class BankTransactionController extends Controller
         $bank = Bank::findOrfail($id);
         $banks = Bank::where('id', '!=', $id)->get();
         $companies  = Company::all();
+        $vault = Vault::first();
 
-        return view('admin.banktransactions.create', compact('bank', 'banks', 'companies'));
+        return view('admin.banktransactions.create', compact('bank', 'banks', 'companies', 'vault'));
     }
 
 
@@ -78,11 +79,11 @@ class BankTransactionController extends Controller
         $data = $request->validate([
             'bank_id' => 'required|exists:banks,id',
             'name' => 'required|string|max:255',
-            'amount' => 'required|numeric',
+            'amount' => 'required|numeric|gt:0',
             'date' => 'nullable',
-            'type' => 'required|in:0,1,2',
-            'trans_bank_id' => 'required_if:type,2|exists:banks,id',
-            'company_id' => 'required_if:type,1|exists:companies,id',
+            'type' => 'required|in:0,1,2,3',
+            'trans_bank_id' => 'required_if:type,2|nullable|exists:banks,id',
+            'company_id' => 'required_if:type,1|nullable|exists:companies,id',
             'image' => 'nullable|mimes:jpg,png,jpeg', // Changed to nullable to handle cases without images
         ]);
         $data['user_id'] = auth()->user()->id;
@@ -91,7 +92,12 @@ class BankTransactionController extends Controller
     
         try {
             $bank = Bank::lockForUpdate()->findOrFail($request->bank_id);
-            $vault = Vault::lockForUpdate()->firstOrFail();
+            $vault = Vault::lockForUpdate()->first();
+            if (! $vault && in_array((int) $request->type, [0, 3], true)) {
+                DB::rollBack();
+
+                return redirect()->back()->withInput()->with('error', 'لا توجد خزنة في النظام');
+            }
             // Handle image upload
             if ($request->hasFile('image')) {
                 $imageName = time() . '_transaction.' . $request->image->extension();
@@ -99,7 +105,7 @@ class BankTransactionController extends Controller
                 $this->uploadImage($request->image, $imageName, $imagePath);
                 $data['image'] = "Admin/images/{$imagePath}/{$imageName}";
             }
-            switch ($request->type) {
+            switch ((int) $request->type) {
                 case 2:
                     $transBank = Bank::lockForUpdate()->findOrFail($request->trans_bank_id);
     
@@ -125,6 +131,37 @@ class BankTransactionController extends Controller
                         'image' => $data['image'] ?? null
                     ]);
                     break;
+
+                case 3:
+                    // Vault → this bank
+                    if ((float) $vault->amount < (float) $request->amount) {
+                        DB::rollBack();
+
+                        return redirect()->back()->withInput()->with('error', __('main.vault_wallet_does_not_have_enough_amount'));
+                    }
+
+                    $vault->amount = (float) $vault->amount - (float) $request->amount;
+                    $bank->amount = (float) $bank->amount + (float) $request->amount;
+                    $vault->save();
+                    $bank->save();
+
+                    VaultTransaction::create([
+                        'bank_id' => $bank->id,
+                        'name' => $request->name,
+                        'amount' => $request->amount,
+                        'type' => 0, // صرف من الخزنة
+                    ]);
+
+                    BankTrnsaction::create([
+                        'bank_id' => $bank->id,
+                        'name' => $request->name,
+                        'date' => $request->date,
+                        'amount' => $request->amount,
+                        'type' => 3,
+                        'user_id' => auth()->user()->id,
+                        'image' => $data['image'] ?? null,
+                    ]);
+                    break;
     
                 case 0:
                     if ((float) $bank->amount < (float) $request->amount) {
@@ -137,6 +174,8 @@ class BankTransactionController extends Controller
                     $vault->amount += $request->amount;
     
                     $vault->save();
+                    // Legacy: bank→vault rows are stored as vault_transactions.type = 0
+                    // so BankTransactionService can still reverse them by timestamp link.
                     VaultTransaction::create([
                         'bank_id' => $bank->id,
                         'name' => $request->name,

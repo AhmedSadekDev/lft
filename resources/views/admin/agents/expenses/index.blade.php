@@ -2,7 +2,8 @@
 @section("content")
 @php
     $agentExpenseRows = $allExpenses->filter(fn ($item) => $item instanceof \App\Models\AgentExpense);
-    $pendingCount = $awaitingReviewIds->count();
+    $pendingVaultReturnIds = $pendingVaultReturnIds ?? collect();
+    $pendingCount = $awaitingReviewIds->count() + $pendingVaultReturnIds->count();
     $reviewedCount = $agentExpenseRows->reject(fn ($item) => $awaitingReviewIds->has($item->id))->count();
 @endphp
 <style>
@@ -208,6 +209,9 @@
                         <strong>{{ $reviewedCount }}</strong>
                     </span>
                 </div>
+                <a href="{{ route('expenses.agent_expenses.export', $agent) }}" class="btn btn-success font-weight-bolder">
+                    <i class="fas fa-file-excel"></i> تصدير Excel
+                </a>
                 @if ($awaitingReviewIds->isNotEmpty())
                     <form id="reviewExpensesForm" method="POST" action="{{ route('expenses.agent_expenses.review', $agent) }}"
                         onsubmit="return lftConfirmForm(this, { title: '{{ __('alerts.are_you_sure') }}', text: 'سيتم اعتماد {{ $awaitingReviewIds->count() }} إيصال وإخفاؤها من تطبيق المندوب. متابعة؟', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });">
@@ -247,7 +251,9 @@
                         @foreach ($allExpenses as $allExpense)
                             @php
                                 $isExpense = $allExpense instanceof \App\Models\AgentExpense;
-                                $isPending = $isExpense && $awaitingReviewIds->has($allExpense->id);
+                                $isTransfer = $allExpense instanceof \App\Models\MoneyTransfer;
+                                $isPendingVault = $isTransfer && $pendingVaultReturnIds->has($allExpense->id);
+                                $isPending = ($isExpense && $awaitingReviewIds->has($allExpense->id)) || $isPendingVault;
                                 $createdAt = method_exists($allExpense, 'getRawOriginal')
                                     ? $allExpense->getRawOriginal('created_at')
                                     : ($allExpense->created_at ?? null);
@@ -273,9 +279,13 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{ $isExpense
-                                        ? ($allExpense->responsible_name ?: '—')
-                                        : ($allExpense->transferer?->name ?? '—') }}
+                                    @if ($isExpense)
+                                        {{ $allExpense->responsible_name ?: '—' }}
+                                    @elseif ($isTransfer && (int) $allExpense->type === \App\Models\MoneyTransfer::fromDashboard)
+                                        {{ $allExpense->transfered?->name ?? $agent->name }}
+                                    @else
+                                        {{ $allExpense->transferer?->name ?? '—' }}
+                                    @endif
                                 </td>
                                 <td>
                                     <span class="lft-exp-value">
@@ -289,7 +299,7 @@
                                 </td>
                                 <td>
                                     @if ($isExpense)
-                                        @if ($isPending)
+                                        @if ($awaitingReviewIds->has($allExpense->id))
                                             <span class="lft-exp-status is-pending">
                                                 <i class="fas fa-clock"></i> بانتظار المراجعة
                                             </span>
@@ -298,6 +308,14 @@
                                                 <i class="fas fa-check-circle"></i> تمت المراجعة
                                             </span>
                                         @endif
+                                    @elseif ($isPendingVault)
+                                        <span class="lft-exp-status is-pending">
+                                            <i class="fas fa-clock"></i> بانتظار المراجعة
+                                        </span>
+                                    @elseif ($isTransfer && (int) $allExpense->type === \App\Models\MoneyTransfer::vaultReturnApproved)
+                                        <span class="lft-exp-status is-done">
+                                            <i class="fas fa-check-circle"></i> تمت المراجعة
+                                        </span>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
@@ -305,7 +323,7 @@
                                 <td>
                                     @if($isExpense && isset($allExpense->agent_id))
                                         <div class="lft-exp-actions">
-                                            @if ($isPending)
+                                            @if ($awaitingReviewIds->has($allExpense->id))
                                                 <button type="button"
                                                         class="btn btn-sm btn-approve"
                                                         onclick="ApproveExpense('{{ $allExpense->id }}')">
@@ -328,6 +346,23 @@
                                                 </button>
                                             @endif
                                         </div>
+                                    @elseif ($isPendingVault)
+                                        <div class="lft-exp-actions">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-approve"
+                                                    onclick="ApproveVaultReturn('{{ $allExpense->id }}')">
+                                                <i class="fas fa-check"></i> موافقة
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-reject"
+                                                    onclick="RejectVaultReturn('{{ $allExpense->id }}')">
+                                                <i class="fas fa-times"></i> رفض
+                                            </button>
+                                        </div>
+                                    @elseif ($isTransfer && (int) $allExpense->type === \App\Models\MoneyTransfer::vaultReturnApproved)
+                                        <span class="lft-exp-approved-label">
+                                            <i class="fas fa-shield-alt"></i> معتمد
+                                        </span>
                                     @endif
                                 </td>
                             </tr>
@@ -404,6 +439,74 @@
                     url: '{{ route("expenses.destroy", ":id") }}'.replace(':id', id),
                     data: { version: version },
                     type: 'delete',
+                    success: function () {
+                        Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 2000 });
+                        location.reload();
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: "{{ __('alerts.error') }}",
+                            text: xhr.responseJSON?.message || "{{ __('alerts.error_occurred') }}",
+                            icon: 'error',
+                        });
+                    }
+                });
+            });
+        }
+
+        function ApproveVaultReturn(id) {
+            Swal.fire({
+                title: 'اعتماد التحويل للخزنة؟',
+                text: 'سيتم إضافة المبلغ للخزنة بعد خصمه مسبقاً من عهدة المندوب.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'موافقة',
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-success mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                ajaxHeaders();
+                $.ajax({
+                    url: '{{ route("expenses.vault_return.approve", ":id") }}'.replace(':id', id),
+                    type: 'POST',
+                    success: function () {
+                        Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 2000 });
+                        location.reload();
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: "{{ __('alerts.error') }}",
+                            text: xhr.responseJSON?.message || "{{ __('alerts.error_occurred') }}",
+                            icon: 'error',
+                        });
+                    }
+                });
+            });
+        }
+
+        function RejectVaultReturn(id) {
+            Swal.fire({
+                title: 'رفض التحويل للخزنة؟',
+                text: 'سيتم إعادة المبلغ إلى عهدة المندوب.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'رفض',
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                ajaxHeaders();
+                $.ajax({
+                    url: '{{ route("expenses.vault_return.reject", ":id") }}'.replace(':id', id),
+                    type: 'POST',
                     success: function () {
                         Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 2000 });
                         location.reload();

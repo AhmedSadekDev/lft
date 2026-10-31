@@ -17,6 +17,6 @@ class VaultTransaction extends Model
     }
     public function agient()
     {
-        return $this->belongsTo(Agent::class);
+        return $this->belongsTo(Agent::class, 'agient_id');
     }
 }

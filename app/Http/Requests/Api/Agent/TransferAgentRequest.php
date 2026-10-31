@@ -24,9 +24,10 @@ class TransferAgentRequest extends FormRequest
     public function rules()
     {
         return [
-            'value'     => 'required|numeric',
+            'value'     => 'required|numeric|gt:0',
             'agent_id'  => 'nullable|exists:agents,id',
-            'notes'     => 'sometimes'
+            'vault'     => 'sometimes|boolean',
+            'notes'     => 'sometimes|nullable|string',
         ];
     }
 

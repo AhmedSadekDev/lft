@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\DB;
  */
 class BankTransactionService
 {
-    public const VAULT_WITHDRAWAL = 'vault_withdrawal';
+    public const VAULT_WITHDRAWAL = 'vault_withdrawal'; // bank → vault (type 0)
+    public const VAULT_DEPOSIT = 'vault_deposit'; // vault → bank (type 3)
     public const TRANSFER = 'transfer';
     public const COMPANY_PAYMENT = 'company_payment';
     public const OPENING_BALANCE_PAYMENT = 'opening_balance_payment';
@@ -38,6 +39,13 @@ class BankTransactionService
                     $vault = Vault::lockForUpdate()->firstOrFail();
                     $this->adjust($vault, -$amount, 'رصيد الخزنة لا يكفي لإلغاء السحب');
                     $this->adjust($bank, $amount);
+                    $vaultTransaction->delete();
+                    break;
+
+                case self::VAULT_DEPOSIT:
+                    $vault = Vault::lockForUpdate()->firstOrFail();
+                    $this->adjust($bank, -$amount, 'رصيد البنك لا يكفي لإلغاء التحويل من الخزنة');
+                    $this->adjust($vault, $amount);
                     $vaultTransaction->delete();
                     break;
 
@@ -78,7 +86,7 @@ class BankTransactionService
             $delta = round($newAmount - (float) $transaction->amount, 2);
 
             if ($delta != 0) {
-                abort_unless(in_array($kind, [self::VAULT_WITHDRAWAL, self::TRANSFER], true), 422, $kind === null
+                abort_unless(in_array($kind, [self::VAULT_WITHDRAWAL, self::VAULT_DEPOSIT, self::TRANSFER], true), 422, $kind === null
                     ? $this->unsupportedMessage($transaction)
                     : 'مبلغ سداد الشركة يُعدَّل من كشف حساب الشركة حتى تبقى الفواتير والبنك متطابقة.');
 
@@ -87,6 +95,10 @@ class BankTransactionService
                     $vault = Vault::lockForUpdate()->firstOrFail();
                     $this->adjust($bank, -$delta, 'رصيد البنك لا يكفي');
                     $this->adjust($vault, $delta, 'رصيد الخزنة لا يكفي لتقليل مبلغ السحب');
+                } elseif ($kind === self::VAULT_DEPOSIT) {
+                    $vault = Vault::lockForUpdate()->firstOrFail();
+                    $this->adjust($bank, $delta, 'رصيد البنك لا يكفي لتقليل مبلغ التحويل من الخزنة');
+                    $this->adjust($vault, -$delta, 'رصيد الخزنة لا يكفي');
                 } else {
                     $receiver = Bank::lockForUpdate()->findOrFail($transaction->trans_bank_id);
                     $this->adjust($bank, -$delta, 'رصيد البنك لا يكفي');
@@ -118,6 +130,12 @@ class BankTransactionService
 
         if ($type === 2 && $transaction->trans_bank_id) {
             return [self::TRANSFER, null];
+        }
+
+        if ($type === 3 && ! $transaction->company_id) {
+            $vaultTransaction = $this->linkedVaultTransaction($transaction);
+
+            return $vaultTransaction ? [self::VAULT_DEPOSIT, $vaultTransaction] : [null, null];
         }
 
         if ($type === 0 && ! $transaction->company_id) {

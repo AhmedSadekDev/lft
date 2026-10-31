@@ -6,14 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Agent\TransferAgentRequest;
 use App\Http\Resources\Api\Agent\NameResource;
 use App\Models\Agent;
-use App\Models\Vault;
-use App\Models\VaultTransaction;
 use App\Models\AppNotification;
 use App\Models\MoneyTransfer;
+use App\Services\AgentVaultReturnService;
 use App\Services\SaveNotification;
 use App\Services\SendNotification;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class TransferAgentController extends Controller
 {
@@ -46,62 +45,66 @@ class TransferAgentController extends Controller
             return $this->returnError(401, $Exception->getMessage());
         }
     }
+
     public function transfer_to_agent(TransferAgentRequest $request)
     {
         try {
-
             $agent = auth()->guard('agent')->user();
+            $toVault = $request->boolean('vault') || ! $request->filled('agent_id');
 
-            if ($agent->wallet < $request->value) {
+            if ($toVault) {
+                app(AgentVaultReturnService::class)->request(
+                    $agent,
+                    (float) $request->value,
+                    $request->input('notes')
+                );
+
+                return $this->returnResponseSuccessMessage(__('alerts.success'));
+            }
+
+            if ((float) $agent->wallet < (float) $request->value) {
                 return $this->returnError(200, __('main.you dont have enougth money'));
             }
-            $value = $request->value;
-            $data["value"] = $request->value;
-            $data["type"] = 2;
-            $data["transferer_type"] = "App\Models\Agent";
-            $data["transferer_id"] = $agent->id;
-            $data["transfered_type"] = "App\Models\Agent";
-            $data["transfered_id"] = $request->agent_id;
-            $moneyTransfer = MoneyTransfer::create($data);
 
-            $agent->wallet = $agent->wallet - $request->value;
-            $agent->save();
+            $value = (float) $request->value;
 
-            $transAgent = Agent::find($request->agent_id);
-            if($transAgent)
-            {
-                $transAgent->wallet = $transAgent->wallet + $request->value;
-                $transAgent->save();
-            }
-            if($request->vault)
-            {
-                VaultTransaction::create([
-                    'agient_id' => $agent->id,
-                    'name' => 'تحويل الي الخزنه',
-                    'amount' => $request->value,
-                    'type' => 1
+            DB::transaction(function () use ($agent, $request, $value) {
+                $agent = Agent::lockForUpdate()->findOrFail($agent->id);
+                abort_unless((float) $agent->wallet >= $value, 422, __('main.you dont have enougth money'));
+
+                $transAgent = Agent::lockForUpdate()->findOrFail($request->agent_id);
+
+                $moneyTransfer = MoneyTransfer::create([
+                    'value' => $value,
+                    'type' => MoneyTransfer::transferAgent,
+                    'transferer_type' => Agent::class,
+                    'transferer_id' => $agent->id,
+                    'transfered_type' => Agent::class,
+                    'transfered_id' => $transAgent->id,
+                    'notes' => $request->input('notes'),
                 ]);
-                $Vault = Vault::first();
-                $Vault->amount += $request->value;
-                $Vault->save();
-            }
 
-            $this->saveLogActivity($agent->id, Agent::class, $moneyTransfer->id, MoneyTransfer::class);
+                $agent->wallet = round((float) $agent->wallet - $value, 2);
+                $agent->save();
 
+                $transAgent->wallet = round((float) $transAgent->wallet + $value, 2);
+                $transAgent->save();
 
-            $title = __('new_notification');
-            $text = __('money_transferred', [
-                'agent' => $agent->name,
-                'value' => $value
-            ]);
+                $this->saveLogActivity($agent->id, Agent::class, $moneyTransfer->id, MoneyTransfer::class);
 
-            SaveNotification::create($title, $text, $moneyTransfer->transfered_id, Agent::class, AppNotification::specific);
-            // Push to the recipient agent (transfered), not the sender.
-            if ($transAgent) {
+                $title = __('new_notification');
+                $text = __('money_transferred', [
+                    'agent' => $agent->name,
+                    'value' => $value,
+                ]);
+
+                SaveNotification::create($title, $text, $moneyTransfer->transfered_id, Agent::class, AppNotification::specific);
                 SendNotification::send($transAgent->device_token ?? '', $title, $text);
-            }
+            });
 
             return $this->returnResponseSuccessMessage(__('alerts.success'));
+        } catch (HttpExceptionInterface $e) {
+            return $this->returnError($e->getStatusCode(), $e->getMessage());
         } catch (\Exception $Exception) {
             return $this->returnError(401, $Exception->getMessage());
         }
