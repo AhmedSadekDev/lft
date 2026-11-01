@@ -57,11 +57,59 @@ class ExpenseController extends Controller
         return Excel::download(new AgentAccountExport($agent), $filename);
     }
 
-    public function review_agent_expenses(Agent $agent)
+    public function review_agent_expenses(Agent $agent, Request $request)
     {
-        $count = app(\App\Services\StageExpenseService::class)->markReviewed($agent->id, null, auth()->id());
+        $ids = $request->input('ids');
+        if (is_string($ids)) {
+            $ids = array_filter(array_map('intval', explode(',', $ids)));
+        } elseif (is_array($ids)) {
+            $ids = array_values(array_filter(array_map('intval', $ids)));
+        } else {
+            $ids = null; // مراجعة الكل
+        }
 
-        return back()->with('success', $count ? "تمت مراجعة {$count} إيصال وخصم العهدة" : 'لا توجد إيصالات بانتظار المراجعة');
+        if ($ids !== null && $ids === []) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'اختر إيصالاً واحداً على الأقل'], 422);
+            }
+
+            return back()->with('error', 'اختر إيصالاً واحداً على الأقل');
+        }
+
+        try {
+            $count = app(\App\Services\StageExpenseService::class)->markReviewed(
+                $agent->id,
+                $ids,
+                auth()->id()
+            );
+            $message = $count
+                ? "تمت مراجعة {$count} إيصال وخصم العهدة"
+                : 'لا توجد إيصالات بانتظار المراجعة';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'count' => $count,
+                    'ids' => $ids ?? [],
+                ], 200);
+            }
+
+            return back()->with('success', $message);
+        } catch (\Exception $e) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], $e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500);
+            }
+
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     /**

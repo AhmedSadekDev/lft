@@ -185,6 +185,20 @@
         border: 1px solid rgba(239, 68, 68, 0.18) !important;
         color: #ef4444 !important;
     }
+    .lft-exp-check {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    #bulkApproveBar {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    #bulkApproveBar.is-visible {
+        display: inline-flex;
+    }
 </style>
 
 <div class="container-fluid lft-simple-page lft-exp-page">
@@ -213,6 +227,12 @@
                     <i class="fas fa-file-excel"></i> تصدير Excel
                 </a>
                 @if ($awaitingReviewIds->isNotEmpty())
+                    <div id="bulkApproveBar">
+                        <button type="button" class="btn btn-success font-weight-bolder" id="bulkApproveBtn" onclick="ApproveSelectedExpenses()">
+                            <i class="fas fa-check"></i>
+                            اعتماد المحدد (<span id="bulkSelectedCount">0</span>)
+                        </button>
+                    </div>
                     <form id="reviewExpensesForm" method="POST" action="{{ route('expenses.agent_expenses.review', $agent) }}"
                         onsubmit="return lftConfirmForm(this, { title: '{{ __('alerts.are_you_sure') }}', text: 'سيتم اعتماد {{ $awaitingReviewIds->count() }} إيصال وإخفاؤها من تطبيق المندوب. متابعة؟', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });">
                         @csrf
@@ -237,6 +257,13 @@
                 <table class="table table-hover lft-exp-table" id="table">
                     <thead class="thead-light">
                         <tr>
+                            <th scope="col" style="width: 42px;" class="text-center">
+                                @if ($awaitingReviewIds->isNotEmpty())
+                                    <input type="checkbox" class="lft-exp-check" id="selectAllPending"
+                                           title="تحديد كل الإيصالات بانتظار المراجعة"
+                                           onclick="toggleSelectAllPending(this)">
+                                @endif
+                            </th>
                             <th scope="col" style="width: 56px;">#</th>
                             <th scope="col" style="width: 72px;">صورة</th>
                             <th scope="col">{{ __('admin.title') }}</th>
@@ -253,13 +280,24 @@
                                 $isExpense = $allExpense instanceof \App\Models\AgentExpense;
                                 $isTransfer = $allExpense instanceof \App\Models\MoneyTransfer;
                                 $isPendingVault = $isTransfer && $pendingVaultReturnIds->has($allExpense->id);
-                                $isPending = ($isExpense && $awaitingReviewIds->has($allExpense->id)) || $isPendingVault;
+                                $isPendingExpense = $isExpense && $awaitingReviewIds->has($allExpense->id);
+                                $isPending = $isPendingExpense || $isPendingVault;
                                 $createdAt = method_exists($allExpense, 'getRawOriginal')
                                     ? $allExpense->getRawOriginal('created_at')
                                     : ($allExpense->created_at ?? null);
                                 $imageName = $isExpense ? $allExpense->image_agent_expenses : null;
                             @endphp
-                            <tr class="{{ $isPending ? 'lft-exp-row--pending' : '' }}">
+                            <tr class="{{ $isPending ? 'lft-exp-row--pending' : '' }}"
+                                data-expense-id="{{ $isExpense ? $allExpense->id : '' }}"
+                                data-pending-expense="{{ $isPendingExpense ? '1' : '0' }}">
+                                <td class="text-center">
+                                    @if ($isPendingExpense)
+                                        <input type="checkbox"
+                                               class="lft-exp-check js-expense-select"
+                                               value="{{ $allExpense->id }}"
+                                               onchange="syncBulkApproveBar()">
+                                    @endif
+                                </td>
                                 <td class="text-muted font-weight-bold">{{ $allExpense->id }}</td>
                                 <td>
                                     @if($imageName)
@@ -385,6 +423,108 @@
             });
         }
 
+        function selectedExpenseIds() {
+            return $('.js-expense-select:checked').map(function () {
+                return parseInt(this.value, 10);
+            }).get().filter(Boolean);
+        }
+
+        function syncBulkApproveBar() {
+            var ids = selectedExpenseIds();
+            var $bar = $('#bulkApproveBar');
+            $('#bulkSelectedCount').text(ids.length);
+            $bar.toggleClass('is-visible', ids.length > 0);
+
+            var $all = $('#selectAllPending');
+            var total = $('.js-expense-select').length;
+            if ($all.length && total) {
+                $all.prop('checked', ids.length === total);
+                $all.prop('indeterminate', ids.length > 0 && ids.length < total);
+            }
+        }
+
+        function toggleSelectAllPending(master) {
+            $('.js-expense-select').prop('checked', !!master.checked);
+            syncBulkApproveBar();
+        }
+
+        function markExpenseRowsApproved(ids) {
+            ids.forEach(function (id) {
+                var $row = $('tr[data-expense-id="' + id + '"]');
+                if (!$row.length) return;
+
+                $row.removeClass('lft-exp-row--pending').attr('data-pending-expense', '0');
+                $row.find('.js-expense-select').closest('td').empty();
+                $row.find('.lft-exp-status').replaceWith(
+                    '<span class="lft-exp-status is-done"><i class="fas fa-check-circle"></i> تمت المراجعة</span>'
+                );
+                $row.find('.lft-exp-actions').html(
+                    '<span class="lft-exp-approved-label"><i class="fas fa-shield-alt"></i> معتمد</span>'
+                );
+            });
+
+            var pendingLeft = parseInt($('.lft-exp-chip.is-pending strong').first().text(), 10) || 0;
+            var reviewed = parseInt($('.lft-exp-chip.is-done strong').first().text(), 10) || 0;
+            var n = ids.length;
+            $('.lft-exp-chip.is-pending strong').first().text(Math.max(0, pendingLeft - n));
+            $('.lft-exp-chip.is-done strong').first().text(reviewed + n);
+
+            var remainingChecks = $('.js-expense-select').length;
+            if (!remainingChecks) {
+                $('#selectAllPending').closest('th').empty();
+                $('#bulkApproveBar').removeClass('is-visible').hide();
+                $('#reviewExpensesForm').remove();
+            }
+            syncBulkApproveBar();
+        }
+
+        function ApproveSelectedExpenses() {
+            var ids = selectedExpenseIds();
+            if (!ids.length) {
+                Swal.fire({ title: 'اختر إيصالات أولاً', icon: 'info' });
+                return;
+            }
+
+            Swal.fire({
+                title: 'اعتماد المحدد؟',
+                text: 'سيتم اعتماد ' + ids.length + ' إيصال وخصم العهدة دون مغادرة الصفحة.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'اعتماد',
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-success mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
+            }).then(function (result) {
+                if (!result.isConfirmed) return;
+                ajaxHeaders();
+                $.ajax({
+                    url: '{{ route("expenses.agent_expenses.review", $agent) }}',
+                    type: 'POST',
+                    data: { ids: ids },
+                    success: function (res) {
+                        markExpenseRowsApproved(ids);
+                        Swal.fire({
+                            title: "{{ __('alerts.done') }}",
+                            text: res.message || '',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1800,
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: "{{ __('alerts.error') }}",
+                            text: xhr.responseJSON?.message || "{{ __('alerts.error_occurred') }}",
+                            icon: 'error',
+                        });
+                    }
+                });
+            });
+        }
+
         function ApproveExpense(id) {
             Swal.fire({
                 title: 'تأكيد الموافقة؟',
@@ -405,8 +545,8 @@
                     url: '{{ route("expenses.approve", ":id") }}'.replace(':id', id),
                     type: 'POST',
                     success: function () {
-                        Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 2000 });
-                        location.reload();
+                        markExpenseRowsApproved([parseInt(id, 10)]);
+                        Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 1500 });
                     },
                     error: function (xhr) {
                         Swal.fire({
@@ -440,8 +580,19 @@
                     data: { version: version },
                     type: 'delete',
                     success: function () {
-                        Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 2000 });
-                        location.reload();
+                        var $row = $('tr[data-expense-id="' + id + '"]');
+                        var wasPending = $row.attr('data-pending-expense') === '1';
+                        if ($row.length && $.fn.DataTable && $.fn.DataTable.isDataTable('#table')) {
+                            $('#table').DataTable().row($row).remove().draw(false);
+                        } else {
+                            $row.remove();
+                        }
+                        if (wasPending) {
+                            var pendingLeft = parseInt($('.lft-exp-chip.is-pending strong').first().text(), 10) || 0;
+                            $('.lft-exp-chip.is-pending strong').first().text(Math.max(0, pendingLeft - 1));
+                        }
+                        syncBulkApproveBar();
+                        Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 1500 });
                     },
                     error: function (xhr) {
                         Swal.fire({
@@ -521,5 +672,9 @@
                 });
             });
         }
+
+        $(document).ready(function () {
+            syncBulkApproveBar();
+        });
     </script>
 @endpush
