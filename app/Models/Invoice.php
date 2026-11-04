@@ -28,6 +28,7 @@ class Invoice extends Model
         'value_added_tax',
         'sales_tax',
         'discount',
+        'print_overrides',
     ];
 
     protected $attributes = [
@@ -40,6 +41,7 @@ class Invoice extends Model
         'transportation_json' => 'json',
         'taxed_services_json' => 'json',
         'untaxed_services_json' => 'json',
+        'print_overrides' => 'array',
         'usd_amount' => 'float',
     ];
 
@@ -225,12 +227,21 @@ class Invoice extends Model
         return $this->discount;
     }
 
+    /**
+     * Tax-paper total after VAT (commercial discount is NOT applied here).
+     * Kept as alias of after-tax for ETA / tax documents.
+     */
     public function getInvoiceTotalAfterDiscountAttribute()
     {
-        return round(
-            (float) $this->invoice_total_after_tax - (float) $this->discount_amount,
-            2
-        );
+        return round((float) $this->invoice_total_after_tax, 2);
+    }
+
+    /**
+     * Commercial discount amount (fixed), shown on the annex only.
+     */
+    public function getCommercialDiscountAmountAttribute()
+    {
+        return round((float) ($this->discount ?? 0), 2);
     }
 
 }

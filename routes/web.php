@@ -287,6 +287,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
                 ->name('booking-agent-expenses.edit');
             Route::put('agent-expenses/{agent_expense}', [BookingAgentExpenseController::class, 'update'])
                 ->name('booking-agent-expenses.update');
+            Route::post('agent-expenses/{agent_expense}/hide-from-invoice', [BookingAgentExpenseController::class, 'hideFromInvoice'])
+                ->name('booking-agent-expenses.hide-from-invoice');
+            Route::post('booking-services/{booking_service}/hide-from-invoice', [BookingServiceController::class, 'hideFromInvoice'])
+                ->name('booking-services.hide-from-invoice');
 
             // ----------------- Booking Invoices -----------------
             Route::resource(
@@ -424,6 +428,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     // ----------------- drivers -----------------
 
     // ----------------- vaults -----------------
+    Route::post('vaults/spend', [VaultController::class, 'spend'])->name('vaults.spend');
     Route::resource('vaults', VaultController::class);
     Route::get('vaults-exports', [VaultController::class, 'export'])->name('vaults.export');
 
@@ -474,6 +479,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     // تم إلغاء التقارير اليومية ودمجها في المصروفات العامة
     Route::get('/export_excel', [ReportController::class, 'exportExcel'])->name('reports.export_excel');
     Route::get('/general_expenses', [ReportController::class, 'general_expenses'])->name('reports.general_expenses');
+    Route::post('/general_expenses/store', [ReportController::class, 'general_expenses_store'])->name('reports.general_expenses.store');
     Route::post('/general_expenses/review', [ReportController::class, 'general_expenses_review'])->name('reports.general_expenses.review');
     Route::get('/general_expenses_export', [ReportController::class, 'general_expenses_export'])->name('reports.general_expenses.export');
 

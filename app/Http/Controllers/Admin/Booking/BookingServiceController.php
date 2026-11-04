@@ -16,7 +16,9 @@ use App\Models\VaultTransaction;
 use App\Models\BankTrnsaction;
 use App\Models\AgentExpense;
 use App\Services\BookingSupplierReceiptSync;
+use App\Services\InvoicePrintOverrideService;
 use App\Support\InvoiceCurrency;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class BookingServiceController extends Controller
@@ -126,6 +128,33 @@ class BookingServiceController extends Controller
 
     public function update(BookingServiceRequest $request, Booking $booking, BookingService $booking_service)
     {
+        $invoice = $booking->invoice;
+        if ($invoice) {
+            try {
+                $money = InvoiceCurrency::normalizeLine($request->only(['currency', 'price', 'exchange_rate']));
+                app(InvoicePrintOverrideService::class)->setServiceOverride(
+                    $invoice,
+                    (int) $booking_service->id,
+                    (float) ($money['price'] ?? $request->input('price')),
+                    false
+                );
+
+                $referer = session('booking_services_edit_referrer')
+                    ?? route('bookings.show', ['booking' => $booking->id]);
+                session()->forget('booking_services_edit_referrer');
+
+                return redirect($referer)->with(
+                    'success',
+                    'تم تحديث قيمة الفاتورة فقط — بدون تأثير على الخزنة/البنك/عهدة المندوب'
+                );
+            } catch (\Throwable $e) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', __('alerts.error_occurred') . ': ' . $e->getMessage());
+            }
+        }
+
         DB::beginTransaction();
         try {
             $oldPrice = $booking_service->price;
@@ -168,6 +197,35 @@ class BookingServiceController extends Controller
                 ->back()
                 ->withInput()
                 ->with('error', __('alerts.error_occurred') . ': ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Hide booking service from invoice print only — no vault/bank/agent refund.
+     */
+    public function hideFromInvoice(Request $request, Booking $booking, BookingService $booking_service)
+    {
+        abort_unless((int) $booking_service->booking_id === (int) $booking->id, 404);
+        $invoice = $booking->invoice;
+        abort_unless($invoice, 422, 'لا توجد فاتورة لهذا الطلب');
+
+        try {
+            app(InvoicePrintOverrideService::class)->hideServiceFromInvoice($invoice, (int) $booking_service->id);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم إخفاء الخدمة من الفاتورة بدون التأثير على الحركات المالية',
+                ]);
+            }
+
+            return back()->with('success', 'تم إخفاء الخدمة من الفاتورة بدون التأثير على الحركات المالية');
+        } catch (\Throwable $e) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+            }
+
+            return back()->with('error', $e->getMessage());
         }
     }
 

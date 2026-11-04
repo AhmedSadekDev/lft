@@ -223,7 +223,7 @@
                         <strong>{{ $reviewedCount }}</strong>
                     </span>
                 </div>
-                <a href="{{ route('expenses.agent_expenses.export', $agent) }}" class="btn btn-success font-weight-bolder">
+                <a href="{{ route('expenses.agent_expenses.export', array_filter(['agent' => $agent, 'from' => request('from'), 'to' => request('to')])) }}" class="btn btn-success font-weight-bolder">
                     <i class="fas fa-file-excel"></i> تصدير Excel
                 </a>
                 @if ($awaitingReviewIds->isNotEmpty())
@@ -236,6 +236,9 @@
                     <form id="reviewExpensesForm" method="POST" action="{{ route('expenses.agent_expenses.review', $agent) }}"
                         onsubmit="return lftConfirmForm(this, { title: '{{ __('alerts.are_you_sure') }}', text: 'سيتم اعتماد {{ $awaitingReviewIds->count() }} إيصال وإخفاؤها من تطبيق المندوب. متابعة؟', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });">
                         @csrf
+                        @foreach ($awaitingReviewIds->keys() as $pendingExpenseId)
+                            <input type="hidden" name="ids[]" value="{{ $pendingExpenseId }}">
+                        @endforeach
                         <button type="submit" class="btn btn-primary font-weight-bolder">
                             <i class="fas fa-check-double"></i>
                             مراجعة الكل ({{ $awaitingReviewIds->count() }})
@@ -252,6 +255,36 @@
             @if(session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
+
+            <form method="GET" action="{{ route('expenses.agent_expenses', $agent) }}" class="mb-4">
+                <div class="row align-items-end" style="gap: 0;">
+                    <div class="col-md-3 col-sm-6 mb-2">
+                        <label for="fromDate" class="font-weight-bold mb-1">من تاريخ</label>
+                        <input type="date" id="fromDate" name="from" value="{{ request('from') }}" class="form-control">
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-2">
+                        <label for="toDate" class="font-weight-bold mb-1">إلى تاريخ</label>
+                        <input type="date" id="toDate" name="to" value="{{ request('to') }}" class="form-control">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-2 d-flex flex-wrap" style="gap: 8px;">
+                        <button type="submit" class="btn btn-primary font-weight-bolder">
+                            <i class="fas fa-filter"></i> تطبيق الفلتر
+                        </button>
+                        @if(request('from') || request('to'))
+                            <a href="{{ route('expenses.agent_expenses', $agent) }}" class="btn btn-light font-weight-bolder">
+                                إلغاء الفلتر
+                            </a>
+                        @endif
+                    </div>
+                </div>
+                @if(request('from') || request('to'))
+                    <div class="text-muted font-size-sm mt-1">
+                        الفلتر النشط:
+                        @if(request('from')) من {{ request('from') }} @endif
+                        @if(request('to')) إلى {{ request('to') }} @endif
+                    </div>
+                @endif
+            </form>
 
             <div class="table-responsive">
                 <table class="table table-hover lft-exp-table" id="table">

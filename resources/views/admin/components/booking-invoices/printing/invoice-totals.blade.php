@@ -9,13 +9,6 @@
             </div>
         </div>
 
-        <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #ffc107;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 700; color: #495057; font-size: 9px;">الخصم:</span>
-                <span style="font-weight: 700; color: #dc3545; font-size: 10px;">{{ number_format($invoice->discount_amount ?? 0, 2) }} {{ $invoice->currencySymbol() }}</span>
-            </div>
-        </div>
-
         <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #28a745;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-weight: 700; color: #495057; font-size: 9px;">ضريبة القيمة المضافة ({{$invoice->value_added_tax ?? 0}}%):</span>
@@ -26,8 +19,8 @@
 
     <div style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); padding: 8px 12px; border-radius: 6px; margin-top: 4px; box-shadow: 0 4px 12px rgba(220, 20, 60, 0.25);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الفاتورة ({{ $invoice->currencyLabel() }}):</span>
-            <span style="font-weight: 700; color: #fff; font-size: 16px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format($invoice->invoice_total_after_discount ?? 0, 2) }} {{ $invoice->currencySymbol() }}</span>
+            <span style="font-weight: 700; color: #fff; font-size: 12px;">إجمالي الورقة الضريبية ({{ $invoice->currencyLabel() }}):</span>
+            <span style="font-weight: 700; color: #fff; font-size: 16px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 4px;">{{ number_format($invoice->invoice_total_after_tax ?? 0, 2) }} {{ $invoice->currencySymbol() }}</span>
         </div>
         @php
             $usdSummary = (float) ($invoice->usd_amount ?? 0);

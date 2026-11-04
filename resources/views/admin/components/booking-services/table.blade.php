@@ -79,7 +79,13 @@
                                 <i class="fas fa-edit text-primary"></i>
                             </a>
                         @endif
-                        @if (auth()->user()->hasPermissionTo('services.delete'))
+                        @if (auth()->user()->hasPermissionTo('services.delete') && isset($booking) && $booking->invoice)
+                            <button class="btn btn-icon btn-light btn-hover-warning btn-sm"
+                                title="إخفاء من الفاتورة"
+                                onclick="serviceHideFromInvoice(event, '{{ $booking->id }}', '{{ $service->id }}')">
+                                <i class="fas fa-eye-slash text-warning"></i>
+                            </button>
+                        @elseif (auth()->user()->hasPermissionTo('services.delete'))
                             <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
                                 onclick="serviceDelete(event, '{{ $service->id }}')">
                                 <i class="fas fa-trash text-danger"></i>
@@ -92,20 +98,40 @@
         @endforelse
 
         @if (isset($expensesServices))
+            @php
+                $invoiceForOverrides = isset($booking) ? $booking->invoice : null;
+                $overrideSvc = $invoiceForOverrides ? app(\App\Services\InvoicePrintOverrideService::class) : null;
+            @endphp
             @foreach($expensesServices as $expense)
-                <tr id="agent_expense_{{ $expense->id }}">
+                @php
+                    $hiddenFromInvoice = $invoiceForOverrides && $overrideSvc
+                        ? $overrideSvc->isExpenseHidden($invoiceForOverrides, (int) $expense->id)
+                        : false;
+                    $invoiceDisplayValue = $invoiceForOverrides && $overrideSvc
+                        ? $overrideSvc->effectiveExpenseAmount($invoiceForOverrides, $expense)
+                        : (float) $expense->value;
+                @endphp
+                <tr id="agent_expense_{{ $expense->id }}" @if($hiddenFromInvoice) class="table-secondary" @endif>
                     <td>
                         {{ $expense->id }}
                     </td>
                     <td>
                         {{ $expense->service?->name ?? __('main.not_found') }}
+                        @if($hiddenFromInvoice)
+                            <br><small class="text-warning">مخفي من الفاتورة</small>
+                        @endif
                     </td>
                     <td>
                         {{ filled($expense->notes) ? $expense->notes : '—' }}
                     </td>
                     <td>{{ $expense->responsible_name ?: '—' }}</td>
-                    <td class="services_total_price" data-price="{{ $expense->value }}">
-                        {{ $expense->value }}
+                    <td class="services_total_price" data-price="{{ $invoiceDisplayValue }}">
+                        @if($invoiceForOverrides && abs($invoiceDisplayValue - (float) $expense->value) > 0.009)
+                            <span class="d-block">{{ number_format($invoiceDisplayValue, 2) }} <small class="text-muted">(فاتورة)</small></span>
+                            <small class="text-muted">أصل المندوب: {{ number_format((float) $expense->value, 2) }}</small>
+                        @else
+                            {{ number_format((float) $expense->value, 2) }}
+                        @endif
                     </td>
                     <td>
                         @php
@@ -127,13 +153,20 @@
                     </td>
                     <td>
                         <div class="d-flex gap-2">
-                            @if (auth()->user()->hasPermissionTo('services.update') && isset($booking))
+                            @if (auth()->user()->hasPermissionTo('services.update') && isset($booking) && ! $hiddenFromInvoice)
                                 <a href="{{ route('booking-agent-expenses.edit', ['booking' => $booking->id, 'agent_expense' => $expense->id]) }}"
-                                   class="btn btn-icon btn-light btn-hover-primary btn-sm">
+                                   class="btn btn-icon btn-light btn-hover-primary btn-sm"
+                                   title="{{ $booking->invoice ? 'تعديل قيمة الفاتورة فقط' : __('admin.edit') }}">
                                     <i class="fas fa-edit text-primary"></i>
                                 </a>
                             @endif
-                            @if (auth()->user()->hasPermissionTo('services.delete'))
+                            @if (auth()->user()->hasPermissionTo('services.delete') && isset($booking) && $booking->invoice && ! $hiddenFromInvoice)
+                                <button type="button" class="btn btn-icon btn-light btn-hover-warning btn-sm"
+                                    title="إخفاء من الفاتورة (يبقى عند المندوب)"
+                                    onclick="agentExpenseHideFromInvoice(event, '{{ $booking->id }}', '{{ $expense->id }}')">
+                                    <i class="fas fa-eye-slash text-warning"></i>
+                                </button>
+                            @elseif (auth()->user()->hasPermissionTo('services.delete') && ! ($booking->invoice ?? null))
                                 <button type="button" class="btn btn-icon btn-light btn-hover-danger btn-sm"
                                     onclick="agentExpenseDelete(event, '{{ $expense->id }}')">
                                     <i class="fas fa-trash text-danger"></i>
@@ -235,6 +268,88 @@
                         }
                     });
                 }
+            });
+        }
+
+        function agentExpenseHideFromInvoice(e, bookingId, expenseId) {
+            e.preventDefault();
+            Swal.fire({
+                title: "{{ __('alerts.are_you_sure') }}",
+                text: 'سيتم إخفاء الإيصال من الفاتورة فقط، ويبقى في حساب المندوب والتطبيق.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "{{ __('alerts.confirm') }}",
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                var url = "{{ url('/dashboard/bookings') }}/" + bookingId + "/agent-expenses/" + expenseId + "/hide-from-invoice";
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                });
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    success: function(response) {
+                        $('#agent_expense_' + expenseId).fadeOut(200, function () { $(this).remove(); });
+                        Swal.fire({
+                            title: (response && response.message) ? response.message : "{{ __('alerts.success') }}",
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                        });
+                    },
+                    error: function(xhr) {
+                        var message = xhr.responseJSON && xhr.responseJSON.message
+                            ? xhr.responseJSON.message
+                            : '{{ __('alerts.error_occurred') }}';
+                        Swal.fire({ title: message, icon: 'error', showConfirmButton: false, timer: 3000 });
+                    }
+                });
+            });
+        }
+
+        function serviceHideFromInvoice(e, bookingId, serviceId) {
+            e.preventDefault();
+            Swal.fire({
+                title: "{{ __('alerts.are_you_sure') }}",
+                text: 'سيتم إخفاء الخدمة من الفاتورة فقط بدون استرداد من الخزنة/البنك/المندوب.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "{{ __('alerts.confirm') }}",
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                var url = "{{ url('/dashboard/bookings') }}/" + bookingId + "/booking-services/" + serviceId + "/hide-from-invoice";
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                });
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    success: function(response) {
+                        $('#service_' + serviceId).fadeOut(200, function () { $(this).remove(); });
+                        Swal.fire({
+                            title: (response && response.message) ? response.message : "{{ __('alerts.success') }}",
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                        });
+                    },
+                    error: function(xhr) {
+                        var message = xhr.responseJSON && xhr.responseJSON.message
+                            ? xhr.responseJSON.message
+                            : '{{ __('alerts.error_occurred') }}';
+                        Swal.fire({ title: message, icon: 'error', showConfirmButton: false, timer: 3000 });
+                    }
+                });
             });
         }
 

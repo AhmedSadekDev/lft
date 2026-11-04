@@ -15,46 +15,69 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class ExpenseController extends Controller
 {
-    public function agent_expenses(Agent $agent)
+    public function agent_expenses(Request $request, Agent $agent)
     {
-        $incoming = $agent->financial_custodies()
-            ->with('transferer')
-            ->orderBy('id', 'desc')
-            ->get();
+        $from = $request->input('from');
+        $to = $request->input('to');
 
-        $outgoing = $agent->sended_financial_custodies()
-            ->with(['transferer', 'transfered'])
-            ->orderBy('id', 'desc')
-            ->get();
+        $incoming = $this->applyCreatedAtDateFilter(
+            $agent->financial_custodies()->with('transferer'),
+            $from,
+            $to
+        )->orderBy('id', 'desc')->get();
 
-        $expenses = $agent->expenses()
-            ->with(['agent', 'booking', 'bookingService.agent', 'bookingService.creator'])
-            ->orderBy('id', 'desc')
-            ->get();
+        $outgoing = $this->applyCreatedAtDateFilter(
+            $agent->sended_financial_custodies()->with(['transferer', 'transfered']),
+            $from,
+            $to
+        )->orderBy('id', 'desc')->get();
+
+        $expenses = $this->applyCreatedAtDateFilter(
+            $agent->expenses()->with(['agent', 'booking', 'bookingService.agent', 'bookingService.creator']),
+            $from,
+            $to
+        )->orderBy('id', 'desc')->get();
 
         // Unique by id — incoming/outgoing can overlap if transferer == transfered historically
         $transfers = $incoming->concat($outgoing)->unique('id')->values();
 
         $allExpenses = $transfers->concat($expenses)->sortBy('created_at')->values();
-        $awaitingReviewIds = $agent->expenses()->awaitingReview()->pluck('id')->flip();
-        $pendingVaultReturnIds = $agent->sended_financial_custodies()
-            ->where('type', MoneyTransfer::vaultReturnPending)
-            ->pluck('id')
-            ->flip();
+        $awaitingReviewIds = $this->applyCreatedAtDateFilter(
+            $agent->expenses()->awaitingReview(),
+            $from,
+            $to
+        )->pluck('id')->flip();
+        $pendingVaultReturnIds = $this->applyCreatedAtDateFilter(
+            $agent->sended_financial_custodies()->where('type', MoneyTransfer::vaultReturnPending),
+            $from,
+            $to
+        )->pluck('id')->flip();
 
         return view('admin.agents.expenses.index', compact(
             'allExpenses',
             'agent',
             'awaitingReviewIds',
-            'pendingVaultReturnIds'
+            'pendingVaultReturnIds',
+            'from',
+            'to'
         ));
     }
 
-    public function export_agent_expenses(Agent $agent)
+    public function export_agent_expenses(Request $request, Agent $agent)
     {
         $filename = 'agent-account-' . $agent->id . '-' . now()->format('Y-m-d') . '.xlsx';
 
-        return Excel::download(new AgentAccountExport($agent), $filename);
+        return Excel::download(
+            new AgentAccountExport($agent, $request->input('from'), $request->input('to')),
+            $filename
+        );
+    }
+
+    private function applyCreatedAtDateFilter($query, ?string $from, ?string $to)
+    {
+        return $query
+            ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to));
     }
 
     public function review_agent_expenses(Agent $agent, Request $request)

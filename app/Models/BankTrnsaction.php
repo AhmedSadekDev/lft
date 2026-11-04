@@ -9,6 +9,9 @@ class BankTrnsaction extends Model
 {
     use HasFactory;
 
+    /** مصروف مسجّل من لوحة التحكم ويُخصم من البنك مباشرة */
+    public const dashboardExpense = 4;
+
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     public function bank()
@@ -47,6 +50,7 @@ class BankTrnsaction extends Model
             1 => __('main.credit'),
             2 => __('main.transfer'),
             3 => __('main.transfer_from_vault'),
+            self::dashboardExpense => 'مصروف داشبورد',
             default => __('main.transfer'),
         };
     }

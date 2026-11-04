@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class VaultTransaction extends Model
 {
     use HasFactory;
-    
+
+    /** مصروف مسجّل من لوحة التحكم ويُخصم من الخزنة مباشرة */
+    public const dashboardExpense = 2;
+
     public $guarded = ['id', 'created_at', 'updated_at'];
     
     public function bank()

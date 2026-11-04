@@ -17,18 +17,19 @@
         </div>
 
         @if($showVat)
-            @if(($group['discount'] ?? 0) > 0)
-                <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #ffc107;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 700; color: #495057; font-size: 9px;">الخصم:</span>
-                        <span style="font-weight: 700; color: #dc3545; font-size: 10px;">{{ number_format($group['discount'] ?? 0, 2) }} {{ $symbol }}</span>
-                    </div>
-                </div>
-            @endif
+            {{-- Commercial discount is shown on the annex only, never on the tax paper --}}
             <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #28a745;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-weight: 700; color: #495057; font-size: 9px;">ضريبة القيمة المضافة ({{ $invoice->value_added_tax ?? 0 }}%):</span>
                     <span style="font-weight: 700; color: #28a745; font-size: 10px;">{{ number_format($group['vat'] ?? 0, 2) }} {{ $symbol }}</span>
+                </div>
+            </div>
+        @endif
+        @if(! $showVat && ($group['discount'] ?? 0) > 0)
+            <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #ffc107;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 700; color: #495057; font-size: 9px;">الخصم:</span>
+                    <span style="font-weight: 700; color: #dc3545; font-size: 10px;">{{ number_format($group['discount'] ?? 0, 2) }} {{ $symbol }}</span>
                 </div>
             </div>
         @endif

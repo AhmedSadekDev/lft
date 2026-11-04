@@ -10,6 +10,12 @@
 
 <input type="hidden" name="version" value="{{ $agentExpense->version }}">
 <p class="px-5 pt-3">المندوب / المشرف: {{ $agentExpense->responsible_name ?: '—' }}</p>
+@if(!empty($invoiceOnly))
+    <div class="alert alert-info mx-5 mb-0">
+        التعديل هنا يخص <strong>الفاتورة فقط</strong>. قيمة إيصال المندوب الأصلية
+        ({{ number_format((float) $agentExpense->value, 2) }}) وحسابه لن يتغيرا.
+    </div>
+@endif
 <div class="card-body">
     <div class="row">
         <div class="col-md-6 col-sm-12">
@@ -19,8 +25,11 @@
                     'service_type_id',
                     array_replace(['to_be_disabled' => __('admin.select')], $service_types->all()),
                     old('service_type_id', $service_type_id ?? null),
-                    ['id' => 'service_type_id', 'class' => 'form-control', 'required' => 'required'],
+                    ['id' => 'service_type_id', 'class' => 'form-control', 'required' => empty($invoiceOnly) ? 'required' : null, 'disabled' => !empty($invoiceOnly)],
                 ) !!}
+                @if(!empty($invoiceOnly))
+                    <input type="hidden" name="service_type_id" value="{{ $service_type_id }}">
+                @endif
                 <small class="text-danger">{{ $errors->first('service_type_id') }}</small>
             </div>
         </div>
@@ -38,16 +47,20 @@
                 {!! Form::select('service_id', $service_options, $selected_service_id, [
                     'id' => 'service_id',
                     'class' => 'form-control',
-                    'required' => 'required',
+                    'required' => empty($invoiceOnly) ? 'required' : null,
+                    'disabled' => !empty($invoiceOnly),
                 ]) !!}
+                @if(!empty($invoiceOnly))
+                    <input type="hidden" name="service_id" value="{{ $agentExpense->service_id }}">
+                @endif
                 <small class="text-danger">{{ $errors->first('service_id') }}</small>
             </div>
         </div>
 
         <div class="col-md-12 col-sm-12">
             <div class="form-group{{ $errors->has('value') ? ' has-error' : '' }}">
-                {!! Form::label('value', __('admin.price')) !!}
-                {!! Form::number('value', old('value', $agentExpense->value), [
+                {!! Form::label('value', !empty($invoiceOnly) ? 'قيمة الفاتورة' : __('admin.price')) !!}
+                {!! Form::number('value', old('value', $invoiceValue ?? $agentExpense->value), [
                     'class' => 'form-control',
                     'required' => 'required',
                     'step' => '0.01',

@@ -12,17 +12,22 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class AgentAccountExport implements FromCollection, ShouldAutoSize, WithHeadings
 {
-    public function __construct(private Agent $agent)
-    {
+    public function __construct(
+        private Agent $agent,
+        private ?string $from = null,
+        private ?string $to = null,
+    ) {
     }
 
     public function collection()
     {
-        $incoming = $this->agent->financial_custodies()->with('transferer')->get();
-        $outgoing = $this->agent->sended_financial_custodies()->with(['transferer', 'transfered'])->get();
-        $expenses = $this->agent->expenses()
-            ->with(['booking', 'service.serviceCategory'])
-            ->get();
+        $incoming = $this->applyDateFilter($this->agent->financial_custodies()->with('transferer'))->get();
+        $outgoing = $this->applyDateFilter(
+            $this->agent->sended_financial_custodies()->with(['transferer', 'transfered'])
+        )->get();
+        $expenses = $this->applyDateFilter(
+            $this->agent->expenses()->with(['booking', 'service.serviceCategory'])
+        )->get();
 
         $transfers = $incoming->concat($outgoing)->unique('id');
 
@@ -92,5 +97,12 @@ class AgentAccountExport implements FromCollection, ShouldAutoSize, WithHeadings
             'الحالة',
             'ملاحظات',
         ];
+    }
+
+    private function applyDateFilter($query)
+    {
+        return $query
+            ->when($this->from, fn ($q) => $q->whereDate('created_at', '>=', $this->from))
+            ->when($this->to, fn ($q) => $q->whereDate('created_at', '<=', $this->to));
     }
 }

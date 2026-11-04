@@ -15,6 +15,9 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex gap-2 flex-wrap">
+                    <button type="button" class="btn btn-info font-weight-bold shadow-sm" data-toggle="modal" data-target="#addExpenseModal">
+                        <i class="fas fa-plus"></i> إضافة مصاريف
+                    </button>
                     <button type="submit" form="reviewExpensesForm" class="btn btn-warning font-weight-bold shadow-sm"
                             onclick="return lftConfirmForm(document.getElementById('reviewExpensesForm'), { title: '{{ __('alerts.are_you_sure') }}', text: 'سيتم اعتماد الإيصالات المحددة وخصم قيمتها من عهدة المندوب. متابعة؟', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });">
                         <i class="fas fa-check-double"></i> اعتماد المحدد
@@ -24,10 +27,81 @@
                         <i class="fas fa-filter"></i> فلتر
                     </button>
                     <!-- زر تصدير Excel -->
-                    <a href="{{ route('reports.general_expenses.export', array_filter(['from' => request('from'), 'to' => request('to'), 'search' => request('search')])) }}"
+                    <a href="{{ route('reports.general_expenses.export', array_filter(['from' => $from, 'to' => $to, 'search' => request('search'), 'kind' => $kind ?? null])) }}"
                        class="btn btn-success font-weight-bold shadow-sm">
                         <i class="fas fa-file-excel"></i> تصدير Excel
                     </a>
+                </div>
+            </div>
+        </div>
+
+        @if(session('success'))
+            <div class="alert alert-success mx-4 mt-3">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger mx-4 mt-3">{{ session('error') }}</div>
+        @endif
+        @if($errors->any())
+            <div class="alert alert-danger mx-4 mt-3">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <!-- Modal إضافة مصاريف -->
+        <div class="modal fade" id="addExpenseModal" tabindex="-1" role="dialog" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title font-weight-bold" id="addExpenseModalLabel">
+                            <i class="fas fa-plus mr-2"></i>إضافة مصاريف
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('reports.general_expenses.store') }}" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="expenseValue" class="font-weight-bold">القيمة</label>
+                                <input type="number" step="0.01" min="0.01" name="value" id="expenseValue"
+                                       value="{{ old('value') }}" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expenseReason" class="font-weight-bold">السبب</label>
+                                <input type="text" name="reason" id="expenseReason" value="{{ old('reason') }}"
+                                       class="form-control" maxlength="255" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expenseSource" class="font-weight-bold">مكان الخصم</label>
+                                <select name="source" id="expenseSource" class="form-control" required>
+                                    <option value="vault" @selected(old('source', 'vault') === 'vault')>الخزنة</option>
+                                    <option value="bank" @selected(old('source') === 'bank')>البنك</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="expenseBankField" style="display: none;">
+                                <label for="expenseBankId" class="font-weight-bold">البنك</label>
+                                <select name="bank_id" id="expenseBankId" class="form-control">
+                                    <option value="">اختر البنك</option>
+                                    @foreach(($banks ?? collect()) as $bank)
+                                        <option value="{{ $bank->id }}" @selected((string) old('bank_id') === (string) $bank->id)>
+                                            {{ $bank->name }} ({{ number_format((float) $bank->amount, 2) }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                            <button class="btn btn-info font-weight-bold" type="submit">
+                                <i class="fas fa-save mr-1"></i> حفظ وخصم
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -38,7 +112,7 @@
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title font-weight-bold" id="filterModalLabel">
-                            <i class="fas fa-calendar-alt mr-2"></i>فلترة حسب التاريخ
+                            <i class="fas fa-calendar-alt mr-2"></i>فلترة التقرير
                         </h5>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -54,11 +128,23 @@
                             @endif
                             <div class="form-group">
                                 <label for="fromInput" class="font-weight-bold">من تاريخ</label>
-                                <input type="date" name="from" value="{{ request('from') }}" id="fromInput" class="form-control form-control-solid">
+                                <input type="date" name="from" value="{{ $from }}" id="fromInput" class="form-control form-control-solid">
                             </div>
                             <div class="form-group">
                                 <label for="toInput" class="font-weight-bold">إلى تاريخ</label>
-                                <input type="date" name="to" value="{{ request('to') }}" id="toInput" class="form-control form-control-solid">
+                                <input type="date" name="to" value="{{ $to }}" id="toInput" class="form-control form-control-solid">
+                            </div>
+                            <div class="form-group">
+                                <label for="kindInput" class="font-weight-bold">النوع</label>
+                                <select name="kind" id="kindInput" class="form-control form-control-solid">
+                                    <option value="all" @selected(($kind ?? 'all') === 'all')>الكل</option>
+                                    <option value="agent" @selected(($kind ?? '') === 'agent')>مصروف مندوب</option>
+                                    <option value="delivery" @selected(($kind ?? '') === 'delivery')>عهدة السيارة</option>
+                                    <option value="office" @selected(($kind ?? '') === 'office')>دخان المكتب</option>
+                                    <option value="paying_car" @selected(($kind ?? '') === 'paying_car')>سداد سيارة</option>
+                                    <option value="dashboard" @selected(($kind ?? '') === 'dashboard')>مصروف داشبورد</option>
+                                    <option value="log" @selected(($kind ?? '') === 'log')>سجل نشاط</option>
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -89,9 +175,14 @@
                                    value="{{ request('search') }}">
                         </div>
                     </div>
-                    @if(request('from') || request('to'))
-                        <input type="hidden" name="from" value="{{ request('from') }}">
-                        <input type="hidden" name="to" value="{{ request('to') }}">
+                    @if($from)
+                        <input type="hidden" name="from" value="{{ $from }}">
+                    @endif
+                    @if($to)
+                        <input type="hidden" name="to" value="{{ $to }}">
+                    @endif
+                    @if(!empty($kind) && $kind !== 'all')
+                        <input type="hidden" name="kind" value="{{ $kind }}">
                     @endif
                     @if(request('per_page'))
                         <input type="hidden" name="per_page" value="{{ request('per_page') }}">
@@ -103,7 +194,7 @@
                     </div>
                     @if(request('search'))
                         <div class="col-md-2">
-                            <a href="{{ route('reports.general_expenses', array_filter(['from' => request('from'), 'to' => request('to'), 'per_page' => request('per_page')])) }}"
+                            <a href="{{ route('reports.general_expenses', array_filter(['from' => $from, 'to' => $to, 'kind' => ($kind ?? null) !== 'all' ? ($kind ?? null) : null, 'per_page' => request('per_page')])) }}"
                                class="btn btn-secondary font-weight-bold w-100">
                                 <i class="fas fa-times mr-1"></i> إلغاء البحث
                             </a>
@@ -128,13 +219,32 @@
                         </select>
                     </div>
                 </div>
-                @if(request('from') || request('to'))
-                    <div class="badge badge-primary badge-pill">
-                        <i class="fas fa-calendar mr-1"></i>
-                        @if(request('from')) من: {{ request('from') }} @endif
-                        @if(request('to')) إلى: {{ request('to') }} @endif
-                    </div>
-                @endif
+                <div class="d-flex flex-wrap align-items-center" style="gap: 8px;">
+                    @if($from || $to)
+                        <div class="badge badge-primary badge-pill">
+                            <i class="fas fa-calendar mr-1"></i>
+                            @if($from) من: {{ $from }} @endif
+                            @if($to) إلى: {{ $to }} @endif
+                            @if(!empty($isDefaultRange))
+                                <span class="ml-1">(الشهر الحالي)</span>
+                            @endif
+                        </div>
+                    @endif
+                    @if(!empty($kind) && $kind !== 'all')
+                        <div class="badge badge-dark badge-pill">
+                            النوع:
+                            @switch($kind)
+                                @case('agent') مصروف مندوب @break
+                                @case('delivery') عهدة السيارة @break
+                                @case('office') دخان المكتب @break
+                                @case('paying_car') سداد سيارة @break
+                                @case('dashboard') مصروف داشبورد @break
+                                @case('log') سجل نشاط @break
+                                @default {{ $kind }}
+                            @endswitch
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <!-- الجدول -->
@@ -167,6 +277,11 @@
                             $isExpense = $item instanceof \App\Models\AgentExpense;
                             $isLogActivity = $item instanceof \App\Models\LogActivity;
                             $isPayingcar = $item instanceof \App\Models\Payingcar;
+                            $isDashboardVault = $item instanceof \App\Models\VaultTransaction
+                                && (int) $item->type === \App\Models\VaultTransaction::dashboardExpense;
+                            $isDashboardBank = $item instanceof \App\Models\BankTrnsaction
+                                && (int) $item->type === \App\Models\BankTrnsaction::dashboardExpense;
+                            $isDashboardExpense = $isDashboardVault || $isDashboardBank;
 
                             // حساب المصروفات والوارد
                             $expenseValue = 0;
@@ -439,6 +554,24 @@
 
                                 // الحصول على الملاحظات
                                 $notes = $item->notes ?? '';
+                            } elseif ($isDashboardVault) {
+                                $expenseValue = (float) ($item->amount ?? 0);
+                                $category = 'مصروف داشبورد - خزنة';
+                                $service = $item->name ?? '-';
+                                $agentName = 'الخزنة';
+                                $date = $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('Y-m-d H:i') : '';
+                                $notes = $item->name ?? '';
+                                $imageUrl = '';
+                            } elseif ($isDashboardBank) {
+                                $expenseValue = (float) ($item->amount ?? 0);
+                                $category = 'مصروف داشبورد - بنك';
+                                $service = $item->name ?? '-';
+                                $agentName = $item->user?->name ?: ($item->bank?->name ?? '-');
+                                $date = $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('Y-m-d H:i') : '';
+                                $notes = $item->bank?->name
+                                    ? ('بنك: ' . $item->bank->name . ($item->name ? ' — ' . $item->name : ''))
+                                    : ($item->name ?? '');
+                                $imageUrl = '';
                             }
                         @endphp
                         @php
@@ -511,7 +644,9 @@
                                 @endif
                             </td>
                             <td class="text-center align-middle">
-                                @if($isExpense)
+                                @if($isDashboardExpense)
+                                    <span class="badge badge-success">تمت الموافقة</span>
+                                @elseif($isExpense)
                                     @if($canReview)
                                         <span class="badge badge-warning">بانتظار المراجعة</span>
                                     @elseif($item->admin_approval)
@@ -565,7 +700,7 @@
                         صفحة {{ $expenses->currentPage() }} من {{ $expenses->lastPage() }}
                     </div>
                     <div>
-                        {{ $expenses->appends(request()->query())->links('pagination::bootstrap-4') }}
+                        {{ $expenses->links('pagination::bootstrap-4') }}
                     </div>
                 </div>
             @endif
@@ -586,8 +721,39 @@
             const url = new URL(window.location.href);
             url.searchParams.set('per_page', value);
             url.searchParams.set('page', '1'); // العودة للصفحة الأولى عند تغيير عدد العناصر
+            @if($from)
+                url.searchParams.set('from', @json($from));
+            @endif
+            @if($to)
+                url.searchParams.set('to', @json($to));
+            @endif
+            @if(!empty($kind) && $kind !== 'all')
+                url.searchParams.set('kind', @json($kind));
+            @endif
             window.location.href = url.toString();
         }
+
+        function syncExpenseSourceFields() {
+            var source = $('#expenseSource').val();
+            var $bankField = $('#expenseBankField');
+            var $bankSelect = $('#expenseBankId');
+            if (source === 'bank') {
+                $bankField.show();
+                $bankSelect.prop('required', true);
+            } else {
+                $bankField.hide();
+                $bankSelect.prop('required', false).val('');
+            }
+        }
+
+        $(document).on('change', '#expenseSource', syncExpenseSourceFields);
+        $(document).ready(function () {
+            syncExpenseSourceFields();
+            @if($errors->any() && old('source'))
+                $('#addExpenseModal').modal('show');
+            @endif
+        });
+
         document.getElementById('reviewSelectAll')?.addEventListener('change', function () {
             document.querySelectorAll('.review-expense-cb').forEach(function (cb) {
                 cb.checked = this.checked;

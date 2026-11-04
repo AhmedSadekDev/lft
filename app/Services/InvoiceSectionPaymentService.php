@@ -25,6 +25,18 @@ class InvoiceSectionPaymentService
     public static function getSectionsBreakdown(Invoice $invoice): array
     {
         $sectionTotals = app(InvoicePrintBuilder::class)->getInvoiceSectionTotals($invoice);
+        // Apply commercial discount against section gross (additional → receipt → tax) so
+        // payable sections match combined invoice total without touching tax-paper math.
+        $discountLeft = round((float) ($sectionTotals['commercial_discount'] ?? 0), 2);
+        foreach (['additional', 'receipt', 'tax'] as $sec) {
+            if ($discountLeft <= 0) {
+                break;
+            }
+            $gross = round((float) ($sectionTotals[$sec] ?? 0), 2);
+            $deduct = min($discountLeft, $gross);
+            $sectionTotals[$sec] = round($gross - $deduct, 2);
+            $discountLeft = round($discountLeft - $deduct, 2);
+        }
 
         $paidBySection = [
             'tax' => 0.0,

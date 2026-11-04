@@ -186,6 +186,7 @@
         $combinedTotal = $combinedTotal ?? $printData['combined_total'];
         $hasAdditionalItems = collect($additionalGroup['items'] ?? [])->isNotEmpty();
         $attachmentsSubtotal = (float) ($receiptGroup['total'] ?? 0) + (float) ($additionalGroup['total'] ?? 0);
+        $commercialDiscount = (float) ($printData['commercial_discount'] ?? $invoice->discount_amount ?? 0);
         $attachmentsTotalLabel = $hasAdditionalItems
             ? 'إجمالي الملحقات (إيصالات + بياتة)'
             : 'إجمالي الإيصالات';
@@ -272,6 +273,16 @@
                             <span style="font-weight: 700; font-size: 13px;">{{ $attachmentsTotalLabel }}</span>
                             <span style="font-weight: 700; font-size: 15px;">{{ number_format($attachmentsSubtotal, 2) }} ج.م</span>
                         </div>
+                        @if($commercialDiscount > 0)
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                                <span style="font-weight: 700; font-size: 13px;">الخصم (على إجمالي الفاتورة)</span>
+                                <span style="font-weight: 700; font-size: 15px;">{{ number_format($commercialDiscount, 2) }} ج.م</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; border-top: 1px solid #000; padding-top: 6px;">
+                                <span style="font-weight: 700; font-size: 13px;">الإجمالي بعد الخصم</span>
+                                <span style="font-weight: 700; font-size: 15px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -331,6 +342,16 @@
                         <span style="font-weight: 700; font-size: 13px;">{{ $attachmentsTotalLabel }}</span>
                         <span style="font-weight: 700; font-size: 15px;">{{ number_format($attachmentsSubtotal, 2) }} ج.م</span>
                     </div>
+                    @if($commercialDiscount > 0)
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                            <span style="font-weight: 700; font-size: 13px;">الخصم (على إجمالي الفاتورة)</span>
+                            <span style="font-weight: 700; font-size: 15px;">{{ number_format($commercialDiscount, 2) }} ج.م</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; border-top: 1px solid #000; padding-top: 6px;">
+                            <span style="font-weight: 700; font-size: 13px;">الإجمالي بعد الخصم</span>
+                            <span style="font-weight: 700; font-size: 15px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -359,8 +380,14 @@
                 ])
 
                 <div style="margin-top: 10px; border: 2px solid #000; padding: 10px 12px;">
+                    @if($commercialDiscount > 0)
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 700; font-size: 13px;">الخصم</span>
+                            <span style="font-weight: 700; font-size: 14px;">{{ number_format($commercialDiscount, 2) }} ج.م</span>
+                        </div>
+                    @endif
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 700; font-size: 14px;">الإجمالي</span>
+                        <span style="font-weight: 700; font-size: 14px;">الإجمالي بعد الخصم</span>
                         <span style="font-weight: 700; font-size: 16px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
                     </div>
                 </div>
