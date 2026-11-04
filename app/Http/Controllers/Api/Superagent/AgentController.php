@@ -425,18 +425,25 @@ class AgentController extends Controller
     {
         try {
             [$containers, $typeId] = $this->resolveStageNotifyRequest($request);
-            $message = $this->stageNotifyMessage($containers, $typeId);
             $links = [];
 
             foreach ($containers as $container) {
                 $this->assertStageReadyForNotify($container, $typeId);
-                $container->loadMissing(['booking.company', 'booking.employee']);
-                $phone = $this->stageWhatsappPhone($container, $typeId);
-                abort_if(! $phone, 422, 'لا يوجد رقم واتساب للمستلمين');
+                $container->loadMissing([
+                    'booking.company',
+                    'booking.employee',
+                    'booking.factory',
+                    'branch.factory',
+                    'delivery_policies.driver',
+                    'delivery_policies.car',
+                    'bookingPapers.image',
+                ]);
+                $phone = $this->stageWhatsappPhone($container);
+                abort_if(! $phone, 422, 'لا يوجد رقم واتساب للموظف المسؤول عن الشركة');
                 $links[] = [
                     'booking_container_id' => $container->id,
                     'phone' => $phone,
-                    'whatsapp_url' => 'https://wa.me/'.$phone.'?text='.rawurlencode($this->stageWhatsappText($container, $message)),
+                    'whatsapp_url' => 'https://wa.me/'.$phone.'?text='.rawurlencode($this->stageWhatsappText($container, $typeId)),
                 ];
             }
 
@@ -500,26 +507,9 @@ class AgentController extends Controller
             : 'تم تعتيق حاوية رقم '.($first->container_no ?? $first->id);
     }
 
-    private function stageWhatsappPhone(BookingContainer $container, int $typeId): ?string
+    private function stageWhatsappPhone(BookingContainer $container): ?string
     {
-        $candidates = [
-            $container->booking?->company?->phone,
-            $container->booking?->employee?->phone,
-        ];
-        $agentIds = BookingContainerAgent::where('booking_container_id', $container->id)
-            ->where('stage_type', $typeId)
-            ->pluck('agent_id');
-        foreach (Agent::whereIn('id', $agentIds)->pluck('phone') as $raw) {
-            $candidates[] = $raw;
-        }
-        foreach ($candidates as $raw) {
-            $phone = $this->normalizeEgyptWhatsappPhone($raw);
-            if ($phone !== null) {
-                return $phone;
-            }
-        }
-
-        return null;
+        return $this->normalizeEgyptWhatsappPhone($container->booking?->employee?->phone);
     }
 
     /**
@@ -546,21 +536,70 @@ class AgentController extends Controller
         return $digits !== '' ? $digits : null;
     }
 
-    private function stageWhatsappText(BookingContainer $container, string $message): string
+    private function stageWhatsappText(BookingContainer $container, int $typeId): string
     {
         $booking = $container->booking;
-
         $trackCode = $booking?->trackCode();
+        $trackUrl = $trackCode
+            ? 'https://leaderfortrans.com/book/?track='.urlencode($trackCode)
+            : '-';
+        $factory = $container->factory_name !== ''
+            ? $container->factory_name
+            : '-';
+        $containerNo = $container->container_no ?: '-';
 
-        return implode("\n", array_filter([
-            $message,
-            'الرقم الداخلي: '.($trackCode ?? '-'),
-            'رقم الحاوية: '.($container->container_no ?? '-'),
-            'الشركة: '.($booking?->company?->name ?? '-'),
-            $trackCode
-                ? 'التتبع: https://leaderfortrans.com/book/?track='.urlencode($trackCode)
-                : null,
-        ]));
+        if ($typeId === 1) {
+            $policy = $container->delivery_policies->first();
+
+            return $this->formatWhatsappLines([
+                '*تم تحميل الحاوية رقم:* '.$containerNo,
+                '',
+                '• رقم الحجز: '.($booking?->booking_number ?: '-'),
+                '• المصنع: '.$factory,
+                '• اسم السائق: '.($policy?->driver?->name ?: '-'),
+                '• رقم التليفون: '.($policy?->driver?->phone ?: '-'),
+                '• رقم السيارة: '.($policy?->car?->car_number ?: '-'),
+                '• لينك التتبع: '.$trackUrl,
+                '• صورة الحاوية: '.$this->stagePaperImageUrl($container, BookingPaper::loading),
+                '• صورة الجواب: '.$this->stagePaperImageUrl($container, BookingPaper::loadingAnswer),
+            ]);
+        }
+
+        if ($typeId === 2) {
+            return $this->formatWhatsappLines([
+                '*تم تعتيق الحاوية رقم:* '.$containerNo,
+                '',
+                '• رقم السيل الملاحي: '.($container->sail_of_number ?: '-'),
+                '• اسم المصنع: '.$factory,
+                '• لينك التتبع: '.$trackUrl,
+            ]);
+        }
+
+        return $this->formatWhatsappLines([
+            '*تم تخصيص الحاوية رقم:* '.$containerNo,
+            '',
+            '• رقم الحجز: '.($booking?->booking_number ?: '-'),
+            '• المصنع: '.$factory,
+            '• لينك التتبع: '.$trackUrl,
+        ]);
+    }
+
+    /**
+     * @param  list<string|null>  $lines
+     */
+    private function formatWhatsappLines(array $lines): string
+    {
+        return implode("\n", array_map(
+            static fn ($line) => $line === null ? '' : (string) $line,
+            $lines
+        ));
+    }
+
+    private function stagePaperImageUrl(BookingContainer $container, int $paperType): string
+    {
+        $url = optional($container->bookingPapers->where('type', $paperType)->last()?->image)->image ?? '';
+
+        return $url !== '' ? $url : '-';
     }
 
     public function expenses(Request $request)
