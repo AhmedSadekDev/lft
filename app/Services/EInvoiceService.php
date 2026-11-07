@@ -241,4 +241,70 @@ class EInvoiceService
         }
     }
 
+    /**
+     * Search taxpayers on ETA (best-effort; endpoint availability varies by environment).
+     */
+    public function searchTaxpayer(string $query, string $accessToken, int $pageSize = 20)
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return [
+                'status' => false,
+                'message' => 'أدخل رقمًا ضريبيًا أو اسمًا للبحث',
+            ];
+        }
+
+        $endpoints = [
+            "{$this->baseUri}/api/v1.0/codetypes/taxpayer/search?TaxCodeOrName={$query}&PgSize={$pageSize}&PgNo=1",
+            "{$this->baseUri}/api/v1/codetypes/taxpayer/search?TaxCodeOrName=".urlencode($query)."&PgSize={$pageSize}&PgNo=1",
+        ];
+
+        $lastError = null;
+        foreach ($endpoints as $url) {
+            try {
+                $response = $this->client->get($url, [
+                    'headers' => [
+                        'Authorization' => 'Bearer '.$accessToken,
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                ]);
+
+                return [
+                    'status' => true,
+                    'data' => json_decode($response->getBody(), true),
+                ];
+            } catch (GuzzleException $e) {
+                $lastError = $e->hasResponse()
+                    ? $e->getResponse()->getBody()->getContents()
+                    : $e->getMessage();
+            }
+        }
+
+        return [
+            'status' => false,
+            'message' => 'بحث الممول غير متاح حاليًا: '.($lastError ?: 'unknown'),
+        ];
+    }
+
+    protected function extractTokenFromUrl(string $url): ?string
+    {
+        if ($url === '') {
+            return null;
+        }
+
+        $parts = parse_url($url);
+        if (! empty($parts['query'])) {
+            parse_str($parts['query'], $query);
+            if (! empty($query['token'])) {
+                return $query['token'];
+            }
+            if (! empty($query['shareToken'])) {
+                return $query['shareToken'];
+            }
+        }
+
+        return null;
+    }
+
 }

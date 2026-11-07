@@ -581,6 +581,36 @@
 
 
 
+                    @if (auth()->user()->hasPermissionTo('e_invoices.index'))
+                        <li class="menu-item menu-item-submenu {{ request()->is('dashboard/e-invoices*') ? 'menu-item-open menu-item-here' : '' }}"
+                            aria-haspopup="true" data-menu-toggle="hover">
+                            <a href="javascript:;" class="menu-link menu-toggle">
+                                <span class="svg-icon menu-icon">
+                                    <i class="la la-file-invoice"></i>
+                                </span>
+                                <span class="menu-text">الفواتير الإلكترونية</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="menu-submenu">
+                                <i class="menu-arrow"></i>
+                                <ul class="menu-subnav">
+                                    <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                        <span class="menu-link">
+                                            <span class="menu-text">الفواتير الإلكترونية</span>
+                                        </span>
+                                    </li>
+                                    <li class="menu-item {{ request()->routeIs('e-invoices.*') ? 'menu-item-active' : '' }}"
+                                        aria-haspopup="true">
+                                        <a href="{{ route('e-invoices.index') }}" class="menu-link">
+                                            <i class="menu-bullet menu-bullet-dot"><span></span></i>
+                                            <span class="menu-text">قائمة الفواتير</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    @endif
+
                     @if (has_app_permission('accounts.index') || has_app_permission('daily_reports.index') || has_app_permission('suppliers.index'))
                         <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
                             <a href="javascript:;" class="menu-link menu-toggle">

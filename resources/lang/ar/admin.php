@@ -552,6 +552,8 @@ return [
     'invoices.create' => 'إنشاء فاتورة',
     'invoices.update' => 'تحديث فاتورة',
     'invoices.udpate' => 'تحديث فاتورة',
+
+    'e_invoices.index' => 'عرض الفواتير الإلكترونية',
     'invoices.delete' => 'حذف فاتورة',
 
     'reports.index' => 'عرض التقارير',

@@ -18,6 +18,7 @@
         'bookingContainers' => 'حاويات الطلبات',
         'bookingServices' => 'خدمات الطلبات',
         'invoices' => 'الفواتير',
+        'e_invoices' => 'الفواتير الإلكترونية',
         'cars' => 'السيارات',
         'drivers' => 'السائقين',
         'employees' => 'الموظفين',
