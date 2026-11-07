@@ -89,35 +89,41 @@
                     </div>
 
                     <div class="tab-pane fade" id="tabUuidDownload" role="tabpanel">
-                        <label class="font-weight-bold d-block mb-2" for="uuidListInput">أرقام الفواتير</label>
-                        <textarea id="uuidListInput" class="form-control e-inv-textarea" rows="7" placeholder="2026-48291-015&#10;2026-001-134"></textarea>
-                        <p class="text-muted mt-2 mb-0">سطر لكل رقم، أو افصل بفاصلة. تُستخدم نفس خيارات التاب الأول.</p>
+                        <div class="e-inv-simple-card">
+                            <div class="e-inv-simple-card__title">
+                                <i class="fas fa-hashtag"></i>
+                                <div>
+                                    <strong>التصدير بأرقام الفواتير</strong>
+                                    <div class="text-muted font-size-sm">اكتب رقمًا في كل سطر، أو افصل بفاصلة</div>
+                                </div>
+                            </div>
+                            <textarea id="uuidListInput" class="form-control e-inv-textarea e-inv-textarea--ltr" rows="8" dir="ltr" placeholder="2026-48291-015&#10;2026-001-134"></textarea>
+                            <div class="e-inv-hint-row">
+                                <span>مثال: <code>2026-001-134</code></span>
+                                <span>نفس خيارات تاب «خيارات التحميل» تُطبَّق تلقائيًا</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="tab-pane fade" id="tabTaxpayerSearch" role="tabpanel">
-                        <div class="form-row align-items-end">
-                            <div class="form-group col-md-8 mb-md-0">
-                                <label for="taxpayerQuery">اسم الشركة أو الرقم الضريبي</label>
-                                <input type="text" id="taxpayerQuery" class="form-control" placeholder="ابحث في شركات اللوحة...">
+                        <div class="e-inv-simple-card">
+                            <div class="e-inv-simple-card__title">
+                                <i class="fas fa-building"></i>
+                                <div>
+                                    <strong>بحث شركات اللوحة</strong>
+                                    <div class="text-muted font-size-sm">ابحث بالاسم أو الرقم الضريبي</div>
+                                </div>
                             </div>
-                            <div class="form-group col-md-4 mb-0">
-                                <button type="button" class="btn btn-primary btn-block" id="btnTaxpayerSearch">
+                            <div class="e-inv-search-row">
+                                <input type="text" id="taxpayerQuery" class="form-control" placeholder="مثال: هاي فريت أو 123456789">
+                                <button type="button" class="btn btn-primary" id="btnTaxpayerSearch">
                                     <i class="fas fa-search"></i> بحث
                                 </button>
                             </div>
-                        </div>
-                        <div id="taxpayerSearchMessage" class="alert alert-light d-none mt-3 mb-2"></div>
-                        <div class="table-responsive mt-2">
-                            <table class="table table-sm table-bordered mb-0" id="taxpayerResultsTable">
-                                <thead>
-                                    <tr>
-                                        <th>الشركة</th>
-                                        <th>الرقم الضريبي</th>
-                                        <th>تفاصيل</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                            <div id="taxpayerSearchMessage" class="e-inv-search-msg d-none"></div>
+                            <div class="e-inv-results" id="taxpayerResultsList">
+                                <div class="e-inv-results__empty text-muted">ابدأ بالبحث لعرض الشركات</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -218,7 +224,61 @@
         border: 1px dashed var(--border, #cbd5e1); border-radius: 10px;
         padding: .85rem 1rem; background: var(--surface-secondary, #f8fafc);
     }
-    .e-inv-textarea { border-radius: 10px; }
+    .e-inv-textarea { border-radius: 12px; resize: vertical; min-height: 180px; }
+    .e-inv-textarea--ltr {
+        direction: ltr; text-align: left; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        letter-spacing: .02em; line-height: 1.7; padding: 1rem 1.1rem;
+    }
+    .e-inv-simple-card {
+        background: var(--surface, #fff);
+        border: 1px solid var(--border, #e5e7eb);
+        border-radius: 14px;
+        padding: 1.15rem 1.25rem;
+    }
+    .e-inv-simple-card__title {
+        display: flex; align-items: flex-start; gap: .75rem;
+        margin-bottom: 1rem; color: var(--text-primary, #111);
+    }
+    .e-inv-simple-card__title > i {
+        width: 36px; height: 36px; border-radius: 10px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: rgba(30, 136, 229, .12); color: #1e88e5; flex: 0 0 auto;
+    }
+    .e-inv-hint-row {
+        display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem;
+        margin-top: .75rem; color: var(--text-secondary, #6b7280); font-size: 12.5px;
+    }
+    .e-inv-hint-row code {
+        background: rgba(30, 136, 229, .1); color: #1e88e5;
+        border-radius: 6px; padding: .1rem .35rem;
+    }
+    .e-inv-search-row {
+        display: grid; grid-template-columns: 1fr auto; gap: .65rem; margin-bottom: .85rem;
+    }
+    .e-inv-search-msg {
+        border-radius: 10px; padding: .65rem .85rem; margin-bottom: .75rem; font-size: 13px;
+    }
+    .e-inv-search-msg.is-info { background: rgba(30,136,229,.1); color: #1565c0; }
+    .e-inv-search-msg.is-ok { background: rgba(67,160,71,.12); color: #2e7d32; }
+    .e-inv-search-msg.is-err { background: rgba(229,57,53,.12); color: #c62828; }
+    .e-inv-results {
+        border: 1px solid var(--border, #e5e7eb); border-radius: 12px;
+        max-height: 280px; overflow: auto; background: var(--surface-secondary, #f8fafc);
+    }
+    .e-inv-results__empty { padding: 1.25rem; text-align: center; }
+    .e-inv-result-item {
+        display: grid; grid-template-columns: 1.4fr 1fr 1.2fr; gap: .75rem;
+        padding: .85rem 1rem; border-bottom: 1px solid var(--border, #e5e7eb);
+        color: var(--text-primary, #111); font-size: 13px;
+    }
+    .e-inv-result-item:last-child { border-bottom: 0; }
+    .e-inv-result-item strong { display: block; margin-bottom: .15rem; }
+    .e-inv-result-item span { color: var(--text-secondary, #6b7280); direction: ltr; display: inline-block; }
+    .e-inv-result-item small { color: var(--text-secondary, #6b7280); }
+    @media (max-width: 767px) {
+        .e-inv-search-row { grid-template-columns: 1fr; }
+        .e-inv-result-item { grid-template-columns: 1fr; gap: .25rem; }
+    }
     .e-inv-excel-panel {
         margin: 0 1.25rem 0; padding: 1rem;
         border: 1px solid rgba(67, 160, 71, .35);
@@ -257,10 +317,10 @@
         gap: .75rem; padding: 1rem 1.25rem; border-top: 1px solid var(--border, #e5e7eb);
         background: var(--surface, #fff);
     }
-    .e-inv-actions { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: flex-end; }
+    .e-inv-actions { display: flex; flex-wrap: wrap; gap: .55rem; justify-content: flex-end; }
     .e-inv-btn {
-        border: 0; border-radius: 10px; font-weight: 700; min-width: 118px;
-        padding: .7rem 1rem; color: #fff !important;
+        border: 0; border-radius: 10px; font-weight: 700; min-width: 126px;
+        padding: .72rem 1rem; color: #fff !important; white-space: nowrap;
     }
     .e-inv-btn i { margin-left: .35rem; }
     .e-inv-btn--close { background: #e53935; }

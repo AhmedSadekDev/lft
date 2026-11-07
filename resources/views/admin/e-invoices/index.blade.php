@@ -454,43 +454,59 @@
         });
     });
 
-    document.getElementById('btnTaxpayerSearch') && document.getElementById('btnTaxpayerSearch').addEventListener('click', function () {
-        var q = (document.getElementById('taxpayerQuery') || {}).value || '';
+    function setSearchMsg(type, text) {
         var msg = document.getElementById('taxpayerSearchMessage');
-        var tbody = document.querySelector('#taxpayerResultsTable tbody');
-        msg.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-light');
-        msg.classList.add('alert-light');
-        msg.textContent = 'جاري البحث...';
-        tbody.innerHTML = '';
+        if (!msg) return;
+        msg.className = 'e-inv-search-msg is-' + type;
+        msg.textContent = text;
+        msg.classList.remove('d-none');
+    }
+
+    document.getElementById('btnTaxpayerSearch') && document.getElementById('btnTaxpayerSearch').addEventListener('click', function () {
+        var q = ((document.getElementById('taxpayerQuery') || {}).value || '').trim();
+        var list = document.getElementById('taxpayerResultsList');
+        if (!q) {
+            setSearchMsg('err', 'اكتب اسم شركة أو رقم ضريبي للبحث');
+            return;
+        }
+        setSearchMsg('info', 'جاري البحث...');
+        list.innerHTML = '<div class="e-inv-results__empty text-muted">جاري التحميل...</div>';
 
         fetch(taxpayerUrl + '?q=' + encodeURIComponent(q), {
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
         }).then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
           .then(function (res) {
               if (!res.ok || !res.data.status) {
-                  msg.classList.remove('alert-light');
-                  msg.classList.add('alert-danger');
-                  msg.textContent = (res.data && res.data.message) ? res.data.message : 'فشل البحث';
+                  setSearchMsg('err', (res.data && res.data.message) ? res.data.message : 'فشل البحث');
+                  list.innerHTML = '<div class="e-inv-results__empty text-muted">لا توجد نتائج</div>';
                   return;
               }
-              msg.classList.remove('alert-light');
-              msg.classList.add('alert-success');
-              msg.textContent = 'تم جلب النتائج';
               var items = (res.data.data && res.data.data.result) ? res.data.data.result : [];
               if (!items.length) {
-                  tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">لا توجد نتائج</td></tr>';
+                  setSearchMsg('info', 'لا توجد شركات مطابقة');
+                  list.innerHTML = '<div class="e-inv-results__empty text-muted">لا توجد نتائج</div>';
                   return;
               }
-              items.forEach(function (item) {
-                  var tr = document.createElement('tr');
-                  tr.innerHTML = '<td>' + (item.name || '—') + '</td><td dir="ltr">' + (item.taxId || '—') + '</td><td><small>' + (item.address || '') + '</small></td>';
-                  tbody.appendChild(tr);
-              });
+              setSearchMsg('ok', 'تم العثور على ' + items.length + ' شركة');
+              list.innerHTML = items.map(function (item) {
+                  return '<div class="e-inv-result-item">'
+                      + '<div><strong>' + (item.name || '—') + '</strong></div>'
+                      + '<div><span>' + (item.taxId || '—') + '</span></div>'
+                      + '<div><small>' + (item.address || '—') + '</small></div>'
+                      + '</div>';
+              }).join('');
           }).catch(function () {
-              msg.classList.remove('alert-light');
-              msg.classList.add('alert-danger');
-              msg.textContent = 'تعذر الاتصال بخدمة البحث';
+              setSearchMsg('err', 'تعذر الاتصال بخدمة البحث');
+              list.innerHTML = '<div class="e-inv-results__empty text-muted">تعذر التحميل</div>';
           });
+    });
+
+    document.getElementById('taxpayerQuery') && document.getElementById('taxpayerQuery').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            var btn = document.getElementById('btnTaxpayerSearch');
+            if (btn) btn.click();
+        }
     });
 
     loadPrefs();
