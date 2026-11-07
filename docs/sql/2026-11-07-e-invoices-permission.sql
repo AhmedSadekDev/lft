@@ -1,5 +1,6 @@
 -- Electronic invoices (ETA) admin page permission
 -- Note: legacy `permissions.id` is NOT auto-increment — set id explicitly.
+-- Note: legacy `permissions.id` is NOT auto-increment — set id explicitly.
 -- After running: php artisan permission:cache-reset
 
 INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`)
