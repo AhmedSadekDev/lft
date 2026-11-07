@@ -24,12 +24,17 @@
                             <th scope="col">{{ __('admin.name') }}</th>
                             <th scope="col">{{ __('admin.email') }}</th>
                             <th scope="col">{{ __('admin.phone') }}</th>
-                            <th scope="col">{{ __('admin.financial_custody') }}</th>
+                            <th scope="col">الفعلي</th>
+                            <th scope="col">تحت المراجعة</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($agents as $agent)
+                            @php
+                                $underReview = round((float) ($underReviewByAgent[$agent->id] ?? 0), 2);
+                                $actual = round((float) $agent->wallet - $underReview, 2);
+                            @endphp
                             <tr>
                                 <th scope="row">{{ $agent->id }}</th>
                                 <td>
@@ -46,7 +51,10 @@
                                 </td>
 
                                 <td>
-                                    {{ $agent->wallet }}
+                                    <span class="font-weight-bold text-success">{{ number_format($actual, 2) }}</span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold {{ $underReview > 0 ? 'text-warning' : 'text-muted' }}">{{ number_format($underReview, 2) }}</span>
                                 </td>
 
 

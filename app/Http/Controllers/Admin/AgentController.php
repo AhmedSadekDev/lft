@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Agent;
+use App\Models\AgentExpense;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
@@ -26,8 +27,17 @@ class AgentController extends Controller
     }
     public function index()
     {
+        // نفس منطق تطبيق المندوب: تحت المراجعة = إيصالات لم تُخصم بعد من المحفظة
+        $underReviewByAgent = AgentExpense::query()
+            ->selectRaw('agent_id, COALESCE(SUM(value), 0) as under_review')
+            ->whereNull('wallet_debited_at')
+            ->whereNull('delivery_policy_id')
+            ->groupBy('agent_id')
+            ->pluck('under_review', 'agent_id');
+
         $input = [
             'agents' => Agent::all(),
+            'underReviewByAgent' => $underReviewByAgent,
         ];
         return view('admin.agents.index', $input);
     }
