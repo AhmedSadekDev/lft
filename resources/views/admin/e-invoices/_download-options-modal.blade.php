@@ -1,9 +1,9 @@
-{{-- Download options modal for ETA e-invoices --}}
+{{-- Download options modal for dashboard (local) invoices --}}
 <div class="modal fade" id="eInvoiceDownloadModal" tabindex="-1" role="dialog" aria-labelledby="eInvoiceDownloadModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
         <div class="modal-content e-invoice-download-modal">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title font-weight-bold" id="eInvoiceDownloadModalLabel">خيارات التحميل</h5>
+                <h5 class="modal-title font-weight-bold" id="eInvoiceDownloadModalLabel">خيارات التحميل — فواتير اللوحة</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -14,7 +14,7 @@
                     <a class="nav-link active" data-toggle="tab" href="#tabDownloadOptions" role="tab">خيارات التحميل</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tabUuidDownload" role="tab">تحميل بـ UUID</a>
+                    <a class="nav-link" data-toggle="tab" href="#tabUuidDownload" role="tab">تحميل بأرقام الفواتير</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#tabTaxpayerSearch" role="tab">بحث عن ممول</a>
@@ -34,20 +34,20 @@
                                     <div class="card-body">
                                         <div class="row" id="pdfFilenameOptions">
                                             <div class="col-md-6">
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.internal_id" checked> <span></span> المعرف الداخلي</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.electronic_id" checked> <span></span> المعرف الإلكتروني</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.internal_id" checked> <span></span> رقم الفاتورة</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.electronic_id" checked> <span></span> معرف الفاتورة</label>
                                                 <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.invoice_date"> <span></span> تاريخ الفاتورة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.document_type"> <span></span> نوع المستند</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.document_type"> <span></span> نوع العملية</label>
                                                 <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.folder_per_seller"> <span></span> مجلد لكل بائع</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.folder_per_buyer"> <span></span> مجلد لكل مشتري</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.folder_per_buyer"> <span></span> مجلد لكل شركة</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.seller_name"> <span></span> اسم البائع</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.seller_name"> <span></span> اسم البائع (ليدر)</label>
                                                 <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.seller_tax"> <span></span> الرقم الضريبي للبائع</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.buyer_name"> <span></span> اسم المشتري</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.buyer_tax"> <span></span> الرقم الضريبي للمشتري</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.po_reference"> <span></span> مرجع أمر الشراء</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.so_reference"> <span></span> مرجع أمر البيع</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.buyer_name"> <span></span> اسم الشركة</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.buyer_tax"> <span></span> الرقم الضريبي للشركة</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.po_reference"> <span></span> رقم الحجز</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.so_reference"> <span></span> معرف الحجز</label>
                                             </div>
                                         </div>
                                         <div class="border rounded p-3 mt-2 bg-light">
@@ -72,25 +72,25 @@
                                     <div class="card-body" id="excelColumnOptions">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.document_type" checked> <span></span> نوع المستند</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.document_version"> <span></span> إصدار المستند</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.status" checked> <span></span> الحالة</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.document_type" checked> <span></span> نوع العملية</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.document_version"> <span></span> مصدر المستند</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.status" checked> <span></span> حالة السداد</label>
                                                 <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.date_issued" checked> <span></span> تاريخ الإصدار</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.date_received" checked> <span></span> تاريخ الاستلام</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.date_received" checked> <span></span> تاريخ التحديث</label>
                                                 <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.seller_data" checked> <span></span> بيانات البائع</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.buyer_data" checked> <span></span> بيانات المشتري</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.electronic_id" checked> <span></span> المعرف الإلكتروني</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.buyer_data" checked> <span></span> بيانات الشركة</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.electronic_id" checked> <span></span> معرف الفاتورة</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.signature"> <span></span> التوقيع الإلكتروني</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.external_link"> <span></span> الرابط الخارجي</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.po_reference"> <span></span> مرجع أمر الشراء</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.so_reference"> <span></span> مرجع أمر البيع</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.signature"> <span></span> جهة التوقيع</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.external_link"> <span></span> رابط الفاتورة</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.po_reference"> <span></span> رقم الحجز</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.so_reference"> <span></span> معرف الحجز</label>
                                                 <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.tax_columns" checked> <span></span> أعمدة الضريبة</label>
                                                 <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.discount_columns" checked> <span></span> أعمدة الخصم</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.group_items" checked> <span></span> تجميع البنود في صفحة واحدة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.credit_note_negative" checked> <span></span> تحويل مبلغ إشعار الدائن لسالب</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.ignore_rejected"> <span></span> تجاهل المرفوض والملغي</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.group_items" checked> <span></span> تفصيل البنود (حاويات/خدمات)</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.credit_note_negative" checked> <span></span> تحويل المبالغ السالبة كما هي</label>
+                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.ignore_rejected"> <span></span> تجاهل الفواتير بدون حجز</label>
                                             </div>
                                         </div>
                                     </div>
@@ -102,18 +102,18 @@
                     {{-- Tab 2 --}}
                     <div class="tab-pane fade" id="tabUuidDownload" role="tabpanel">
                         <div class="form-group">
-                            <label for="uuidListInput">أدخل معرفات UUID (سطر لكل معرف أو مفصولة بفاصلة)</label>
-                            <textarea id="uuidListInput" class="form-control" rows="8" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"></textarea>
+                            <label for="uuidListInput">أدخل أرقام الفواتير (سطر لكل رقم أو مفصولة بفاصلة)</label>
+                            <textarea id="uuidListInput" class="form-control" rows="8" placeholder="2026-48291-015"></textarea>
                         </div>
-                        <p class="text-muted mb-0">سيتم استخدام نفس خيارات اسم الملف وأعمدة الإكسيل من التاب الأول عند التصدير.</p>
+                        <p class="text-muted mb-0">فواتير اللوحة فقط — نفس خيارات اسم الملف وأعمدة الإكسيل من التاب الأول.</p>
                     </div>
 
                     {{-- Tab 3 --}}
                     <div class="tab-pane fade" id="tabTaxpayerSearch" role="tabpanel">
                         <div class="form-row align-items-end">
                             <div class="form-group col-md-8">
-                                <label for="taxpayerQuery">الرقم الضريبي أو الاسم</label>
-                                <input type="text" id="taxpayerQuery" class="form-control" placeholder="ابحث عن ممول...">
+                                <label for="taxpayerQuery">اسم الشركة أو الرقم الضريبي</label>
+                                <input type="text" id="taxpayerQuery" class="form-control" placeholder="ابحث في شركات اللوحة...">
                             </div>
                             <div class="form-group col-md-4">
                                 <button type="button" class="btn btn-primary btn-block" id="btnTaxpayerSearch">
@@ -126,7 +126,7 @@
                             <table class="table table-sm table-bordered" id="taxpayerResultsTable">
                                 <thead>
                                     <tr>
-                                        <th>الاسم</th>
+                                        <th>الشركة</th>
                                         <th>الرقم الضريبي</th>
                                         <th>تفاصيل</th>
                                     </tr>

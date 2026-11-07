@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Models\Booking;
 use App\Models\CompanyFatoorah;
+use App\Models\Invoice;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Mpdf\Mpdf;
 use ZipArchive;
 
 class EInvoiceExportService
@@ -15,217 +17,403 @@ class EInvoiceExportService
     }
 
     /**
-     * @param  array<int|string>  $bookingIds
-     * @param  array<string>  $uuids
-     * @param  array<string, mixed>  $options
+     * @param  array<int>  $invoiceIds
+     * @param  array<string>  $invoiceNumbers
+     * @param  array<string, mixed>  $filters
      */
-    public function resolveBookings(array $bookingIds = [], array $uuids = [], array $options = []): Collection
+    public function resolveLocalInvoices(array $invoiceIds = [], array $invoiceNumbers = [], array $filters = [], bool $allFiltered = false): Collection
     {
-        $query = Booking::query()
-            ->with(['company', 'invoice'])
-            ->whereNotNull('invoice_uuid')
-            ->where('invoice_uuid', '!=', '');
+        $query = Invoice::query()->with([
+            'booking.company',
+            'booking.bookingContainers.container',
+            'booking.bookingServices.service',
+            'invoicePayments',
+        ]);
 
-        if (! empty($bookingIds)) {
-            $query->whereIn('id', $bookingIds);
-        } elseif (! empty($uuids)) {
-            $normalized = collect($uuids)
-                ->flatMap(fn ($u) => preg_split('/[\s,;]+/', (string) $u) ?: [])
-                ->map(fn ($u) => trim($u))
+        if ($allFiltered) {
+            $this->applyLocalFilters($query, $filters);
+        } elseif (! empty($invoiceIds)) {
+            $query->whereIn('id', $invoiceIds);
+        } elseif (! empty($invoiceNumbers)) {
+            $normalized = collect($invoiceNumbers)
+                ->flatMap(fn ($n) => preg_split('/[\s,;]+/', (string) $n) ?: [])
+                ->map(fn ($n) => trim($n))
                 ->filter()
                 ->unique()
                 ->values()
                 ->all();
-
-            $query->whereIn('invoice_uuid', $normalized);
+            $query->whereIn('invoice_number', $normalized);
+        } else {
+            return collect();
         }
 
-        if (! empty($options['ignore_rejected'])) {
-            $query->where(function ($q) {
-                $q->whereNull('invoice_status')
-                    ->orWhereNotIn('invoice_status', ['Invalid', 'Cancelled', 'Canceled', 'Rejected', 'Failed']);
-            });
+        if (! empty($filters['ignore_rejected'])) {
+            $query->whereHas('booking');
         }
 
-        return $query->orderByDesc('id')->get();
+        return $query->orderByDesc('id')->limit(500)->get();
     }
 
     /**
-     * Enrich bookings with ETA document details/raw when credentials are available.
-     *
-     * @return array{rows: Collection, errors: array<int, string>}
+     * @param  \Illuminate\Database\Eloquent\Builder<\App\Models\Invoice>  $query
+     * @param  array<string, mixed>  $filters
      */
-    public function hydrateDocuments(Collection $bookings, bool $needDetails = true, bool $needRaw = false): array
+    public function applyLocalFilters($query, array $filters): void
     {
-        $errors = [];
-        $tokenCache = [];
+        if (! empty($filters['company_id'])) {
+            $query->whereHas('booking', fn ($q) => $q->where('company_id', $filters['company_id']));
+        }
 
-        $rows = $bookings->map(function (Booking $booking) use (&$errors, &$tokenCache, $needDetails, $needRaw) {
-            $row = [
-                'booking' => $booking,
-                'uuid' => $booking->invoice_uuid,
-                'status' => $booking->invoice_status,
-                'internal_id' => $booking->invoice?->invoice_number
-                    ? (string) $booking->invoice->invoice_number
-                    : ('INV-'.($booking->booking_number ?? $booking->id)),
-                'company_name' => $booking->company?->name,
-                'company_tax' => $booking->company?->tax_no,
-                'details' => null,
-                'raw' => null,
-                'pdf' => null,
+        if (! empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+
+        if (! empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
+        if (! empty($filters['currency'])) {
+            // currency column may be missing on legacy DB — ignore silently if so
+            try {
+                $query->where('currency', $filters['currency']);
+            } catch (\Throwable $e) {
+                // no-op
+            }
+        }
+
+        if (! empty($filters['search'])) {
+            $search = trim((string) $filters['search']);
+            $query->where(function ($q) use ($search) {
+                $q->where('invoice_number', 'like', "%{$search}%")
+                    ->orWhere('id', $search)
+                    ->orWhereHas('booking', function ($bq) use ($search) {
+                        $bq->where('booking_number', 'like', "%{$search}%");
+                    });
+            });
+        }
+    }
+
+    /**
+     * Normalize checkbox payload ("1"/"0"/true/false) to bool map.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, bool>
+     */
+    public function normalizeBoolOptions(array $options): array
+    {
+        $out = [];
+        foreach ($options as $key => $value) {
+            $out[$key] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        return $out;
+    }
+
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    public function mapLocalInvoices(Collection $invoices, array $excelOptions = []): Collection
+    {
+        $excelOptions = $this->normalizeBoolOptions($excelOptions);
+        $seller = $this->resolveSellerIdentity();
+
+        $mapped = $invoices->map(function (Invoice $invoice) use ($excelOptions, $seller) {
+            $booking = $invoice->booking;
+            $company = $booking?->company;
+
+            if (! empty($excelOptions['ignore_rejected']) && ! $booking) {
+                return null;
+            }
+
+            $beforeTax = (float) ($invoice->invoice_total_before_tax ?? 0);
+            $vat = (float) ($invoice->value_added_tax_amount ?? 0);
+            $salesTax = (float) ($invoice->sales_tax_amount ?? 0);
+            $discount = (float) ($invoice->discount_amount ?? 0);
+            $total = (float) ($invoice->invoice_total_after_tax ?? ($beforeTax + $vat));
+            $paid = (float) ($invoice->invoicePayments?->sum('value') ?? 0);
+
+            if (! empty($excelOptions['credit_note_negative']) && $total < 0) {
+                $total = -abs($total);
+            }
+
+            $docType = $this->documentTypeLabel($booking?->type_of_action);
+
+            return [
+                'invoice' => $invoice,
+                'invoice_id' => $invoice->id,
+                'internal_id' => $invoice->invoice_number,
+                'booking_id' => $invoice->booking_id,
+                'booking_number' => $booking?->booking_number,
+                'company_name' => $company?->name,
+                'company_tax' => $company?->tax_no,
+                'buyer_name' => $company?->name,
+                'buyer_tax' => $company?->tax_no,
+                'seller_name' => $seller['name'],
+                'seller_tax' => $seller['tax'],
+                'document_type' => $docType,
+                'document_version' => 'لوحة التحكم',
+                'status' => $paid >= $total && $total > 0 ? 'مسدد' : ($paid > 0 ? 'جزئي' : 'غير مسدد'),
+                'date_issued' => optional($invoice->created_at)->toDateTimeString(),
+                'date_received' => optional($invoice->updated_at)->toDateString(),
+                'electronic_id' => (string) $invoice->id,
+                'signature' => $booking?->signature_company ?: '—',
+                'external_link' => $invoice->id ? route('booking-invoices.show', $invoice->id) : '',
+                'po_reference' => $booking?->booking_number ?: '',
+                'so_reference' => (string) ($invoice->booking_id ?: ''),
+                'tax_total' => round($vat + $salesTax, 2),
+                'discount_total' => $discount,
+                'net_amount' => $beforeTax,
+                'total_amount' => $total,
+                'paid_amount' => $paid,
+                'remaining_amount' => round($total - $paid, 2),
+                'vat_amount' => $vat,
+                'sales_tax_amount' => $salesTax,
+                'transportation_total' => (float) ($invoice->transportation_total_before_vat ?? 0),
+                'taxed_services_total' => (float) ($invoice->taxed_services_total_before_vat ?? 0),
+                'untaxed_services_total' => (float) ($invoice->untaxed_services_total_before_vat ?? 0),
+                'lines' => $this->buildInvoiceLines($invoice),
             ];
+        })->filter()->values();
 
-            $token = $this->tokenForBooking($booking, $tokenCache);
-            if (! $token) {
-                $errors[] = "تعذر الحصول على توكن ETA للفاتورة {$booking->invoice_uuid}";
+        return $mapped;
+    }
 
-                return $row;
-            }
+    /**
+     * @param  array<string, mixed>  $excelOptions
+     * @return array{headers: array<int, string>, rows: array<int, array<int, mixed>>}
+     */
+    public function buildLocalColumnarTable(Collection $mappedRows, array $excelOptions): array
+    {
+        $excelOptions = $this->normalizeBoolOptions($excelOptions);
+        $columns = $this->selectedLocalColumnDefs($excelOptions);
+        $headers = array_values(array_map(fn ($c) => $c['label'], $columns));
+        $groupItems = ! empty($excelOptions['group_items']);
 
-            if ($needDetails) {
-                $details = $this->eInvoiceService->getInvoiceDetails($booking->invoice_uuid, $token);
-                if (($details['status'] ?? false) === true) {
-                    $row['details'] = $details['data'] ?? null;
-                } else {
-                    $errors[] = "تعذر جلب تفاصيل {$booking->invoice_uuid}: ".($details['message'] ?? '');
+        if ($groupItems) {
+            $headers[] = 'البند';
+            $headers[] = 'قيمة البند';
+        }
+
+        $rows = [];
+        foreach ($mappedRows as $mapped) {
+            if ($groupItems && ! empty($mapped['lines'])) {
+                foreach ($mapped['lines'] as $line) {
+                    $rows[] = array_merge(
+                        $this->rowValuesForMapped($columns, $mapped, $line),
+                        [
+                            $line['description'] ?? '',
+                            $line['amount'] ?? 0,
+                        ]
+                    );
                 }
-            }
-
-            if ($needRaw) {
-                $raw = $this->eInvoiceService->getInvoice($booking->invoice_uuid, $token);
-                if (is_array($raw) && ! isset($raw['status'])) {
-                    $row['raw'] = $raw;
-                } elseif (is_array($raw) && ($raw['status'] ?? true) === false) {
-                    $errors[] = "تعذر جلب JSON للفاتورة {$booking->invoice_uuid}: ".($raw['message'] ?? '');
-                } else {
-                    $row['raw'] = $raw;
+            } else {
+                $row = $this->rowValuesForMapped($columns, $mapped, null);
+                if ($groupItems) {
+                    $row[] = '—';
+                    $row[] = $mapped['total_amount'] ?? 0;
                 }
+                $rows[] = $row;
             }
+        }
 
-            return $row;
-        });
+        return ['headers' => $headers, 'rows' => $rows];
+    }
 
-        return ['rows' => $rows, 'errors' => $errors];
+    /**
+     * @param  array<int, array{key: string, label: string}>  $columns
+     * @param  array<string, mixed>  $mapped
+     * @param  array<string, mixed>|null  $line
+     * @return array<int, mixed>
+     */
+    protected function rowValuesForMapped(array $columns, array $mapped, ?array $line): array
+    {
+        $values = [];
+        foreach ($columns as $column) {
+            $key = $column['key'];
+            $values[] = match ($key) {
+                'seller_data' => trim(($mapped['seller_name'] ?? '').' / '.($mapped['seller_tax'] ?? '')),
+                'buyer_data' => trim(($mapped['buyer_name'] ?? '').' / '.($mapped['buyer_tax'] ?? '')),
+                'tax_columns' => 'ض.ق.م: '.number_format((float) ($mapped['vat_amount'] ?? 0), 2)
+                    .' | مبيعات: '.number_format((float) ($mapped['sales_tax_amount'] ?? 0), 2),
+                'discount_columns' => $mapped['discount_total'] ?? 0,
+                'total_amount' => $line['amount'] ?? ($mapped['total_amount'] ?? 0),
+                default => $mapped[$key] ?? '',
+            };
+        }
+
+        return $values;
+    }
+
+    /**
+     * @return array<int, array{description: string, amount: float, type: string}>
+     */
+    protected function buildInvoiceLines(Invoice $invoice): array
+    {
+        $lines = [];
+        $booking = $invoice->booking;
+        if (! $booking) {
+            return $lines;
+        }
+
+        $booking->loadMissing(['bookingContainers.container', 'bookingServices.service']);
+
+        foreach ($booking->bookingContainers ?? [] as $container) {
+            $lines[] = [
+                'description' => 'نقل: '.($container->container?->full_name ?? ('حاوية #'.$container->id)),
+                'amount' => (float) ($container->price ?? 0),
+                'type' => 'transportation',
+            ];
+        }
+
+        foreach ($booking->bookingServices ?? [] as $service) {
+            $lines[] = [
+                'description' => 'خدمة: '.($service->full_name ?? ($service->service?->name ?? ('#'.$service->id))),
+                'amount' => (float) ($service->price ?? $service->total ?? 0),
+                'type' => 'service',
+            ];
+        }
+
+        if (empty($lines)) {
+            $lines[] = [
+                'description' => 'إجمالي الفاتورة',
+                'amount' => (float) ($invoice->invoice_total_after_tax ?? 0),
+                'type' => 'total',
+            ];
+        }
+
+        return $lines;
+    }
+
+    /**
+     * @return array{name: string, tax: string}
+     */
+    protected function resolveSellerIdentity(): array
+    {
+        static $cached = null;
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $fatoorah = CompanyFatoorah::query()->orderBy('id')->first();
+        $cached = [
+            'name' => $fatoorah?->company_name
+                ?: config('app.name', 'Leader for Trans'),
+            'tax' => env('COMPANY_TAX_NO', '765717972'),
+        ];
+
+        return $cached;
+    }
+
+    protected function documentTypeLabel($typeOfAction): string
+    {
+        return match ((string) $typeOfAction) {
+            '0' => 'صادر',
+            '1' => 'وارد',
+            '2' => 'تخليص',
+            '3', '4' => 'عملية خاصة',
+            default => 'فاتورة',
+        };
     }
 
     /**
      * @param  array<string, mixed>  $filenameOptions
      */
-    public function buildPdfFilename(array $row, array $filenameOptions): string
+    public function buildLocalPdfFilename(array $mapped, array $filenameOptions): string
     {
+        $filenameOptions = $this->normalizeBoolOptions($filenameOptions);
         $parts = [];
-        $details = is_array($row['details'] ?? null) ? $row['details'] : [];
-        $raw = is_array($row['raw'] ?? null) ? $row['raw'] : [];
-        $doc = $raw['document'] ?? $raw;
-
-        $issuer = $details['issuer'] ?? ($doc['issuer'] ?? []);
-        $receiver = $details['receiver'] ?? ($doc['receiver'] ?? []);
-        $dateIssued = $details['dateTimeIssued']
-            ?? $details['dateTimeReceived']
-            ?? ($doc['dateTimeIssued'] ?? null);
-
         if (! empty($filenameOptions['internal_id'])) {
-            $parts[] = $row['internal_id'] ?? 'INV';
+            $parts[] = $mapped['internal_id'] ?? ('INV-'.$mapped['invoice_id']);
         }
         if (! empty($filenameOptions['electronic_id'])) {
-            $parts[] = $row['uuid'] ?? 'uuid';
+            $parts[] = $mapped['invoice_id'] ?? 'id';
         }
-        if (! empty($filenameOptions['invoice_date']) && $dateIssued) {
-            $parts[] = substr((string) $dateIssued, 0, 10);
+        if (! empty($filenameOptions['invoice_date']) && ! empty($mapped['date_issued'])) {
+            $parts[] = substr((string) $mapped['date_issued'], 0, 10);
         }
         if (! empty($filenameOptions['document_type'])) {
-            $parts[] = $details['documentType'] ?? ($doc['documentType'] ?? 'I');
+            $parts[] = $mapped['document_type'] ?? 'I';
         }
         if (! empty($filenameOptions['seller_name'])) {
-            $parts[] = $issuer['name'] ?? ($issuer['id'] ?? 'seller');
+            $parts[] = $mapped['seller_name'] ?? 'seller';
         }
         if (! empty($filenameOptions['seller_tax'])) {
-            $parts[] = $issuer['id'] ?? 'seller-tax';
+            $parts[] = $mapped['seller_tax'] ?: 'seller-tax';
         }
         if (! empty($filenameOptions['buyer_name'])) {
-            $parts[] = $receiver['name'] ?? ($row['company_name'] ?? 'buyer');
+            $parts[] = $mapped['buyer_name'] ?? 'buyer';
         }
         if (! empty($filenameOptions['buyer_tax'])) {
-            $parts[] = $receiver['id'] ?? ($row['company_tax'] ?? 'buyer-tax');
+            $parts[] = $mapped['buyer_tax'] ?: 'buyer-tax';
         }
         if (! empty($filenameOptions['po_reference'])) {
-            $parts[] = $details['purchaseOrderReference'] ?? ($doc['purchaseOrderReference'] ?? 'po');
+            $parts[] = $mapped['booking_number'] ?? 'booking';
         }
         if (! empty($filenameOptions['so_reference'])) {
-            $parts[] = $details['salesOrderReference'] ?? ($doc['salesOrderReference'] ?? 'so');
+            $parts[] = $mapped['booking_id'] ?? 'booking-id';
         }
 
         if (empty($parts)) {
-            $parts[] = $row['uuid'] ?? ('invoice-'.Str::random(6));
+            $parts[] = 'invoice-'.($mapped['invoice_id'] ?? Str::random(6));
         }
 
-        $name = collect($parts)
-            ->map(fn ($p) => Str::slug((string) $p, '_'))
-            ->filter()
-            ->implode('__');
-
-        return $name.'.pdf';
-    }
-
-    /**
-     * @param  array<string, mixed>  $filenameOptions
-     */
-    public function buildRelativePath(array $row, array $filenameOptions, string $filename): string
-    {
-        $details = is_array($row['details'] ?? null) ? $row['details'] : [];
-        $raw = is_array($row['raw'] ?? null) ? $row['raw'] : [];
-        $doc = $raw['document'] ?? $raw;
-        $issuer = $details['issuer'] ?? ($doc['issuer'] ?? []);
-        $receiver = $details['receiver'] ?? ($doc['receiver'] ?? []);
-
-        $segments = [];
-        if (! empty($filenameOptions['folder_per_seller'])) {
-            $segments[] = Str::slug((string) ($issuer['name'] ?? $issuer['id'] ?? 'seller'), '_');
-        }
-        if (! empty($filenameOptions['folder_per_buyer'])) {
-            $segments[] = Str::slug((string) ($receiver['name'] ?? $row['company_name'] ?? 'buyer'), '_');
-        }
-
-        $segments[] = $filename;
-
-        return implode('/', $segments);
+        return collect($parts)->map(fn ($p) => Str::slug((string) $p, '_'))->filter()->implode('__').'.pdf';
     }
 
     /**
      * @param  array<string, mixed>  $filenameOptions
      * @return array{path: string, errors: array<int, string>}
      */
-    public function exportPdfZip(Collection $bookings, array $filenameOptions): array
+    public function exportLocalPdfZip(Collection $invoices, array $filenameOptions): array
     {
-        $hydrated = $this->hydrateDocuments($bookings, true, false);
-        $errors = $hydrated['errors'];
-        $tokenCache = [];
-
-        $tmp = $this->makeTempZipPath('eta-pdfs');
+        $filenameOptions = $this->normalizeBoolOptions($filenameOptions);
+        $mapped = $this->mapLocalInvoices($invoices);
+        $errors = [];
+        $tmp = $this->makeTempZipPath('local-invoices-pdf');
         $zip = new ZipArchive();
         if ($zip->open($tmp, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-            return ['path' => '', 'errors' => array_merge($errors, ['تعذر إنشاء ملف ZIP'])];
+            return ['path' => '', 'errors' => ['تعذر إنشاء ملف ZIP']];
         }
 
         $added = 0;
-        foreach ($hydrated['rows'] as $row) {
-            /** @var Booking $booking */
-            $booking = $row['booking'];
-            $token = $this->tokenForBooking($booking, $tokenCache);
-            if (! $token) {
-                continue;
-            }
+        foreach ($mapped as $row) {
+            /** @var Invoice $invoice */
+            $invoice = $row['invoice'];
+            try {
+                $html = view('admin.e-invoices.pdf-single', [
+                    'invoice' => $invoice,
+                    'row' => $row,
+                ])->render();
 
-            $pdf = $this->eInvoiceService->getInvoicePDF($booking->invoice_uuid, $token);
-            if (! $pdf) {
-                $errors[] = "تعذر تحميل PDF للفاتورة {$booking->invoice_uuid}";
-                continue;
-            }
+                $mpdf = new Mpdf([
+                    'mode' => 'utf-8',
+                    'format' => 'A4',
+                    'default_font' => 'dejavusans',
+                    'directionality' => 'rtl',
+                    'margin_left' => 10,
+                    'margin_right' => 10,
+                    'margin_top' => 10,
+                    'margin_bottom' => 10,
+                ]);
+                $mpdf->WriteHTML($html);
+                $pdfBinary = $mpdf->Output('', 'S');
 
-            $filename = $this->buildPdfFilename($row, $filenameOptions);
-            $path = $this->buildRelativePath($row, $filenameOptions, $filename);
-            $zip->addFromString($path, $pdf);
-            $added++;
+                $filename = $this->buildLocalPdfFilename($row, $filenameOptions);
+                $path = $filename;
+                if (! empty($filenameOptions['folder_per_buyer'])) {
+                    $folder = Str::slug((string) ($row['buyer_name'] ?: 'buyer'), '_') ?: 'buyer';
+                    $path = $folder.'/'.$filename;
+                }
+                if (! empty($filenameOptions['folder_per_seller'])) {
+                    $folder = Str::slug((string) ($row['seller_name'] ?: 'seller'), '_') ?: 'seller';
+                    $path = $folder.'/'.$path;
+                }
+
+                $zip->addFromString($path, $pdfBinary);
+                $added++;
+            } catch (\Throwable $e) {
+                $errors[] = 'فشل PDF للفاتورة '.($invoice->invoice_number ?? $invoice->id).': '.$e->getMessage();
+            }
         }
 
         $zip->close();
@@ -242,149 +430,78 @@ class EInvoiceExportService
     /**
      * @return array{path: string, errors: array<int, string>}
      */
-    public function exportJsonXmlZip(Collection $bookings): array
+    public function exportLocalJsonXmlZip(Collection $invoices): array
     {
-        $hydrated = $this->hydrateDocuments($bookings, false, true);
-        $errors = $hydrated['errors'];
-
-        $tmp = $this->makeTempZipPath('eta-json-xml');
+        $mapped = $this->mapLocalInvoices($invoices);
+        $tmp = $this->makeTempZipPath('local-invoices-json-xml');
         $zip = new ZipArchive();
         if ($zip->open($tmp, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-            return ['path' => '', 'errors' => array_merge($errors, ['تعذر إنشاء ملف ZIP'])];
+            return ['path' => '', 'errors' => ['تعذر إنشاء ملف ZIP']];
         }
 
-        $added = 0;
-        foreach ($hydrated['rows'] as $row) {
-            $uuid = $row['uuid'] ?? 'unknown';
-            $raw = $row['raw'];
-            if (! $raw) {
-                continue;
-            }
+        foreach ($mapped as $row) {
+            /** @var Invoice $invoice */
+            $invoice = $row['invoice'];
+            $payload = [
+                'id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
+                'booking_id' => $invoice->booking_id,
+                'booking_number' => $row['booking_number'],
+                'company' => [
+                    'name' => $row['company_name'],
+                    'tax_no' => $row['company_tax'],
+                ],
+                'totals' => [
+                    'before_tax' => $row['net_amount'],
+                    'vat' => $row['vat_amount'],
+                    'sales_tax' => $row['sales_tax_amount'],
+                    'discount' => $row['discount_total'],
+                    'total' => $row['total_amount'],
+                    'paid' => $row['paid_amount'],
+                    'remaining' => $row['remaining_amount'],
+                ],
+                'created_at' => $row['date_issued'],
+            ];
 
-            $json = json_encode($raw, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-            $zip->addFromString("{$uuid}/raw.json", $json ?: '{}');
-            $zip->addFromString("{$uuid}/document.xml", $this->arrayToXml($raw, 'document'));
-            $added++;
+            $folder = Str::slug((string) ($invoice->invoice_number ?: $invoice->id), '_');
+            $json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) ?: '{}';
+            $zip->addFromString("{$folder}/invoice.json", $json);
+            $zip->addFromString("{$folder}/invoice.xml", $this->arrayToXml($payload, 'invoice'));
         }
 
         $zip->close();
 
-        if ($added === 0) {
-            @unlink($tmp);
-
-            return ['path' => '', 'errors' => array_merge($errors, ['لم يتم إضافة أي ملفات JSON/XML'])];
-        }
-
-        return ['path' => $tmp, 'errors' => $errors];
+        return ['path' => $tmp, 'errors' => []];
     }
 
-    /**
-     * Flatten rows for CSV / TABLE / Excel shared mapping.
-     *
-     * @param  array<string, mixed>  $excelOptions
-     * @return Collection<int, array<string, mixed>>
-     */
-    public function mapRowsForColumns(Collection $hydratedRows, array $excelOptions): Collection
+    public function exportLocalDatabaseCsv(Collection $invoices): string
     {
-        return $hydratedRows->map(function (array $row) use ($excelOptions) {
-            $details = is_array($row['details'] ?? null) ? $row['details'] : [];
-            $raw = is_array($row['raw'] ?? null) ? $row['raw'] : [];
-            $doc = $raw['document'] ?? $raw;
-            $issuer = $details['issuer'] ?? ($doc['issuer'] ?? []);
-            $receiver = $details['receiver'] ?? ($doc['receiver'] ?? []);
-            /** @var Booking $booking */
-            $booking = $row['booking'];
-
-            $documentType = $details['documentType'] ?? ($doc['documentType'] ?? 'I');
-            $total = (float) ($details['totalAmount'] ?? $doc['totalAmount'] ?? $booking->invoice?->invoice_total_before_tax ?? 0);
-            if (! empty($excelOptions['credit_note_negative']) && in_array(strtoupper((string) $documentType), ['C', 'CN', 'CREDITNOTE'], true)) {
-                $total = -abs($total);
-            }
-
-            $mapped = [
-                'booking_id' => $booking->id,
-                'booking_number' => $booking->booking_number,
-                'uuid' => $row['uuid'],
-                'status' => $details['status'] ?? $row['status'],
-                'internal_id' => $row['internal_id'],
-                'submission_id' => $booking->submission_id,
-                'company_name' => $row['company_name'],
-                'company_tax' => $row['company_tax'],
-                'document_type' => $documentType,
-                'document_version' => $details['documentTypeVersion'] ?? ($doc['documentTypeVersion'] ?? ''),
-                'date_issued' => $details['dateTimeIssued'] ?? ($doc['dateTimeIssued'] ?? ''),
-                'date_received' => $details['dateTimeReceived'] ?? ($details['receptionDateTime'] ?? ''),
-                'seller_name' => $issuer['name'] ?? '',
-                'seller_tax' => $issuer['id'] ?? '',
-                'buyer_name' => $receiver['name'] ?? ($row['company_name'] ?? ''),
-                'buyer_tax' => $receiver['id'] ?? ($row['company_tax'] ?? ''),
-                'electronic_id' => $row['uuid'],
-                'signature' => ! empty($details['signatures'] ?? $doc['signatures'] ?? null) ? 'yes' : '',
-                'external_link' => $details['publicUrl'] ?? ($details['shareUrl'] ?? ''),
-                'po_reference' => $details['purchaseOrderReference'] ?? ($doc['purchaseOrderReference'] ?? ''),
-                'so_reference' => $details['salesOrderReference'] ?? ($doc['salesOrderReference'] ?? ''),
-                'tax_total' => collect($details['taxTotals'] ?? $doc['taxTotals'] ?? [])->sum('amount'),
-                'discount_total' => $details['totalDiscountAmount'] ?? ($doc['totalDiscountAmount'] ?? 0),
-                'total_amount' => $total,
-                'net_amount' => $details['netAmount'] ?? ($doc['netAmount'] ?? 0),
-                'lines' => $details['invoiceLines'] ?? ($doc['invoiceLines'] ?? []),
-            ];
-
-            return $mapped;
-        });
-    }
-
-    /**
-     * @param  array<string, mixed>  $excelOptions
-     * @return array{headers: array<int, string>, rows: array<int, array<int, mixed>>}
-     */
-    public function buildColumnarTable(Collection $mappedRows, array $excelOptions): array
-    {
-        $columns = $this->selectedColumnDefs($excelOptions);
-        $headers = array_values(array_map(fn ($c) => $c['label'], $columns));
-
-        $groupItems = ! empty($excelOptions['group_items']);
-        if ($groupItems) {
-            $headers[] = 'البند';
-        }
-
-        $rows = [];
-        foreach ($mappedRows as $mapped) {
-            if ($groupItems && ! empty($mapped['lines']) && is_array($mapped['lines'])) {
-                foreach ($mapped['lines'] as $line) {
-                    $rows[] = $this->rowValues($columns, $mapped, $line, true);
-                }
-            } else {
-                $rows[] = $this->rowValues($columns, $mapped, null, $groupItems);
-            }
-        }
-
-        return ['headers' => $headers, 'rows' => $rows];
-    }
-
-    public function exportDatabaseCsv(Collection $bookings): string
-    {
-        $tmp = storage_path('app/temp/eta-db-'.Str::random(8).'.csv');
+        $tmp = storage_path('app/temp/local-invoices-db-'.Str::random(8).'.csv');
         $this->ensureTempDir();
         $fh = fopen($tmp, 'w');
         fputcsv($fh, [
-            'booking_id', 'booking_number', 'company_id', 'company_name', 'company_tax',
-            'invoice_uuid', 'submission_id', 'invoice_status', 'signature_company_id',
-            'created_at',
+            'invoice_id', 'invoice_number', 'booking_id', 'booking_number',
+            'company_name', 'company_tax', 'before_tax', 'vat', 'sales_tax',
+            'discount', 'total', 'paid', 'remaining', 'status', 'created_at',
         ]);
 
-        foreach ($bookings as $booking) {
+        foreach ($this->mapLocalInvoices($invoices) as $row) {
             fputcsv($fh, [
-                $booking->id,
-                $booking->booking_number,
-                $booking->company_id,
-                $booking->company?->name,
-                $booking->company?->tax_no,
-                $booking->invoice_uuid,
-                $booking->submission_id,
-                $booking->invoice_status,
-                $booking->signature_company_id,
-                optional($booking->created_at)->toDateTimeString(),
+                $row['invoice_id'],
+                $row['internal_id'],
+                $row['booking_id'],
+                $row['booking_number'],
+                $row['company_name'],
+                $row['company_tax'],
+                $row['net_amount'],
+                $row['vat_amount'],
+                $row['sales_tax_amount'],
+                $row['discount_total'],
+                $row['total_amount'],
+                $row['paid_amount'],
+                $row['remaining_amount'],
+                $row['status'],
+                $row['date_issued'],
             ]);
         }
 
@@ -418,9 +535,17 @@ class EInvoiceExportService
      * @param  array<string, mixed>  $excelOptions
      * @return array<int, array{key: string, label: string}>
      */
-    protected function selectedColumnDefs(array $excelOptions): array
+    protected function selectedLocalColumnDefs(array $excelOptions): array
     {
-        $all = [
+        $excelOptions = $this->normalizeBoolOptions($excelOptions);
+
+        // Always keep identity + money columns for usable reports.
+        $selected = [
+            ['key' => 'internal_id', 'label' => 'رقم الفاتورة'],
+            ['key' => 'booking_number', 'label' => 'رقم الحجز'],
+        ];
+
+        $optional = [
             'document_type' => 'نوع المستند',
             'document_version' => 'إصدار المستند',
             'status' => 'الحالة',
@@ -428,91 +553,27 @@ class EInvoiceExportService
             'date_received' => 'تاريخ الاستلام',
             'seller_data' => 'بيانات البائع',
             'buyer_data' => 'بيانات المشتري',
-            'electronic_id' => 'المعرف الإلكتروني',
-            'signature' => 'التوقيع الإلكتروني',
-            'external_link' => 'الرابط الخارجي',
-            'po_reference' => 'مرجع أمر الشراء',
-            'so_reference' => 'مرجع أمر البيع',
+            'electronic_id' => 'معرف الفاتورة',
+            'signature' => 'التوقيع / جهة التوقيع',
+            'external_link' => 'رابط الفاتورة',
+            'po_reference' => 'رقم الحجز (مرجع)',
+            'so_reference' => 'معرف الحجز',
             'tax_columns' => 'أعمدة الضريبة',
             'discount_columns' => 'أعمدة الخصم',
-            'total_amount' => 'الإجمالي',
-            'internal_id' => 'المعرف الداخلي',
-            'booking_number' => 'رقم الحجز',
         ];
 
-        $selected = [];
-        foreach ($all as $key => $label) {
-            // Always include core identity columns; optional ones follow checkboxes.
-            $always = in_array($key, ['total_amount', 'internal_id', 'booking_number'], true);
-            if ($always || ! empty($excelOptions[$key])) {
+        foreach ($optional as $key => $label) {
+            if (! empty($excelOptions[$key])) {
                 $selected[] = ['key' => $key, 'label' => $label];
             }
         }
 
-        if (empty($selected)) {
-            $selected[] = ['key' => 'electronic_id', 'label' => 'المعرف الإلكتروني'];
-            $selected[] = ['key' => 'status', 'label' => 'الحالة'];
-            $selected[] = ['key' => 'total_amount', 'label' => 'الإجمالي'];
-        }
+        $selected[] = ['key' => 'net_amount', 'label' => 'قبل الضريبة'];
+        $selected[] = ['key' => 'total_amount', 'label' => 'الإجمالي'];
+        $selected[] = ['key' => 'paid_amount', 'label' => 'المدفوع'];
+        $selected[] = ['key' => 'remaining_amount', 'label' => 'المتبقي'];
 
         return $selected;
-    }
-
-    /**
-     * @param  array<int, array{key: string, label: string}>  $columns
-     * @param  array<string, mixed>  $mapped
-     * @param  array<string, mixed>|null  $line
-     * @return array<int, mixed>
-     */
-    protected function rowValues(array $columns, array $mapped, ?array $line, bool $includeLineColumn = false): array
-    {
-        $values = [];
-        foreach ($columns as $column) {
-            $key = $column['key'];
-            $values[] = match ($key) {
-                'seller_data' => trim(($mapped['seller_name'] ?? '').' / '.($mapped['seller_tax'] ?? '')),
-                'buyer_data' => trim(($mapped['buyer_name'] ?? '').' / '.($mapped['buyer_tax'] ?? '')),
-                'tax_columns' => $line['taxableItems'][0]['amount'] ?? ($mapped['tax_total'] ?? ''),
-                'discount_columns' => $line['discount']['amount'] ?? ($mapped['discount_total'] ?? ''),
-                'total_amount' => $line['total'] ?? ($mapped['total_amount'] ?? ''),
-                default => $mapped[$key] ?? ($line[$key] ?? ''),
-            };
-        }
-
-        if ($includeLineColumn) {
-            $values[] = $line['description'] ?? ($line['itemCode'] ?? '');
-        }
-
-        return $values;
-    }
-
-    /**
-     * @param  array<string, string|null>  $tokenCache
-     */
-    protected function tokenForBooking(Booking $booking, array &$tokenCache): ?string
-    {
-        $companyId = $booking->signature_company_id;
-        $cacheKey = $companyId ? 'cf-'.$companyId : 'env-default';
-
-        if (array_key_exists($cacheKey, $tokenCache)) {
-            return $tokenCache[$cacheKey];
-        }
-
-        if ($companyId) {
-            $company = CompanyFatoorah::find($companyId);
-            if ($company) {
-                $tokenCache[$cacheKey] = $this->eInvoiceService->getAccessToken(
-                    $company->ETA_CLIENT_ID,
-                    $company->ETA_CLIENT_SECRET
-                );
-
-                return $tokenCache[$cacheKey];
-            }
-        }
-
-        $tokenCache[$cacheKey] = $this->eInvoiceService->getAccessToken();
-
-        return $tokenCache[$cacheKey];
     }
 
     protected function makeTempZipPath(string $prefix): string
@@ -528,5 +589,42 @@ class EInvoiceExportService
         if (! is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
+    }
+
+    // ---- Legacy ETA helpers kept for UUID/taxpayer tabs ----
+
+    /**
+     * @param  array<int|string>  $bookingIds
+     * @param  array<string>  $uuids
+     * @param  array<string, mixed>  $options
+     */
+    public function resolveBookings(array $bookingIds = [], array $uuids = [], array $options = []): Collection
+    {
+        $query = Booking::query()
+            ->with(['company', 'invoice'])
+            ->whereNotNull('invoice_uuid')
+            ->where('invoice_uuid', '!=', '');
+
+        if (! empty($bookingIds)) {
+            $query->whereIn('id', $bookingIds);
+        } elseif (! empty($uuids)) {
+            $normalized = collect($uuids)
+                ->flatMap(fn ($u) => preg_split('/[\s,;]+/', (string) $u) ?: [])
+                ->map(fn ($u) => trim($u))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+            $query->whereIn('invoice_uuid', $normalized);
+        }
+
+        if (! empty($options['ignore_rejected'])) {
+            $query->where(function ($q) {
+                $q->whereNull('invoice_status')
+                    ->orWhereNotIn('invoice_status', ['Invalid', 'Cancelled', 'Canceled', 'Rejected', 'Failed']);
+            });
+        }
+
+        return $query->orderByDesc('id')->get();
     }
 }
