@@ -360,71 +360,75 @@ class EInvoiceExportService
         return collect($parts)->map(fn ($p) => Str::slug((string) $p, '_'))->filter()->implode('__').'.pdf';
     }
 
+    public const PDF_MAX_INVOICES = 40;
+
     /**
+     * Build one multi-page PDF (safer than hundreds of separate mPDF runs).
+     *
      * @param  array<string, mixed>  $filenameOptions
-     * @return array{path: string, errors: array<int, string>}
+     * @return array{path: string, download_name: string, errors: array<int, string>}
      */
     public function exportLocalPdfZip(Collection $invoices, array $filenameOptions): array
     {
         $filenameOptions = $this->normalizeBoolOptions($filenameOptions);
+
+        if ($invoices->count() > self::PDF_MAX_INVOICES) {
+            return [
+                'path' => '',
+                'download_name' => '',
+                'errors' => [
+                    'تصدير PDF يدعم حتى '.self::PDF_MAX_INVOICES.' فاتورة فقط. الحالي: '.$invoices->count()
+                    .' — قلّل التحديد أو استخدم Excel / قاعدة البيانات للكميات الكبيرة.',
+                ],
+            ];
+        }
+
         $mapped = $this->mapLocalInvoices($invoices);
-        $errors = [];
-        $tmp = $this->makeTempZipPath('local-invoices-pdf');
-        $zip = new ZipArchive();
-        if ($zip->open($tmp, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-            return ['path' => '', 'errors' => ['تعذر إنشاء ملف ZIP']];
+        if ($mapped->isEmpty()) {
+            return ['path' => '', 'download_name' => '', 'errors' => ['لا توجد فواتير لتصدير PDF']];
         }
 
-        $added = 0;
-        foreach ($mapped as $row) {
-            /** @var Invoice $invoice */
-            $invoice = $row['invoice'];
-            try {
-                $html = view('admin.e-invoices.pdf-single', [
-                    'invoice' => $invoice,
-                    'row' => $row,
-                ])->render();
+        $this->ensureTempDir();
+        $tmp = storage_path('app/temp/local-invoices-'.Str::random(8).'.pdf');
 
-                $mpdf = new Mpdf([
-                    'mode' => 'utf-8',
-                    'format' => 'A4',
-                    'default_font' => 'dejavusans',
-                    'directionality' => 'rtl',
-                    'margin_left' => 10,
-                    'margin_right' => 10,
-                    'margin_top' => 10,
-                    'margin_bottom' => 10,
-                ]);
-                $mpdf->WriteHTML($html);
-                $pdfBinary = $mpdf->Output('', 'S');
+        try {
+            $html = view('admin.e-invoices.pdf-batch', [
+                'rows' => $mapped,
+            ])->render();
 
-                $filename = $this->buildLocalPdfFilename($row, $filenameOptions);
-                $path = $filename;
-                if (! empty($filenameOptions['folder_per_buyer'])) {
-                    $folder = Str::slug((string) ($row['buyer_name'] ?: 'buyer'), '_') ?: 'buyer';
-                    $path = $folder.'/'.$filename;
-                }
-                if (! empty($filenameOptions['folder_per_seller'])) {
-                    $folder = Str::slug((string) ($row['seller_name'] ?: 'seller'), '_') ?: 'seller';
-                    $path = $folder.'/'.$path;
-                }
-
-                $zip->addFromString($path, $pdfBinary);
-                $added++;
-            } catch (\Throwable $e) {
-                $errors[] = 'فشل PDF للفاتورة '.($invoice->invoice_number ?? $invoice->id).': '.$e->getMessage();
-            }
-        }
-
-        $zip->close();
-
-        if ($added === 0) {
+            $mpdf = new Mpdf([
+                'mode' => 'utf-8',
+                'format' => 'A4',
+                'default_font' => 'dejavusans',
+                'directionality' => 'rtl',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+                'margin_bottom' => 10,
+                'tempDir' => storage_path('app/temp'),
+            ]);
+            $mpdf->WriteHTML($html);
+            $mpdf->Output($tmp, \Mpdf\Output\Destination::FILE);
+        } catch (\Throwable $e) {
             @unlink($tmp);
 
-            return ['path' => '', 'errors' => array_merge($errors, ['لم يتم إضافة أي ملفات PDF'])];
+            return [
+                'path' => '',
+                'download_name' => '',
+                'errors' => ['فشل إنشاء PDF: '.$e->getMessage()],
+            ];
         }
 
-        return ['path' => $tmp, 'errors' => $errors];
+        $downloadName = $this->buildLocalPdfFilename($mapped->first(), $filenameOptions);
+        if ($mapped->count() > 1) {
+            $downloadName = 'invoices-'.$mapped->count().'-'.now()->format('Ymd-His').'.pdf';
+        }
+
+        return [
+            'path' => $tmp,
+            'download_name' => $downloadName,
+            'errors' => [],
+        ];
     }
 
     /**

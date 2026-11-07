@@ -1,97 +1,86 @@
-{{-- Download options modal for dashboard (local) invoices --}}
+{{-- Download options modal for dashboard invoices --}}
 <div class="modal fade" id="eInvoiceDownloadModal" tabindex="-1" role="dialog" aria-labelledby="eInvoiceDownloadModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
-        <div class="modal-content e-invoice-download-modal">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title font-weight-bold" id="eInvoiceDownloadModalLabel">خيارات التحميل — فواتير اللوحة</h5>
+        <div class="modal-content e-inv-modal">
+            <div class="modal-header e-inv-modal__header">
+                <div>
+                    <h5 class="modal-title mb-1" id="eInvoiceDownloadModalLabel">خيارات التحميل</h5>
+                    <div class="text-muted font-size-sm">فواتير اللوحة — اختر الحقول ثم صيغة التصدير</div>
+                </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
-            <ul class="nav nav-tabs nav-tabs-line nav-tabs-line-2x px-5 pt-2" role="tablist">
+            <ul class="nav nav-tabs e-inv-modal__tabs px-4" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" data-toggle="tab" href="#tabDownloadOptions" role="tab">خيارات التحميل</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tabUuidDownload" role="tab">تحميل بأرقام الفواتير</a>
+                    <a class="nav-link" data-toggle="tab" href="#tabUuidDownload" role="tab">بأرقام الفواتير</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tabTaxpayerSearch" role="tab">بحث عن ممول</a>
+                    <a class="nav-link" data-toggle="tab" href="#tabTaxpayerSearch" role="tab">بحث شركة</a>
                 </li>
             </ul>
 
-            <div class="modal-body">
+            <div class="modal-body e-inv-modal__body">
+                <div id="eInvExportAlert" class="alert d-none mb-4" role="alert"></div>
+
                 <div class="tab-content">
-                    {{-- Tab 1 --}}
                     <div class="tab-pane fade show active" id="tabDownloadOptions" role="tabpanel">
                         <div class="row">
                             <div class="col-lg-6 mb-4">
-                                <div class="card border-0 shadow-sm h-100">
-                                    <div class="card-header e-inv-header-blue py-3">
-                                        <strong>خيارات اسم الملف - PDF</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row" id="pdfFilenameOptions">
-                                            <div class="col-md-6">
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.internal_id" checked> <span></span> رقم الفاتورة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.electronic_id" checked> <span></span> معرف الفاتورة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.invoice_date"> <span></span> تاريخ الفاتورة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.document_type"> <span></span> نوع العملية</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.folder_per_seller"> <span></span> مجلد لكل بائع</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.folder_per_buyer"> <span></span> مجلد لكل شركة</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.seller_name"> <span></span> اسم البائع (ليدر)</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.seller_tax"> <span></span> الرقم الضريبي للبائع</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.buyer_name"> <span></span> اسم الشركة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.buyer_tax"> <span></span> الرقم الضريبي للشركة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.po_reference"> <span></span> رقم الحجز</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="filename.so_reference"> <span></span> معرف الحجز</label>
-                                            </div>
+                                <div class="e-inv-panel e-inv-panel--blue">
+                                    <div class="e-inv-panel__title">خيارات اسم الملف — PDF</div>
+                                    <div class="e-inv-panel__body">
+                                        <div class="e-inv-checks">
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.internal_id" checked> رقم الفاتورة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.electronic_id" checked> معرف الفاتورة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.invoice_date"> تاريخ الفاتورة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.document_type"> نوع العملية</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.folder_per_seller"> مجلد لكل بائع</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.folder_per_buyer"> مجلد لكل شركة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.seller_name"> اسم البائع</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.seller_tax"> الرقم الضريبي للبائع</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.buyer_name"> اسم الشركة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.buyer_tax"> الرقم الضريبي للشركة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.po_reference"> رقم الحجز</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="filename.so_reference"> معرف الحجز</label>
                                         </div>
-                                        <div class="border rounded p-3 mt-2 bg-light">
-                                            <strong class="d-block mb-2">خيارات التحميل</strong>
-                                            <label class="checkbox mb-0">
+                                        <div class="e-inv-scope mt-3">
+                                            <label class="e-inv-check mb-0">
                                                 <input type="checkbox" id="downloadAllFiltered" data-opt="use_all_filtered">
-                                                <span></span>
-                                                تحميل كل الصفحات —
-                                                <span id="filteredInvoiceCount">{{ $filteredCount ?? 0 }}</span>
-                                                فاتورة
+                                                تحميل كل الصفحات — <strong id="filteredInvoiceCount">{{ $filteredCount ?? 0 }}</strong> فاتورة
                                             </label>
+                                            <div class="text-muted font-size-sm mt-2">PDF بحد أقصى 40 فاتورة لتجنّب ضغط السيرفر</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-lg-6 mb-4">
-                                <div class="card border-0 shadow-sm h-100">
-                                    <div class="card-header e-inv-header-green py-3">
-                                        <strong>أعمدة ملف الإكسيل</strong>
-                                    </div>
-                                    <div class="card-body" id="excelColumnOptions">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.document_type" checked> <span></span> نوع العملية</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.document_version"> <span></span> مصدر المستند</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.status" checked> <span></span> حالة السداد</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.date_issued" checked> <span></span> تاريخ الإصدار</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.date_received" checked> <span></span> تاريخ التحديث</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.seller_data" checked> <span></span> بيانات البائع</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.buyer_data" checked> <span></span> بيانات الشركة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.electronic_id" checked> <span></span> معرف الفاتورة</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.signature"> <span></span> جهة التوقيع</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.external_link"> <span></span> رابط الفاتورة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.po_reference"> <span></span> رقم الحجز</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.so_reference"> <span></span> معرف الحجز</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.tax_columns" checked> <span></span> أعمدة الضريبة</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.discount_columns" checked> <span></span> أعمدة الخصم</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.group_items" checked> <span></span> تفصيل البنود (حاويات/خدمات)</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.credit_note_negative" checked> <span></span> تحويل المبالغ السالبة كما هي</label>
-                                                <label class="checkbox mb-3"><input type="checkbox" data-opt="excel.ignore_rejected"> <span></span> تجاهل الفواتير بدون حجز</label>
-                                            </div>
+                                <div class="e-inv-panel e-inv-panel--green">
+                                    <div class="e-inv-panel__title">أعمدة ملف الإكسيل / TABLE</div>
+                                    <div class="e-inv-panel__body">
+                                        <div class="e-inv-checks">
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.document_type" checked> نوع العملية</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.document_version"> مصدر المستند</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.status" checked> حالة السداد</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.date_issued" checked> تاريخ الإصدار</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.date_received" checked> تاريخ التحديث</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.seller_data" checked> بيانات البائع</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.buyer_data" checked> بيانات الشركة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.electronic_id" checked> معرف الفاتورة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.signature"> جهة التوقيع</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.external_link"> رابط الفاتورة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.po_reference"> رقم الحجز</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.so_reference"> معرف الحجز</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.tax_columns" checked> أعمدة الضريبة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.discount_columns" checked> أعمدة الخصم</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.group_items"> تفصيل البنود</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.credit_note_negative" checked> الحفاظ على المبالغ السالبة</label>
+                                            <label class="e-inv-check"><input type="checkbox" data-opt="excel.ignore_rejected"> تجاهل الفواتير بدون حجز</label>
                                         </div>
                                     </div>
                                 </div>
@@ -99,31 +88,27 @@
                         </div>
                     </div>
 
-                    {{-- Tab 2 --}}
                     <div class="tab-pane fade" id="tabUuidDownload" role="tabpanel">
-                        <div class="form-group">
-                            <label for="uuidListInput">أدخل أرقام الفواتير (سطر لكل رقم أو مفصولة بفاصلة)</label>
-                            <textarea id="uuidListInput" class="form-control" rows="8" placeholder="2026-48291-015"></textarea>
-                        </div>
-                        <p class="text-muted mb-0">فواتير اللوحة فقط — نفس خيارات اسم الملف وأعمدة الإكسيل من التاب الأول.</p>
+                        <label class="font-weight-bold d-block mb-2" for="uuidListInput">أرقام الفواتير</label>
+                        <textarea id="uuidListInput" class="form-control e-inv-textarea" rows="7" placeholder="2026-48291-015&#10;2026-001-134"></textarea>
+                        <p class="text-muted mt-2 mb-0">سطر لكل رقم، أو افصل بفاصلة. تُستخدم نفس خيارات التاب الأول.</p>
                     </div>
 
-                    {{-- Tab 3 --}}
                     <div class="tab-pane fade" id="tabTaxpayerSearch" role="tabpanel">
                         <div class="form-row align-items-end">
-                            <div class="form-group col-md-8">
+                            <div class="form-group col-md-8 mb-md-0">
                                 <label for="taxpayerQuery">اسم الشركة أو الرقم الضريبي</label>
                                 <input type="text" id="taxpayerQuery" class="form-control" placeholder="ابحث في شركات اللوحة...">
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-4 mb-0">
                                 <button type="button" class="btn btn-primary btn-block" id="btnTaxpayerSearch">
                                     <i class="fas fa-search"></i> بحث
                                 </button>
                             </div>
                         </div>
-                        <div id="taxpayerSearchMessage" class="alert alert-light d-none"></div>
-                        <div class="table-responsive">
-                            <table class="table table-sm table-bordered" id="taxpayerResultsTable">
+                        <div id="taxpayerSearchMessage" class="alert alert-light d-none mt-3 mb-2"></div>
+                        <div class="table-responsive mt-2">
+                            <table class="table table-sm table-bordered mb-0" id="taxpayerResultsTable">
                                 <thead>
                                     <tr>
                                         <th>الشركة</th>
@@ -138,26 +123,26 @@
                 </div>
             </div>
 
-            <div class="modal-footer flex-wrap justify-content-between e-inv-actions">
-                <button type="button" class="btn btn-danger btn-lg mb-2" data-dismiss="modal">CLOSE</button>
-                <div class="d-flex flex-wrap">
-                    <button type="button" class="btn btn-warning btn-lg mb-2 ml-2 e-inv-export-btn" data-format="database">
+            <div class="modal-footer e-inv-modal__footer">
+                <button type="button" class="btn e-inv-btn e-inv-btn--close" data-dismiss="modal">إغلاق</button>
+                <div class="e-inv-actions">
+                    <button type="button" class="btn e-inv-btn e-inv-btn--db e-inv-export-btn" data-format="database">
                         <i class="fas fa-database"></i> قاعدة البيانات
                     </button>
-                    <button type="button" class="btn btn-lg mb-2 ml-2 e-inv-export-btn" data-format="table" style="background:#6f42c1;color:#fff;">
+                    <button type="button" class="btn e-inv-btn e-inv-btn--table e-inv-export-btn" data-format="table">
                         <i class="fas fa-table"></i> TABLE
                     </button>
-                    <button type="button" class="btn btn-secondary btn-lg mb-2 ml-2 e-inv-export-btn" data-format="json_xml">
+                    <button type="button" class="btn e-inv-btn e-inv-btn--code e-inv-export-btn" data-format="json_xml">
                         <i class="fas fa-file-code"></i> JSON/XML
                     </button>
-                    <button type="button" class="btn btn-primary btn-lg mb-2 ml-2 e-inv-export-btn" data-format="pdf">
+                    <button type="button" class="btn e-inv-btn e-inv-btn--pdf e-inv-export-btn" data-format="pdf">
                         <i class="fas fa-file-pdf"></i> PDF
                     </button>
-                    <div class="btn-group dropup mb-2 ml-2">
-                        <button type="button" class="btn btn-success btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="btn-group dropup">
+                        <button type="button" class="btn e-inv-btn e-inv-btn--excel dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-file-excel"></i> EXCEL
                         </button>
-                        <div class="dropdown-menu dropdown-menu-right shadow">
+                        <div class="dropdown-menu dropdown-menu-right shadow e-inv-excel-menu">
                             <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="comprehensive">تقرير شامل</a>
                             <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="transactions">بيان تعاملات <span class="badge badge-danger">New</span></a>
                             <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="vat_sales">تقرير مبيعات قيمة مضافة</a>
@@ -168,13 +153,76 @@
                     </div>
                 </div>
             </div>
+
+            <div id="eInvExportBusy" class="e-inv-busy d-none">
+                <div class="e-inv-busy__card">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <div class="font-weight-bold">جاري تجهيز الملف...</div>
+                    <div class="text-muted font-size-sm mt-1">لا تغلق النافذة</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-    .e-inv-header-blue { background: #1e88e5; color: #fff; }
-    .e-inv-header-green { background: #43a047; color: #fff; }
-    .e-invoice-download-modal .checkbox > span { margin-left: .5rem; }
-    .e-inv-actions .btn { min-width: 120px; }
+    .e-inv-modal { border: 0; border-radius: 16px; overflow: hidden; background: var(--surface, #fff); }
+    .e-inv-modal__header { border-bottom: 1px solid var(--border, #e5e7eb); padding: 1.1rem 1.4rem; align-items: flex-start; }
+    .e-inv-modal__header .modal-title { font-weight: 800; font-size: 1.15rem; color: var(--text-primary, #111); }
+    .e-inv-modal__tabs { border-bottom: 1px solid var(--border, #e5e7eb); gap: .25rem; }
+    .e-inv-modal__tabs .nav-link {
+        border: 0; border-bottom: 2px solid transparent; color: var(--text-secondary, #6b7280);
+        font-weight: 600; padding: .85rem 1rem;
+    }
+    .e-inv-modal__tabs .nav-link.active { color: #1e88e5; border-bottom-color: #1e88e5; background: transparent; }
+    .e-inv-modal__body { padding: 1.25rem 1.4rem; background: var(--surface-secondary, #f8fafc); }
+    .e-inv-panel { border-radius: 14px; overflow: hidden; border: 1px solid var(--border, #e5e7eb); background: var(--surface, #fff); height: 100%; }
+    .e-inv-panel__title { padding: .85rem 1rem; font-weight: 800; color: #fff; }
+    .e-inv-panel--blue .e-inv-panel__title { background: #1e88e5; }
+    .e-inv-panel--green .e-inv-panel__title { background: #43a047; }
+    .e-inv-panel__body { padding: 1rem; }
+    .e-inv-checks { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem .75rem; }
+    .e-inv-check {
+        display: flex; align-items: flex-start; gap: .55rem; margin: 0;
+        font-size: 13px; color: var(--text-primary, #111); cursor: pointer; line-height: 1.35;
+    }
+    .e-inv-check input { margin-top: .15rem; flex: 0 0 auto; }
+    .e-inv-scope {
+        border: 1px dashed var(--border, #cbd5e1); border-radius: 10px;
+        padding: .85rem 1rem; background: var(--surface-secondary, #f8fafc);
+    }
+    .e-inv-textarea { border-radius: 10px; }
+    .e-inv-modal__footer {
+        display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+        gap: .75rem; padding: 1rem 1.25rem; border-top: 1px solid var(--border, #e5e7eb);
+        background: var(--surface, #fff);
+    }
+    .e-inv-actions { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: flex-end; }
+    .e-inv-btn {
+        border: 0; border-radius: 10px; font-weight: 700; min-width: 118px;
+        padding: .7rem 1rem; color: #fff !important;
+    }
+    .e-inv-btn i { margin-left: .35rem; }
+    .e-inv-btn--close { background: #e53935; }
+    .e-inv-btn--db { background: #fb8c00; }
+    .e-inv-btn--table { background: #8e24aa; }
+    .e-inv-btn--code { background: #546e7a; }
+    .e-inv-btn--pdf { background: #1e88e5; }
+    .e-inv-btn--excel { background: #43a047; }
+    .e-inv-excel-menu { min-width: 240px; border-radius: 10px; }
+    .e-inv-busy {
+        position: absolute; inset: 0; background: rgba(15, 23, 42, .45);
+        display: flex; align-items: center; justify-content: center; z-index: 5;
+    }
+    .e-inv-busy__card {
+        background: var(--surface, #fff); border-radius: 14px; padding: 1.5rem 2rem;
+        text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    }
+    .e-inv-modal { position: relative; }
+    @media (max-width: 767px) {
+        .e-inv-checks { grid-template-columns: 1fr; }
+        .e-inv-modal__footer { flex-direction: column-reverse; align-items: stretch; }
+        .e-inv-actions { justify-content: stretch; }
+        .e-inv-btn { width: 100%; }
+    }
 </style>
