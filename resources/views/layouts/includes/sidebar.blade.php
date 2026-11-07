@@ -581,7 +581,7 @@
 
 
 
-                    @if (has_app_permission('e_invoices.index'))
+                    <!-- @if (has_app_permission('e_invoices.index'))
                         <li class="menu-item menu-item-submenu {{ request()->is('dashboard/e-invoices*') ? 'menu-item-open menu-item-here' : '' }}"
                             aria-haspopup="true" data-menu-toggle="hover">
                             <a href="javascript:;" class="menu-link menu-toggle">
@@ -609,7 +609,7 @@
                                 </ul>
                             </div>
                         </li>
-                    @endif
+                    @endif -->
 
                     @if (has_app_permission('accounts.index') || has_app_permission('daily_reports.index') || has_app_permission('suppliers.index'))
                         <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
