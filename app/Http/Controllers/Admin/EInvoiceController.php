@@ -23,7 +23,13 @@ class EInvoiceController extends Controller
         protected EInvoiceService $eInvoiceService,
         protected EInvoiceExportService $exportService
     ) {
-        $this->middleware('permission:e_invoices.index');
+        // Use safe check: Spatie middleware throws if the permission cache is stale
+        // even when the DB row exists.
+        $this->middleware(function ($request, $next) {
+            abort_unless(has_app_permission('e_invoices.index'), 403);
+
+            return $next($request);
+        });
     }
 
     public function index(Request $request)

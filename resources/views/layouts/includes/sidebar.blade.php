@@ -581,7 +581,7 @@
 
 
 
-                    @if (auth()->user()->hasPermissionTo('e_invoices.index'))
+                    @if (has_app_permission('e_invoices.index'))
                         <li class="menu-item menu-item-submenu {{ request()->is('dashboard/e-invoices*') ? 'menu-item-open menu-item-here' : '' }}"
                             aria-haspopup="true" data-menu-toggle="hover">
                             <a href="javascript:;" class="menu-link menu-toggle">
