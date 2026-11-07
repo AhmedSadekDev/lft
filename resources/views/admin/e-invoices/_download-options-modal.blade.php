@@ -123,6 +123,40 @@
                 </div>
             </div>
 
+            <div class="e-inv-excel-panel d-none" id="eInvExcelPanel">
+                <div class="e-inv-excel-panel__head">
+                    <strong>اختر تقرير Excel</strong>
+                    <button type="button" class="btn btn-sm btn-light" id="btnCloseExcelPanel">&times;</button>
+                </div>
+                <div class="e-inv-excel-panel__grid">
+                    <button type="button" class="e-inv-excel-option e-inv-export-btn" data-format="excel" data-excel-type="comprehensive">
+                        <i class="fas fa-file-excel"></i>
+                        <span>تقرير شامل</span>
+                    </button>
+                    <button type="button" class="e-inv-excel-option e-inv-export-btn" data-format="excel" data-excel-type="transactions">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>بيان تعاملات</span>
+                        <em class="e-inv-new">New</em>
+                    </button>
+                    <button type="button" class="e-inv-excel-option e-inv-export-btn" data-format="excel" data-excel-type="vat_sales">
+                        <i class="fas fa-chart-line"></i>
+                        <span>تقرير مبيعات قيمة مضافة</span>
+                    </button>
+                    <button type="button" class="e-inv-excel-option e-inv-export-btn" data-format="excel" data-excel-type="vat_purchases">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>تقرير مشتريات قيمة مضافة</span>
+                    </button>
+                    <button type="button" class="e-inv-excel-option e-inv-export-btn" data-format="excel" data-excel-type="form41">
+                        <i class="fas fa-file-alt"></i>
+                        <span>نموذج 41</span>
+                    </button>
+                    <button type="button" class="e-inv-excel-option e-inv-export-btn" data-format="excel" data-excel-type="account_certificate">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>كشف حساب / شهادة تعاملات</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="modal-footer e-inv-modal__footer">
                 <button type="button" class="btn e-inv-btn e-inv-btn--close" data-dismiss="modal">إغلاق</button>
                 <div class="e-inv-actions">
@@ -138,19 +172,9 @@
                     <button type="button" class="btn e-inv-btn e-inv-btn--pdf e-inv-export-btn" data-format="pdf">
                         <i class="fas fa-file-pdf"></i> PDF
                     </button>
-                    <div class="btn-group dropup">
-                        <button type="button" class="btn e-inv-btn e-inv-btn--excel dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-file-excel"></i> EXCEL
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right shadow e-inv-excel-menu">
-                            <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="comprehensive">تقرير شامل</a>
-                            <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="transactions">بيان تعاملات <span class="badge badge-danger">New</span></a>
-                            <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="vat_sales">تقرير مبيعات قيمة مضافة</a>
-                            <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="vat_purchases">تقرير مشتريات قيمة مضافة</a>
-                            <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="form41">نموذج 41</a>
-                            <a class="dropdown-item e-inv-export-btn" href="javascript:;" data-format="excel" data-excel-type="account_certificate">كشف حساب / شهادة تعاملات</a>
-                        </div>
-                    </div>
+                    <button type="button" class="btn e-inv-btn e-inv-btn--excel" id="btnToggleExcelPanel">
+                        <i class="fas fa-file-excel"></i> EXCEL
+                    </button>
                 </div>
             </div>
 
@@ -166,7 +190,10 @@
 </div>
 
 <style>
-    .e-inv-modal { border: 0; border-radius: 16px; overflow: hidden; background: var(--surface, #fff); }
+    .e-inv-modal {
+        border: 0; border-radius: 16px; overflow: visible;
+        background: var(--surface, #fff); position: relative;
+    }
     .e-inv-modal__header { border-bottom: 1px solid var(--border, #e5e7eb); padding: 1.1rem 1.4rem; align-items: flex-start; }
     .e-inv-modal__header .modal-title { font-weight: 800; font-size: 1.15rem; color: var(--text-primary, #111); }
     .e-inv-modal__tabs { border-bottom: 1px solid var(--border, #e5e7eb); gap: .25rem; }
@@ -192,6 +219,39 @@
         padding: .85rem 1rem; background: var(--surface-secondary, #f8fafc);
     }
     .e-inv-textarea { border-radius: 10px; }
+    .e-inv-excel-panel {
+        margin: 0 1.25rem 0; padding: 1rem;
+        border: 1px solid rgba(67, 160, 71, .35);
+        border-radius: 12px;
+        background: rgba(67, 160, 71, .08);
+    }
+    .e-inv-excel-panel__head {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: .75rem; color: var(--text-primary, #111);
+    }
+    .e-inv-excel-panel__grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .65rem;
+    }
+    .e-inv-excel-option {
+        display: flex; align-items: center; gap: .65rem;
+        width: 100%; text-align: right; white-space: normal;
+        border: 1px solid var(--border, #d1d5db);
+        background: var(--surface, #fff);
+        color: var(--text-primary, #111);
+        border-radius: 10px; padding: .75rem .9rem;
+        font-weight: 600; line-height: 1.35;
+    }
+    .e-inv-excel-option:hover {
+        border-color: #43a047; background: rgba(67, 160, 71, .12);
+    }
+    .e-inv-excel-option i { color: #43a047; width: 18px; text-align: center; flex: 0 0 auto; }
+    .e-inv-excel-option span { flex: 1 1 auto; }
+    .e-inv-new {
+        background: #e53935; color: #fff; border-radius: 999px;
+        font-style: normal; font-size: 10px; padding: .1rem .4rem; font-weight: 700;
+    }
     .e-inv-modal__footer {
         display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
         gap: .75rem; padding: 1rem 1.25rem; border-top: 1px solid var(--border, #e5e7eb);
@@ -209,18 +269,17 @@
     .e-inv-btn--code { background: #546e7a; }
     .e-inv-btn--pdf { background: #1e88e5; }
     .e-inv-btn--excel { background: #43a047; }
-    .e-inv-excel-menu { min-width: 240px; border-radius: 10px; }
     .e-inv-busy {
         position: absolute; inset: 0; background: rgba(15, 23, 42, .45);
         display: flex; align-items: center; justify-content: center; z-index: 5;
+        border-radius: 16px;
     }
     .e-inv-busy__card {
         background: var(--surface, #fff); border-radius: 14px; padding: 1.5rem 2rem;
         text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.18);
     }
-    .e-inv-modal { position: relative; }
     @media (max-width: 767px) {
-        .e-inv-checks { grid-template-columns: 1fr; }
+        .e-inv-checks, .e-inv-excel-panel__grid { grid-template-columns: 1fr; }
         .e-inv-modal__footer { flex-direction: column-reverse; align-items: stretch; }
         .e-inv-actions { justify-content: stretch; }
         .e-inv-btn { width: 100%; }

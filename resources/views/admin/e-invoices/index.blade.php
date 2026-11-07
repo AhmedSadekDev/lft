@@ -419,10 +419,26 @@
         document.querySelectorAll('.e-inv-row-check').forEach(function (el) { el.checked = checked; });
     });
 
+    function setExcelPanel(open) {
+        var panel = document.getElementById('eInvExcelPanel');
+        if (!panel) return;
+        panel.classList.toggle('d-none', !open);
+    }
+
     document.getElementById('btnOpenDownloadOptions') && document.getElementById('btnOpenDownloadOptions').addEventListener('click', function () {
         clearAlert();
+        setExcelPanel(false);
         loadPrefs();
         $('#eInvoiceDownloadModal').modal('show');
+    });
+
+    document.getElementById('btnToggleExcelPanel') && document.getElementById('btnToggleExcelPanel').addEventListener('click', function () {
+        var panel = document.getElementById('eInvExcelPanel');
+        setExcelPanel(panel && panel.classList.contains('d-none'));
+    });
+
+    document.getElementById('btnCloseExcelPanel') && document.getElementById('btnCloseExcelPanel').addEventListener('click', function () {
+        setExcelPanel(false);
     });
 
     document.querySelectorAll('[data-opt]').forEach(function (el) {
@@ -432,7 +448,9 @@
     document.querySelectorAll('.e-inv-export-btn').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
-            submitExport(btn.getAttribute('data-format'), btn.getAttribute('data-excel-type'));
+            var format = btn.getAttribute('data-format');
+            if (format === 'excel') setExcelPanel(false);
+            submitExport(format, btn.getAttribute('data-excel-type'));
         });
     });
 
