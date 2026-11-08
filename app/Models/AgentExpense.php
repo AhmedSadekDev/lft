@@ -131,21 +131,15 @@ class AgentExpense extends Model
     }
 
     /**
-     * إيصالات التطبيق التي لم تُراجع بعد. المراجعة = admin_approval، أو إقفال إيصالات المرحلة،
-     * أو تسوية العهدة، أو إصدار فاتورة؛ وهي نفس الحالات التي يُمنع فيها المندوب من التعديل.
+     * إيصالات التطبيق بانتظار اعتماد الداشبورد. تبقى ظاهرة وقابلة للتعديل للمندوب
+     * حتى markReviewed — لا تختفي بعد منتصف الليل ولا بإقفال إيصالات المرحلة.
      */
     public function scopeAwaitingReview($query)
     {
         return $query->visibleToAgent()
             ->whereNull('booking_service_id')
             ->where(fn ($q) => $q->where('admin_approval', 0)->orWhereNull('admin_approval'))
-            ->whereDoesntHave('delivery_policy', fn ($q) => $q->where('is_settled', 1))
-            ->whereNotExists(function ($q) {
-                $q->selectRaw('1')->from('booking_container_stages')
-                    ->whereColumn('booking_container_stages.booking_container_id', 'agent_expenses.booking_container_id')
-                    ->whereColumn('booking_container_stages.type_id', 'agent_expenses.type_id')
-                    ->whereNotNull('booking_container_stages.receipts_closed_at');
-            });
+            ->whereDoesntHave('delivery_policy', fn ($q) => $q->where('is_settled', 1));
     }
 
     /**

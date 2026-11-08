@@ -28,4 +28,4 @@ Backfill stamps `wallet_debited_at` on already-approved / booking-service rows s
 
 ## Note
 
-Stage `closeReceipts` still hides receipts from the agent screen without debiting. Pending holds remain until dashboard review (by agent screen or general-expenses checkboxes with explicit ids).
+Pending receipts stay on the agent screen (and remain editable) until dashboard `markReviewed`, including after midnight and after stage `closeReceipts`. Pending holds remain until dashboard review (agent expenses screen or general-expenses checkboxes with explicit ids). Incoming money transfers expose `transferer_name` so the agent sees who sent custody.

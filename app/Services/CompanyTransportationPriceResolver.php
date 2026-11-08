@@ -43,13 +43,22 @@ class CompanyTransportationPriceResolver
      * Apply tariff price onto the container when a company-scoped match exists.
      * Leaves price unchanged when no row matches (does not force zero).
      *
-     * @return float|null applied price, or null if no match
+     * @param  bool  $overwriteManual  when false, keep any positive manual/special price
+     * @return float|null applied price, or null if no match / skipped
      */
-    public function applyToContainer(BookingContainer $container): ?float
+    public function applyToContainer(BookingContainer $container, bool $overwriteManual = true): ?float
     {
         $tariff = $this->findForContainer($container);
         if (! $tariff) {
             return null;
+        }
+
+        if (! $overwriteManual) {
+            $hasManual = (float) ($container->price ?? 0) > 0
+                || (float) ($container->foreign_amount ?? 0) > 0;
+            if ($hasManual) {
+                return null;
+            }
         }
 
         $price = (float) $tariff->price;
@@ -63,16 +72,17 @@ class CompanyTransportationPriceResolver
     }
 
     /**
-     * Sync every container on a booking from company tariffs (used before invoicing).
+     * Sync every container on a booking from company tariffs.
      *
+     * @param  bool  $overwriteManual  false = fill empty prices only (invoice special cases)
      * @return int number of containers that received a tariff price
      */
-    public function applyToBooking(Booking $booking): int
+    public function applyToBooking(Booking $booking, bool $overwriteManual = true): int
     {
         $booking->loadMissing('bookingContainers');
         $applied = 0;
         foreach ($booking->bookingContainers as $container) {
-            if ($this->applyToContainer($container) !== null) {
+            if ($this->applyToContainer($container, $overwriteManual) !== null) {
                 $applied++;
             }
         }
@@ -82,6 +92,14 @@ class CompanyTransportationPriceResolver
         }
 
         return $applied;
+    }
+
+    /**
+     * Invoice path: fill missing tariffs only — never wipe special/manual trip prices.
+     */
+    public function fillMissingPricesOnBooking(Booking $booking): int
+    {
+        return $this->applyToBooking($booking, false);
     }
 
     /**
