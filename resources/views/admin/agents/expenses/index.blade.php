@@ -4,7 +4,9 @@
     $agentExpenseRows = $allExpenses->filter(fn ($item) => $item instanceof \App\Models\AgentExpense);
     $pendingVaultReturnIds = $pendingVaultReturnIds ?? collect();
     $pendingCount = $awaitingReviewIds->count() + $pendingVaultReturnIds->count();
-    $reviewedCount = $agentExpenseRows->reject(fn ($item) => $awaitingReviewIds->has($item->id))->count();
+    $reviewedCount = $agentExpenseRows->reject(fn ($item) => $awaitingReviewIds->has($item->id))->count()
+        + $allExpenses->filter(fn ($item) => $item instanceof \App\Models\MoneyTransfer
+            && (int) $item->type === \App\Models\MoneyTransfer::vaultReturnApproved)->count();
 @endphp
 <style>
     .lft-exp-page .lft-exp-summary {
@@ -315,6 +317,9 @@
                                 $isPendingVault = $isTransfer && $pendingVaultReturnIds->has($allExpense->id);
                                 $isPendingExpense = $isExpense && $awaitingReviewIds->has($allExpense->id);
                                 $isPending = $isPendingExpense || $isPendingVault;
+                                $isReviewed = ($isExpense && ! $isPendingExpense)
+                                    || ($isTransfer && (int) $allExpense->type === \App\Models\MoneyTransfer::vaultReturnApproved);
+                                $reviewOrder = $isPending ? 2 : ($isReviewed ? 1 : 0);
                                 $createdAt = method_exists($allExpense, 'getRawOriginal')
                                     ? $allExpense->getRawOriginal('created_at')
                                     : ($allExpense->created_at ?? null);
@@ -323,7 +328,7 @@
                             <tr class="{{ $isPending ? 'lft-exp-row--pending' : '' }}"
                                 data-expense-id="{{ $isExpense ? $allExpense->id : '' }}"
                                 data-pending-expense="{{ $isPendingExpense ? '1' : '0' }}">
-                                <td class="text-center">
+                                <td class="text-center" data-order="{{ $reviewOrder }}">
                                     @if ($isPendingExpense)
                                         <input type="checkbox"
                                                class="lft-exp-check js-expense-select"

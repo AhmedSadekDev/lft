@@ -32,8 +32,9 @@
                     <tbody>
                         @foreach ($agents as $agent)
                             @php
+                                $pendingExpenses = (float) ($pendingExpensesByAgent[$agent->id] ?? 0);
                                 $underReview = round((float) ($underReviewByAgent[$agent->id] ?? 0), 2);
-                                $actual = round((float) $agent->wallet - $underReview, 2);
+                                $actual = round((float) $agent->wallet - $pendingExpenses, 2);
                             @endphp
                             <tr>
                                 <th scope="row">{{ $agent->id }}</th>

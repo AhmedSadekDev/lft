@@ -27,16 +27,36 @@ class AgentController extends Controller
     }
     public function index()
     {
-        // نفس منطق تطبيق المندوب: تحت المراجعة = إيصالات لم تُخصم بعد من المحفظة
-        $underReviewByAgent = AgentExpense::query()
+        // Pending receipts still need to be deducted from the wallet when reviewed.
+        $pendingExpensesByAgent = AgentExpense::query()
             ->selectRaw('agent_id, COALESCE(SUM(value), 0) as under_review')
             ->whereNull('wallet_debited_at')
             ->whereNull('delivery_policy_id')
             ->groupBy('agent_id')
             ->pluck('under_review', 'agent_id');
 
+        // Vault returns are already deducted from the wallet when requested, but remain
+        // under review until accounting approves the transfer.
+        $pendingVaultReturnsByAgent = \App\Models\MoneyTransfer::query()
+            ->selectRaw('transferer_id as agent_id, COALESCE(SUM(value), 0) as under_review')
+            ->where('transferer_type', Agent::class)
+            ->where('type', \App\Models\MoneyTransfer::vaultReturnPending)
+            ->groupBy('transferer_id')
+            ->pluck('under_review', 'agent_id');
+
+        $underReviewByAgent = $pendingExpensesByAgent->map(function ($amount, $agentId) use ($pendingVaultReturnsByAgent) {
+            return (float) $amount + (float) ($pendingVaultReturnsByAgent[$agentId] ?? 0);
+        });
+        foreach ($pendingVaultReturnsByAgent as $agentId => $amount) {
+            if (! $underReviewByAgent->has($agentId)) {
+                $underReviewByAgent[$agentId] = (float) $amount;
+            }
+        }
+
         $input = [
             'agents' => Agent::all(),
+            'pendingExpensesByAgent' => $pendingExpensesByAgent,
+            'pendingVaultReturnsByAgent' => $pendingVaultReturnsByAgent,
             'underReviewByAgent' => $underReviewByAgent,
         ];
         return view('admin.agents.index', $input);
