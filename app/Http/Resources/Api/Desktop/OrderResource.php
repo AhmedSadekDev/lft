@@ -30,6 +30,7 @@ class OrderResource extends JsonResource
             'submission_id'  => $this->submission_id ?? "",
             'invoice_uuid'   => $this->invoice_uuid ?? "",
             'invoice_status'   => $this->invoice_status ?? "",
+            'invoice_errors' => $this->invoice_errors ?? "",
             'is_submitted'   => $this->invoice_status == "Valid" ? 1 : 0,
             'invoice_link'   => $this->is_submitted ? route('bookings.previewInvoicePDF', [$this->signature_company_id, $this->invoice_uuid]) : "",
         ];

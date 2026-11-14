@@ -1,20 +1,19 @@
 {
-    "private": true,
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build"
-    },
-    "devDependencies": {
-        "@popperjs/core": "^2.11.6",
-        "axios": "^1.1.2",
-        "bootstrap": "^5.2.3",
-        "laravel-vite-plugin": "^0.7.2",
-        "lodash": "^4.17.19",
-        "postcss": "^8.1.14",
-        "sass": "^1.56.1",
-        "vite": "^4.0.3"
-    },
-    "dependencies": {
-        "sweetalert": "^2.1.2"
-    }
+  "name": "e-invo",
+  "version": "1.0.1",
+  "description": "Egypt's  e-invoice app for leaderfortrans",
+  "main": "./out/main/index.js",
+  "author": "alaahany.name",
+  "homepage": "https://leaderfortrans.com/",
+  "dependencies": {
+    "@chilkat/ck-electron34-win64": "^10.1.3",
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@tanstack/vue-query": "^5.70.0",
+    "koffi": "^2.10.1",
+    "lodash": "^4.17.21",
+    "moment-timezone": "^0.5.48",
+    "vite-plugin-commonjs": "^0.10.4",
+    "vue-i18n": "^11.1.2"
+  }
 }

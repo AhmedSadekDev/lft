@@ -474,9 +474,9 @@ class OrderController extends Controller
                         ]);
                     }
 
-                    $reasons = isset($invoiceDetails['data']['validationResults'])
-                        ? collect($invoiceDetails['data']['validationResults'])->pluck('message')->implode(', ')
-                        : 'سبب غير معروف';
+                    $reasons = $this->formatEtaValidationErrors(
+                        $invoiceDetails['data']['validationResults'] ?? null
+                    );
 
                     Booking::where('id', $referenceId)->update([
                         'submission_id' => $submissionId,
@@ -647,7 +647,7 @@ class OrderController extends Controller
             return [$invoiceData];
         }
 
-        // invoiceData[0] = { invoiceData, reference_id } — الشكل القديم
+        // invoiceData[0] = { invoiceData, reference_id } — الشكل السابق
         if (isset($invoiceData[0]) && is_array($invoiceData[0]) && isset($invoiceData[0]['invoiceData'])) {
             return [$invoiceData[0]];
         }
@@ -657,5 +657,59 @@ class OrderController extends Controller
         ], 'warning');
 
         return [];
+    }
+
+    /**
+     * استخراج رسائل أخطاء التحقق من ETA (validationSteps / innerError).
+     */
+    private function formatEtaValidationErrors(mixed $validationResults): string
+    {
+        if (! is_array($validationResults)) {
+            return 'سبب غير معروف';
+        }
+
+        $messages = [];
+        $steps = $validationResults['validationSteps'] ?? [];
+
+        foreach ($steps as $step) {
+            if (! is_array($step) || ($step['status'] ?? null) !== 'Invalid') {
+                continue;
+            }
+
+            $stepName = $step['stepName'] ?? 'validation';
+            $error = $step['error'] ?? null;
+
+            if (! is_array($error)) {
+                $messages[] = $stepName;
+                continue;
+            }
+
+            $parts = array_filter([
+                $error['errorCode'] ?? null,
+                $error['errorAr'] ?? null,
+                $error['error'] ?? null,
+            ]);
+
+            $inner = $error['innerError'] ?? null;
+            if (is_array($inner)) {
+                foreach ($inner as $innerItem) {
+                    if (! is_array($innerItem)) {
+                        continue;
+                    }
+                    $parts = array_merge($parts, array_filter([
+                        $innerItem['errorCode'] ?? null,
+                        $innerItem['errorAr'] ?? null,
+                        $innerItem['error'] ?? null,
+                    ]));
+                }
+            }
+
+            $detail = implode(' — ', array_unique(array_map('strval', $parts)));
+            $messages[] = $detail !== '' ? "{$stepName}: {$detail}" : $stepName;
+        }
+
+        $messages = array_values(array_filter($messages));
+
+        return $messages !== [] ? implode(' | ', $messages) : 'التوقيع أو بيانات الفاتورة غير صالحة';
     }
 }
