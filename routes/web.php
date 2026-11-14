@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\SponserController;
 use App\Http\Controllers\Admin\ChooseUsController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InvoicesController;
+use App\Http\Controllers\Admin\EInvoiceController;
 use App\Http\Controllers\Admin\ShipmentController;
 use App\Http\Controllers\Admin\CarPayingController;
 use App\Http\Controllers\Admin\ContactUsController;
@@ -231,6 +232,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('bookings-invoices/{id?}', [InvoicesController::class, 'index'])->name('bokkings.invoices');
     Route::get('bookings-invoices-exports/{id?}', [InvoicesController::class, 'export'])->name('bookings.invoices.exports');
     Route::get('/download-invoice/{companyId?}', [InvoicesController::class, 'downloadPDF'])->name('bookings.invoices.pdf');
+
+    Route::get('e-invoices', [EInvoiceController::class, 'index'])->name('e-invoices.index');
+    Route::post('e-invoices/export', [EInvoiceController::class, 'export'])->name('e-invoices.export');
+    Route::post('e-invoices/lookup-uuid', [EInvoiceController::class, 'lookupUuid'])->name('e-invoices.lookup-uuid');
+    Route::get('e-invoices/taxpayer-search', [EInvoiceController::class, 'taxpayerSearch'])->name('e-invoices.taxpayer-search');
 
     Route::get('/export-cars', function () {
         return Excel::download(new CarsExport, 'cars.xlsx');

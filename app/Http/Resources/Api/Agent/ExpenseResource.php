@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api\Agent;
 
+use App\Models\MoneyTransfer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExpenseResource extends JsonResource
@@ -17,6 +18,17 @@ class ExpenseResource extends JsonResource
         $registeredAt = $this->resource->getRawOriginal('created_at');
         $registeredTs = $registeredAt ? strtotime((string) $registeredAt) : false;
 
+        $isTransfer = $this->resource instanceof MoneyTransfer;
+        $transfererName = null;
+        $title = $this->title ?? '';
+        if ($isTransfer) {
+            $this->resource->loadMissing('transferer');
+            $transfererName = $this->transferer?->name ?: null;
+            if ($transfererName) {
+                $title = 'تحويل عهدة من ' . $transfererName;
+            }
+        }
+
         return [
             'id' => $this->id,
             'version' => $this->version,
@@ -25,7 +37,7 @@ class ExpenseResource extends JsonResource
             'booking_id' => $this->booking_id,
             'request_key' => $this->request_key,
             'voided_at' => $this->voided_at,
-            'title' => $this->title ?? '',
+            'title' => $title,
             'text' => $this->notes ?? '',
             'date' => $registeredTs ? date('Y-m-d', $registeredTs) : '',
             'time' => $registeredTs ? date('H:i', $registeredTs) : '',
@@ -33,6 +45,13 @@ class ExpenseResource extends JsonResource
             'value' => $this->value,
             'image' => $image,
             'booking_number' => $this->booking?->booking_number ?? $this->bookingContainer?->booking?->booking_number ?? null,
+            'is_money_transfer' => $isTransfer,
+            'transferer_name' => $transfererName,
+            'under_review' => $isTransfer ? false : (
+                ! $this->admin_approval
+                && ! $this->booking_service_id
+                && ! $this->voided_at
+            ),
         ];
     }
 }

@@ -16,7 +16,10 @@ class StageExpenseService
         }
         abort_if($type === null, 422, 'يجب تحديد مرحلة الإيصال');
         $container = BookingContainer::lockForUpdate()->findOrFail($containerId);
-        if ($asAdmin) {
+        if ($asAdmin || $allowClosedReceipts) {
+            if (! $asAdmin) {
+                app(ContainerStageService::class)->assertAssigned($container, $type, $agentId);
+            }
             $stage = app(ContainerStageService::class)->receipts($container, $type);
             abort_if($stage->receipts_closed_at && ! $allowClosedReceipts, 409, 'تم إقفال إيصالات المرحلة');
 
@@ -72,8 +75,17 @@ class StageExpenseService
         DB::transaction(function () use ($agentId, $expenseId, $version, $data, $storeImage, $asAdmin) {
             $snapshot = AgentExpense::withTrashed()->findOrFail($expenseId);
             abort_unless((int) $snapshot->agent_id === $agentId, 403, 'غير مسموح بتعديل هذا الإيصال');
-            // The dashboard may remove a wrong receipt after the stage receipts were closed, refunding the agent.
-            $stage = $snapshot->type_id === null ? null : $this->stage($snapshot->booking_container_id, (int) $snapshot->type_id, $agentId, $asAdmin, $asAdmin && $data === null);
+            // Pending (unreviewed) receipts stay editable for the agent even after stage close / midnight.
+            // Dashboard may also delete after close. New creates still require an open stage.
+            $allowClosed = ($asAdmin && $data === null)
+                || (! $asAdmin && ! $snapshot->admin_approval && ! $snapshot->booking_service_id);
+            $stage = $snapshot->type_id === null ? null : $this->stage(
+                $snapshot->booking_container_id,
+                (int) $snapshot->type_id,
+                $agentId,
+                $asAdmin,
+                $allowClosed
+            );
             $agent = Agent::lockForUpdate()->find($agentId);
             abort_unless($agent || $asAdmin, 404, 'المندوب غير موجود');
             $expense = AgentExpense::withTrashed()->lockForUpdate()->findOrFail($expenseId);

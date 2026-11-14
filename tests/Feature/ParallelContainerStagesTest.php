@@ -988,7 +988,8 @@ class ParallelContainerStagesTest extends TestCase
         Schema::create('money_transfers', function (Blueprint $t) {
             $t->id();
             $t->decimal('value', 12, 2)->default(0);
-            $t->morphs('transferer');
+            $t->nullableMorphs('transferer');
+            $t->nullableMorphs('transfered');
             $t->unsignedBigInteger('delivery_policy_id')->nullable();
             $t->timestamps();
         });
@@ -1016,14 +1017,17 @@ class ParallelContainerStagesTest extends TestCase
         $this->postJson('/api/agent/update_expense', ['id' => $id, 'value' => 130, 'version' => 3])->assertStatus(409);
         $this->assertSame(0, app(StageExpenseService::class)->markReviewed(1));
 
-        // Closing the stage receipts from the supervisor side also removes them from the agent screen.
+        // Closing stage receipts must NOT hide pending items — only dashboard review clears them.
         $second = $this->postJson('/api/agent/make_general_expenses', $receipt + ['request_key' => 'r-2'])->assertOk()->json('data.id');
         $this->travel(1)->days();
         $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('data.0.id', $second);
         $version = BookingContainerStage::where(['booking_container_id' => 1, 'type_id' => 1])->value('version');
         app(ContainerStageService::class)->closeReceipts(1, 1, 7, $version);
-        $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 0);
+        $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 1)->assertJsonPath('data.0.id', $second);
+        $this->postJson('/api/agent/update_expense', ['id' => $second, 'value' => 95, 'version' => 1])->assertOk();
         $this->assertSame(0, (int) AgentExpense::find($second)->admin_approval);
+        $this->assertSame(1, app(StageExpenseService::class)->markReviewed(1, null, 9));
+        $this->postJson('/api/agent/fetch_all_expenses')->assertOk()->assertJsonPath('pagination.total', 0);
     }
 
     public function test_agent_can_record_a_receipt_on_any_open_booking(): void

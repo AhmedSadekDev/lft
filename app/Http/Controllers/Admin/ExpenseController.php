@@ -40,8 +40,6 @@ class ExpenseController extends Controller
 
         // Unique by id — incoming/outgoing can overlap if transferer == transfered historically
         $transfers = $incoming->concat($outgoing)->unique('id')->values();
-
-        $allExpenses = $transfers->concat($expenses)->sortBy('created_at')->values();
         $awaitingReviewIds = $this->applyCreatedAtDateFilter(
             $agent->expenses()->awaitingReview(),
             $from,
@@ -52,6 +50,35 @@ class ExpenseController extends Controller
             $from,
             $to
         )->pluck('id')->flip();
+
+        $reviewOrder = function ($item) use ($awaitingReviewIds, $pendingVaultReturnIds) {
+            if ($item instanceof AgentExpense && $awaitingReviewIds->has($item->id)) {
+                return 0;
+            }
+
+            if ($item instanceof MoneyTransfer) {
+                if ($pendingVaultReturnIds->has($item->id)) {
+                    return 0;
+                }
+                if ((int) $item->type === MoneyTransfer::vaultReturnApproved) {
+                    return 1;
+                }
+            }
+
+            return $item instanceof AgentExpense ? 1 : 2;
+        };
+
+        $allExpenses = $transfers->concat($expenses)->sort(function ($left, $right) use ($reviewOrder) {
+            $orderDifference = $reviewOrder($left) <=> $reviewOrder($right);
+            if ($orderDifference !== 0) {
+                return $orderDifference;
+            }
+
+            $leftDate = $left->getRawOriginal('created_at') ?? '';
+            $rightDate = $right->getRawOriginal('created_at') ?? '';
+
+            return strcmp($leftDate, $rightDate);
+        })->values();
 
         return view('admin.agents.expenses.index', compact(
             'allExpenses',

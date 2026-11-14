@@ -515,6 +515,8 @@ return [
     'invoices.create' => 'Create Invoice',
     'invoices.update' => 'Update Invoice',
     'invoices.delete' => 'Delete Invoice',
+
+    'e_invoices.index' => 'View Electronic Invoices',
     'reports.index' => 'View Reports',
     'reports.create' => 'Create Report',
     'reports.update' => 'Update Report',

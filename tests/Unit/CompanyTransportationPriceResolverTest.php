@@ -170,4 +170,31 @@ class CompanyTransportationPriceResolverTest extends TestCase
         $this->assertSame(1, $count);
         $this->assertSame(18000.0, (float) $zero->fresh()->price);
     }
+
+    public function test_fill_missing_preserves_manual_special_price(): void
+    {
+        $booking = Booking::create(['company_id' => $this->checkpointId]);
+        $manual = BookingContainer::create([
+            'booking_id' => $booking->id,
+            'container_id' => $this->containerTypeId,
+            'departure_id' => 10,
+            'loading_id' => 20,
+            'aging_id' => 30,
+            'price' => 16500,
+        ]);
+        $empty = BookingContainer::create([
+            'booking_id' => $booking->id,
+            'container_id' => $this->containerTypeId,
+            'departure_id' => 10,
+            'loading_id' => 20,
+            'aging_id' => 30,
+            'price' => 0,
+        ]);
+
+        $count = app(CompanyTransportationPriceResolver::class)->fillMissingPricesOnBooking($booking->fresh());
+
+        $this->assertSame(1, $count);
+        $this->assertSame(16500.0, (float) $manual->fresh()->price);
+        $this->assertSame(18000.0, (float) $empty->fresh()->price);
+    }
 }

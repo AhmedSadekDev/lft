@@ -93,6 +93,9 @@
                 <span class="invoice-subsection-icon invoice-subsection-icon--blue"><i class="fas fa-truck"></i></span>
                 {{ __('admin.transportation_details') }}
             </h3>
+            <p class="text-muted font-size-sm mb-2">
+                للنقلات الخاصة: عدّل سعر الحاوية من زر التعديل — السعر اليدوي لن يُستبدل ببيان الأسعار عند حفظ الفاتورة.
+            </p>
             <div class="table-responsive rounded border invoice-table-wrap">
                 @include('admin.components.booking-containers.table')
             </div>

@@ -179,6 +179,27 @@ class ExpenseController extends Controller
         } catch (\Throwable $e) { return $this->expenseFailure($e); }
     }
 
+    /**
+     * حوالات واردة للمندوب (مين حوّل له) + الصادر اليوم لسياق بوليصة التوصيل.
+     */
+    private function agentScreenMoneyTransfers($agent, bool $deliveryPolicyOnly = false)
+    {
+        $incoming = $agent->financial_custodies()
+            ->with('transferer')
+            ->whereDate('created_at', now())
+            ->when($deliveryPolicyOnly, fn ($q) => $q->whereNotNull('delivery_policy_id'))
+            ->get();
+
+        $outgoing = $agent->sended_financial_custodies()
+            ->with('transferer')
+            ->whereDoesntHave('delivery_policy.booking_containers.booking.invoice')
+            ->whereDate('created_at', now())
+            ->when($deliveryPolicyOnly, fn ($q) => $q->whereNotNull('delivery_policy_id'), fn ($q) => $q)
+            ->get();
+
+        return $incoming->concat($outgoing)->unique('id')->values();
+    }
+
     public function fetch_all_expenses()
     {
         try {
@@ -213,11 +234,7 @@ class ExpenseController extends Controller
 
                 $expenses = $expensesQuery->get();
             } elseif ($type == 1) {
-                $financial_custodies = $agent->sended_financial_custodies()
-                    ->whereDoesntHave('delivery_policy.booking_containers.booking.invoice')
-                    ->where("delivery_policy_id", "!=", null)
-                    ->whereDate("created_at", now())
-                    ->get();
+                $financial_custodies = $this->agentScreenMoneyTransfers($agent, true);
                 $expenses = $agent->expenses()->onAgentScreen()
                     ->where("delivery_policy_id", "!=", null)
                     ->get();
@@ -230,10 +247,7 @@ class ExpenseController extends Controller
                     ->where("delivery_policy_id", request()->delivery_policy_id)
                     ->get();
             } else {
-                $financial_custodies = $agent->sended_financial_custodies()
-                    ->whereDoesntHave('delivery_policy.booking_containers.booking.invoice')
-                    ->whereDate("created_at", now())
-                    ->get();
+                $financial_custodies = $this->agentScreenMoneyTransfers($agent);
                 $expenses = $agent->expenses()->onAgentScreen()->get();
             }
 
@@ -277,14 +291,23 @@ class ExpenseController extends Controller
 
             $agent = auth()->guard('agent')->user();
 
-            $financial_custodies = $agent->sended_financial_custodies()->whereDoesntHave('delivery_policy.booking_containers.booking.invoice')->whereDate("created_at", now())->get();
-            $expenses = $agent->expenses()->visibleToAgent()->whereDate("created_at", now())->get();
+            // Under-review receipts stay until dashboard review (not only today's).
+            $financial_custodies = $this->agentScreenMoneyTransfers($agent);
+            $expenses = $agent->expenses()->onAgentScreen()->get();
 
             // Merge the collections
             $merged = $financial_custodies->concat($expenses);
 
-            // Order the merged collection by the created_at timestamp
-            $ordered = $merged->sortBy('created_at')->take(3);
+            // Prefer under-review receipts, then newest activity.
+            $ordered = $merged->sortByDesc(function ($item) {
+                $raw = method_exists($item, 'getRawOriginal') ? $item->getRawOriginal('created_at') : $item->created_at;
+                $ts = $raw ? strtotime((string) $raw) : 0;
+                $underReview = ! ($item instanceof \App\Models\MoneyTransfer)
+                    && ! $item->admin_approval
+                    && ! $item->booking_service_id;
+
+                return ($underReview ? 1_000_000_000_000 : 0) + $ts;
+            })->take(3)->values();
 
             $data = ExpenseResource::collection($ordered);
 

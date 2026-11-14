@@ -4,9 +4,12 @@ namespace Tests\Feature;
 
 use App\Exports\AgentAccountExport;
 use App\Exports\VaultTransactionExport;
+use App\Http\Controllers\Admin\AgentController;
+use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\MoneyTransferController;
 use App\Http\Requests\Admin\MoneyTransferRequest;
 use App\Models\Agent;
+use App\Models\AgentExpense;
 use App\Models\MoneyTransfer;
 use App\Models\User;
 use App\Models\Vault;
@@ -91,6 +94,25 @@ class AgentVaultReturnAndCustodyTest extends TestCase
             $t->timestamp('voided_at')->nullable();
             $t->string('image')->nullable();
             $t->timestamps();
+        });
+        Schema::create('bookings', function (Blueprint $t) {
+            $t->id();
+        });
+        Schema::create('invoices', function (Blueprint $t) {
+            $t->id();
+            $t->unsignedBigInteger('booking_id')->nullable();
+        });
+        Schema::create('booking_containers', function (Blueprint $t) {
+            $t->id();
+            $t->unsignedBigInteger('booking_id')->nullable();
+        });
+        Schema::create('delivery_policies', function (Blueprint $t) {
+            $t->id();
+            $t->boolean('is_settled')->default(false);
+        });
+        Schema::create('delivery_policy_containers', function (Blueprint $t) {
+            $t->unsignedBigInteger('delivery_policy_id');
+            $t->unsignedBigInteger('booking_container_id');
         });
         Schema::create('app_notifications', function (Blueprint $t) {
             $t->id();
@@ -182,6 +204,52 @@ class AgentVaultReturnAndCustodyTest extends TestCase
         $this->assertSame(100000.0, (float) Vault::first()->amount);
         $this->assertDatabaseCount('money_transfers', 0);
         $this->assertDatabaseCount('vault_transactions', 0);
+    }
+
+    public function test_agents_list_includes_pending_vault_returns_without_double_deducting_them(): void
+    {
+        $agent = Agent::find(1);
+        app(AgentVaultReturnService::class)->request($agent, 2000.0);
+        DB::table('agent_expenses')->insert([
+            'agent_id' => 1,
+            'value' => '500',
+            'admin_approval' => 0,
+            'version' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $viewData = app(AgentController::class)->index()->getData();
+
+        $this->assertSame(3000.0, (float) Agent::find(1)->wallet);
+        $this->assertSame(500.0, (float) $viewData['pendingExpensesByAgent'][1]);
+        $this->assertSame(2000.0, (float) $viewData['pendingVaultReturnsByAgent'][1]);
+        $this->assertSame(2500.0, (float) $viewData['underReviewByAgent'][1]);
+    }
+
+    public function test_agent_expenses_list_orders_pending_vault_returns_before_approved_returns(): void
+    {
+        $approved = MoneyTransfer::create([
+            'value' => 1000,
+            'type' => MoneyTransfer::vaultReturnApproved,
+            'transferer_type' => Agent::class,
+            'transferer_id' => 1,
+            'created_at' => now()->subDay(),
+            'updated_at' => now()->subDay(),
+        ]);
+        $pending = MoneyTransfer::create([
+            'value' => 2000,
+            'type' => MoneyTransfer::vaultReturnPending,
+            'transferer_type' => Agent::class,
+            'transferer_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $view = app(ExpenseController::class)->agent_expenses(new Request(), Agent::findOrFail(1));
+        $rows = $view->getData()['allExpenses'];
+
+        $this->assertSame([$pending->id, $approved->id], $rows->pluck('id')->all());
     }
 
     public function test_agent_and_vault_excel_exports_build_rows(): void
