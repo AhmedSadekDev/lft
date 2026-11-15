@@ -311,7 +311,7 @@ class GeneralExpensesReportService
 
     private function awaitingReviewIdsForRange(?string $fromBound, ?string $toBound): Collection
     {
-        return $this->applyDateFilter(AgentExpense::awaitingReview(), $fromBound, $toBound)
+        return $this->applyDateFilter(AgentExpense::awaitingDashboardReview(), $fromBound, $toBound)
             ->pluck('id')
             ->flip();
     }

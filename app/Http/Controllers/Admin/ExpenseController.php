@@ -41,7 +41,7 @@ class ExpenseController extends Controller
         // Unique by id — incoming/outgoing can overlap if transferer == transfered historically
         $transfers = $incoming->concat($outgoing)->unique('id')->values();
         $awaitingReviewIds = $this->applyCreatedAtDateFilter(
-            $agent->expenses()->awaitingReview(),
+            $agent->expenses()->awaitingDashboardReview(),
             $from,
             $to
         )->pluck('id')->flip();

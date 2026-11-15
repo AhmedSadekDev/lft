@@ -153,15 +153,28 @@
 
         <hr class="totals-hr">
 
-        {{-- الخصم والرقم النهائي ورقم الفاتورة --}}
+        {{-- خصم أو إضافة على الإجمالي النهائي بعد الثلاث مجموعات --}}
         <div class="totals-block">
             <h3 class="totals-block-title">
                 <span class="totals-block-icon totals-block-icon--green"><i class="fas fa-hand-holding-dollar"></i></span>
-                الخصم والمبلغ النهائي
+                خصم / إضافة على إجمالي الفاتورة
             </h3>
+            <p class="text-muted font-size-sm mb-3 mb-lg-2">
+                يُطبَّق على الإجمالي بعد الضريبة والإيصالات والخدمات الإضافية — وليس من قيمة النقل وحدها.
+            </p>
             <div class="row align-items-end">
-                <div class="col-md-6 col-lg-3 mb-3">
-                    <label class="totals-input-label">{{ __('admin.discount') }} ({{ $currencySymbol }})</label>
+                <div class="col-md-6 col-lg-2 mb-3">
+                    <label class="totals-input-label">النوع</label>
+                    {!! Form::select('adjustment_type', [
+                        'discount' => 'خصم',
+                        'addition' => 'إضافة',
+                    ], old('adjustment_type') ?? (isset($invoice) ? ($invoice->adjustment_type ?? 'discount') : 'discount'), [
+                        'class' => 'form-control form-control-solid totals-input',
+                        'id' => 'adjustment_type',
+                    ]) !!}
+                </div>
+                <div class="col-md-6 col-lg-2 mb-3">
+                    <label class="totals-input-label">المبلغ ({{ $currencySymbol }})</label>
                     {!! Form::number('discount', old('discount') ?? (isset($invoice) ? $invoice->discount : 0), [
                         'class' => 'form-control form-control-solid totals-input',
                         'required' => 'required',
@@ -171,11 +184,21 @@
                     ]) !!}
                     @error('discount') <small class="text-danger d-block mt-1">{{ $message }}</small> @enderror
                 </div>
-                <div class="col-md-6 col-lg-3 mb-3">
-                    <label class="totals-input-label">{{ __('admin.required_to_be_paid_after_discount') }}</label>
+                <div class="col-md-12 col-lg-4 mb-3">
+                    <label class="totals-input-label">سبب الخصم / الإضافة</label>
+                    {!! Form::text('adjustment_reason', old('adjustment_reason') ?? (isset($invoice) ? ($invoice->adjustment_reason ?? '') : ''), [
+                        'class' => 'form-control form-control-solid totals-input',
+                        'id' => 'adjustment_reason',
+                        'maxlength' => 500,
+                        'placeholder' => 'مطلوب عند وجود مبلغ',
+                    ]) !!}
+                    @error('adjustment_reason') <small class="text-danger d-block mt-1">{{ $message }}</small> @enderror
+                </div>
+                <div class="col-md-6 col-lg-2 mb-3">
+                    <label class="totals-input-label" id="after_adjustment_label">المطلوب بعد التسوية</label>
                     <div class="totals-result-box totals-result-box--success" id="required_to_be_paid_after_discount">0.00</div>
                 </div>
-                <div class="col-md-6 col-lg-4 mb-3">
+                <div class="col-md-6 col-lg-2 mb-3">
                     <label class="totals-input-label">{{ __('admin.invoice_number') }}</label>
                     {!! Form::text('invoice_number', old('invoice_number') ?? ($invoice_number ?? ''), [
                         'class' => 'form-control form-control-solid totals-input',
@@ -400,9 +423,12 @@
         var billableAmount = invoiceTotalAfterTax + untaxedServicesTotal;
         $('#required_to_be_paid').text(billableAmount.toLocaleString('en-US', { minimumFractionDigits: 2 }));
 
-        var discount = parseFloat($('#discount').val()) || 0;
-        var billableAfterDiscount = billableAmount - discount;
-        $('#required_to_be_paid_after_discount').text(billableAfterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2 }));
+        var adjustmentAmount = parseFloat($('#discount').val()) || 0;
+        var adjustmentType = $('#adjustment_type').val() || 'discount';
+        var signed = adjustmentType === 'addition' ? adjustmentAmount : -adjustmentAmount;
+        var billableAfterAdjustment = billableAmount + signed;
+        $('#required_to_be_paid_after_discount').text(billableAfterAdjustment.toLocaleString('en-US', { minimumFractionDigits: 2 }));
+        $('#after_adjustment_label').text(adjustmentType === 'addition' ? 'المطلوب بعد الإضافة' : 'المطلوب بعد الخصم');
 
         $('#taxAmount').val(taxAmount.toFixed(2));
     }
@@ -421,6 +447,7 @@
     $('#value_added_tax').on('input', updateInvoiceAndBillableAmounts);
     $('#sales_tax').on('input', updateInvoiceAndBillableAmounts);
     $('#discount').on('input', updateInvoiceAndBillableAmounts);
+    $('#adjustment_type').on('change', updateInvoiceAndBillableAmounts);
     $('#taxAmount').on('input', updateTaxPercentagesBasedOnAmount);
 
     $('#invoice_currency').on('change', function () {

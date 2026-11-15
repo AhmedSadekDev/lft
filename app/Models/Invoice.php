@@ -28,12 +28,15 @@ class Invoice extends Model
         'value_added_tax',
         'sales_tax',
         'discount',
+        'adjustment_type',
+        'adjustment_reason',
         'print_overrides',
     ];
 
     protected $attributes = [
         'currency' => InvoiceCurrency::EGP,
         'usd_amount' => 0,
+        'adjustment_type' => 'discount',
     ];
 
     protected $casts = [
@@ -241,7 +244,33 @@ class Invoice extends Model
      */
     public function getCommercialDiscountAmountAttribute()
     {
-        return round((float) ($this->discount ?? 0), 2);
+        return $this->isAdditionAdjustment()
+            ? 0.0
+            : round(abs((float) ($this->discount ?? 0)), 2);
+    }
+
+    public function isAdditionAdjustment(): bool
+    {
+        return ($this->adjustment_type ?? 'discount') === 'addition';
+    }
+
+    /** Absolute commercial adjustment amount (discount or addition). */
+    public function commercialAdjustmentAmount(): float
+    {
+        return round(abs((float) ($this->discount ?? 0)), 2);
+    }
+
+    /** Signed: addition positive, discount negative — applied to grand total after the three groups. */
+    public function commercialAdjustmentSigned(): float
+    {
+        $amount = $this->commercialAdjustmentAmount();
+
+        return $this->isAdditionAdjustment() ? $amount : -$amount;
+    }
+
+    public function adjustmentTypeLabel(): string
+    {
+        return $this->isAdditionAdjustment() ? 'إضافة' : 'خصم';
     }
 
 }

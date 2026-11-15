@@ -27,6 +27,7 @@ use App\Models\Bank;
 use App\Models\Booking;
 use App\Models\BookingContainer;
 use App\Models\Invoice;
+use App\Models\CompanyAccountAdjustment;
 use App\Services\InvoicePrintBuilder;
 use App\Services\InvoiceSectionPaymentService;
 use App\Support\CompanyCurrencyLedger;
@@ -95,8 +96,14 @@ class AccountController extends Controller
         $totalPaymentsBalances = CompanyCurrencyLedger::paymentBuckets($payments);
         $totalPayments = $totalPaymentsBalances[InvoiceCurrency::EGP];
 
+        $adjustments = $this->getCompanyAdjustmentsInPeriod($company, $fromDate, $toDate);
+        $adjustmentBuckets = $this->sumCompanyAdjustmentBuckets($adjustments);
+
         $finalBalances = CompanyCurrencyLedger::sub(
-            CompanyCurrencyLedger::add($carriedForwardBalances, $totalInvoicesBalances),
+            CompanyCurrencyLedger::add(
+                CompanyCurrencyLedger::add($carriedForwardBalances, $totalInvoicesBalances),
+                $adjustmentBuckets
+            ),
             $totalPaymentsBalances
         );
         $finalBalance = $finalBalances[InvoiceCurrency::EGP];
@@ -107,7 +114,8 @@ class AccountController extends Controller
             $carriedForwardBalances,
             $fromDate,
             $company,
-            $mode
+            $mode,
+            $adjustments
         );
 
         return view('admin.accounts.statement', compact(
@@ -125,7 +133,9 @@ class AccountController extends Controller
             'finalBalance',
             'finalBalances',
             'payments',
-            'transactions'
+            'transactions',
+            'adjustments',
+            'adjustmentBuckets'
         ));
     }
 
@@ -144,8 +154,9 @@ class AccountController extends Controller
      *
      * @param  array{EGP: float, USD: float}|float  $carriedForwardBalance
      * @param  string  $mode  combined|detailed
+     * @param  \Illuminate\Support\Collection|null  $adjustments
      */
-    private function buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate = null, $company = null, string $mode = 'combined')
+    private function buildTransactionsList($invoices, $payments, $carriedForwardBalance, $fromDate = null, $company = null, string $mode = 'combined', $adjustments = null)
     {
         $transactions = collect();
         $printBuilder = new InvoicePrintBuilder();
@@ -488,6 +499,43 @@ class AccountController extends Controller
             ]);
         }
 
+        $adjustments = $adjustments instanceof \Illuminate\Support\Collection ? $adjustments : collect($adjustments ?? []);
+        foreach ($adjustments as $adjustment) {
+            $currency = InvoiceCurrency::normalize($adjustment->currency ?? InvoiceCurrency::EGP);
+            $signed = (float) $adjustment->signedAmount();
+            $pair = CompanyCurrencyLedger::zero();
+            $pair[$currency] = $signed;
+            $runningBalances = CompanyCurrencyLedger::add($runningBalances, $pair);
+            $isDiscount = $adjustment->isDiscount();
+
+            $transactions->push([
+                'date' => Carbon::parse($adjustment->created_at),
+                'type' => 'company_adjustment',
+                'type_label' => $adjustment->typeLabel(),
+                'booking_number' => '',
+                'invoice_number' => $adjustment->note_number ?: ('ADJ-' . $adjustment->id),
+                'currency' => InvoiceCurrency::label($currency),
+                'previous_debit' => 0,
+                'previous_credit' => 0,
+                'discount' => $isDiscount ? abs($signed) : 0,
+                'tax' => 0,
+                'attachment_statement' => '',
+                'transportation' => 0,
+                'total' => $signed,
+                'total_egp' => $currency === InvoiceCurrency::EGP ? $signed : 0.0,
+                'total_usd' => $currency === InvoiceCurrency::USD ? $signed : 0.0,
+                'paid' => 0,
+                'notes' => $adjustment->reason,
+                'current_debit' => $signed > 0 ? $signed : 0,
+                'current_credit' => $signed < 0 ? abs($signed) : 0,
+                'running_balance' => $runningBalances[InvoiceCurrency::EGP],
+                'running_balance_egp' => $runningBalances[InvoiceCurrency::EGP],
+                'running_balance_usd' => $runningBalances[InvoiceCurrency::USD],
+                'adjustment_id' => $adjustment->id,
+                'line_order' => 50,
+            ]);
+        }
+
         $sortedTransactions = $transactions->sortBy([
             ['date', 'asc'],
             ['line_order', 'asc'],
@@ -633,12 +681,17 @@ class AccountController extends Controller
         $payments = $this->getPaymentsInPeriod($company, $fromDate, $toDate);
         $totalPaymentsBalances = CompanyCurrencyLedger::paymentBuckets($payments);
         $totalPayments = $totalPaymentsBalances[InvoiceCurrency::EGP];
+        $adjustments = $this->getCompanyAdjustmentsInPeriod($company, $fromDate, $toDate);
+        $adjustmentBuckets = $this->sumCompanyAdjustmentBuckets($adjustments);
         $finalBalances = CompanyCurrencyLedger::sub(
-            CompanyCurrencyLedger::add($carriedForwardBalances, $totalInvoicesBalances),
+            CompanyCurrencyLedger::add(
+                CompanyCurrencyLedger::add($carriedForwardBalances, $totalInvoicesBalances),
+                $adjustmentBuckets
+            ),
             $totalPaymentsBalances
         );
         $finalBalance = $finalBalances[InvoiceCurrency::EGP];
-        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalances, $fromDate, $company, $mode);
+        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalances, $fromDate, $company, $mode, $adjustments);
 
         // ترتيب تصاعدي (ASC) للتصدير مع الحفاظ على I ثم R ثم S
         $transactions = $transactions->sortBy([
@@ -686,12 +739,17 @@ class AccountController extends Controller
         $payments = $this->getPaymentsInPeriod($company, $fromDate, $toDate);
         $totalPaymentsBalances = CompanyCurrencyLedger::paymentBuckets($payments);
         $totalPayments = $totalPaymentsBalances[InvoiceCurrency::EGP];
+        $adjustments = $this->getCompanyAdjustmentsInPeriod($company, $fromDate, $toDate);
+        $adjustmentBuckets = $this->sumCompanyAdjustmentBuckets($adjustments);
         $finalBalances = CompanyCurrencyLedger::sub(
-            CompanyCurrencyLedger::add($carriedForwardBalances, $totalInvoicesBalances),
+            CompanyCurrencyLedger::add(
+                CompanyCurrencyLedger::add($carriedForwardBalances, $totalInvoicesBalances),
+                $adjustmentBuckets
+            ),
             $totalPaymentsBalances
         );
         $finalBalance = $finalBalances[InvoiceCurrency::EGP];
-        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalances, $fromDate, $company, $mode);
+        $transactions = $this->buildTransactionsList($invoices, $payments, $carriedForwardBalances, $fromDate, $company, $mode, $adjustments);
 
         // ترتيب تصاعدي (ASC) للتصدير
         $transactions = $transactions->sortBy([
@@ -1764,15 +1822,48 @@ class AccountController extends Controller
 
         $paymentBuckets = CompanyCurrencyLedger::paymentBuckets($payments);
 
+        $priorAdjustments = CompanyAccountAdjustment::query()
+            ->where('company_id', $company->id)
+            ->whereDate('created_at', '<', $fromDate)
+            ->get();
+        $adjustmentBuckets = $this->sumCompanyAdjustmentBuckets($priorAdjustments);
+
         $opening = [
             InvoiceCurrency::EGP => (float) ($company->opening_balance ?? 0),
             InvoiceCurrency::USD => (float) ($company->opening_balance_usd ?? 0),
         ];
 
         return CompanyCurrencyLedger::sub(
-            CompanyCurrencyLedger::add($opening, $invoiceBuckets),
+            CompanyCurrencyLedger::add(
+                CompanyCurrencyLedger::add($opening, $invoiceBuckets),
+                $adjustmentBuckets
+            ),
             $paymentBuckets
         );
+    }
+
+    private function getCompanyAdjustmentsInPeriod($company, $fromDate, $toDate)
+    {
+        return CompanyAccountAdjustment::query()
+            ->where('company_id', $company->id)
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->orderBy('created_at')
+            ->get();
+    }
+
+    /**
+     * @param  \Illuminate\Support\Collection  $adjustments
+     * @return array{EGP: float, USD: float}
+     */
+    private function sumCompanyAdjustmentBuckets($adjustments): array
+    {
+        $buckets = CompanyCurrencyLedger::zero();
+        foreach ($adjustments as $adjustment) {
+            $currency = InvoiceCurrency::normalize($adjustment->currency ?? InvoiceCurrency::EGP);
+            $buckets[$currency] = round($buckets[$currency] + (float) $adjustment->signedAmount(), 2);
+        }
+
+        return $buckets;
     }
 
     /**
@@ -1899,9 +1990,11 @@ class AccountController extends Controller
         $untaxedServicesTotal = $invoice->untaxed_services_total_before_vat ?? 0;
         $vatValue = $invoice->value_added_tax_amount ?? 0;
         $saleValue = $invoice->sales_tax_amount ?? 0;
-        $discountValue = $invoice->discount_amount ?? 0;
+        $signedAdjustment = method_exists($invoice, 'commercialAdjustmentSigned')
+            ? $invoice->commercialAdjustmentSigned()
+            : -abs((float) ($invoice->discount_amount ?? $invoice->discount ?? 0));
 
-        return ceil($invoiceTotalBeforeTax + $taxedServicesTotal + $untaxedServicesTotal + $vatValue - $saleValue - $discountValue);
+        return ceil($invoiceTotalBeforeTax + $taxedServicesTotal + $untaxedServicesTotal + $vatValue - $saleValue + $signedAdjustment);
     }
 
     /**
@@ -3132,7 +3225,29 @@ class AccountController extends Controller
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
         $companyId = $request->company_id;
 
-        // جلب الطلبات في الفترة المحددة
+        $built = $this->buildProfitLossDataset($fromDate, $toDate, $companyId);
+        $companies = Company::orderBy('name')->get();
+
+        return view('admin.accounts.profit-loss-report', array_merge($built, compact(
+            'fromDate',
+            'toDate',
+            'companyId',
+            'companies'
+        )));
+    }
+
+    /**
+     * @return array{
+     *   reportData: \Illuminate\Support\Collection,
+     *   companyAdjustments: \Illuminate\Support\Collection,
+     *   totalCost: float,
+     *   totalRevenue: float,
+     *   totalProfitLoss: float,
+     *   summary: array
+     * }
+     */
+    private function buildProfitLossDataset(string $fromDate, string $toDate, $companyId): array
+    {
         $bookings = Booking::query()
             ->whereHas('invoice', function ($query) use ($fromDate, $toDate) {
                 $query->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59']);
@@ -3145,24 +3260,24 @@ class AccountController extends Controller
                 'company',
                 'bookingContainers.expenses.service',
                 'bookingContainers.extraExpenses',
-                'bookingContainers.delivery_policies'
+                'bookingContainers.delivery_policies',
             ])
             ->orderBy('created_at', 'desc')
             ->get();
 
         $reportData = collect();
+        $invoiceDiscounts = 0.0;
+        $invoiceAdditions = 0.0;
 
         foreach ($bookings as $booking) {
             $invoice = $booking->invoice;
-            if (!$invoice) {
+            if (! $invoice) {
                 continue;
             }
 
-            // حساب التكلفة الفعلية (جميع المصروفات)
             $totalCost = 0;
             $expensesDetails = collect();
 
-            // جمع مصروفات AgentExpense
             foreach ($booking->bookingContainers as $container) {
                 foreach ($container->expenses as $expense) {
                     $totalCost += $expense->value ?? 0;
@@ -3172,8 +3287,6 @@ class AccountController extends Controller
                         'value' => $expense->value ?? 0,
                     ]);
                 }
-
-                // جمع المصروفات الإضافية
                 foreach ($container->extraExpenses as $extraExpense) {
                     $totalCost += $extraExpense->value ?? 0;
                     $expensesDetails->push([
@@ -3184,43 +3297,63 @@ class AccountController extends Controller
                 }
             }
 
-            // حساب سعر الفاتورة
             $invoiceTotal = $this->calculateInvoiceTotal($invoice);
-
-            // حساب الربح/الخسارة
             $profitLoss = $invoiceTotal - $totalCost;
+            $adjAmount = $invoice->commercialAdjustmentAmount();
+            if ($invoice->isAdditionAdjustment()) {
+                $invoiceAdditions += $adjAmount;
+            } else {
+                $invoiceDiscounts += $adjAmount;
+            }
 
             $reportData->push([
                 'booking_id' => $booking->id,
+                'invoice_id' => $invoice->id,
                 'booking_number' => $booking->booking_number,
                 'invoice_number' => $invoice->invoice_number,
-                'company_name' => $booking->company->name,
+                'company_name' => $booking->company->name ?? '',
                 'invoice_date' => $invoice->created_at,
                 'expenses_details' => $expensesDetails,
+                'expenses_description' => $expensesDetails->pluck('description')->implode('، '),
                 'total_cost' => $totalCost,
                 'invoice_total' => $invoiceTotal,
                 'profit_loss' => $profitLoss,
+                'adjustment_type' => $invoice->adjustment_type ?? 'discount',
+                'adjustment_amount' => $adjAmount,
             ]);
         }
 
-        // حساب الإجماليات
-        $totalCost = $reportData->sum('total_cost');
-        $totalRevenue = $reportData->sum('invoice_total');
-        $totalProfitLoss = $reportData->sum('profit_loss');
+        $companyAdjustments = CompanyAccountAdjustment::query()
+            ->with('company')
+            ->when($companyId, fn ($q) => $q->where('company_id', $companyId))
+            ->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        // جلب قائمة الشركات للفلتر
-        $companies = Company::orderBy('name')->get();
+        $companyDiscounts = (float) $companyAdjustments->filter->isDiscount()->sum(fn ($a) => abs((float) $a->amount));
+        $companyAdditions = (float) $companyAdjustments->filter->isAddition()->sum(fn ($a) => abs((float) $a->amount));
 
-        return view('admin.accounts.profit-loss-report', compact(
-            'reportData',
-            'fromDate',
-            'toDate',
-            'companyId',
-            'companies',
-            'totalCost',
-            'totalRevenue',
-            'totalProfitLoss'
-        ));
+        $totalCost = (float) $reportData->sum('total_cost');
+        $totalRevenue = (float) $reportData->sum('invoice_total');
+        $totalProfitLoss = (float) $reportData->sum('profit_loss');
+        // Company discounts reduce profit; company additions increase receivable/revenue impact.
+        $adjustedProfit = $totalProfitLoss - $companyDiscounts + $companyAdditions;
+
+        $summary = [
+            'invoice_count' => $reportData->count(),
+            'invoice_total' => $totalRevenue,
+            'invoice_cost' => $totalCost,
+            'invoice_net_profit' => $totalProfitLoss,
+            'discount_notices_total' => round($invoiceDiscounts + $companyDiscounts, 2),
+            'addition_notices_total' => round($invoiceAdditions + $companyAdditions, 2),
+            'invoice_discounts' => round($invoiceDiscounts, 2),
+            'invoice_additions' => round($invoiceAdditions, 2),
+            'company_discounts' => round($companyDiscounts, 2),
+            'company_additions' => round($companyAdditions, 2),
+            'adjusted_profit' => round($adjustedProfit, 2),
+        ];
+
+        return compact('reportData', 'companyAdjustments', 'totalCost', 'totalRevenue', 'totalProfitLoss', 'summary');
     }
 
     /**
@@ -3231,66 +3364,18 @@ class AccountController extends Controller
         $fromDate = $request->from ?? Carbon::now()->startOfYear()->format('Y-m-d');
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
         $companyId = $request->company_id;
-
-        // جلب الطلبات في الفترة المحددة
-        $bookings = Booking::query()
-            ->whereHas('invoice', function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59']);
-            })
-            ->when($companyId, function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->with([
-                'invoice',
-                'company',
-                'bookingContainers.expenses.service',
-                'bookingContainers.extraExpenses',
-            ])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $reportData = collect();
-
-        foreach ($bookings as $booking) {
-            $invoice = $booking->invoice;
-            if (!$invoice) {
-                continue;
-            }
-
-            // حساب التكلفة الفعلية
-            $totalCost = 0;
-            $expensesDetails = collect();
-
-            foreach ($booking->bookingContainers as $container) {
-                foreach ($container->expenses as $expense) {
-                    $totalCost += $expense->value ?? 0;
-                    $expensesDetails->push($expense->service->name ?? $expense->notes ?? 'مصروف');
-                }
-                foreach ($container->extraExpenses as $extraExpense) {
-                    $totalCost += $extraExpense->value ?? 0;
-                    $expensesDetails->push($extraExpense->name ?? 'مصروف إضافي');
-                }
-            }
-
-            $invoiceTotal = $this->calculateInvoiceTotal($invoice);
-            $profitLoss = $invoiceTotal - $totalCost;
-
-            $reportData->push([
-                'booking_number' => $booking->booking_number,
-                'invoice_number' => $invoice->invoice_number,
-                'company_name' => $booking->company->name,
-                'invoice_date' => $invoice->created_at,
-                'expenses_description' => $expensesDetails->implode('، '),
-                'total_cost' => $totalCost,
-                'invoice_total' => $invoiceTotal,
-                'profit_loss' => $profitLoss,
-            ]);
-        }
+        $built = $this->buildProfitLossDataset($fromDate, $toDate, $companyId);
 
         $fileName = 'تقرير_الأرباح_والخسائر_' . $fromDate . '_' . $toDate . '.xlsx';
 
         return Excel::download(
-            new ProfitLossReportExport($reportData, $fromDate, $toDate),
+            new ProfitLossReportExport(
+                $built['reportData'],
+                $fromDate,
+                $toDate,
+                $built['summary'],
+                $built['companyAdjustments']
+            ),
             $fileName
         );
     }
@@ -3303,81 +3388,12 @@ class AccountController extends Controller
         $fromDate = $request->from ?? Carbon::now()->startOfYear()->format('Y-m-d');
         $toDate = $request->to ?? Carbon::now()->format('Y-m-d');
         $companyId = $request->company_id;
+        $built = $this->buildProfitLossDataset($fromDate, $toDate, $companyId);
 
-        // جلب الطلبات في الفترة المحددة
-        $bookings = Booking::query()
-            ->whereHas('invoice', function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('created_at', [$fromDate, $toDate . ' 23:59:59']);
-            })
-            ->when($companyId, function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->with([
-                'invoice',
-                'company',
-                'bookingContainers.expenses.service',
-                'bookingContainers.extraExpenses',
-            ])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $reportData = collect();
-
-        foreach ($bookings as $booking) {
-            $invoice = $booking->invoice;
-            if (!$invoice) {
-                continue;
-            }
-
-            $totalCost = 0;
-            $expensesDetails = collect();
-
-            foreach ($booking->bookingContainers as $container) {
-                foreach ($container->expenses as $expense) {
-                    $totalCost += $expense->value ?? 0;
-                    $expensesDetails->push([
-                        'type' => 'مصروف',
-                        'description' => $expense->service->name ?? $expense->notes ?? 'مصروف',
-                        'value' => $expense->value ?? 0,
-                    ]);
-                }
-                foreach ($container->extraExpenses as $extraExpense) {
-                    $totalCost += $extraExpense->value ?? 0;
-                    $expensesDetails->push([
-                        'type' => 'مصروف إضافي',
-                        'description' => $extraExpense->name ?? 'مصروف إضافي',
-                        'value' => $extraExpense->value ?? 0,
-                    ]);
-                }
-            }
-
-            $invoiceTotal = $this->calculateInvoiceTotal($invoice);
-            $profitLoss = $invoiceTotal - $totalCost;
-
-            $reportData->push([
-                'booking_number' => $booking->booking_number,
-                'invoice_number' => $invoice->invoice_number,
-                'company_name' => $booking->company->name,
-                'invoice_date' => $invoice->created_at,
-                'expenses_details' => $expensesDetails,
-                'total_cost' => $totalCost,
-                'invoice_total' => $invoiceTotal,
-                'profit_loss' => $profitLoss,
-            ]);
-        }
-
-        $totalCost = $reportData->sum('total_cost');
-        $totalRevenue = $reportData->sum('invoice_total');
-        $totalProfitLoss = $reportData->sum('profit_loss');
-
-        $html = view('admin.accounts.profit-loss-report-pdf', compact(
-            'reportData',
+        $html = view('admin.accounts.profit-loss-report-pdf', array_merge($built, compact(
             'fromDate',
-            'toDate',
-            'totalCost',
-            'totalRevenue',
-            'totalProfitLoss'
-        ))->render();
+            'toDate'
+        )))->render();
 
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
@@ -3397,5 +3413,75 @@ class AccountController extends Controller
         $fileName = 'تقرير_الأرباح_والخسائر_' . $fromDate . '_' . $toDate . '.pdf';
 
         return $mpdf->Output($fileName, 'D');
+    }
+
+    /**
+     * إنشاء إشعار خصم/إضافة على مستوى الشركة (بدون فاتورة).
+     */
+    public function storeCompanyAdjustment(Request $request, $companyId)
+    {
+        $company = Company::findOrFail($companyId);
+        $data = $request->validate([
+            'type' => 'required|in:discount,addition',
+            'amount' => 'required|numeric|min:0.01',
+            'currency' => 'required|in:EGP,USD',
+            'reason' => 'required|string|max:500',
+            'note_date' => 'nullable|date',
+        ]);
+
+        $noteNumber = 'CN-' . $company->id . '-' . now()->format('ymdHis');
+        $createdAt = ! empty($data['note_date'])
+            ? Carbon::parse($data['note_date'])->setTimeFrom(now())
+            : now();
+
+        $adjustment = CompanyAccountAdjustment::create([
+            'company_id' => $company->id,
+            'type' => $data['type'],
+            'amount' => round(abs((float) $data['amount']), 2),
+            'currency' => InvoiceCurrency::normalize($data['currency']),
+            'reason' => $data['reason'],
+            'note_number' => $noteNumber,
+            'created_by' => auth()->id(),
+            'created_at' => $createdAt,
+            'updated_at' => $createdAt,
+        ]);
+
+        return redirect()
+            ->route('accounts.statement', ['companyId' => $company->id] + $request->only(['from', 'to', 'mode']))
+            ->with('success', 'تم إنشاء ' . $adjustment->typeLabel() . ' بنجاح');
+    }
+
+    public function destroyCompanyAdjustment($companyId, $adjustmentId)
+    {
+        $adjustment = CompanyAccountAdjustment::query()
+            ->where('company_id', $companyId)
+            ->whereKey($adjustmentId)
+            ->firstOrFail();
+        $adjustment->delete();
+
+        return redirect()
+            ->route('accounts.statement', $companyId)
+            ->with('success', 'تم حذف الإشعار');
+    }
+
+    public function printCompanyAdjustmentNotice($companyId, $adjustmentId)
+    {
+        $company = Company::findOrFail($companyId);
+        $adjustment = CompanyAccountAdjustment::query()
+            ->where('company_id', $company->id)
+            ->whereKey($adjustmentId)
+            ->firstOrFail();
+
+        return view('admin.accounts.adjustment-notice', [
+            'company' => $company,
+            'adjustment' => $adjustment,
+            'amount' => abs((float) $adjustment->amount),
+            'type' => $adjustment->isAddition() ? 'addition' : 'discount',
+            'typeLabel' => $adjustment->typeLabel(),
+            'reason' => $adjustment->reason,
+            'noteNumber' => $adjustment->note_number ?: ('ADJ-' . $adjustment->id),
+            'noteDate' => optional($adjustment->created_at)->format('Y-m-d'),
+            'currencySymbol' => InvoiceCurrency::symbol($adjustment->currency ?? InvoiceCurrency::EGP),
+        ]);
     }
 }

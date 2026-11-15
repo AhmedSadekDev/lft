@@ -2,8 +2,9 @@
     $taxTotal = (float) ($taxGroup['total'] ?? $invoice->invoice_total_after_tax ?? 0);
     $receiptTotal = (float) ($receiptGroup['total'] ?? 0);
     $additionalTotal = (float) ($additionalGroup['total'] ?? 0);
-    $discount = (float) ($printData['commercial_discount'] ?? $invoice->discount_amount ?? 0);
-    $grand = (float) ($combinedTotal ?? max(0, $taxTotal + $receiptTotal + $additionalTotal - $discount));
+    $discount = (float) ($printData['commercial_discount'] ?? 0);
+    $addition = (float) ($printData['commercial_addition'] ?? 0);
+    $grand = (float) ($combinedTotal ?? max(0, $taxTotal + $receiptTotal + $additionalTotal - $discount + $addition));
 @endphp
 <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 8px; border-radius: 6px; margin-top: 6px; border: 2px solid #dee2e6;">
     <h3 style="font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; color: #212529; margin: 0 0 6px 0; text-align: center; padding-bottom: 4px; border-bottom: 2px solid #dc3545;">ملخص الأقسام</h3>
@@ -30,16 +31,24 @@
         @if($discount > 0)
             <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #ffc107;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: 700; color: #495057; font-size: 9px;">الخصم (ملحق):</span>
-                    <span style="font-weight: 700; color: #dc3545; font-size: 10px;">{{ number_format($discount, 2) }} ج.م</span>
+                    <span style="font-weight: 700; color: #495057; font-size: 9px;">خصم تجاري:</span>
+                    <span style="font-weight: 700; color: #dc3545; font-size: 10px;">− {{ number_format($discount, 2) }} ج.م</span>
+                </div>
+            </div>
+        @endif
+        @if($addition > 0)
+            <div style="background: #fff; padding: 4px 6px; border-radius: 4px; border-right: 2px solid #198754;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 700; color: #495057; font-size: 9px;">إضافة:</span>
+                    <span style="font-weight: 700; color: #198754; font-size: 10px;">+ {{ number_format($addition, 2) }} ج.م</span>
                 </div>
             </div>
         @endif
     </div>
 
-    <div style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); padding: 8px 12px; border-radius: 6px; margin-top: 4px;">
+    <div style="background: linear-gradient(135deg, #1E4DAE 0%, #0F75D2 100%); padding: 8px 12px; border-radius: 6px; margin-top: 4px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 700; color: #fff; font-size: 12px;">الإجمالي العام بعد الخصم:</span>
+            <span style="font-weight: 700; color: #fff; font-size: 12px;">الإجمالي العام بعد التسوية:</span>
             <span style="font-weight: 700; color: #fff; font-size: 16px;">{{ number_format($grand, 2) }} ج.م</span>
         </div>
     </div>

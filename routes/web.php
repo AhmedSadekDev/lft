@@ -324,6 +324,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
             'only' => ['show', 'edit', 'update', 'destroy'],
         ]
     );
+    Route::get(
+        'booking-invoices/{booking_invoice}/adjustment-notice',
+        [BookingInvoiceController::class, 'printAdjustmentNotice']
+    )->name('booking-invoices.adjustment-notice');
     // ----------------- \Invoices -----------------
 
     // ----------------- Transportation -----------------
@@ -504,6 +508,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('accounts/{companyId}/statement/export-pdf', [AccountController::class, 'exportPDF'])->name('accounts.statement.export.pdf');
     Route::get('accounts/{companyId}/statement/payment-receipt', [AccountController::class, 'companyStatementPaymentReceiptPrint'])->name('accounts.statement.payment-receipt');
     Route::get('accounts/{companyId}/statement/payment-receipt-pdf', [AccountController::class, 'companyStatementPaymentReceiptPdf'])->name('accounts.statement.payment-receipt-pdf');
+    Route::post('accounts/{companyId}/adjustments', [AccountController::class, 'storeCompanyAdjustment'])->name('accounts.adjustments.store');
+    Route::delete('accounts/{companyId}/adjustments/{adjustmentId}', [AccountController::class, 'destroyCompanyAdjustment'])->name('accounts.adjustments.destroy');
+    Route::get('accounts/{companyId}/adjustments/{adjustmentId}/print', [AccountController::class, 'printCompanyAdjustmentNotice'])->name('accounts.adjustments.print');
     Route::get('accounts/{companyId}/payment', [AccountController::class, 'showPaymentForm'])->name('accounts.payment');
     Route::post('accounts/{companyId}/payment', [AccountController::class, 'processPayment'])->name('accounts.payment.process');
     Route::delete('accounts/{companyId}/payment/{paymentId}', [AccountController::class, 'destroyPayment'])->name('accounts.payment.destroy');

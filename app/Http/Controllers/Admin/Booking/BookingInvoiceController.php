@@ -106,8 +106,11 @@ class BookingInvoiceController extends Controller
                     'value_added_tax',
                     'discount',
                     'sales_tax',
+                    'adjustment_type',
+                    'adjustment_reason',
                 ])
             );
+            $invoice_data = $this->normalizeInvoiceAdjustment($invoice_data, $request);
             Invoice::create($invoice_data);
             DB::commit();
 
@@ -247,8 +250,11 @@ class BookingInvoiceController extends Controller
                     'value_added_tax',
                     'discount',
                     'sales_tax',
+                    'adjustment_type',
+                    'adjustment_reason',
                 ])
             );
+            $invoice_data = $this->normalizeInvoiceAdjustment($invoice_data, $request);
             $booking_invoice->update($invoice_data);
             DB::commit();
             return back()
@@ -295,5 +301,48 @@ class BookingInvoiceController extends Controller
             \Illuminate\Support\Facades\Log::error($th);
             return redirect()->back()->with('error', $th->getMessage());
         }
+    }
+
+    /**
+     * Print standalone commercial discount/addition notice for an invoice.
+     */
+    public function printAdjustmentNotice(Invoice $booking_invoice)
+    {
+        $amount = $booking_invoice->commercialAdjustmentAmount();
+        if ($amount <= 0) {
+            return redirect()
+                ->route('booking-invoices.show', $booking_invoice)
+                ->with('error', 'لا يوجد خصم أو إضافة على هذه الفاتورة');
+        }
+
+        $booking_invoice->loadMissing('booking.company');
+
+        return view('admin.bookings.booking-invoices.adjustment-notice', [
+            'invoice' => $booking_invoice,
+            'company' => $booking_invoice->booking?->company,
+            'amount' => $amount,
+            'type' => $booking_invoice->isAdditionAdjustment() ? 'addition' : 'discount',
+            'typeLabel' => $booking_invoice->isAdditionAdjustment() ? 'إشعار إضافة' : 'إشعار خصم',
+            'reason' => $booking_invoice->adjustment_reason,
+        ]);
+    }
+
+    private function normalizeInvoiceAdjustment(array $data, \Illuminate\Http\Request $request): array
+    {
+        $type = in_array($request->input('adjustment_type'), ['discount', 'addition'], true)
+            ? $request->input('adjustment_type')
+            : 'discount';
+        $amount = round(abs((float) ($data['discount'] ?? 0)), 2);
+        $reason = trim((string) $request->input('adjustment_reason', ''));
+
+        if ($amount > 0 && $reason === '') {
+            throw new \InvalidArgumentException('سبب الخصم / الإضافة مطلوب عند وجود مبلغ');
+        }
+
+        $data['adjustment_type'] = $type;
+        $data['discount'] = $amount;
+        $data['adjustment_reason'] = $amount > 0 ? $reason : null;
+
+        return $data;
     }
 }

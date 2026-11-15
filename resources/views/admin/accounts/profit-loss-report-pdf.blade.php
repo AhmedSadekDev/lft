@@ -114,9 +114,18 @@
         <div class="period">الفترة من {{ $fromDate }} الى {{ $toDate }}</div>
     </div>
 
+    @php $summary = $summary ?? []; @endphp
     <div class="summary">
         <h5>ملخص التقرير</h5>
-        <div class="summary-row">
+        <p style="margin: 4px 0;"><strong>1) إجمالي الفواتير:</strong>
+            {{ $summary['invoice_count'] ?? 0 }} فاتورة —
+            قيمة {{ number_format($summary['invoice_total'] ?? $totalRevenue ?? 0, 2) }} —
+            تكلفة {{ number_format($summary['invoice_cost'] ?? $totalCost ?? 0, 2) }} —
+            صافي {{ number_format($summary['invoice_net_profit'] ?? $totalProfitLoss ?? 0, 2) }}
+        </p>
+        <p style="margin: 4px 0;"><strong>2) إشعارات الخصم:</strong> {{ number_format($summary['discount_notices_total'] ?? 0, 2) }}</p>
+        <p style="margin: 4px 0;"><strong>3) إشعارات الإضافة:</strong> {{ number_format($summary['addition_notices_total'] ?? 0, 2) }}</p>
+        <div class="summary-row" style="display:none;">
             <div class="summary-item">
                 <strong>إجمالي التكلفة</strong>
                 <span class="text-danger" style="font-size: 13px;">{{ number_format($totalCost, 2) }} ج.م</span>

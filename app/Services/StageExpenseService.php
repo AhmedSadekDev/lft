@@ -150,7 +150,9 @@ class StageExpenseService
                     ->whereNull('booking_service_id')
                     ->where(fn ($q) => $q->where('admin_approval', 0)->orWhereNull('admin_approval'));
             } else {
-                $query->awaitingReview();
+                // Dashboard bulk review must include holds on invoiced bookings
+                // (agent app still uses awaitingReview / visibleToAgent).
+                $query->awaitingDashboardReview();
             }
             $expenses = $query->get();
             if ($expenses->isEmpty()) {
