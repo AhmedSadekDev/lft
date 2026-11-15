@@ -312,7 +312,7 @@
                     </div>
                     <h3 class="font-weight-bolder mb-2">مساحة عمل إدارة النقل والحاويات</h3>
                     <p class="lft-text-secondary max-w-500px mx-auto mb-6">
-                        أهلاً بك في نظام Leader for Trans. يمكنك متابعة العمليات المصرح لك بها من خلال القائمة الجانبية.
+                        أهلاً بك في نظام Leader Trans International. يمكنك متابعة العمليات المصرح لك بها من خلال القائمة الجانبية.
                     </p>
                     <div class="d-flex justify-content-center gap-3">
                         @if($canBookings)

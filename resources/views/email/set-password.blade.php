@@ -1,4 +1,4 @@
-@extends('email.layouts.main', ['title' => 'تعيين كلمة المرور', 'preheader' => 'اضغط على الزر لتعيين كلمة المرور وتفعيل حسابك على Leader for Trans.'])
+@extends('email.layouts.main', ['title' => 'تعيين كلمة المرور', 'preheader' => 'اضغط على الزر لتعيين كلمة المرور وتفعيل حسابك على Leader Trans International.'])
 
 @section('content')
     @include('email.partials.heading', ['title' => 'تعيين كلمة المرور', 'subtitle' => $accountLabel])

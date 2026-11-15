@@ -56,12 +56,12 @@ class AssignSuperagentPasswordNotification extends Notification
             'name' => $name,
             'url' => $url,
             'accountLabel' => 'حساب المندوب المسؤول',
-            'intro' => 'تم إنشاء حساب لك كمندوب مسؤول على منظومة Leader for Trans. اضغط على الزر أدناه لتعيين كلمة المرور وإكمال تفعيل الحساب.',
+            'intro' => 'تم إنشاء حساب لك كمندوب مسؤول على منظومة Leader Trans International. اضغط على الزر أدناه لتعيين كلمة المرور وإكمال تفعيل الحساب.',
         ])->render();
 
         return [
             'to' => $to,
-            'subject' => 'تعيين كلمة المرور لحساب المندوب المسؤول - Leader for Trans',
+            'subject' => 'تعيين كلمة المرور لحساب المندوب المسؤول - Leader Trans International',
             'html' => $html,
         ];
     }

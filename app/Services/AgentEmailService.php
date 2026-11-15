@@ -19,7 +19,7 @@ class AgentEmailService
         try {
             $url = rtrim(env('APP_URL'), '/') . '/set_password/agents/?token=' . $token;
             $name = $agent->name ?? '';
-            $subject = 'تعيين كلمة المرور لحساب المندوب - Leader for Trans';
+            $subject = 'تعيين كلمة المرور لحساب المندوب - Leader Trans International';
             $to = $agent->email;
 
             if (empty($to)) {
@@ -105,7 +105,7 @@ class AgentEmailService
             'name' => $name,
             'url' => $url,
             'accountLabel' => 'حساب المندوب',
-            'intro' => 'تم إنشاء حساب لك كمندوب على منظومة Leader for Trans. اضغط على الزر أدناه لتعيين كلمة المرور وإكمال تفعيل الحساب.',
+            'intro' => 'تم إنشاء حساب لك كمندوب على منظومة Leader Trans International. اضغط على الزر أدناه لتعيين كلمة المرور وإكمال تفعيل الحساب.',
         ])->render();
     }
 
@@ -121,7 +121,7 @@ class AgentEmailService
     {
         try {
             $url = rtrim(env('APP_URL'), '/') . '/set_password/agents/?token=' . $token;
-            $subject = 'اختبار - تعيين كلمة المرور لحساب المندوب - Leader for Trans';
+            $subject = 'اختبار - تعيين كلمة المرور لحساب المندوب - Leader Trans International';
             $html = $this->getEmailTemplate($name, $url);
 
             // Headers للبريد

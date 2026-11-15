@@ -297,7 +297,7 @@ class EInvoiceExportService
         $fatoorah = CompanyFatoorah::query()->orderBy('id')->first();
         $cached = [
             'name' => $fatoorah?->company_name
-                ?: config('app.name', 'Leader for Trans'),
+                ?: config('app.name', 'Leader Trans International'),
             'tax' => env('COMPANY_TAX_NO', '765717972'),
         ];
 

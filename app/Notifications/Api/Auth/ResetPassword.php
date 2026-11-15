@@ -51,9 +51,9 @@ class ResetPassword extends Notification
         $to = $notifiable->email ?? null;
         return [
             'to' => $to,
-            'subject' => 'كود إعادة تعيين كلمة المرور - Leader for Trans',
+            'subject' => 'كود إعادة تعيين كلمة المرور - Leader Trans International',
             'html' => $html,
-            'from' => 'Leader for Trans <booking@leaderfortrans.com>',
+            'from' => 'Leader Trans International <booking@leaderfortrans.com>',
             'reply_to' => 'booking@leaderfortrans.com',
         ];
     }

@@ -56,12 +56,12 @@ class AssignPasswordNotification extends Notification
             'name' => $name,
             'url' => $url,
             'accountLabel' => 'حساب الشركة',
-            'intro' => 'تم إنشاء حساب لشركتكم على منظومة Leader for Trans. اضغط على الزر أدناه لتعيين كلمة المرور وإكمال تفعيل الحساب.',
+            'intro' => 'تم إنشاء حساب لشركتكم على منظومة Leader Trans International. اضغط على الزر أدناه لتعيين كلمة المرور وإكمال تفعيل الحساب.',
         ])->render();
 
         return [
             'to' => $to,
-            'subject' => 'تعيين كلمة المرور لحساب الشركة - Leader for Trans',
+            'subject' => 'تعيين كلمة المرور لحساب الشركة - Leader Trans International',
             'html' => $html,
         ];
     }

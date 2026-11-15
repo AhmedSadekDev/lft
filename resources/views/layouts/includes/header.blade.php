@@ -24,10 +24,10 @@ License: You must have a valid license purchased only from themeforest(the above
     </script>
     <base href="">
     <meta charset="utf-8" />
-    <title>@yield('admin-page-title', 'لوحة التحكم') | Leader for Trans</title>
+    <title>@yield('admin-page-title', 'لوحة التحكم') | Leader Trans International</title>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="Leader for Trans — إدارة النقل والحاويات والحسابات" />
+    <meta name="description" content="Leader Trans International — إدارة النقل والحاويات والحسابات" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <!--begin::Fonts (parallel with CSS — do not @import fonts inside admin-ui.css)-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,7 +77,7 @@ License: You must have a valid license purchased only from themeforest(the above
     </style>
 
     @stack('css')
-    <link href="{{ asset('assets/css/admin-ui.css') }}?v=5m" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/admin-ui.css') }}?v=lti-brand" rel="stylesheet" type="text/css" />
 </head>
 <!--end::Head-->
 <!--begin::Body-->

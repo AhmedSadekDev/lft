@@ -1,4 +1,4 @@
-@extends('email.layouts.main', ['title' => 'مرحباً بك معنا', 'preheader' => 'تم إنشاء حسابك على Leader for Trans.'])
+@extends('email.layouts.main', ['title' => 'مرحباً بك معنا', 'preheader' => 'تم إنشاء حسابك على Leader Trans International.'])
 
 @section('content')
     @include('email.partials.heading', ['title' => 'مرحباً بك معنا'])
@@ -8,7 +8,7 @@
     </p>
 
     <p style="margin:0 0 12px; text-align:right;">
-        تم إنشاء حسابك على منظومة Leader for Trans، ويسعدنا انضمامك إلينا.
+        تم إنشاء حسابك على منظومة Leader Trans International، ويسعدنا انضمامك إلينا.
     </p>
 
     <p style="margin:0; text-align:right;">

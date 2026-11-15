@@ -5,9 +5,9 @@
         <!--begin::Brand-->
         <div class="brand flex-column-auto" id="kt_brand">
             <a href="{{ route('main') }}" class="brand-logo lft-sidebar-brand">
-                <img src="{{ asset('assets/media/logo.png') }}" alt="Leader for Trans" class="lft-sidebar-logo" />
+                <img src="{{ asset('assets/media/logo.png') }}" alt="Leader Trans International" class="lft-sidebar-logo" />
                 <span class="lft-brand-titles">
-                    <span class="lft-brand-title">Leader for Trans</span>
+                    <span class="lft-brand-title">Leader Trans International</span>
                     <span class="lft-brand-badge">إدارة</span>
                 </span>
             </a>
@@ -831,7 +831,7 @@
                 <!--begin::Copyright-->
                 <div class="text-dark order-2 order-md-1">
                     <span class="text-muted font-weight-bold mr-2">{{ date('Y') }} ©</span>
-                    <a href="{{ route('main') }}" class="text-dark-75 text-hover-primary">LeaderForTrans</a>
+                    <a href="{{ route('main') }}" class="text-dark-75 text-hover-primary">Leader Trans International</a>
                 </div>
                 <!--end::Copyright-->
                 <!--begin::Nav-->

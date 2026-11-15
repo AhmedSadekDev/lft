@@ -56,12 +56,12 @@ class AssignAgentPasswordNotification extends Notification
             'name' => $name,
             'url' => $url,
             'accountLabel' => 'حساب المندوب',
-            'intro' => 'تم إنشاء حساب لك كمندوب على منظومة Leader for Trans. اضغط على الزر أدناه لتعيين كلمة المرور وإكمال تفعيل الحساب.',
+            'intro' => 'تم إنشاء حساب لك كمندوب على منظومة Leader Trans International. اضغط على الزر أدناه لتعيين كلمة المرور وإكمال تفعيل الحساب.',
         ])->render();
 
         return [
             'to' => $to,
-            'subject' => 'تعيين كلمة المرور لحساب المندوب - Leader for Trans',
+            'subject' => 'تعيين كلمة المرور لحساب المندوب - Leader Trans International',
             'html' => $html,
         ];
     }

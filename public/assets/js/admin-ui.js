@@ -1,5 +1,5 @@
 /**
- * Leader for Trans (LFT) — Admin UI Scripts
+ * Leader Trans International (LFT) — Admin UI Scripts
  * Phase 4B: Theme Management, Responsive Drawer, Password Visibility, Charts
  */
 
@@ -249,7 +249,7 @@
                 if (currentCrumb) {
                     currentCrumb.textContent = titleText;
                 }
-                document.title = titleText + ' | Leader for Trans';
+                document.title = titleText + ' | Leader Trans International';
             }
         }
 

@@ -22,7 +22,7 @@
 <x-slot:footer>
 <x-mail::footer>
 للاستفسار تواصل معنا على [booking@leaderfortrans.com](mailto:booking@leaderfortrans.com)<br>
-<span dir="ltr">© {{ date('Y') }} Leader for Trans</span> · جميع الحقوق محفوظة
+<span dir="ltr">© {{ date('Y') }} Leader Trans International</span> · جميع الحقوق محفوظة
 </x-mail::footer>
 </x-slot:footer>
 </x-mail::layout>

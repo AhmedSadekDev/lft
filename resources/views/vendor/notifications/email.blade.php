@@ -40,7 +40,7 @@
 {{ $salutation }}
 @else
 @lang('Regards')،<br>
-Leader for Trans
+Leader Trans International
 @endif
 
 {{-- Subcopy --}}

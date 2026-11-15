@@ -25,7 +25,7 @@ class PhpMailChannel
         $to = $payload['to'] ?? $this->resolveEmailAddress($notifiable);
         $subject = $payload['subject'] ?? '';
         $html = $payload['html'] ?? '';
-        $from = $payload['from'] ?? 'Leader for Trans <booking@leaderfortrans.com>';
+        $from = $payload['from'] ?? 'Leader Trans International <booking@leaderfortrans.com>';
         $replyTo = $payload['reply_to'] ?? 'booking@leaderfortrans.com';
         $extraHeaders = $payload['headers'] ?? [];
 
@@ -41,7 +41,7 @@ class PhpMailChannel
 
         // Extract email and name from "Name <email@domain>" format
         $fromEmail = $this->extractEmailAddress($from) ?: 'booking@leaderfortrans.com';
-        $fromName = $this->extractNameFromAddress($from) ?: 'Leader for Trans';
+        $fromName = $this->extractNameFromAddress($from) ?: 'Leader Trans International';
 
         try {
             // Headers للبريد

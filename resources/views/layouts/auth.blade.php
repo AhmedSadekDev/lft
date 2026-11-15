@@ -11,7 +11,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') · Leader for Trans</title>
+    <title>@yield('title') · Leader Trans International</title>
 
     <link rel="shortcut icon" href="{{ asset('assets/media/logo.png') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
     {{-- Load FA without blocking first paint --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}?v=5m">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin-ui.css') }}?v=lti-brand">
 </head>
 <body style="margin: 0; padding: 0;">
     <main class="lft-login-page">
@@ -40,10 +40,10 @@
         <div class="lft-login-card-container">
             <div class="lft-login-brand-header">
                 <div class="lft-login-logo-tile">
-                    <img src="{{ asset('assets/media/logo.png') }}" alt="Leader for Trans" width="72" height="72" decoding="async">
+                    <img src="{{ asset('assets/media/logo.png') }}" alt="Leader Trans International" width="120" height="72" decoding="async">
                 </div>
-                <div class="lft-login-brand-name">Leader for Trans</div>
-                <div class="lft-login-brand-tagline">منظومة التجارة والأعمال الرقمية</div>
+                <div class="lft-login-brand-name">Leader Trans International</div>
+                <div class="lft-login-brand-tagline">منظومة النقل واللوجستيات الدولية</div>
             </div>
 
             <div class="lft-glass-card">
