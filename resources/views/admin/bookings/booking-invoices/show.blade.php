@@ -186,7 +186,9 @@
         $combinedTotal = $combinedTotal ?? $printData['combined_total'];
         $hasAdditionalItems = collect($additionalGroup['items'] ?? [])->isNotEmpty();
         $attachmentsSubtotal = (float) ($receiptGroup['total'] ?? 0) + (float) ($additionalGroup['total'] ?? 0);
-        $commercialDiscount = (float) ($printData['commercial_discount'] ?? $invoice->discount_amount ?? 0);
+        $commercialDiscount = (float) ($printData['commercial_discount'] ?? ($invoice->isAdditionAdjustment() ? 0 : $invoice->commercialAdjustmentAmount()));
+        $commercialAddition = (float) ($printData['commercial_addition'] ?? ($invoice->isAdditionAdjustment() ? $invoice->commercialAdjustmentAmount() : 0));
+        $adjustmentReason = $printData['adjustment_reason'] ?? $invoice->adjustment_reason;
         $attachmentsTotalLabel = $hasAdditionalItems
             ? 'إجمالي الملحقات (إيصالات + بياتة)'
             : 'إجمالي الإيصالات';
@@ -199,6 +201,11 @@
         <button type="button" class="btn print-btn secondary" onclick="printInvoiceMode('printableAreaCombined', true, false)">
             طباعة كشف حساب (مجمّع)
         </button>
+        @if($commercialDiscount > 0 || $commercialAddition > 0)
+            <a href="{{ route('booking-invoices.adjustment-notice', $invoice) }}" class="btn print-btn secondary" target="_blank">
+                طباعة {{ $commercialAddition > 0 ? 'إشعار إضافة' : 'إشعار خصم' }}
+            </a>
+        @endif
         @if (!$hasPayments)
             <form method="POST"
                   action="{{ route('booking-invoices.destroy', ['booking_invoice' => $invoice->id]) }}"
@@ -273,16 +280,13 @@
                             <span style="font-weight: 700; font-size: 13px;">{{ $attachmentsTotalLabel }}</span>
                             <span style="font-weight: 700; font-size: 15px;">{{ number_format($attachmentsSubtotal, 2) }} ج.م</span>
                         </div>
-                        @if($commercialDiscount > 0)
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-                                <span style="font-weight: 700; font-size: 13px;">الخصم (على إجمالي الفاتورة)</span>
-                                <span style="font-weight: 700; font-size: 15px;">{{ number_format($commercialDiscount, 2) }} ج.م</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; border-top: 1px solid #000; padding-top: 6px;">
-                                <span style="font-weight: 700; font-size: 13px;">الإجمالي بعد الخصم</span>
-                                <span style="font-weight: 700; font-size: 15px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
-                            </div>
-                        @endif
+                        @include('admin.components.booking-invoices.printing.grand-adjustment-lines', [
+                            'commercialDiscount' => $commercialDiscount,
+                            'commercialAddition' => $commercialAddition,
+                            'combinedTotal' => $combinedTotal,
+                            'adjustmentReason' => $adjustmentReason,
+                            'symbol' => 'ج.م',
+                        ])
                     </div>
                 </div>
             </div>
@@ -342,16 +346,13 @@
                         <span style="font-weight: 700; font-size: 13px;">{{ $attachmentsTotalLabel }}</span>
                         <span style="font-weight: 700; font-size: 15px;">{{ number_format($attachmentsSubtotal, 2) }} ج.م</span>
                     </div>
-                    @if($commercialDiscount > 0)
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-                            <span style="font-weight: 700; font-size: 13px;">الخصم (على إجمالي الفاتورة)</span>
-                            <span style="font-weight: 700; font-size: 15px;">{{ number_format($commercialDiscount, 2) }} ج.م</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; border-top: 1px solid #000; padding-top: 6px;">
-                            <span style="font-weight: 700; font-size: 13px;">الإجمالي بعد الخصم</span>
-                            <span style="font-weight: 700; font-size: 15px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
-                        </div>
-                    @endif
+                    @include('admin.components.booking-invoices.printing.grand-adjustment-lines', [
+                        'commercialDiscount' => $commercialDiscount,
+                        'commercialAddition' => $commercialAddition,
+                        'combinedTotal' => $combinedTotal,
+                        'adjustmentReason' => $adjustmentReason,
+                        'symbol' => 'ج.م',
+                    ])
                 </div>
             </div>
         </div>
@@ -380,16 +381,19 @@
                 ])
 
                 <div style="margin-top: 10px; border: 2px solid #000; padding: 10px 12px;">
-                    @if($commercialDiscount > 0)
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span style="font-weight: 700; font-size: 13px;">الخصم</span>
-                            <span style="font-weight: 700; font-size: 14px;">{{ number_format($commercialDiscount, 2) }} ج.م</span>
+                    @include('admin.components.booking-invoices.printing.grand-adjustment-lines', [
+                        'commercialDiscount' => $commercialDiscount,
+                        'commercialAddition' => $commercialAddition,
+                        'combinedTotal' => $combinedTotal,
+                        'adjustmentReason' => $adjustmentReason,
+                        'symbol' => 'ج.م',
+                    ])
+                    @if($commercialDiscount <= 0 && $commercialAddition <= 0)
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 700; font-size: 14px;">الإجمالي</span>
+                            <span style="font-weight: 700; font-size: 16px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
                         </div>
                     @endif
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 700; font-size: 14px;">الإجمالي بعد الخصم</span>
-                        <span style="font-weight: 700; font-size: 16px;">{{ number_format($combinedTotal, 2) }} ج.م</span>
-                    </div>
                 </div>
             </div>
         </div>

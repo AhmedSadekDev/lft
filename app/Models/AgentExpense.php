@@ -131,15 +131,24 @@ class AgentExpense extends Model
     }
 
     /**
-     * إيصالات التطبيق بانتظار اعتماد الداشبورد. تبقى ظاهرة وقابلة للتعديل للمندوب
-     * حتى markReviewed — لا تختفي بعد منتصف الليل ولا بإقفال إيصالات المرحلة.
+     * إيصالات بانتظار اعتماد المحاسبة على الداشبورد (بما فيها حجوزات عليها فاتورة).
+     * لا تستخدم شاشة المندوب — هناك تُخفى بعد الفاتورة عبر awaitingReview.
+     */
+    public function scopeAwaitingDashboardReview($query)
+    {
+        return $query->whereNull('booking_service_id')
+            ->where(fn ($q) => $q->where('admin_approval', 0)->orWhereNull('admin_approval'))
+            ->whereDoesntHave('delivery_policy', fn ($q) => $q->where('is_settled', 1));
+    }
+
+    /**
+     * إيصالات التطبيق الظاهرة للمندوب وبانتظار الاعتماد.
+     * تبقى قابلة للتعديل حتى markReviewed — لا تختفي بعد منتصف الليل ولا بإقفال إيصالات المرحلة.
+     * تُستبعد حجوزات عليها فاتورة (visibleToAgent).
      */
     public function scopeAwaitingReview($query)
     {
-        return $query->visibleToAgent()
-            ->whereNull('booking_service_id')
-            ->where(fn ($q) => $q->where('admin_approval', 0)->orWhereNull('admin_approval'))
-            ->whereDoesntHave('delivery_policy', fn ($q) => $q->where('is_settled', 1));
+        return $query->visibleToAgent()->awaitingDashboardReview();
     }
 
     /**

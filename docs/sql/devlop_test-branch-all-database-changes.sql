@@ -32,6 +32,7 @@
 --   docs/sql/2026-10-22-reefer-delivery-policy-tracking.sql
 --   docs/sql/2026-10-22-bookings-public-code.sql
 --   docs/sql/2026-10-22-agent-expenses-deferred-review.sql
+--   docs/sql/2026-11-15-invoice-company-adjustments.sql
 --   docs/modernization/phase-1-performance-indexes.sql
 --   docs/modernization/phase-6-performance-indexes.sql
 --   docs/modernization/phase-7-queue-infrastructure.sql
@@ -378,3 +379,53 @@ CREATE TABLE IF NOT EXISTS `job_batches` (
 -- E) PHASE 2 / 3 / 4A — no DDL on this branch
 -- #############################################################################
 SELECT 'Phase 2/3/4A: zero new indexes (documented no-ops)' AS phase_noop_note;
+
+
+-- #############################################################################
+-- F) Invoice commercial adjustments + company account notes (2026-11-15)
+-- Source: docs/sql/2026-11-15-invoice-company-adjustments.sql
+-- #############################################################################
+
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'invoices' AND COLUMN_NAME = 'adjustment_type'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `invoices` ADD COLUMN `adjustment_type` VARCHAR(20) NOT NULL DEFAULT ''discount'' COMMENT ''discount or addition on grand total'' AFTER `discount`',
+  'SELECT ''invoices.adjustment_type already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @col := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'invoices' AND COLUMN_NAME = 'adjustment_reason'
+);
+SET @sql := IF(@col = 0,
+  'ALTER TABLE `invoices` ADD COLUMN `adjustment_reason` VARCHAR(500) NULL DEFAULT NULL COMMENT ''Reason for commercial discount/addition'' AFTER `adjustment_type`',
+  'SELECT ''invoices.adjustment_reason already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @tbl := (
+  SELECT COUNT(*) FROM information_schema.TABLES
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'company_account_adjustments'
+);
+SET @sql := IF(@tbl = 0,
+  'CREATE TABLE `company_account_adjustments` (
+      `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+      `company_id` BIGINT UNSIGNED NOT NULL,
+      `type` VARCHAR(20) NOT NULL COMMENT ''discount reduces AR; addition increases AR'',
+      `amount` DECIMAL(14,2) NOT NULL DEFAULT 0,
+      `currency` VARCHAR(3) NOT NULL DEFAULT ''EGP'',
+      `reason` VARCHAR(500) NULL DEFAULT NULL,
+      `note_number` VARCHAR(50) NULL DEFAULT NULL,
+      `created_by` BIGINT UNSIGNED NULL DEFAULT NULL,
+      `created_at` TIMESTAMP NULL DEFAULT NULL,
+      `updated_at` TIMESTAMP NULL DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `idx_caa_company_created` (`company_id`, `created_at`),
+      KEY `idx_caa_type` (`type`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+  'SELECT ''company_account_adjustments already exists'''
+);
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;

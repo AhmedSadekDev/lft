@@ -63,6 +63,11 @@ class Company extends Authenticatable implements JWTSubject
         return $this->hasMany(CompanyTransportation::class);
     }
 
+    public function accountAdjustments()
+    {
+        return $this->hasMany(CompanyAccountAdjustment::class);
+    }
+
 
     /**
      * Get all of the comments for the Company

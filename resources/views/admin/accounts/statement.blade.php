@@ -104,6 +104,9 @@
                     <button class="btn btn-primary btn-sm mr-2" data-toggle="modal" data-target="#filterModal">
                         <i class="fas fa-filter"></i> فلتر
                     </button>
+                    <button class="btn btn-warning btn-sm mr-2" data-toggle="modal" data-target="#companyAdjustmentModal">
+                        <i class="fas fa-file-invoice-dollar"></i> إشعار خصم / إضافة
+                    </button>
 
                     <div class="btn-group" role="group">
                         <a href="{{ route('accounts.statement', ['companyId' => $company->id, 'from' => $fromDate, 'to' => $toDate, 'mode' => 'combined']) }}"
@@ -184,6 +187,10 @@
                                         @endif
                                     @elseif($transaction['type'] == 'payment')
                                         <span class="badge badge-success">{{ $transaction['type_label'] ?? 'سداد' }}</span>
+                                    @elseif(($transaction['type'] ?? '') === 'company_adjustment')
+                                        <span class="badge {{ ($transaction['total'] ?? 0) < 0 ? 'badge-warning' : 'badge-info' }}">
+                                            {{ $transaction['type_label'] ?? 'إشعار' }}
+                                        </span>
                                     @else
                                         <span class="badge badge-secondary">
                                             {{ $transaction['type_label'] ?? '-' }}
@@ -243,9 +250,22 @@
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </form>
-                                        @else
-                                            <span class="text-muted">-</span>
                                         @endif
+                                    @elseif(($transaction['type'] ?? '') === 'company_adjustment' && !empty($transaction['adjustment_id']))
+                                        <a href="{{ route('accounts.adjustments.print', [$company->id, $transaction['adjustment_id']]) }}"
+                                           class="btn btn-sm btn-light-primary" target="_blank" title="طباعة الإشعار">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+                                        <form method="POST"
+                                              action="{{ route('accounts.adjustments.destroy', [$company->id, $transaction['adjustment_id']]) }}"
+                                              onsubmit="return lftConfirmForm(this, { title: '{{ __('alerts.are_you_sure') }}', text: 'حذف إشعار الخصم/الإضافة؟', confirmText: '{{ __('alerts.confirm') }}', cancelText: '{{ __('alerts.cancel') }}' });"
+                                              class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger" title="حذف الإشعار">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
@@ -422,6 +442,57 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary">تطبيق</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- إشعار خصم/إضافة على الشركة --}}
+<div class="modal fade" id="companyAdjustmentModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{{ route('accounts.adjustments.store', $company->id) }}">
+                @csrf
+                <input type="hidden" name="from" value="{{ $fromDate }}">
+                <input type="hidden" name="to" value="{{ $toDate }}">
+                <input type="hidden" name="mode" value="{{ $mode ?? 'combined' }}">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title font-weight-bold">إشعار خصم / إضافة للشركة</h5>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">يُسجَّل على كشف الحساب فورًا بدون ربطه بفاتورة معينة، ويدخل تقرير الأرباح والخسائر.</p>
+                    <div class="form-group">
+                        <label>النوع</label>
+                        <select name="type" class="form-control" required>
+                            <option value="discount">خصم (يقلل المستحق)</option>
+                            <option value="addition">إضافة (يزيد المستحق)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ</label>
+                        <input type="number" name="amount" class="form-control" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>العملة</label>
+                        <select name="currency" class="form-control" required>
+                            <option value="EGP">جنيه</option>
+                            <option value="USD">دولار</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>التاريخ</label>
+                        <input type="date" name="note_date" class="form-control" value="{{ now()->format('Y-m-d') }}">
+                    </div>
+                    <div class="form-group">
+                        <label>السبب</label>
+                        <textarea name="reason" class="form-control" rows="3" maxlength="500" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-warning font-weight-bold">حفظ الإشعار</button>
                 </div>
             </form>
         </div>

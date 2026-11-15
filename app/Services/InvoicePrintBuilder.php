@@ -132,7 +132,12 @@ class InvoicePrintBuilder
         $additionalSubtotal = $this->sumItems($additionalItems, $invoiceCurrency);
         $additionalUsdSubtotal = $this->sumUsdItems($additionalItems);
 
-        $commercialDiscount = round((float) ($invoice->discount_amount ?? $invoice->discount ?? 0), 2);
+        // Absolute amount; type decides sign. Not attached to any of the three groups.
+        $adjustmentAmount = $invoice->commercialAdjustmentAmount();
+        $isAddition = $invoice->isAdditionAdjustment();
+        $commercialDiscount = $isAddition ? 0.0 : $adjustmentAmount;
+        $commercialAddition = $isAddition ? $adjustmentAmount : 0.0;
+        $signedAdjustment = $invoice->commercialAdjustmentSigned();
 
         $taxGroup = $this->makeGroup(
             InvoicePrintSectionMapper::TAX,
@@ -162,7 +167,7 @@ class InvoicePrintBuilder
             $additionalItems,
             $additionalSubtotal,
             0,
-            $commercialDiscount,
+            0,
             $additionalSubtotal,
             $additionalUsdSubtotal
         );
@@ -173,7 +178,7 @@ class InvoicePrintBuilder
             ->values();
 
         $usdCombined = round($taxUsdSubtotal + $receiptUsdSubtotal + $additionalUsdSubtotal, 2);
-        $combinedTotal = max(0, round($taxTotal + $receiptSubtotal + $additionalSubtotal - $commercialDiscount, 2));
+        $combinedTotal = max(0, round($taxTotal + $receiptSubtotal + $additionalSubtotal + $signedAdjustment, 2));
 
         return [
             'invoice_number' => $baseNumber,
@@ -188,11 +193,14 @@ class InvoicePrintBuilder
             'combined_items' => $combinedItems,
             'combined_total' => $combinedTotal,
             'commercial_discount' => $commercialDiscount,
+            'commercial_addition' => $commercialAddition,
+            'adjustment_type' => $isAddition ? 'addition' : 'discount',
+            'adjustment_reason' => $invoice->adjustment_reason,
         ];
     }
 
     /**
-     * @return array{tax: float, receipt: float, additional: float, usd: float, commercial_discount: float}
+     * @return array{tax: float, receipt: float, additional: float, usd: float, commercial_discount: float, commercial_addition: float}
      */
     public function getInvoiceSectionTotals(Invoice $invoice): array
     {
@@ -201,6 +209,7 @@ class InvoicePrintBuilder
         $receipt = round((float) ($print['receipt']['total'] ?? 0), 2);
         $additional = round((float) ($print['additional']['total'] ?? 0), 2);
         $discount = round((float) ($print['commercial_discount'] ?? 0), 2);
+        $addition = round((float) ($print['commercial_addition'] ?? 0), 2);
 
         $usd = 0.0;
         if (! InvoiceCurrency::isUsd($invoice->currency ?? null)) {
@@ -213,6 +222,7 @@ class InvoicePrintBuilder
             'additional' => $additional,
             'usd' => $usd,
             'commercial_discount' => $discount,
+            'commercial_addition' => $addition,
         ];
     }
 
