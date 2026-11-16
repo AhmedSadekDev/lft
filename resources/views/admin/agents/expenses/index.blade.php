@@ -327,6 +327,7 @@
                             @endphp
                             <tr class="{{ $isPending ? 'lft-exp-row--pending' : '' }}"
                                 data-expense-id="{{ $isExpense ? $allExpense->id : '' }}"
+                                data-expense-version="{{ $isExpense ? $allExpense->version : '' }}"
                                 data-pending-expense="{{ $isPendingExpense ? '1' : '0' }}">
                                 <td class="text-center" data-order="{{ $reviewOrder }}">
                                     @if ($isPendingExpense)
@@ -402,7 +403,7 @@
                                             @if ($awaitingReviewIds->has($allExpense->id))
                                                 <button type="button"
                                                         class="btn btn-sm btn-approve"
-                                                        onclick="ApproveExpense('{{ $allExpense->id }}')">
+                                                        onclick="ApproveExpense('{{ $allExpense->id }}', '{{ $allExpense->version }}')">
                                                     <i class="fas fa-check"></i> موافقة
                                                 </button>
                                                 <button type="button"
@@ -414,12 +415,14 @@
                                                 <span class="lft-exp-approved-label">
                                                     <i class="fas fa-shield-alt"></i> معتمد
                                                 </span>
-                                                <button type="button"
-                                                        class="btn btn-icon-delete"
-                                                        title="حذف"
-                                                        onclick="RejectExpense('{{ $allExpense->id }}', '{{ $allExpense->version }}')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                @if (! $allExpense->booking_service_id)
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-light-warning"
+                                                            title="إرجاع للمراجعة"
+                                                            onclick="UnreviewExpense('{{ $allExpense->id }}', '{{ $allExpense->version }}')">
+                                                        <i class="fas fa-undo"></i> إرجاع للمراجعة
+                                                    </button>
+                                                @endif
                                             @endif
                                         </div>
                                     @elseif ($isPendingVault)
@@ -486,18 +489,27 @@
             syncBulkApproveBar();
         }
 
-        function markExpenseRowsApproved(ids) {
+        function markExpenseRowsApproved(ids, versionById) {
+            versionById = versionById || {};
             ids.forEach(function (id) {
                 var $row = $('tr[data-expense-id="' + id + '"]');
                 if (!$row.length) return;
 
+                var nextVersion = parseInt(versionById[id], 10);
+                if (!nextVersion) {
+                    nextVersion = (parseInt($row.attr('data-expense-version'), 10) || 0) + 1;
+                }
+                $row.attr('data-expense-version', nextVersion);
                 $row.removeClass('lft-exp-row--pending').attr('data-pending-expense', '0');
                 $row.find('.js-expense-select').closest('td').empty();
                 $row.find('.lft-exp-status').replaceWith(
                     '<span class="lft-exp-status is-done"><i class="fas fa-check-circle"></i> تمت المراجعة</span>'
                 );
                 $row.find('.lft-exp-actions').html(
-                    '<span class="lft-exp-approved-label"><i class="fas fa-shield-alt"></i> معتمد</span>'
+                    '<span class="lft-exp-approved-label"><i class="fas fa-shield-alt"></i> معتمد</span>' +
+                    '<button type="button" class="btn btn-sm btn-light-warning" title="إرجاع للمراجعة"' +
+                    ' onclick="UnreviewExpense(\'' + id + '\', \'' + nextVersion + '\')">' +
+                    '<i class="fas fa-undo"></i> إرجاع للمراجعة</button>'
                 );
             });
 
@@ -563,7 +575,7 @@
             });
         }
 
-        function ApproveExpense(id) {
+        function ApproveExpense(id, version) {
             Swal.fire({
                 title: 'تأكيد الموافقة؟',
                 text: 'سيتم اعتماد الإيصال وخصم العهدة وإخفاؤه من شاشة المندوب.',
@@ -583,7 +595,9 @@
                     url: '{{ route("expenses.approve", ":id") }}'.replace(':id', id),
                     type: 'POST',
                     success: function () {
-                        markExpenseRowsApproved([parseInt(id, 10)]);
+                        var next = {};
+                        next[parseInt(id, 10)] = (parseInt(version, 10) || 0) + 1;
+                        markExpenseRowsApproved([parseInt(id, 10)], next);
                         Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 1500 });
                     },
                     error: function (xhr) {
@@ -631,6 +645,48 @@
                         }
                         syncBulkApproveBar();
                         Swal.fire({ title: "{{ __('alerts.done') }}", icon: 'success', showConfirmButton: false, timer: 1500 });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: "{{ __('alerts.error') }}",
+                            text: xhr.responseJSON?.message || "{{ __('alerts.error_occurred') }}",
+                            icon: 'error',
+                        });
+                    }
+                });
+            });
+        }
+
+        function UnreviewExpense(id, version) {
+            Swal.fire({
+                title: 'إرجاع للمراجعة؟',
+                text: 'الإيصال سيفضل موجوداً ويرجع لحالة بانتظار المراجعة، وتُعاد قيمته للعهدة إن كانت خُصمت.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'إرجاع للمراجعة',
+                cancelButtonText: "{{ __('alerts.cancel') }}",
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-warning mx-1',
+                    cancelButton: 'btn btn-secondary mx-1',
+                },
+            }).then(function (result) {
+                if (!result.isConfirmed) return;
+                ajaxHeaders();
+                $.ajax({
+                    url: '{{ route("expenses.unreview", ":id") }}'.replace(':id', id),
+                    type: 'POST',
+                    data: { version: version },
+                    success: function (res) {
+                        Swal.fire({
+                            title: "{{ __('alerts.done') }}",
+                            text: res.message || '',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1200,
+                        }).then(function () {
+                            window.location.reload();
+                        });
                     },
                     error: function (xhr) {
                         Swal.fire({

@@ -200,20 +200,19 @@ class BookingController extends Controller
             }
             BookingContainer::insert($dataBookingContainers);
             if ($request->hasFile('image')) {
-
-                // Create new paper
                 $bookingPaper = BookingPaper::create([
                     'booking_id' => $booking->id,
                     'type' => $request->type,
                     'booking_container_id' => $request->booking_container_id ?? null,
                 ]);
 
-                // Save image file
-                $path = $request->file('image')->store('uploads', 'public');
-                $image_data["image"] = $request->image;
-                $image_data["imageable_id"] = $bookingPaper->id;
-                $image_data["imageable_type"] = "App\Models\BookingPaper";
-                Image::create($image_data);
+                // Store relative path (booking_papers/...) like agent uploads — filename-only breaks dashboard URLs.
+                $path = $request->file('image')->store('booking_papers', 'public');
+                Image::create([
+                    'image' => $path,
+                    'imageable_id' => $bookingPaper->id,
+                    'imageable_type' => BookingPaper::class,
+                ]);
             }
 
             $company = Company::find($request->company_id);
@@ -499,20 +498,18 @@ class BookingController extends Controller
             // If no containers data in request, keep existing containers unchanged (only update booking details)
 
             if ($request->hasFile('image')) {
-
-                // Create new paper
                 $bookingPaper = BookingPaper::create([
                     'booking_id' => $booking->id,
                     'type' => $request->type,
                     'booking_container_id' => $request->booking_container_id ?? null,
                 ]);
 
-                // Save image file
-                $path = $request->file('image')->store('uploads', 'public');
-                $image_data["image"] = $request->image;
-                $image_data["imageable_id"] = $bookingPaper->id;
-                $image_data["imageable_type"] = "App\Models\BookingPaper";
-                Image::create($image_data);
+                $path = $request->file('image')->store('booking_papers', 'public');
+                Image::create([
+                    'image' => $path,
+                    'imageable_id' => $bookingPaper->id,
+                    'imageable_type' => BookingPaper::class,
+                ]);
             }
 
             // Commit the transaction
@@ -756,20 +753,19 @@ class BookingController extends Controller
 
             // If image uploaded, handle file and paper record
             if ($request->hasFile('image')) {
-
-                // Create new paper
                 $bookingPaper = BookingPaper::create([
                     'booking_id' => $booking->id,
                     'type' => $request->type,
                     'booking_container_id' => $request->booking_container_id ?? null,
                 ]);
 
-                // Save image file
-                $path = $request->file('image')->store('uploads', 'public');
-                $image_data["image"] = $request->image;
-                $image_data["imageable_id"] = $bookingPaper->id;
-                $image_data["imageable_type"] = "App\Models\BookingPaper";
-                Image::create($image_data);
+                // Same path shape as agent/API uploads so Image accessor resolves /storage/booking_papers/...
+                $path = $request->file('image')->store('booking_papers', 'public');
+                Image::create([
+                    'image' => $path,
+                    'imageable_id' => $bookingPaper->id,
+                    'imageable_type' => BookingPaper::class,
+                ]);
             }
 
             return back()->with('success', 'تم اضافة الملف بنجاح');

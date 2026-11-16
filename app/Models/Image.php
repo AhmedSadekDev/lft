@@ -24,6 +24,13 @@ class Image extends Model
             return $value;
         }
 
-        return asset('/storage/' . ltrim($value, '/'));
+        // Dashboard uploads historically saved bare filenames via FileAttributes setter
+        // while files live under booking_papers/ — match agent/API relative paths.
+        $relative = ltrim($value, '/');
+        if (! str_contains($relative, '/') && ! empty($this->imageFolder)) {
+            $relative = trim($this->imageFolder, '/') . '/' . $relative;
+        }
+
+        return asset('/storage/' . $relative);
     }
 }

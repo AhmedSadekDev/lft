@@ -261,6 +261,46 @@ class ExpenseController extends Controller
         return view('admin.bookings.booking-containers.expenses', compact('allExpenses'));
     }
 
+    /**
+     * إرجاع إيصال معتمد إلى بانتظار المراجعة دون حذفه.
+     */
+    public function unreview($id)
+    {
+        try {
+            request()->validate(['version' => 'required|integer|min:1']);
+            $expense = AgentExpense::findOrFail($id);
+            app(\App\Services\StageExpenseService::class)->unreview(
+                (int) $expense->agent_id,
+                $expense->id,
+                (int) request('version')
+            );
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم إرجاع الإيصال إلى بانتظار المراجعة',
+                ], 200);
+            }
+
+            return back()->with('success', 'تم إرجاع الإيصال إلى بانتظار المراجعة');
+        } catch (\Exception $Exception) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $Exception->getMessage(),
+                ], $Exception instanceof HttpExceptionInterface
+                    ? $Exception->getStatusCode()
+                    : 500);
+            }
+
+            return back()->with('error', $Exception->getMessage());
+        }
+    }
+
     public function destroy($id)
     {
         try {
