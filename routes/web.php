@@ -480,6 +480,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get('/agent_expenses/{agent}/export', [ExpenseController::class, 'export_agent_expenses'])->name('expenses.agent_expenses.export');
     Route::post('/agent_expenses/{agent}/review', [ExpenseController::class, 'review_agent_expenses'])->name('expenses.agent_expenses.review');
     Route::post('/expenses/{id}/approve', [ExpenseController::class, 'approve'])->name('expenses.approve');
+    Route::post('/expenses/{id}/unreview', [ExpenseController::class, 'unreview'])->name('expenses.unreview');
     Route::post('/vault-returns/{id}/approve', [ExpenseController::class, 'approve_vault_return'])->name('expenses.vault_return.approve');
     Route::post('/vault-returns/{id}/reject', [ExpenseController::class, 'reject_vault_return'])->name('expenses.vault_return.reject');
     Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');

@@ -178,4 +178,36 @@ class StageExpenseService
             return $expenses->count();
         });
     }
+
+    /**
+     * إرجاع إيصال معتمد إلى «بانتظار المراجعة» دون حذفه:
+     * يعيد قيمة العهدة إن كانت خُصمت، ويمسح اعتماد المراجعة.
+     */
+    public function unreview(int $agentId, int $expenseId, int $version): void
+    {
+        DB::transaction(function () use ($agentId, $expenseId, $version) {
+            $agent = Agent::lockForUpdate()->findOrFail($agentId);
+            $expense = AgentExpense::lockForUpdate()->findOrFail($expenseId);
+
+            abort_unless((int) $expense->agent_id === $agentId, 403, 'غير مسموح بتعديل هذا الإيصال');
+            abort_unless((int) $expense->version === $version, 409, 'تم تعديل الإيصال؛ حدث البيانات قبل المحاولة مجدداً');
+            abort_if($expense->voided_at, 409, 'تم إلغاء الإيصال');
+            abort_if($expense->booking_service_id, 422, 'إيصالات خدمات الحجز لا تُرجع للمراجعة من هنا');
+            abort_unless(
+                (int) $expense->admin_approval === 1 || $expense->reviewed_at !== null || $expense->wallet_debited_at !== null,
+                422,
+                'الإيصال غير معتمد'
+            );
+
+            if ($expense->wallet_debited_at && ! $expense->delivery_policy_id) {
+                $agent->increment('wallet', (float) $expense->value);
+                $expense->wallet_debited_at = null;
+            }
+
+            $expense->admin_approval = 0;
+            $expense->reviewed_at = null;
+            $expense->version = (int) $expense->version + 1;
+            $expense->save();
+        });
+    }
 }
