@@ -224,6 +224,18 @@
                         تمت المراجعة
                         <strong>{{ $reviewedCount }}</strong>
                     </span>
+                    @isset($openingBalance)
+                        <span class="lft-exp-chip">
+                            رصيد افتتاحي
+                            <strong>{{ number_format((float) $openingBalance, 2) }}</strong>
+                        </span>
+                    @endisset
+                    @isset($closingBalance)
+                        <span class="lft-exp-chip is-done">
+                            رصيد ختامي
+                            <strong>{{ number_format((float) $closingBalance, 2) }}</strong>
+                        </span>
+                    @endisset
                 </div>
                 <a href="{{ route('expenses.agent_expenses.export', array_filter(['agent' => $agent, 'from' => request('from'), 'to' => request('to')])) }}" class="btn btn-success font-weight-bolder">
                     <i class="fas fa-file-excel"></i> تصدير Excel
@@ -304,6 +316,8 @@
                             <th scope="col">{{ __('admin.title') }}</th>
                             <th scope="col">المندوب / المشرف</th>
                             <th scope="col">{{ __('admin.value') }}</th>
+                            <th scope="col">رصيد قبل</th>
+                            <th scope="col">رصيد بعد</th>
                             <th scope="col">{{ __('main.date') }}</th>
                             <th scope="col">المراجعة</th>
                             <th scope="col" style="min-width: 180px;">{{ __('admin.actions') }}</th>
@@ -314,6 +328,10 @@
                             @php
                                 $isExpense = $allExpense instanceof \App\Models\AgentExpense;
                                 $isTransfer = $allExpense instanceof \App\Models\MoneyTransfer;
+                                $rowKey = $isExpense
+                                    ? ('expense:' . $allExpense->id)
+                                    : ($isTransfer ? ('transfer:' . $allExpense->id) : '');
+                                $balanceRow = ($balancesByKey ?? [])[$rowKey] ?? null;
                                 $isPendingVault = $isTransfer && $pendingVaultReturnIds->has($allExpense->id);
                                 $isPendingExpense = $isExpense && $awaitingReviewIds->has($allExpense->id);
                                 $isPending = $isPendingExpense || $isPendingVault;
@@ -367,6 +385,16 @@
                                 <td>
                                     <span class="lft-exp-value">
                                         {{ is_numeric($allExpense->value ?? null) ? number_format((float) $allExpense->value, 2) : ($allExpense->value ?? '—') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold text-muted">
+                                        {{ $balanceRow ? number_format((float) $balanceRow['balance_before'], 2) : '—' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold text-success">
+                                        {{ $balanceRow ? number_format((float) $balanceRow['balance_after'], 2) : '—' }}
                                     </span>
                                 </td>
                                 <td>
