@@ -9,6 +9,7 @@ use App\Models\AgentExpense;
 use App\Models\MoneyTransfer;
 use App\Services\AgentCustodyStatementService;
 use App\Services\AgentVaultReturnService;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -27,7 +28,9 @@ class ExpenseController extends Controller
         $openingBalance = $statement['opening_balance'];
         $closingBalance = $statement['closing_balance'];
 
-        $expenseModels = $allExpenses->filter(fn ($item) => $item instanceof AgentExpense)->values();
+        $expenseModels = new EloquentCollection(
+            $allExpenses->filter(fn ($item) => $item instanceof AgentExpense)->all()
+        );
         if ($expenseModels->isNotEmpty()) {
             $expenseModels->loadMissing(['bookingService.agent', 'bookingService.creator', 'booking']);
         }
