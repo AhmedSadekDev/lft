@@ -635,7 +635,7 @@ class BookingController extends Controller
             'container' => $container,
             'drivers' => Driver::query()->orderBy('name')->get(['id', 'name']),
             'cars' => Car::query()->orderBy('car_number')->get(['id', 'car_number']),
-            'cities' => CitiesAndRegions::query()->orderBy('city')->get(['id', 'city', 'address']),
+            'cities' => CitiesAndRegions::pluck('title', 'id'),
             'isReefer' => app(ReeferTripTrackingService::class)->policyIsReefer($deliveryPolicy),
         ]);
     }
@@ -690,7 +690,7 @@ class BookingController extends Controller
                 if ($request->filled('loading_id')) {
                     $city = CitiesAndRegions::find($request->input('loading_id'));
                     if ($city) {
-                        $deliveryPolicy->address = trim(($city->address ?? '') . ' ' . ($city->city ?? ''));
+                        $deliveryPolicy->address = (string) $city->title;
                     }
                 }
 

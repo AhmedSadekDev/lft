@@ -110,9 +110,9 @@
                         <label class="font-weight-bold">{{ __('admin.departure') }}</label>
                         <select name="departure_id" class="form-control">
                             <option value="">—</option>
-                            @foreach($cities as $city)
-                                <option value="{{ $city->id }}" @selected((int) old('departure_id', $container?->departure_id) === (int) $city->id)>
-                                    {{ $city->city }}
+                            @foreach($cities as $id => $title)
+                                <option value="{{ $id }}" @selected((int) old('departure_id', $container?->departure_id) === (int) $id)>
+                                    {{ $title }}
                                 </option>
                             @endforeach
                         </select>
@@ -122,9 +122,9 @@
                         <label class="font-weight-bold">{{ __('admin.loading') }}</label>
                         <select name="loading_id" class="form-control">
                             <option value="">—</option>
-                            @foreach($cities as $city)
-                                <option value="{{ $city->id }}" @selected((int) old('loading_id', $container?->loading_id) === (int) $city->id)>
-                                    {{ $city->city }}
+                            @foreach($cities as $id => $title)
+                                <option value="{{ $id }}" @selected((int) old('loading_id', $container?->loading_id) === (int) $id)>
+                                    {{ $title }}
                                 </option>
                             @endforeach
                         </select>
@@ -134,9 +134,9 @@
                         <label class="font-weight-bold">{{ __('admin.aging') }}</label>
                         <select name="aging_id" class="form-control">
                             <option value="">—</option>
-                            @foreach($cities as $city)
-                                <option value="{{ $city->id }}" @selected((int) old('aging_id', $container?->aging_id) === (int) $city->id)>
-                                    {{ $city->city }}
+                            @foreach($cities as $id => $title)
+                                <option value="{{ $id }}" @selected((int) old('aging_id', $container?->aging_id) === (int) $id)>
+                                    {{ $title }}
                                 </option>
                             @endforeach
                         </select>
