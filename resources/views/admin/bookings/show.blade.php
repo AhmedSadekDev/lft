@@ -483,6 +483,12 @@
                                                class="btn btn-sm btn-light-primary">
                                                 <i class="fas fa-print"></i> {{ __('main.land_bill_of_lading') }}
                                             </a>
+                                            @if((int) $policy->is_settled !== 1 && auth()->user()->hasPermissionTo('bookings.update'))
+                                                <a href="{{ route('bookings.delivery_policy_edit', $policy->id) }}"
+                                                   class="btn btn-sm btn-light-warning">
+                                                    <i class="fas fa-edit"></i> {{ __('admin.edit') }}
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
