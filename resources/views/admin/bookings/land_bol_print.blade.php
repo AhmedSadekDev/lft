@@ -37,7 +37,7 @@
 
         @page {
             size: A4;
-            margin: 12mm;
+            margin: 8mm;
         }
 
         body {
@@ -357,19 +357,126 @@
         }
 
         @media print {
-            body { background: #fff; }
-            .toolbar { display: none !important; }
-            .sheet-wrap { padding: 0; }
-            .sheet {
-                width: auto;
-                min-height: auto;
-                margin: 0;
-                border: 0;
-                border-radius: 0;
-                box-shadow: none;
-                padding: 0;
+            html, body {
+                background: #fff !important;
+                height: auto !important;
             }
-            .sheet::before { height: 4px; }
+            .toolbar { display: none !important; }
+            .sheet-wrap { padding: 0 !important; margin: 0 !important; }
+            .sheet {
+                width: auto !important;
+                max-width: none !important;
+                min-height: 0 !important;
+                height: auto !important;
+                margin: 0 !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                padding: 2mm 0 0 !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .sheet::before { height: 3px; }
+
+            .header {
+                gap: 8px !important;
+                padding-bottom: 6px !important;
+                margin-bottom: 6px !important;
+            }
+            .brand { gap: 8px !important; }
+            .brand img {
+                width: 40px !important;
+                height: 40px !important;
+            }
+            .brand h1 { font-size: 15px !important; line-height: 1.25 !important; }
+            .brand p { font-size: 10px !important; margin: 0 !important; }
+            .doc-meta { min-width: 0 !important; }
+            .badge {
+                padding: 1px 8px !important;
+                font-size: 9px !important;
+                margin-bottom: 3px !important;
+            }
+            .doc-meta .num { font-size: 18px !important; }
+            .doc-meta .sub { font-size: 10px !important; margin-top: 2px !important; }
+
+            .section-title {
+                margin: 7px 0 4px !important;
+                font-size: 11px !important;
+            }
+
+            .grid-2,
+            .money {
+                gap: 5px !important;
+            }
+
+            .card {
+                border-radius: 6px !important;
+                padding: 6px 8px !important;
+                min-height: 0 !important;
+            }
+            .card .label {
+                font-size: 9px !important;
+                margin-bottom: 1px !important;
+            }
+            .card .value {
+                font-size: 11px !important;
+                line-height: 1.3 !important;
+            }
+
+            .route { gap: 4px !important; margin-top: 0 !important; }
+            .route-step {
+                border-radius: 6px !important;
+                padding: 6px !important;
+            }
+            .route-step .label {
+                font-size: 9px !important;
+                margin-bottom: 2px !important;
+            }
+            .route-step .value {
+                font-size: 11px !important;
+                line-height: 1.25 !important;
+            }
+            .route-arrow { font-size: 12px !important; }
+
+            .note {
+                margin-top: 3px !important;
+                font-size: 9px !important;
+            }
+
+            .timeline {
+                margin-top: 2px !important;
+                border-radius: 6px !important;
+            }
+            .timeline th,
+            .timeline td {
+                padding: 3px 6px !important;
+                font-size: 9px !important;
+                line-height: 1.25 !important;
+            }
+
+            .signatures {
+                gap: 8px !important;
+                margin-top: 10px !important;
+            }
+            .sign-box {
+                border-radius: 6px !important;
+                min-height: 52px !important;
+                padding: 6px !important;
+            }
+            .sign-box .label { font-size: 10px !important; }
+            .sign-box .line {
+                margin-top: 22px !important;
+                padding-top: 4px !important;
+                font-size: 9px !important;
+            }
+
+            .footer {
+                margin-top: 8px !important;
+                padding-top: 4px !important;
+                font-size: 9px !important;
+            }
+
             a { text-decoration: none; color: inherit; }
         }
     </style>
