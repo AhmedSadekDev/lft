@@ -6,6 +6,20 @@
     $displayName = $privateCompany ? $privateCompany->name : ($company->name ?? "");
     $logoUrl = $privateCompany ? $privateCompany->logo : null;
 
+    // Embed logo as data-URI when the file exists — avoids broken/blurry remote loads in print.
+    $logoSrc = null;
+    $logoFile = $privateCompany ? $privateCompany->getRawOriginal('logo') : null;
+    if (is_string($logoFile) && $logoFile !== '') {
+        $absoluteLogo = storage_path('app/public/private_companies/' . ltrim($logoFile, '/'));
+        if (is_file($absoluteLogo)) {
+            $mime = @mime_content_type($absoluteLogo) ?: 'image/png';
+            $logoSrc = 'data:' . $mime . ';base64,' . base64_encode((string) file_get_contents($absoluteLogo));
+        }
+    }
+    if (! $logoSrc && is_string($logoUrl) && $logoUrl !== '') {
+        $logoSrc = $logoUrl;
+    }
+
     // السجل التجاري والرقم الضريبي من الشركة الخاصة
     $privateCompanyTaxNo = $privateCompany->tax_no ?? "";
     $privateCompanyCommercialRegister = $privateCompany->commercial_register ?? "";
@@ -39,117 +53,67 @@
         .letterhead-header {
             position: relative !important;
             display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
             width: 100% !important;
-            background: #fff !important;
-            padding: 20px !important;
-            margin-bottom: 20px !important;
-            margin-top: 0 !important;
-            border: 1px solid #000 !important;
-            border-bottom: 2px solid #8B4513 !important;
-            z-index: 1000 !important;
-            page-break-inside: avoid !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-        }
-
-        .letterhead-footer {
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100% !important;
+            max-width: 100% !important;
             box-sizing: border-box !important;
             background: #fff !important;
-            border: 1px solid #8B4513 !important;
-            border-radius: 0 !important;
             padding: 6px 8px !important;
-            margin: 0 !important;
-            z-index: 1000 !important;
+            margin: 0 0 8px 0 !important;
+            border: 1px solid #000 !important;
+            border-bottom: 2px solid #8B4513 !important;
             page-break-inside: avoid !important;
-            box-shadow: none !important;
-            font-size: 10px !important;
-        }
-
-        .company-print-name {
-            font-size: 16px !important;
-        }
-
-        body {
-            margin-top: 0 !important;
-            margin-bottom: 0 !important;
-            padding: 0 !important;
-        }
-
-        .watermark {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 0.15 !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
             color-adjust: exact !important;
         }
 
-        /* Ensure flexbox layout works correctly in print */
+        /* Fixed footer clipped page edges — hide on print */
+        .letterhead-footer,
+        .watermark {
+            display: none !important;
+        }
+
         .logo-company-container {
             display: flex !important;
             flex-direction: row !important;
             justify-content: space-between !important;
             align-items: center !important;
+            gap: 10px !important;
         }
 
-        /* Ensure logo and company info are vertically aligned in print */
-        .letterhead-header > div[style*="display: flex"] {
-            align-items: center !important;
-        }
-
-        /* Ensure logo container is centered */
-        .letterhead-header > div > div:first-child {
-            display: flex !important;
-            align-items: center !important;
-        }
-
-        /* Ensure company info is centered */
-        .letterhead-header > div > div:last-child {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: center !important;
-        }
-
-        /* Logo on the left */
         .logo-container {
             order: 1 !important;
             flex: 0 0 auto !important;
-        }
-
-        /* Keep logo sharp: never force upscale beyond natural size */
-        .logo-container {
             min-width: 0 !important;
-            max-width: 130px !important;
+            max-width: 110px !important;
         }
 
         .logo-container img,
         .logo-container svg,
         .logo-image {
-            max-width: 120px !important;
-            max-height: 64px !important;
+            max-width: 100px !important;
+            max-height: 56px !important;
             width: auto !important;
             height: auto !important;
             object-fit: contain !important;
-            image-rendering: auto !important;
         }
 
-        /* Company info on the right */
         .company-info-container {
             order: 2 !important;
             flex: 1 !important;
             text-align: right !important;
             direction: rtl !important;
+        }
+
+        .company-print-name {
+            font-size: 15px !important;
+            line-height: 1.2 !important;
+        }
+
+        .invoice-title-banner {
+            background: #DC143C !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
     }
 
@@ -199,24 +163,33 @@
             align-items: center;
             max-width: 140px;
         ">
-            @if($logoUrl)
-                <img src="{{ $logoUrl }}"
+            @if($logoSrc)
+                <img src="{{ $logoSrc }}"
                      alt="Logo"
                      class="logo-image"
                      loading="eager"
                      decoding="sync"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
                      style="
-                        max-width: 120px;
-                        max-height: 64px;
+                        max-width: 100px;
+                        max-height: 56px;
                         width: auto;
                         height: auto;
                         object-fit: contain;
                         display: block;
                      ">
+                <svg width="100" height="56" viewBox="0 0 120 70" class="logo-svg" style="display:none;">
+                    <circle cx="36" cy="35" r="28" fill="#DC143C"/>
+                    <text x="36" y="40" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif">LEADER</text>
+                    <text x="72" y="32" font-size="10" font-weight="700" fill="#DC143C" text-anchor="start" font-family="Arial,sans-serif">FOR</text>
+                    <text x="72" y="46" font-size="10" font-weight="700" fill="#333" text-anchor="start" font-family="Arial,sans-serif">TRANS</text>
+                </svg>
             @else
-                <svg width="120" height="64" viewBox="0 0 200 90" class="logo-svg">
-                    <circle cx="100" cy="45" r="40" fill="#DC143C" opacity="0.1"/>
-                    <text x="100" y="50" font-size="20" font-weight="bold" fill="#DC143C" text-anchor="middle" font-family="Arial">LEADER FOR TRANS</text>
+                <svg width="100" height="56" viewBox="0 0 120 70" class="logo-svg">
+                    <circle cx="36" cy="35" r="28" fill="#DC143C"/>
+                    <text x="36" y="40" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif">LEADER</text>
+                    <text x="72" y="32" font-size="10" font-weight="700" fill="#DC143C" text-anchor="start" font-family="Arial,sans-serif">FOR</text>
+                    <text x="72" y="46" font-size="10" font-weight="700" fill="#333" text-anchor="start" font-family="Arial,sans-serif">TRANS</text>
                 </svg>
             @endif
         </div>
@@ -259,18 +232,7 @@
     </div>
 </div>
 
-<!-- Print Rules -->
-<style>
-@media print {
-    .watermark {
-        display: block !important;
-    }
-}
-</style>
-
-
-
-<!-- Letterhead Footer -->
+<!-- Letterhead Footer (screen helper only; hidden when printing to avoid clipping) -->
 <div class="letterhead-footer" style="position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border: 2px solid #8B4513; border-radius: 8px; padding: 15px 20px; z-index: 1000; display: none; margin: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
     <!-- Left: English Contact Info -->
     <div style="flex: 1; border-right: 1px solid #8B4513; padding-right: 20px;">

@@ -452,26 +452,26 @@
 
     <script>
         function printInvoiceMode(divName, combined, detailed) {
-            var printContents = document.getElementById(divName).innerHTML;
-            var originalContents = document.body.innerHTML;
-            var originalClassName = document.body.className;
+            var source = document.getElementById(divName);
+            if (!source) return;
 
             var pageCss =
-                '@page { size: A4 portrait; margin: 8mm 7mm 12mm 7mm; }' +
+                '@page { size: A4 portrait; margin: 10mm 8mm 12mm 8mm; }' +
                 'html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; background: #fff !important;' +
+                ' font-family: Cairo, Arial, sans-serif; direction: rtl;' +
                 ' -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }' +
-                'img, .logo-image { max-width: 120px !important; max-height: 64px !important; width: auto !important; height: auto !important;' +
-                ' object-fit: contain !important; }' +
-                'table { width: 100% !important; max-width: 100% !important; table-layout: fixed !important; border-collapse: collapse; }' +
-                '.letterhead-header { width: 100% !important; max-width: 100% !important; padding: 8px 10px !important; box-sizing: border-box !important; }' +
-                '.invoice-title-banner { background: #DC143C !important; }';
+                '.letterhead-footer, .watermark { display: none !important; }' +
+                '.letterhead-header { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;' +
+                ' padding: 6px 8px !important; margin: 0 0 8px 0 !important; }' +
+                '.logo-image, .logo-container img, .logo-container svg { max-width: 100px !important; max-height: 56px !important;' +
+                ' width: auto !important; height: auto !important; object-fit: contain !important; }' +
+                '.invoice-title-banner { background: #DC143C !important; }' +
+                'table { width: 100% !important; max-width: 100% !important; table-layout: fixed !important; border-collapse: collapse; word-wrap: break-word; }' +
+                '.print-sheet { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }';
 
-            var style = '<style>' + pageCss;
             if (combined) {
-                document.body.classList.add('print-combined');
-                style +=
-                    'body { font-family: Cairo, sans-serif; color: #000 !important; }' +
-                    '.letterhead-header, .letterhead-footer, .watermark { display: none !important; }' +
+                pageCss +=
+                    '.letterhead-header { display: none !important; }' +
                     'div, td, th, span, p { background: #fff !important; background-image: none !important; color: #000 !important; }' +
                     'table { border: 1px solid #000 !important; }' +
                     'table th { background: #e0e0e0 !important; border: 1px solid #000 !important; color: #000 !important; }' +
@@ -479,35 +479,54 @@
             }
 
             if (detailed) {
-                document.body.classList.add('print-detailed');
-                style +=
-                    'body { font-family: Cairo, sans-serif; }' +
+                pageCss +=
                     '.detailed-page-break { page-break-before: always; break-before: page; }' +
-                    '.attachments-print-page .letterhead-header,' +
-                    '.attachments-print-page .letterhead-footer,' +
-                    '.attachments-print-page .watermark { display: none !important; }' +
+                    '.attachments-print-page .letterhead-header { display: none !important; }' +
                     '.attachments-print-page, .attachments-print-page * { color: #000 !important; }' +
                     '.attachments-print-page div, .attachments-print-page td, .attachments-print-page th,' +
-                    '.attachments-print-page span, .attachments-print-page p {' +
-                    '  background: #fff !important; background-image: none !important;' +
-                    '}' +
+                    '.attachments-print-page span, .attachments-print-page p { background: #fff !important; background-image: none !important; }' +
                     '.attachments-print-page table { border: 1px solid #000 !important; }' +
                     '.attachments-print-page table th { background: #e0e0e0 !important; border: 1px solid #000 !important; color: #000 !important; }' +
                     '.attachments-print-page table td { border: 1px solid #000 !important; }';
             }
-            style += '</style>';
 
-            document.body.innerHTML = style + printContents;
+            var frame = document.createElement('iframe');
+            frame.style.position = 'fixed';
+            frame.style.right = '0';
+            frame.style.bottom = '0';
+            frame.style.width = '0';
+            frame.style.height = '0';
+            frame.style.border = '0';
+            frame.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(frame);
 
-            var finish = function () {
-                window.print();
-                document.body.innerHTML = originalContents;
-                document.body.className = originalClassName;
+            var doc = frame.contentDocument || frame.contentWindow.document;
+            doc.open();
+            doc.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">' +
+                '<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">' +
+                '<style>' + pageCss + '</style></head><body>' +
+                '<div class="print-sheet">' + source.innerHTML + '</div>' +
+                '</body></html>');
+            doc.close();
+
+            var cleanup = function () {
+                if (frame && frame.parentNode) {
+                    frame.parentNode.removeChild(frame);
+                }
             };
 
-            var images = Array.prototype.slice.call(document.images || []);
+            var triggerPrint = function () {
+                try {
+                    frame.contentWindow.focus();
+                    frame.contentWindow.print();
+                } finally {
+                    setTimeout(cleanup, 500);
+                }
+            };
+
+            var images = Array.prototype.slice.call(doc.images || []);
             if (!images.length) {
-                finish();
+                setTimeout(triggerPrint, 100);
                 return;
             }
 
@@ -515,8 +534,7 @@
             var settled = function () {
                 pending -= 1;
                 if (pending <= 0) {
-                    // brief delay so the browser paints decoded bitmaps before print
-                    setTimeout(finish, 50);
+                    setTimeout(triggerPrint, 80);
                 }
             };
 
