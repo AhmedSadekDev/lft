@@ -628,11 +628,13 @@ class BookingController extends Controller
 
         $container = $deliveryPolicy->booking_containers->first();
         $booking = $container?->booking;
+        $returnTo = request()->query('return') === 'booking' ? 'booking' : 'container';
 
         return view('admin.bookings.delivery_policy_edit', [
             'policy' => $deliveryPolicy,
             'booking' => $booking,
             'container' => $container,
+            'returnTo' => $returnTo,
             'drivers' => Driver::query()->orderBy('name')->get(['id', 'name']),
             'cars' => Car::query()->orderBy('car_number')->get(['id', 'car_number']),
             'cities' => CitiesAndRegions::pluck('title', 'id'),
@@ -764,10 +766,26 @@ class BookingController extends Controller
             return back()->withInput()->with('error', $e->getMessage());
         }
 
-        $container = $deliveryPolicy->booking_containers()->first();
+        $deliveryPolicy->loadMissing('booking_containers.booking');
+        $container = $deliveryPolicy->booking_containers->first();
+        $booking = $container?->booking;
+        $returnTo = $request->input('return') === 'booking' ? 'booking' : 'container';
+
+        if ($returnTo === 'booking' && $booking) {
+            return redirect()
+                ->route('bookings.show', $booking->id)
+                ->with('success', __('alerts.updated_successfully'));
+        }
+
         if ($container) {
             return redirect()
                 ->route('bookings.booking_container_policies', $container->id)
+                ->with('success', __('alerts.updated_successfully'));
+        }
+
+        if ($booking) {
+            return redirect()
+                ->route('bookings.show', $booking->id)
                 ->with('success', __('alerts.updated_successfully'));
         }
 

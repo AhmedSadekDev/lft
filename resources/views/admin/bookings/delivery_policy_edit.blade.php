@@ -9,7 +9,11 @@
                 <h3 class="card-label mb-0">تعديل بوليصة التوصيل #{{ $policy->id }}</h3>
             </div>
             <div class="card-toolbar">
-                @if($container)
+                @if(($returnTo ?? 'container') === 'booking' && $booking)
+                    <a href="{{ route('bookings.show', $booking->id) }}" class="btn btn-light font-weight-bolder">
+                        {{ __('main.back') }}
+                    </a>
+                @elseif($container)
                     <a href="{{ route('bookings.booking_container_policies', $container->id) }}" class="btn btn-light font-weight-bolder">
                         {{ __('main.back') }}
                     </a>
@@ -41,6 +45,7 @@
             <form method="POST" action="{{ route('bookings.delivery_policy_update', $policy) }}">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="return" value="{{ $returnTo ?? 'container' }}">
 
                 <div class="row">
                     <div class="form-group col-md-6">
