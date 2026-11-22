@@ -703,7 +703,17 @@ class BookingController extends Controller
                     $deliveryPolicy->date = $request->input('date');
                 }
                 if ($isReefer && $request->has('custody_usd')) {
-                    $deliveryPolicy->custody_usd = $request->input('custody_usd');
+                    $oldCustodyUsd = (float) ($deliveryPolicy->custody_usd ?? 0);
+                    $newCustodyUsd = (float) $request->input('custody_usd');
+                    $usdDiff = round($newCustodyUsd - $oldCustodyUsd, 2);
+                    if ($agent && $usdDiff != 0.0) {
+                        if ($usdDiff > 0 && (float) ($agent->wallet_usd ?? 0) < $usdDiff) {
+                            abort(422, 'رصيد دولار المندوب غير كافٍ للعهدة');
+                        }
+                        $agent->wallet_usd = round((float) ($agent->wallet_usd ?? 0) - $usdDiff, 2);
+                        $agent->save();
+                    }
+                    $deliveryPolicy->custody_usd = $newCustodyUsd;
                 }
                 $deliveryPolicy->save();
 

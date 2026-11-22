@@ -33,6 +33,7 @@
 --   docs/sql/2026-10-22-bookings-public-code.sql
 --   docs/sql/2026-10-22-agent-expenses-deferred-review.sql
 --   docs/sql/2026-11-15-invoice-company-adjustments.sql
+--   docs/sql/2026-11-22-usd-followup-reefer-module.sql  (USD vault + follow-ups + reefer trips — apply separately)
 --   docs/modernization/phase-1-performance-indexes.sql
 --   docs/modernization/phase-6-performance-indexes.sql
 --   docs/modernization/phase-7-queue-infrastructure.sql

@@ -574,6 +574,24 @@
                                         </li>
                                     @endif
 
+                                    @if (has_app_permission('follow_ups.index'))
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('follow_ups.index') }}" class="menu-link">
+                                                <span class="menu-text">{{ __('main.follow_ups') }}</span>
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    @if (has_app_permission('reefer_trips.index'))
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('reefer_trips.index') }}" class="menu-link">
+                                                <span class="menu-text">{{ __('main.reefer_trips') }}</span>
+                                            </a>
+                                        </li>
+                                    @endif
+
                                 </ul>
                             </div>
                         </li>
@@ -721,6 +739,16 @@
                                             <a href="{{ route('vaults.index') }}" id="vaults-link"
                                                 class="menu-link">
                                                 <span class="menu-text">{{ __('main.vaults') }}</span>
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    @if (has_app_permission('usd_vault.index'))
+                                        <li class="menu-item menu-item-submenu" aria-haspopup="true"
+                                            data-menu-toggle="hover">
+                                            <a href="{{ route('usd_vault.index') }}" id="usd-vault-link"
+                                                class="menu-link">
+                                                <span class="menu-text">{{ __('main.usd_vault') }}</span>
                                             </a>
                                         </li>
                                     @endif

@@ -483,6 +483,15 @@
                                                class="btn btn-sm btn-light-primary">
                                                 <i class="fas fa-print"></i> {{ __('main.land_bill_of_lading') }}
                                             </a>
+                                            @if(has_app_permission('follow_ups.index'))
+                                                <a href="{{ route('follow_ups.show', [
+                                                        'booking_container_id' => $policy->booking_containers->first()?->id,
+                                                        'delivery_policy_id' => $policy->id,
+                                                    ]) }}"
+                                                   class="btn btn-sm btn-light-info">
+                                                    <i class="fas fa-route"></i> {{ __('main.follow_ups') }}
+                                                </a>
+                                            @endif
                                             @if((int) $policy->is_settled !== 1 && auth()->user()->hasPermissionTo('bookings.update'))
                                                 <a href="{{ route('bookings.delivery_policy_edit', ['deliveryPolicy' => $policy->id, 'return' => 'booking']) }}"
                                                    class="btn btn-sm btn-light-warning">

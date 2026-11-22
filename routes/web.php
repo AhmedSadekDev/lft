@@ -42,6 +42,9 @@ use App\Http\Controllers\Admin\CompanyServicesController;
 use App\Http\Controllers\Admin\ServiceCategoryController;
 use App\Http\Controllers\Admin\CitiesAndRegionsController;
 use App\Http\Controllers\Admin\VaultTransactionController;
+use App\Http\Controllers\Admin\UsdVaultController;
+use App\Http\Controllers\Admin\FollowUpController;
+use App\Http\Controllers\Admin\ReeferTripController as AdminReeferTripController;
 use App\Http\Controllers\Admin\CompanyTransportationController;
 use App\Http\Controllers\Admin\Booking\BookingInvoiceController;
 use App\Http\Controllers\Admin\Booking\BookingServiceController;
@@ -456,6 +459,20 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
         Route::get('/export', [VaultTransactionController::class, 'export'])->name('vaultransactions.export');
     });
     // ----------------- vaults -----------------
+
+    // ----------------- USD vault / follow-ups / reefer trips -----------------
+    Route::get('usd-vault', [UsdVaultController::class, 'index'])->name('usd_vault.index');
+    Route::get('usd-vault/transactions', [UsdVaultController::class, 'transactions'])->name('usd_vault.transactions');
+    Route::post('usd-vault', [UsdVaultController::class, 'store'])->name('usd_vault.store');
+
+    Route::get('follow-ups', [FollowUpController::class, 'index'])->name('follow_ups.index');
+    Route::get('follow-ups/show', [FollowUpController::class, 'show'])->name('follow_ups.show');
+    Route::post('follow-ups', [FollowUpController::class, 'store'])->name('follow_ups.store');
+    Route::put('follow-ups/{followUp}', [FollowUpController::class, 'update'])->name('follow_ups.update');
+
+    Route::resource('reefer-trips', AdminReeferTripController::class)->names('reefer_trips');
+    Route::put('reefer-trips/{reeferTrip}/timeline', [AdminReeferTripController::class, 'updateTimeline'])->name('reefer_trips.timeline');
+    // ----------------- USD vault / follow-ups / reefer trips -----------------
 
 
     // ----------------- banks -----------------

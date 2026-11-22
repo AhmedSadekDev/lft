@@ -25,6 +25,7 @@
                             <th scope="col">{{ __('admin.email') }}</th>
                             <th scope="col">{{ __('admin.phone') }}</th>
                             <th scope="col">الفعلي</th>
+                            <th scope="col">دولار</th>
                             <th scope="col">تحت المراجعة</th>
                             <th scope="col"></th>
                         </tr>
@@ -53,6 +54,9 @@
 
                                 <td>
                                     <span class="font-weight-bold text-success">{{ number_format($actual, 2) }}</span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold text-info">${{ number_format((float) ($agent->wallet_usd ?? 0), 2) }}</span>
                                 </td>
                                 <td>
                                     <span class="font-weight-bold {{ $underReview > 0 ? 'text-warning' : 'text-muted' }}">{{ number_format($underReview, 2) }}</span>
