@@ -22,7 +22,8 @@ class CompanyController extends Controller
     {
         $this->middleware('permission:companies.index')->only('index');
         $this->middleware('permission:companies.create')->only(['create', 'store']);
-        $this->middleware('permission:companies.udpate')->only(['edit', 'udpate']);
+        // Accept both spellings: UI/roles use companies.update; legacy DB may still have companies.udpate
+        $this->middleware('permission:companies.update|companies.udpate')->only(['edit', 'update']);
         $this->middleware('permission:companies.delete')->only('destroy');
     }
     /**

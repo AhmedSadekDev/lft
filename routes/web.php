@@ -561,6 +561,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     // تقرير الموقف المالي - السيارات
     Route::get('accounts/cars/financial-position', [AccountController::class, 'carsFinancialPositionReport'])->name('accounts.cars.financial-position');
+    Route::get('accounts/cars/financial-position/export-pdf', [AccountController::class, 'exportCarsFinancialPositionPDF'])->name('accounts.cars.financial-position.export.pdf');
+    Route::get('accounts/cars/financial-position/export-excel', [AccountController::class, 'exportCarsFinancialPositionExcel'])->name('accounts.cars.financial-position.export.excel');
 
     // تقرير الأرباح والخسائر
     Route::get('accounts/profit-loss', [AccountController::class, 'profitLossReport'])->name('accounts.profit-loss');

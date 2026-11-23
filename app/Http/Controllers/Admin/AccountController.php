@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use App\Exports\AccountStatementExport;
 use App\Exports\CarStatementExport;
 use App\Exports\FinancialPositionExport;
+use App\Exports\CarsFinancialPositionExport;
 use App\Exports\ProfitLossReportExport;
 use App\Models\BookingContrainerExtraCosts;
 use App\Http\Traits\ImagesTrait;
@@ -2915,89 +2916,95 @@ class AccountController extends Controller
     /**
      * عرض تقرير الموقف المالي - الشركات المدينة
      */
-    public function financialPositionReport(Request $request)
+    /**
+     * رصيد الشركة حتى تاريخ التقرير — نفس منطق كشف الحساب
+     * (افتتاحي + فواتير + إشعارات خصم/إضافة − سداد بما فيه السداد بدون فاتورة؛ شيكات غير مستحقة مستبعدة).
+     *
+     * @return array{
+     *   balance: float,
+     *   balance_usd: float,
+     *   total_invoices: float,
+     *   total_payments: float,
+     *   total_invoices_usd: float,
+     *   total_payments_usd: float
+     * }
+     */
+    private function getCompanyFinancialPositionUpToDate(Company $company, string $reportDate): array
     {
-        $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
+        // calculateCarriedForwardBalances يستخدم created_at < $fromDate
+        // لذلك fromDate = اليوم التالي ⇒ يشمل كل نشاط حتى نهاية reportDate
+        $asOfExclusive = Carbon::parse($reportDate)->addDay()->format('Y-m-d');
+        $balances = $this->calculateCarriedForwardBalances($company, $asOfExclusive);
 
-        // جلب جميع الشركات
-        $companies = Company::with(['bookings.invoice.invoicePayments'])
-            ->orderBy('name')
+        $payments = InvoicePayment::query()
+            ->tap(fn ($q) => $this->applyCompanyInvoicePaymentsScope($q, (int) $company->id))
+            ->whereDate('created_at', '<', $asOfExclusive)
             ->get();
+        $paymentBuckets = CompanyCurrencyLedger::paymentBuckets($payments);
 
+        // للـ PDF/Excel: المستحقات = الرصيد + المدفوعات (يطابق كشف الحساب)
+        $chargeBuckets = CompanyCurrencyLedger::add($balances, $paymentBuckets);
+
+        return [
+            'balance' => $balances[InvoiceCurrency::EGP],
+            'balance_usd' => $balances[InvoiceCurrency::USD],
+            'total_invoices' => $chargeBuckets[InvoiceCurrency::EGP],
+            'total_payments' => $paymentBuckets[InvoiceCurrency::EGP],
+            'total_invoices_usd' => $chargeBuckets[InvoiceCurrency::USD],
+            'total_payments_usd' => $paymentBuckets[InvoiceCurrency::USD],
+        ];
+    }
+
+    /**
+     * @return array{
+     *   companiesWithDebts: \Illuminate\Support\Collection,
+     *   reportDate: string,
+     *   totalDebts: float,
+     *   totalDebtsUsd: float
+     * }
+     */
+    private function buildCompaniesFinancialPositionDataset(string $reportDate): array
+    {
+        $companies = Company::query()->orderBy('name')->get();
         $companiesWithDebts = collect();
 
         foreach ($companies as $company) {
-            $invoiceBuckets = CompanyCurrencyLedger::zero();
-            $paymentBuckets = CompanyCurrencyLedger::zero();
+            $snapshot = $this->getCompanyFinancialPositionUpToDate($company, $reportDate);
+            $balance = (float) $snapshot['balance'];
+            $balanceUsd = (float) $snapshot['balance_usd'];
 
-            $invoices = $company->bookings()
-                ->whereHas('invoice', function ($query) use ($reportDate) {
-                    $query->whereDate('created_at', '<=', $reportDate);
-                })
-                ->with(['invoice.invoicePayments'])
-                ->get();
-
-            foreach ($invoices as $booking) {
-                $invoice = $booking->invoice;
-                if (! $invoice) {
-                    continue;
-                }
-                $invoiceBuckets = CompanyCurrencyLedger::add(
-                    $invoiceBuckets,
-                    CompanyCurrencyLedger::invoiceTotals($invoice, fn ($inv) => $this->calculateInvoiceTotal($inv))
-                );
-                foreach ($invoice->invoicePayments as $payment) {
-                    if ($payment->created_at && $payment->created_at->format('Y-m-d') > $reportDate) {
-                        continue;
-                    }
-                    if (! CompanyCurrencyLedger::paymentCountsTowardBalance($payment)) {
-                        continue;
-                    }
-                    $currency = InvoiceCurrency::normalize($payment->currency ?? InvoiceCurrency::EGP);
-                    $paymentBuckets[$currency] = round($paymentBuckets[$currency] + (float) $payment->value, 2);
-                }
-            }
-
-            $opening = [
-                InvoiceCurrency::EGP => (float) ($company->opening_balance ?? 0),
-                InvoiceCurrency::USD => (float) ($company->opening_balance_usd ?? 0),
-            ];
-            $balances = CompanyCurrencyLedger::sub(
-                CompanyCurrencyLedger::add($opening, $invoiceBuckets),
-                $paymentBuckets
-            );
-            $balance = $balances[InvoiceCurrency::EGP];
-            $balanceUsd = $balances[InvoiceCurrency::USD];
-
-            if ($balance > 0 || $balanceUsd > 0) {
+            if ($balance > 0.0001 || $balanceUsd > 0.0001) {
                 $companiesWithDebts->push([
                     'id' => $company->id,
                     'name' => $company->name,
                     'email' => $company->email,
                     'phone' => $company->phone,
-                    'total_invoices' => $invoiceBuckets[InvoiceCurrency::EGP],
-                    'total_payments' => $paymentBuckets[InvoiceCurrency::EGP],
+                    'total_invoices' => $snapshot['total_invoices'],
+                    'total_payments' => $snapshot['total_payments'],
                     'balance' => $balance,
                     'balance_usd' => $balanceUsd,
-                    'total_invoices_usd' => $invoiceBuckets[InvoiceCurrency::USD],
-                    'total_payments_usd' => $paymentBuckets[InvoiceCurrency::USD],
+                    'total_invoices_usd' => $snapshot['total_invoices_usd'],
+                    'total_payments_usd' => $snapshot['total_payments_usd'],
                 ]);
             }
         }
 
-        // ترتيب حسب المبلغ المستحق (من الأكبر للأصغر)
         $companiesWithDebts = $companiesWithDebts->sortByDesc('balance')->values();
 
-        // حساب الإجمالي
-        $totalDebts = $companiesWithDebts->sum('balance');
-        $totalDebtsUsd = $companiesWithDebts->sum('balance_usd');
+        return [
+            'companiesWithDebts' => $companiesWithDebts,
+            'reportDate' => $reportDate,
+            'totalDebts' => (float) $companiesWithDebts->sum('balance'),
+            'totalDebtsUsd' => (float) $companiesWithDebts->sum('balance_usd'),
+        ];
+    }
 
-        return view('admin.accounts.financial-position-report', compact(
-            'companiesWithDebts',
-            'reportDate',
-            'totalDebts',
-            'totalDebtsUsd'
-        ));
+    public function financialPositionReport(Request $request)
+    {
+        $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
+        $built = $this->buildCompaniesFinancialPositionDataset($reportDate);
+
+        return view('admin.accounts.financial-position-report', $built);
     }
 
     /**
@@ -3006,66 +3013,9 @@ class AccountController extends Controller
     public function exportFinancialPositionPDF(Request $request)
     {
         $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
+        $built = $this->buildCompaniesFinancialPositionDataset($reportDate);
 
-        // جلب جميع الشركات
-        $companies = Company::with(['bookings.invoice.invoicePayments'])
-            ->orderBy('name')
-            ->get();
-
-        $companiesWithDebts = collect();
-
-        foreach ($companies as $company) {
-            // حساب الرصيد المستحق حتى تاريخ التقرير
-            $totalInvoices = 0;
-            $totalPayments = 0;
-
-            $invoices = $company->bookings()
-                ->whereHas('invoice', function ($query) use ($reportDate) {
-                    $query->whereDate('created_at', '<=', $reportDate);
-                })
-                ->with('invoice')
-                ->get();
-
-            foreach ($invoices as $booking) {
-                $invoice = $booking->invoice;
-                if ($invoice) {
-                    $totalInvoices += $this->calculateInvoiceTotal($invoice);
-
-                    // حساب المدفوعات حتى تاريخ التقرير
-                    $payments = $invoice->invoicePayments()
-                        ->whereDate('created_at', '<=', $reportDate)
-                        ->sum('value');
-                    $totalPayments += $payments;
-                }
-            }
-
-            $balance = $totalInvoices - $totalPayments;
-
-            // إضافة الشركة فقط إذا كان لديها رصيد مستحق (مدين)
-            if ($balance > 0) {
-                $companiesWithDebts->push([
-                    'id' => $company->id,
-                    'name' => $company->name,
-                    'email' => $company->email,
-                    'phone' => $company->phone,
-                    'total_invoices' => $totalInvoices,
-                    'total_payments' => $totalPayments,
-                    'balance' => $balance,
-                ]);
-            }
-        }
-
-        // ترتيب حسب المبلغ المستحق (من الأكبر للأصغر)
-        $companiesWithDebts = $companiesWithDebts->sortByDesc('balance')->values();
-
-        // حساب الإجمالي
-        $totalDebts = $companiesWithDebts->sum('balance');
-
-        $html = view('admin.accounts.financial-position-report-pdf', compact(
-            'companiesWithDebts',
-            'reportDate',
-            'totalDebts'
-        ))->render();
+        $html = view('admin.accounts.financial-position-report-pdf', $built)->render();
 
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
@@ -3093,68 +3043,19 @@ class AccountController extends Controller
     public function exportFinancialPositionExcel(Request $request)
     {
         $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
-
-        // جلب جميع الشركات
-        $companies = Company::with(['bookings.invoice.invoicePayments'])
-            ->orderBy('name')
-            ->get();
-
-        $companiesWithDebts = collect();
-
-        foreach ($companies as $company) {
-            // حساب الرصيد المستحق حتى تاريخ التقرير
-            $totalInvoices = 0;
-            $totalPayments = 0;
-
-            $invoices = $company->bookings()
-                ->whereHas('invoice', function ($query) use ($reportDate) {
-                    $query->whereDate('created_at', '<=', $reportDate);
-                })
-                ->with('invoice')
-                ->get();
-
-            foreach ($invoices as $booking) {
-                $invoice = $booking->invoice;
-                if ($invoice) {
-                    $totalInvoices += $this->calculateInvoiceTotal($invoice);
-
-                    // حساب المدفوعات حتى تاريخ التقرير
-                    $payments = $invoice->invoicePayments()
-                        ->whereDate('created_at', '<=', $reportDate)
-                        ->sum('value');
-                    $totalPayments += $payments;
-                }
-            }
-
-            $balance = $totalInvoices - $totalPayments;
-
-            // إضافة الشركة فقط إذا كان لديها رصيد مستحق (مدين)
-            if ($balance > 0) {
-                $companiesWithDebts->push([
-                    'id' => $company->id,
-                    'name' => $company->name,
-                    'email' => $company->email,
-                    'phone' => $company->phone,
-                    'total_invoices' => $totalInvoices,
-                    'total_payments' => $totalPayments,
-                    'balance' => $balance,
-                ]);
-            }
-        }
-
-        // ترتيب حسب المبلغ المستحق (من الأكبر للأصغر)
-        $companiesWithDebts = $companiesWithDebts->sortByDesc('balance')->values();
-
-        // حساب الإجمالي
-        $totalDebts = $companiesWithDebts->sum('balance');
+        $built = $this->buildCompaniesFinancialPositionDataset($reportDate);
 
         $fileName = 'تقرير_الموقف_المالي_' . $reportDate . '.xlsx';
 
         return Excel::download(
-            new FinancialPositionExport($companiesWithDebts, $reportDate, $totalDebts),
-             $fileName
-         );
-     }
+            new FinancialPositionExport(
+                $built['companiesWithDebts'],
+                $built['reportDate'],
+                $built['totalDebts']
+            ),
+            $fileName
+        );
+    }
 
     /**
      * الموقف المالي للسيارة حتى تاريخ التقرير (نفس منطق كشف الحساب: متبقي كل نقلة)
@@ -3178,12 +3079,10 @@ class AccountController extends Controller
     }
 
     /**
-     * عرض تقرير الموقف المالي - السيارات
+     * @return array{carsWithDebts: \Illuminate\Support\Collection, reportDate: string, totalDebts: float}
      */
-    public function carsFinancialPositionReport(Request $request)
+    private function buildCarsFinancialPositionDataset(string $reportDate): array
     {
-        $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
-
         $cars = Car::query()
             ->orderBy('car_number')
             ->get();
@@ -3203,17 +3102,67 @@ class AccountController extends Controller
             }
         }
 
-        // ترتيب حسب الرصيد (من الأكبر للأصغر)
         $carsWithDebts = $carsWithDebts->sortByDesc('balance')->values();
+        $totalDebts = (float) $carsWithDebts->sum('balance');
 
-        // صافي إجمالي الأرصدة (مجموع الموجب والسالب)
-        $totalDebts = $carsWithDebts->sum('balance');
+        return compact('carsWithDebts', 'reportDate', 'totalDebts');
+    }
 
-        return view('admin.accounts.cars-financial-position-report', compact(
-            'carsWithDebts',
-            'reportDate',
-            'totalDebts'
-        ));
+    /**
+     * عرض تقرير الموقف المالي - السيارات
+     */
+    public function carsFinancialPositionReport(Request $request)
+    {
+        $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
+        $built = $this->buildCarsFinancialPositionDataset($reportDate);
+
+        return view('admin.accounts.cars-financial-position-report', $built);
+    }
+
+    /**
+     * تصدير الموقف المالي للسيارات إلى PDF
+     */
+    public function exportCarsFinancialPositionPDF(Request $request)
+    {
+        $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
+        $built = $this->buildCarsFinancialPositionDataset($reportDate);
+
+        $html = view('admin.accounts.cars-financial-position-report-pdf', $built)->render();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font' => 'dejavusans',
+            'directionality' => 'rtl',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'margin_header' => 6,
+            'margin_footer' => 6,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        return $mpdf->Output('الموقف_المالي_السيارات_'.$reportDate.'.pdf', 'D');
+    }
+
+    /**
+     * تصدير الموقف المالي للسيارات إلى Excel
+     */
+    public function exportCarsFinancialPositionExcel(Request $request)
+    {
+        $reportDate = $request->date ?? Carbon::now()->format('Y-m-d');
+        $built = $this->buildCarsFinancialPositionDataset($reportDate);
+
+        return Excel::download(
+            new CarsFinancialPositionExport(
+                $built['carsWithDebts'],
+                $built['reportDate'],
+                $built['totalDebts']
+            ),
+            'الموقف_المالي_السيارات_'.$reportDate.'.xlsx'
+        );
     }
 
     /**

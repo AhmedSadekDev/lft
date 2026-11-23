@@ -13,7 +13,15 @@
                     الموقف المالي - السيارات
                 </h3>
             </div>
-            <div class="card-toolbar">
+            <div class="card-toolbar d-flex align-items-center flex-wrap" style="gap: 8px;">
+                <a href="{{ route('accounts.cars.financial-position.export.excel', ['date' => $reportDate]) }}"
+                   class="btn btn-success font-weight-bold shadow-sm">
+                    <i class="fas fa-file-excel"></i> تصدير Excel
+                </a>
+                <a href="{{ route('accounts.cars.financial-position.export.pdf', ['date' => $reportDate]) }}"
+                   class="btn btn-danger font-weight-bold shadow-sm">
+                    <i class="fas fa-file-pdf"></i> تصدير PDF
+                </a>
                 <form action="{{ route('accounts.cars.financial-position') }}" method="get" class="d-flex align-items-center">
                     <input type="date"
                            name="date"
