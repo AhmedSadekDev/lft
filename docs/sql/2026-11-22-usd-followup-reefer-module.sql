@@ -1,41 +1,32 @@
 -- =============================================================================
 -- USD wallets + follow-up log + reefer module (dashboard)
 -- Reviewable SQL only — do NOT run via artisan migrate.
--- Re-runnable via information_schema guards.
+--
+-- No information_schema (shared hosts often deny it).
+-- Re-run notes:
+--   - CREATE TABLE IF NOT EXISTS / INSERT WHERE NOT EXISTS = safe to re-run
+--   - ALTER ADD COLUMN: if you see #1060 Duplicate column name → column already
+--     exists; ignore that statement and continue
 -- After permissions: php artisan permission:cache-reset
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
 -- A) Agent USD custody balance
 -- ---------------------------------------------------------------------------
-SET @col_exists := (
-    SELECT COUNT(*) FROM information_schema.COLUMNS
-    WHERE TABLE_SCHEMA = DATABASE()
-      AND TABLE_NAME = 'agents'
-      AND COLUMN_NAME = 'wallet_usd'
-);
-SET @sql := IF(
-    @col_exists = 0,
-    'ALTER TABLE `agents` ADD COLUMN `wallet_usd` DECIMAL(14,2) NOT NULL DEFAULT 0 COMMENT ''USD custody balance (dashboard)'' AFTER `wallet`',
-    'SELECT ''agents.wallet_usd already exists'' AS info'
-);
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+-- Ignore error #1060 if column already exists
+ALTER TABLE `agents`
+    ADD COLUMN `wallet_usd` DECIMAL(14,2) NOT NULL DEFAULT 0
+    COMMENT 'USD custody balance (dashboard)'
+    AFTER `wallet`;
 
 -- ---------------------------------------------------------------------------
 -- B) Bank USD book balance (isolated from banks.amount EGP)
 -- ---------------------------------------------------------------------------
-SET @col_exists := (
-    SELECT COUNT(*) FROM information_schema.COLUMNS
-    WHERE TABLE_SCHEMA = DATABASE()
-      AND TABLE_NAME = 'banks'
-      AND COLUMN_NAME = 'amount_usd'
-);
-SET @sql := IF(
-    @col_exists = 0,
-    'ALTER TABLE `banks` ADD COLUMN `amount_usd` DECIMAL(14,2) NOT NULL DEFAULT 0 COMMENT ''USD bank book balance'' AFTER `amount`',
-    'SELECT ''banks.amount_usd already exists'' AS info'
-);
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+-- Ignore error #1060 if column already exists
+ALTER TABLE `banks`
+    ADD COLUMN `amount_usd` DECIMAL(14,2) NOT NULL DEFAULT 0
+    COMMENT 'USD bank book balance'
+    AFTER `amount`;
 
 -- ---------------------------------------------------------------------------
 -- C) USD vault + ledger
@@ -172,28 +163,28 @@ CREATE TABLE IF NOT EXISTS `reefer_trips` (
 -- ---------------------------------------------------------------------------
 -- F) Permissions
 -- ---------------------------------------------------------------------------
-INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`)
-SELECT (SELECT IFNULL(MAX(id), 0) + 1 FROM `permissions` p), 'usd_vault.index', 'web', NOW(), NOW()
+INSERT INTO `permissions` (`name`, `guard_name`, `created_at`, `updated_at`)
+SELECT 'usd_vault.index', 'web', NOW(), NOW()
 FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM `permissions` WHERE `name` = 'usd_vault.index' AND `guard_name` = 'web');
 
-INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`)
-SELECT (SELECT IFNULL(MAX(id), 0) + 1 FROM `permissions` p), 'usd_vault.manage', 'web', NOW(), NOW()
+INSERT INTO `permissions` (`name`, `guard_name`, `created_at`, `updated_at`)
+SELECT 'usd_vault.manage', 'web', NOW(), NOW()
 FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM `permissions` WHERE `name` = 'usd_vault.manage' AND `guard_name` = 'web');
 
-INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`)
-SELECT (SELECT IFNULL(MAX(id), 0) + 1 FROM `permissions` p), 'follow_ups.index', 'web', NOW(), NOW()
+INSERT INTO `permissions` (`name`, `guard_name`, `created_at`, `updated_at`)
+SELECT 'follow_ups.index', 'web', NOW(), NOW()
 FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM `permissions` WHERE `name` = 'follow_ups.index' AND `guard_name` = 'web');
 
-INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`)
-SELECT (SELECT IFNULL(MAX(id), 0) + 1 FROM `permissions` p), 'follow_ups.manage', 'web', NOW(), NOW()
+INSERT INTO `permissions` (`name`, `guard_name`, `created_at`, `updated_at`)
+SELECT 'follow_ups.manage', 'web', NOW(), NOW()
 FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM `permissions` WHERE `name` = 'follow_ups.manage' AND `guard_name` = 'web');
 
-INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`)
-SELECT (SELECT IFNULL(MAX(id), 0) + 1 FROM `permissions` p), 'reefer_trips.index', 'web', NOW(), NOW()
+INSERT INTO `permissions` (`name`, `guard_name`, `created_at`, `updated_at`)
+SELECT 'reefer_trips.index', 'web', NOW(), NOW()
 FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM `permissions` WHERE `name` = 'reefer_trips.index' AND `guard_name` = 'web');
 
-INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`)
-SELECT (SELECT IFNULL(MAX(id), 0) + 1 FROM `permissions` p), 'reefer_trips.manage', 'web', NOW(), NOW()
+INSERT INTO `permissions` (`name`, `guard_name`, `created_at`, `updated_at`)
+SELECT 'reefer_trips.manage', 'web', NOW(), NOW()
 FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM `permissions` WHERE `name` = 'reefer_trips.manage' AND `guard_name` = 'web');
 
 SET @admin_role_id = (SELECT id FROM roles WHERE name = 'Admin' AND guard_name = 'web' LIMIT 1);
@@ -213,23 +204,19 @@ WHERE p.guard_name = 'web'
       WHERE rh.permission_id = p.id AND rh.role_id = @admin_role_id
   );
 
--- Preflight
-SELECT 'agents.wallet_usd' AS col, COUNT(*) AS present
-FROM information_schema.COLUMNS
-WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'agents' AND COLUMN_NAME = 'wallet_usd'
-UNION ALL
-SELECT 'banks.amount_usd', COUNT(*)
-FROM information_schema.COLUMNS
-WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'banks' AND COLUMN_NAME = 'amount_usd'
-UNION ALL
-SELECT 'usd_vaults', COUNT(*)
-FROM information_schema.TABLES
-WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'usd_vaults'
-UNION ALL
-SELECT 'container_follow_ups', COUNT(*)
-FROM information_schema.TABLES
-WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'container_follow_ups'
-UNION ALL
-SELECT 'reefer_trips', COUNT(*)
-FROM information_schema.TABLES
-WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'reefer_trips';
+-- ---------------------------------------------------------------------------
+-- Preflight (app tables only — no information_schema)
+-- If ALTER already applied: these succeed. If a column is missing: that SELECT fails.
+-- ---------------------------------------------------------------------------
+SELECT `wallet_usd` FROM `agents` LIMIT 1;
+SELECT `amount_usd` FROM `banks` LIMIT 1;
+SELECT COUNT(*) AS usd_vaults_rows FROM `usd_vaults`;
+SELECT COUNT(*) AS container_follow_ups_rows FROM `container_follow_ups`;
+SELECT COUNT(*) AS reefer_trips_rows FROM `reefer_trips`;
+SELECT COUNT(*) AS reefer_shipments_rows FROM `reefer_shipments`;
+SELECT `name` FROM `permissions`
+WHERE `name` IN (
+    'usd_vault.index', 'usd_vault.manage',
+    'follow_ups.index', 'follow_ups.manage',
+    'reefer_trips.index', 'reefer_trips.manage'
+);
