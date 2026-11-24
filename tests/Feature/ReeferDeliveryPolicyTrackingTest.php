@@ -316,7 +316,27 @@ class ReeferDeliveryPolicyTrackingTest extends TestCase
         $this->assertSame(1000.0, (float) $policy->settled_money_transfer->value);
     }
 
-    public function test_non_reefer_rejects_custody_usd_on_create(): void
+    public function test_reefer_create_allows_omitting_custody_usd(): void
+    {
+        $agent = $this->actingAsAgent(1);
+        $payload = $this->createReeferPolicyPayload();
+        unset($payload['custody_usd']);
+
+        $request = DeliveryPolicyRequest::create('/api/agent/create_delivery_policy', 'POST', $payload);
+        $request->setContainer(app());
+        $request->validateResolved();
+
+        $response = app(DeliveryPolicyController::class)->create_delivery_policy($request);
+        $this->assertSame(200, $response->getStatusCode());
+
+        $policy = DeliveryPolicy::latest('id')->first();
+        $this->assertNotNull($policy);
+        $this->assertTrue($policy->custody_usd === null || (float) $policy->custody_usd === 0.0);
+        $agent->refresh();
+        $this->assertNotNull($agent);
+    }
+
+    public function test_non_reefer_strips_custody_usd_on_create(): void
     {
         $this->actingAsAgent(1);
         $payload = $this->createReeferPolicyPayload([
@@ -325,13 +345,9 @@ class ReeferDeliveryPolicyTrackingTest extends TestCase
         ]);
         $request = DeliveryPolicyRequest::create('/api/agent/create_delivery_policy', 'POST', $payload);
         $request->setContainer(app());
+        $request->validateResolved();
 
-        try {
-            $request->validateResolved();
-            $this->fail('Expected validation failure for non-reefer custody_usd');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            $this->assertArrayHasKey('custody_usd', $e->errors());
-        }
+        $this->assertNull($request->input('custody_usd'));
     }
 
     public function test_stages_order_timestamps_and_notes_only_stage_11(): void

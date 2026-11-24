@@ -21,6 +21,10 @@ use App\Models\ServiceCategory;
 use App\Models\shippingAgent;
 use App\Models\MoneyTransfer;
 use App\Models\Agent;
+use App\Models\Car;
+use App\Models\Driver;
+use App\Services\CompanyTransportationPriceResolver;
+use App\Services\ReeferTripTrackingService;
 use App\Services\ShipmentWorkflow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -595,15 +599,209 @@ class BookingController extends Controller
             'booking_containers.container',
         ]);
 
-        $isReefer = app(\App\Services\ReeferTripTrackingService::class)->policyIsReefer($deliveryPolicy);
+        $isReefer = app(ReeferTripTrackingService::class)->policyIsReefer($deliveryPolicy);
 
         return view('admin.bookings.land_bol_print', [
             'policy' => $deliveryPolicy,
             'isReefer' => $isReefer,
             'timeline' => $isReefer
-                ? app(\App\Services\ReeferTripTrackingService::class)->buildTimeline($deliveryPolicy)
+                ? app(ReeferTripTrackingService::class)->buildTimeline($deliveryPolicy)
                 : [],
         ]);
+    }
+
+    public function edit_delivery_policy(DeliveryPolicy $deliveryPolicy)
+    {
+        $deliveryPolicy->load([
+            'driver',
+            'car',
+            'money_transfer',
+            'booking_containers.booking',
+            'booking_containers.departure',
+            'booking_containers.loading',
+            'booking_containers.aging',
+        ]);
+
+        if ((int) $deliveryPolicy->is_settled === 1) {
+            return back()->with('error', __('main.delivery_policy is settled'));
+        }
+
+        $container = $deliveryPolicy->booking_containers->first();
+        $booking = $container?->booking;
+        $returnTo = request()->query('return') === 'booking' ? 'booking' : 'container';
+
+        return view('admin.bookings.delivery_policy_edit', [
+            'policy' => $deliveryPolicy,
+            'booking' => $booking,
+            'container' => $container,
+            'returnTo' => $returnTo,
+            'drivers' => Driver::query()->orderBy('name')->get(['id', 'name']),
+            'cars' => Car::query()->orderBy('car_number')->get(['id', 'car_number']),
+            'cities' => CitiesAndRegions::pluck('title', 'id'),
+            'isReefer' => app(ReeferTripTrackingService::class)->policyIsReefer($deliveryPolicy),
+        ]);
+    }
+
+    public function update_delivery_policy(Request $request, DeliveryPolicy $deliveryPolicy)
+    {
+        $deliveryPolicy->load(['money_transfer', 'booking_containers.booking']);
+
+        if ((int) $deliveryPolicy->is_settled === 1) {
+            return back()->with('error', __('main.delivery_policy is settled'));
+        }
+
+        $isReefer = app(ReeferTripTrackingService::class)->policyIsReefer($deliveryPolicy);
+
+        $request->validate([
+            'driver_id' => 'required|exists:drivers,id',
+            'car_id' => 'required|exists:cars,id',
+            'value' => 'required|numeric|min:0',
+            'office_commission' => 'nullable|numeric|min:0',
+            'custody_usd' => 'nullable|numeric|min:0',
+            'date' => 'nullable|date',
+            'departure_id' => 'nullable|exists:cities_and_regions,id',
+            'loading_id' => 'nullable|exists:cities_and_regions,id',
+            'aging_id' => 'nullable|exists:cities_and_regions,id',
+        ]);
+
+        if ($request->filled('custody_usd') && ! $isReefer) {
+            return back()->withInput()->with('error', __('main.custody_usd_reefer_only'));
+        }
+
+        try {
+            DB::transaction(function () use ($request, $deliveryPolicy, $isReefer) {
+                $agent = null;
+                if ($deliveryPolicy->money_transfer
+                    && $deliveryPolicy->money_transfer->transferer_type === Agent::class) {
+                    $agent = Agent::lockForUpdate()->find($deliveryPolicy->money_transfer->transferer_id);
+                }
+
+                $oldValue = (float) ($deliveryPolicy->money_transfer?->value ?? 0);
+                $oldCommission = (float) ($deliveryPolicy->office_commission ?? 0);
+                $oldActualDeduction = $oldValue - $oldCommission;
+
+                $newValue = (float) $request->input('value');
+                $newCommission = (float) ($request->input('office_commission') ?? 0);
+                $newActualDeduction = $newValue - $newCommission;
+                $actualDiff = round($newActualDeduction - $oldActualDeduction, 2);
+
+                if ($agent && $actualDiff > 0 && (float) $agent->wallet < $actualDiff) {
+                    abort(422, __('main.you dont have enougth money'));
+                }
+
+                if ($request->filled('loading_id')) {
+                    $city = CitiesAndRegions::find($request->input('loading_id'));
+                    if ($city) {
+                        $deliveryPolicy->address = (string) $city->title;
+                    }
+                }
+
+                $deliveryPolicy->driver_id = (int) $request->input('driver_id');
+                $deliveryPolicy->car_id = (int) $request->input('car_id');
+                $deliveryPolicy->office_commission = $newCommission;
+                if ($request->filled('date')) {
+                    $deliveryPolicy->date = $request->input('date');
+                }
+                if ($isReefer && $request->has('custody_usd')) {
+                    $oldCustodyUsd = (float) ($deliveryPolicy->custody_usd ?? 0);
+                    $newCustodyUsd = (float) $request->input('custody_usd');
+                    $usdDiff = round($newCustodyUsd - $oldCustodyUsd, 2);
+                    if ($agent && $usdDiff != 0.0) {
+                        if ($usdDiff > 0 && (float) ($agent->wallet_usd ?? 0) < $usdDiff) {
+                            abort(422, 'رصيد دولار المندوب غير كافٍ للعهدة');
+                        }
+                        $agent->wallet_usd = round((float) ($agent->wallet_usd ?? 0) - $usdDiff, 2);
+                        $agent->save();
+                    }
+                    $deliveryPolicy->custody_usd = $newCustodyUsd;
+                }
+                $deliveryPolicy->save();
+
+                if ($deliveryPolicy->money_transfer) {
+                    $deliveryPolicy->money_transfer->update([
+                        'value' => $newValue,
+                        'transfered_type' => Driver::class,
+                        'transfered_id' => $deliveryPolicy->driver_id,
+                        'date' => $deliveryPolicy->date ?? $deliveryPolicy->money_transfer->date,
+                        'address' => $deliveryPolicy->address,
+                    ]);
+                }
+
+                $officeCommissionTransfer = MoneyTransfer::where('delivery_policy_id', $deliveryPolicy->id)
+                    ->where('type', MoneyTransfer::officeCommission)
+                    ->first();
+
+                if ($newCommission > 0) {
+                    $commissionPayload = [
+                        'value' => $newCommission,
+                        'type' => MoneyTransfer::officeCommission,
+                        'transferer_type' => Driver::class,
+                        'transferer_id' => $deliveryPolicy->driver_id,
+                        'transfered_type' => Agent::class,
+                        'transfered_id' => $agent?->id,
+                        'delivery_policy_id' => $deliveryPolicy->id,
+                        'date' => $deliveryPolicy->date ?? now(),
+                        'address' => $deliveryPolicy->address,
+                    ];
+                    if ($officeCommissionTransfer) {
+                        $officeCommissionTransfer->update($commissionPayload);
+                    } elseif ($agent) {
+                        MoneyTransfer::create($commissionPayload);
+                    }
+                } elseif ($officeCommissionTransfer) {
+                    $officeCommissionTransfer->delete();
+                }
+
+                if ($agent && $actualDiff != 0.0) {
+                    $agent->update(['wallet' => round((float) $agent->wallet - $actualDiff, 2)]);
+                }
+
+                $routeContainer = $deliveryPolicy->booking_containers()->with('booking')->first();
+                if ($routeContainer && ($request->filled('departure_id') || $request->filled('loading_id') || $request->filled('aging_id'))) {
+                    $routePatch = array_filter([
+                        'departure_id' => $request->input('departure_id'),
+                        'loading_id' => $request->input('loading_id'),
+                        'aging_id' => $request->input('aging_id'),
+                    ], fn ($v) => $v !== null && $v !== '');
+                    if ($routePatch !== []) {
+                        $routeContainer->update($routePatch);
+                        $routeContainer->refresh();
+                        app(CompanyTransportationPriceResolver::class)->applyToContainer($routeContainer);
+                    }
+                }
+            });
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+
+        $deliveryPolicy->loadMissing('booking_containers.booking');
+        $container = $deliveryPolicy->booking_containers->first();
+        $booking = $container?->booking;
+        $returnTo = $request->input('return') === 'booking' ? 'booking' : 'container';
+
+        if ($returnTo === 'booking' && $booking) {
+            return redirect()
+                ->route('bookings.show', $booking->id)
+                ->with('success', __('alerts.updated_successfully'));
+        }
+
+        if ($container) {
+            return redirect()
+                ->route('bookings.booking_container_policies', $container->id)
+                ->with('success', __('alerts.updated_successfully'));
+        }
+
+        if ($booking) {
+            return redirect()
+                ->route('bookings.show', $booking->id)
+                ->with('success', __('alerts.updated_successfully'));
+        }
+
+        return redirect()
+            ->route('bookings.index')
+            ->with('success', __('alerts.updated_successfully'));
     }
 
     public function delete_delivery_policy($id)

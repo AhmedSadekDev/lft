@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Agent;
 use App\Models\AgentExpense;
 use App\Models\MoneyTransfer;
+use App\Services\AgentCustodyStatementService;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -21,69 +22,96 @@ class AgentAccountExport implements FromCollection, ShouldAutoSize, WithHeadings
 
     public function collection()
     {
-        $incoming = $this->applyDateFilter($this->agent->financial_custodies()->with('transferer'))->get();
-        $outgoing = $this->applyDateFilter(
-            $this->agent->sended_financial_custodies()->with(['transferer', 'transfered'])
-        )->get();
-        $expenses = $this->applyDateFilter(
-            $this->agent->expenses()->with(['booking', 'service.serviceCategory'])
-        )->get();
+        $statement = app(AgentCustodyStatementService::class)->build($this->agent, $this->from, $this->to);
 
-        $transfers = $incoming->concat($outgoing)->unique('id');
+        $rows = collect();
+        if ($this->from || $this->to) {
+            $rows->push([
+                'id' => '',
+                'date' => '',
+                'kind' => 'رصيد افتتاحي',
+                'title' => '',
+                'amount' => '',
+                'status' => '',
+                'balance_before' => '',
+                'balance_after' => $statement['opening_balance'],
+                'notes' => '',
+            ]);
+        }
 
-        return $transfers->concat($expenses)
-            ->sortBy(function ($row) {
-                $raw = method_exists($row, 'getRawOriginal') ? $row->getRawOriginal('created_at') : $row->created_at;
+        foreach ($statement['rows'] as $row) {
+            $model = $row['model'];
+            $raw = method_exists($model, 'getRawOriginal')
+                ? ($model->getRawOriginal('created_at') ?? null)
+                : ($model->created_at ?? null);
+            $date = $raw ? Carbon::parse($raw)->format('Y-m-d H:i:s') : '';
+            $effective = $row['effective_at']->format('Y-m-d H:i:s');
 
-                return $raw ? Carbon::parse($raw)->timestamp : 0;
-            })
-            ->values()
-            ->map(function ($row) {
-                $raw = method_exists($row, 'getRawOriginal') ? $row->getRawOriginal('created_at') : ($row->created_at ?? null);
-                $date = $raw ? Carbon::parse($raw)->format('Y-m-d H:i:s') : '';
+            if ($model instanceof AgentExpense) {
+                $pending = $model->admin_approval == 0 || $model->admin_approval === null;
 
-                if ($row instanceof AgentExpense) {
-                    $pending = $row->admin_approval == 0 || $row->admin_approval === null;
-
-                    return [
-                        'id' => $row->id,
-                        'date' => $date,
-                        'kind' => 'مصروف',
-                        'title' => $row->title ?? '',
-                        'amount' => $row->value,
-                        'status' => $pending ? 'بانتظار المراجعة' : 'تمت المراجعة',
-                        'notes' => $row->booking?->booking_number ? ('طلب ' . $row->booking->booking_number) : '',
-                    ];
-                }
-
-                /** @var MoneyTransfer $row */
-                $type = (int) $row->type;
-                $kind = match ($type) {
-                    MoneyTransfer::fromDashboard => 'عهدة واردة',
-                    MoneyTransfer::transferAgent => 'تحويل مندوب',
-                    MoneyTransfer::vaultReturnPending => 'إرجاع خزنة (معلّق)',
-                    MoneyTransfer::vaultReturnApproved => 'إرجاع خزنة (معتمد)',
-                    MoneyTransfer::deliveryPolicy => 'عهدة نقلة',
-                    MoneyTransfer::settle => 'تسوية',
-                    MoneyTransfer::officeCommission => 'دخان مكتب',
-                    default => 'تحويل #' . $type,
-                };
-                $status = match ($type) {
-                    MoneyTransfer::vaultReturnPending => 'بانتظار المراجعة',
-                    MoneyTransfer::vaultReturnApproved => 'تمت المراجعة',
-                    default => '—',
-                };
-
-                return [
-                    'id' => $row->id,
+                $rows->push([
+                    'id' => $model->id,
                     'date' => $date,
-                    'kind' => $kind,
-                    'title' => $row->title ?? '',
-                    'amount' => $row->value,
-                    'status' => $status,
-                    'notes' => $row->notes ?? '',
-                ];
-            });
+                    'kind' => 'مصروف',
+                    'title' => $model->title ?? '',
+                    'amount' => $model->value,
+                    'status' => $pending ? 'بانتظار المراجعة' : 'تمت المراجعة',
+                    'balance_before' => $row['balance_before'],
+                    'balance_after' => $row['balance_after'],
+                    'notes' => trim(
+                        ($model->booking?->booking_number ? ('طلب ' . $model->booking->booking_number) : '')
+                        . ($effective !== $date ? (' | تأثير الرصيد: ' . $effective) : '')
+                    ),
+                ]);
+
+                continue;
+            }
+
+            /** @var MoneyTransfer $model */
+            $type = (int) $model->type;
+            $kind = match ($type) {
+                MoneyTransfer::fromDashboard => 'عهدة واردة',
+                MoneyTransfer::transferAgent => 'تحويل مندوب',
+                MoneyTransfer::vaultReturnPending => 'إرجاع خزنة (معلّق)',
+                MoneyTransfer::vaultReturnApproved => 'إرجاع خزنة (معتمد)',
+                MoneyTransfer::deliveryPolicy => 'عهدة نقلة',
+                MoneyTransfer::settle => 'تسوية',
+                MoneyTransfer::officeCommission => 'دخان مكتب',
+                default => 'تحويل #' . $type,
+            };
+            $status = match ($type) {
+                MoneyTransfer::vaultReturnPending => 'بانتظار المراجعة',
+                MoneyTransfer::vaultReturnApproved => 'تمت المراجعة',
+                default => '—',
+            };
+
+            $rows->push([
+                'id' => $model->id,
+                'date' => $date,
+                'kind' => $kind,
+                'title' => $model->title ?? '',
+                'amount' => $model->value,
+                'status' => $status,
+                'balance_before' => $row['balance_before'],
+                'balance_after' => $row['balance_after'],
+                'notes' => $model->notes ?? '',
+            ]);
+        }
+
+        $rows->push([
+            'id' => '',
+            'date' => '',
+            'kind' => 'رصيد ختامي',
+            'title' => '',
+            'amount' => '',
+            'status' => '',
+            'balance_before' => '',
+            'balance_after' => $statement['closing_balance'],
+            'notes' => '',
+        ]);
+
+        return $rows;
     }
 
     public function headings(): array
@@ -95,14 +123,9 @@ class AgentAccountExport implements FromCollection, ShouldAutoSize, WithHeadings
             'الوصف',
             'المبلغ',
             'الحالة',
+            'رصيد قبل',
+            'رصيد بعد',
             'ملاحظات',
         ];
-    }
-
-    private function applyDateFilter($query)
-    {
-        return $query
-            ->when($this->from, fn ($q) => $q->whereDate('created_at', '>=', $this->from))
-            ->when($this->to, fn ($q) => $q->whereDate('created_at', '<=', $this->to));
     }
 }

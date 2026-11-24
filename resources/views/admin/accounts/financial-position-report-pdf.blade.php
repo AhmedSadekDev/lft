@@ -113,12 +113,10 @@
         <thead>
             <tr>
                 <th style="width: 5%;">#</th>
-                <th style="width: 25%;">اسم الشركة</th>
-                <th style="width: 20%;">البريد الإلكتروني</th>
+                <th style="width: 35%;">اسم الشركة</th>
+                <th style="width: 25%;">البريد الإلكتروني</th>
                 <th style="width: 15%;">الهاتف</th>
-                <th style="width: 15%;">إجمالي الفواتير</th>
-                <th style="width: 15%;">إجمالي المدفوعات</th>
-                <th style="width: 15%;">الرصيد المستحق</th>
+                <th style="width: 20%;">الرصيد المستحق</th>
             </tr>
         </thead>
         <tbody>
@@ -128,15 +126,13 @@
                     <td style="font-weight: bold; text-align: right; padding-right: 10px;">{{ $company['name'] }}</td>
                     <td style="font-size: 8px;">{{ $company['email'] }}</td>
                     <td>{{ $company['phone'] }}</td>
-                    <td>{{ number_format($company['total_invoices'], 2) }}</td>
-                    <td class="text-success">{{ number_format($company['total_payments'], 2) }}</td>
                     <td class="text-danger" style="font-weight: bold; font-size: 10px;">
                         {{ number_format($company['balance'], 2) }}
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 20px;">
+                    <td colspan="5" style="text-align: center; padding: 20px;">
                         لا توجد شركات مدينة في هذا التاريخ
                     </td>
                 </tr>
@@ -145,8 +141,6 @@
             @if($companiesWithDebts->count() > 0)
                 <tr class="footer-row">
                     <td colspan="4" style="text-align: right; padding-right: 15px; font-size: 10px;">الإجمالي:</td>
-                    <td>{{ number_format($companiesWithDebts->sum('total_invoices'), 2) }}</td>
-                    <td>{{ number_format($companiesWithDebts->sum('total_payments'), 2) }}</td>
                     <td class="footer-total">{{ number_format($totalDebts, 2) }}</td>
                 </tr>
             @endif

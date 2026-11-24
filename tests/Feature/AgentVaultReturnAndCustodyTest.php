@@ -227,7 +227,7 @@ class AgentVaultReturnAndCustodyTest extends TestCase
         $this->assertSame(2500.0, (float) $viewData['underReviewByAgent'][1]);
     }
 
-    public function test_agent_expenses_list_orders_pending_vault_returns_before_approved_returns(): void
+    public function test_agent_expenses_list_orders_chronologically_for_running_balance(): void
     {
         $approved = MoneyTransfer::create([
             'value' => 1000,
@@ -249,7 +249,61 @@ class AgentVaultReturnAndCustodyTest extends TestCase
         $view = app(ExpenseController::class)->agent_expenses(new Request(), Agent::findOrFail(1));
         $rows = $view->getData()['allExpenses'];
 
-        $this->assertSame([$pending->id, $approved->id], $rows->pluck('id')->all());
+        $this->assertSame([$approved->id, $pending->id], $rows->pluck('id')->all());
+    }
+
+    public function test_custody_statement_running_balance_after_approved_expense_only(): void
+    {
+        MoneyTransfer::create([
+            'value' => 20000,
+            'type' => MoneyTransfer::fromDashboard,
+            'transferer_type' => User::class,
+            'transferer_id' => 1,
+            'transfered_type' => Agent::class,
+            'transfered_id' => 1,
+            'created_at' => '2026-01-01 10:00:00',
+            'updated_at' => '2026-01-01 10:00:00',
+        ]);
+
+        $pendingExpense = AgentExpense::create([
+            'agent_id' => 1,
+            'value' => 15000,
+            'admin_approval' => 0,
+            'version' => 1,
+            'created_at' => '2026-01-02 10:00:00',
+            'updated_at' => '2026-01-02 10:00:00',
+        ]);
+
+        MoneyTransfer::create([
+            'value' => 2000,
+            'type' => MoneyTransfer::fromDashboard,
+            'transferer_type' => User::class,
+            'transferer_id' => 1,
+            'transfered_type' => Agent::class,
+            'transfered_id' => 1,
+            'created_at' => '2026-01-03 10:00:00',
+            'updated_at' => '2026-01-03 10:00:00',
+        ]);
+
+        $beforeReview = app(\App\Services\AgentCustodyStatementService::class)->build(Agent::findOrFail(1));
+        $this->assertSame(22000.0, $beforeReview['closing_balance']);
+        $this->assertSame(0.0, $beforeReview['balances_by_key']['expense:' . $pendingExpense->id]['delta']);
+        $this->assertSame(20000.0, $beforeReview['balances_by_key']['expense:' . $pendingExpense->id]['balance_after']);
+        $this->assertSame(20000.0, $beforeReview['balances_by_key']['transfer:' . MoneyTransfer::where('value', 2000)->value('id')]['balance_before']);
+        $this->assertSame(22000.0, $beforeReview['balances_by_key']['transfer:' . MoneyTransfer::where('value', 2000)->value('id')]['balance_after']);
+
+        $pendingExpense->update([
+            'admin_approval' => 1,
+            'wallet_debited_at' => '2026-01-02 12:00:00',
+            'reviewed_at' => '2026-01-02 12:00:00',
+        ]);
+
+        $afterReview = app(\App\Services\AgentCustodyStatementService::class)->build(Agent::findOrFail(1));
+        $this->assertSame(7000.0, $afterReview['closing_balance']);
+        $this->assertSame(-15000.0, $afterReview['balances_by_key']['expense:' . $pendingExpense->id]['delta']);
+        $this->assertSame(5000.0, $afterReview['balances_by_key']['expense:' . $pendingExpense->id]['balance_after']);
+        $this->assertSame(5000.0, $afterReview['balances_by_key']['transfer:' . MoneyTransfer::where('value', 2000)->value('id')]['balance_before']);
+        $this->assertSame(7000.0, $afterReview['balances_by_key']['transfer:' . MoneyTransfer::where('value', 2000)->value('id')]['balance_after']);
     }
 
     public function test_agent_and_vault_excel_exports_build_rows(): void
@@ -270,8 +324,11 @@ class AgentVaultReturnAndCustodyTest extends TestCase
         ]);
 
         $agentRows = (new AgentAccountExport(Agent::find(1)))->collection();
-        $this->assertGreaterThanOrEqual(1, $agentRows->count());
+        $this->assertGreaterThanOrEqual(2, $agentRows->count());
         $this->assertSame('عهدة واردة', $agentRows->first()['kind']);
+        $this->assertSame('رصيد ختامي', $agentRows->last()['kind']);
+        $this->assertSame(10000.0, (float) $agentRows->first()['balance_after']);
+        $this->assertSame(10000.0, (float) $agentRows->last()['balance_after']);
 
         VaultTransaction::create([
             'agient_id' => 1,

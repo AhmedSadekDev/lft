@@ -70,8 +70,8 @@ class DeliveryPolicyController extends Controller
             $delivery_policy_data["date"] = $request->date;
             $delivery_policy_data["address"] = $city->address . " " . $city->city;
             $delivery_policy_data["office_commission"] = $officeCommission;
-            // USD: record-only on reefer policies; never debits wallet / settlement.
-            if ($isReefer) {
+            // USD: optional record-only on reefer policies; never debits wallet / settlement.
+            if ($isReefer && $request->filled('custody_usd')) {
                 $delivery_policy_data['custody_usd'] = $request->custody_usd;
             }
             $delivery_policy = DeliveryPolicy::create($delivery_policy_data);
@@ -335,9 +335,7 @@ class DeliveryPolicyController extends Controller
             }
 
             $isReefer = app(ReeferTripTrackingService::class)->policyIsReefer($delivery_policy);
-            if ($request->has('custody_usd') && ! $isReefer) {
-                return $this->returnError(422, __('main.custody_usd_reefer_only'));
-            }
+            // Non-reefer: ignore custody_usd from agent app (optional field, never required).
 
             $oldValue = (float) ($delivery_policy->money_transfer?->value ?? 0);
             $oldCommission = (float) ($delivery_policy->office_commission ?? 0);

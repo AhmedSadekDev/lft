@@ -6,6 +6,20 @@
     $displayName = $privateCompany ? $privateCompany->name : ($company->name ?? "");
     $logoUrl = $privateCompany ? $privateCompany->logo : null;
 
+    // Embed logo as data-URI when the file exists — avoids broken/blurry remote loads in print.
+    $logoSrc = null;
+    $logoFile = $privateCompany ? $privateCompany->getRawOriginal('logo') : null;
+    if (is_string($logoFile) && $logoFile !== '') {
+        $absoluteLogo = storage_path('app/public/private_companies/' . ltrim($logoFile, '/'));
+        if (is_file($absoluteLogo)) {
+            $mime = @mime_content_type($absoluteLogo) ?: 'image/png';
+            $logoSrc = 'data:' . $mime . ';base64,' . base64_encode((string) file_get_contents($absoluteLogo));
+        }
+    }
+    if (! $logoSrc && is_string($logoUrl) && $logoUrl !== '') {
+        $logoSrc = $logoUrl;
+    }
+
     // السجل التجاري والرقم الضريبي من الشركة الخاصة
     $privateCompanyTaxNo = $privateCompany->tax_no ?? "";
     $privateCompanyCommercialRegister = $privateCompany->commercial_register ?? "";
@@ -39,102 +53,67 @@
         .letterhead-header {
             position: relative !important;
             display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
             width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
             background: #fff !important;
-            padding: 20px !important;
-            margin-bottom: 20px !important;
-            margin-top: 0 !important;
+            padding: 6px 8px !important;
+            margin: 0 0 8px 0 !important;
             border: 1px solid #000 !important;
             border-bottom: 2px solid #8B4513 !important;
-            z-index: 1000 !important;
             page-break-inside: avoid !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
             color-adjust: exact !important;
         }
 
-        .letterhead-footer {
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            position: fixed !important;
-            bottom: 10px !important;
-            left: 10px !important;
-            right: 10px !important;
-            width: calc(100% - 20px) !important;
-            background: #fff !important;
-            border: 2px solid #8B4513 !important;
-            border-radius: 8px !important;
-            padding: 15px 20px !important;
-            z-index: 1000 !important;
-            page-break-inside: avoid !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-        }
-
-        body {
-            margin-top: 0 !important;
-            margin-bottom: 0 !important;
-            padding: 0 !important;
-        }
-
+        /* Fixed footer clipped page edges — hide on print */
+        .letterhead-footer,
         .watermark {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 0.15 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
+            display: none !important;
         }
 
-        /* Ensure flexbox layout works correctly in print */
         .logo-company-container {
             display: flex !important;
             flex-direction: row !important;
             justify-content: space-between !important;
             align-items: center !important;
+            gap: 10px !important;
         }
 
-        /* Ensure logo and company info are vertically aligned in print */
-        .letterhead-header > div[style*="display: flex"] {
-            align-items: center !important;
-        }
-
-        /* Ensure logo container is centered */
-        .letterhead-header > div > div:first-child {
-            display: flex !important;
-            align-items: center !important;
-        }
-
-        /* Ensure company info is centered */
-        .letterhead-header > div > div:last-child {
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: center !important;
-        }
-
-        /* Logo on the left */
         .logo-container {
             order: 1 !important;
             flex: 0 0 auto !important;
+            min-width: 0 !important;
+            max-width: 110px !important;
         }
 
-        /* Bigger logo in print */
         .logo-container img,
-        .logo-container svg {
-            max-width: 250px !important;
-            max-height: 120px !important;
-            width: 250px !important;
+        .logo-container svg,
+        .logo-image {
+            max-width: 100px !important;
+            max-height: 56px !important;
+            width: auto !important;
             height: auto !important;
+            object-fit: contain !important;
         }
 
-        /* Company info on the right */
         .company-info-container {
             order: 2 !important;
             flex: 1 !important;
             text-align: right !important;
             direction: rtl !important;
+        }
+
+        .company-print-name {
+            font-size: 15px !important;
+            line-height: 1.2 !important;
+        }
+
+        .invoice-title-banner {
+            background: #DC143C !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
     }
 
@@ -159,9 +138,11 @@
 <div class="letterhead-header"
      style="
         width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
         background: #fff;
-        padding: 15px 20px;
-        margin-bottom: 15px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
         border: 1px solid #000;
         border-bottom: 2px solid #8B4513;
      ">
@@ -180,24 +161,35 @@
             flex: 0 0 auto;
             display: flex;
             align-items: center;
-            min-width: 250px;
+            max-width: 140px;
         ">
-            @if($logoUrl)
-                <img src="{{ $logoUrl }}"
+            @if($logoSrc)
+                <img src="{{ $logoSrc }}"
                      alt="Logo"
                      class="logo-image"
+                     loading="eager"
+                     decoding="sync"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
                      style="
-                        max-width: 250px;
-                        max-height: 120px;
-                        width: 250px;
+                        max-width: 100px;
+                        max-height: 56px;
+                        width: auto;
                         height: auto;
                         object-fit: contain;
                         display: block;
                      ">
+                <svg width="100" height="56" viewBox="0 0 120 70" class="logo-svg" style="display:none;">
+                    <circle cx="36" cy="35" r="28" fill="#DC143C"/>
+                    <text x="36" y="40" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif">LEADER</text>
+                    <text x="72" y="32" font-size="10" font-weight="700" fill="#DC143C" text-anchor="start" font-family="Arial,sans-serif">FOR</text>
+                    <text x="72" y="46" font-size="10" font-weight="700" fill="#333" text-anchor="start" font-family="Arial,sans-serif">TRANS</text>
+                </svg>
             @else
-                <svg width="250" height="120" viewBox="0 0 200 90" class="logo-svg">
-                    <circle cx="100" cy="45" r="40" fill="#DC143C" opacity="0.1"/>
-                    <text x="100" y="50" font-size="20" font-weight="bold" fill="#DC143C" text-anchor="middle" font-family="Arial">LEADER FOR TRANS</text>
+                <svg width="100" height="56" viewBox="0 0 120 70" class="logo-svg">
+                    <circle cx="36" cy="35" r="28" fill="#DC143C"/>
+                    <text x="36" y="40" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif">LEADER</text>
+                    <text x="72" y="32" font-size="10" font-weight="700" fill="#DC143C" text-anchor="start" font-family="Arial,sans-serif">FOR</text>
+                    <text x="72" y="46" font-size="10" font-weight="700" fill="#333" text-anchor="start" font-family="Arial,sans-serif">TRANS</text>
                 </svg>
             @endif
         </div>
@@ -208,12 +200,12 @@
             text-align: right;
             direction: rtl;
         ">
-            <div style="
+            <div class="company-print-name" style="
                 color: #DC143C;
-                font-size: 24px;
+                font-size: 20px;
                 font-weight: bold;
                 font-family: 'Cairo', sans-serif;
-                line-height: 1.3;
+                line-height: 1.25;
                 margin-bottom: 4px;
             ">
                 {{ $displayName }}
@@ -221,7 +213,7 @@
 
             <div style="
                 color: #333;
-                font-size: 14px;
+                font-size: 12px;
                 font-family: 'Cairo', sans-serif;
                 margin-bottom: 4px;
             ">
@@ -240,18 +232,7 @@
     </div>
 </div>
 
-<!-- Print Rules -->
-<style>
-@media print {
-    .watermark {
-        display: block !important;
-    }
-}
-</style>
-
-
-
-<!-- Letterhead Footer -->
+<!-- Letterhead Footer (screen helper only; hidden when printing to avoid clipping) -->
 <div class="letterhead-footer" style="position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border: 2px solid #8B4513; border-radius: 8px; padding: 15px 20px; z-index: 1000; display: none; margin: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
     <!-- Left: English Contact Info -->
     <div style="flex: 1; border-right: 1px solid #8B4513; padding-right: 20px;">
@@ -284,7 +265,7 @@
 </div>
 
 <!-- Invoice Title and Number -->
-<div style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; box-shadow: 0 4px 15px rgba(220, 20, 60, 0.2); -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact; display: block !important; visibility: visible !important; page-break-inside: avoid; position: relative; z-index: 2;">
+<div class="invoice-title-banner" style="background: #DC143C; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact; display: block !important; visibility: visible !important; page-break-inside: avoid; position: relative; z-index: 2;">
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 8px;">
             <h2 style="font-family: 'Cairo', sans-serif; color: #fff; margin: 0; font-size: 16px; font-weight: 700;">{{ str_replace('فواتير', 'فاتوره', $document_title ?? '') }} - {{ $clientName }}</h2>

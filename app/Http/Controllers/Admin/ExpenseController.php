@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Agent;
 use App\Models\AgentExpense;
 use App\Models\MoneyTransfer;
+use App\Services\AgentCustodyStatementService;
 use App\Services\AgentVaultReturnService;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -20,71 +22,40 @@ class ExpenseController extends Controller
         $from = $request->input('from');
         $to = $request->input('to');
 
-        $incoming = $this->applyCreatedAtDateFilter(
-            $agent->financial_custodies()->with('transferer'),
-            $from,
-            $to
-        )->orderBy('id', 'desc')->get();
+        $statement = app(AgentCustodyStatementService::class)->build($agent, $from, $to);
+        $allExpenses = $statement['rows']->map(fn (array $row) => $row['model'])->values();
+        $balancesByKey = $statement['balances_by_key'];
+        $openingBalance = $statement['opening_balance'];
+        $closingBalance = $statement['closing_balance'];
 
-        $outgoing = $this->applyCreatedAtDateFilter(
-            $agent->sended_financial_custodies()->with(['transferer', 'transfered']),
-            $from,
-            $to
-        )->orderBy('id', 'desc')->get();
+        $expenseModels = new EloquentCollection(
+            $allExpenses->filter(fn ($item) => $item instanceof AgentExpense)->all()
+        );
+        if ($expenseModels->isNotEmpty()) {
+            $expenseModels->loadMissing(['bookingService.agent', 'bookingService.creator', 'booking']);
+        }
 
-        $expenses = $this->applyCreatedAtDateFilter(
-            $agent->expenses()->with(['agent', 'booking', 'bookingService.agent', 'bookingService.creator']),
-            $from,
-            $to
-        )->orderBy('id', 'desc')->get();
+        $shownExpenseIds = $expenseModels->pluck('id');
+        $awaitingReviewIds = $agent->expenses()
+            ->awaitingDashboardReview()
+            ->whereIn('id', $shownExpenseIds)
+            ->pluck('id')
+            ->flip();
 
-        // Unique by id — incoming/outgoing can overlap if transferer == transfered historically
-        $transfers = $incoming->concat($outgoing)->unique('id')->values();
-        $awaitingReviewIds = $this->applyCreatedAtDateFilter(
-            $agent->expenses()->awaitingDashboardReview(),
-            $from,
-            $to
-        )->pluck('id')->flip();
-        $pendingVaultReturnIds = $this->applyCreatedAtDateFilter(
-            $agent->sended_financial_custodies()->where('type', MoneyTransfer::vaultReturnPending),
-            $from,
-            $to
-        )->pluck('id')->flip();
-
-        $reviewOrder = function ($item) use ($awaitingReviewIds, $pendingVaultReturnIds) {
-            if ($item instanceof AgentExpense && $awaitingReviewIds->has($item->id)) {
-                return 0;
-            }
-
-            if ($item instanceof MoneyTransfer) {
-                if ($pendingVaultReturnIds->has($item->id)) {
-                    return 0;
-                }
-                if ((int) $item->type === MoneyTransfer::vaultReturnApproved) {
-                    return 1;
-                }
-            }
-
-            return $item instanceof AgentExpense ? 1 : 2;
-        };
-
-        $allExpenses = $transfers->concat($expenses)->sort(function ($left, $right) use ($reviewOrder) {
-            $orderDifference = $reviewOrder($left) <=> $reviewOrder($right);
-            if ($orderDifference !== 0) {
-                return $orderDifference;
-            }
-
-            $leftDate = $left->getRawOriginal('created_at') ?? '';
-            $rightDate = $right->getRawOriginal('created_at') ?? '';
-
-            return strcmp($leftDate, $rightDate);
-        })->values();
+        $pendingVaultReturnIds = $allExpenses
+            ->filter(fn ($item) => $item instanceof MoneyTransfer
+                && (int) $item->type === MoneyTransfer::vaultReturnPending)
+            ->pluck('id')
+            ->flip();
 
         return view('admin.agents.expenses.index', compact(
             'allExpenses',
             'agent',
             'awaitingReviewIds',
             'pendingVaultReturnIds',
+            'balancesByKey',
+            'openingBalance',
+            'closingBalance',
             'from',
             'to'
         ));
@@ -98,13 +69,6 @@ class ExpenseController extends Controller
             new AgentAccountExport($agent, $request->input('from'), $request->input('to')),
             $filename
         );
-    }
-
-    private function applyCreatedAtDateFilter($query, ?string $from, ?string $to)
-    {
-        return $query
-            ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
-            ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to));
     }
 
     public function review_agent_expenses(Agent $agent, Request $request)

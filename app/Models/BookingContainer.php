@@ -76,6 +76,11 @@ class BookingContainer extends Model
         )->withTimestamps();
     }
 
+    public function followUps()
+    {
+        return $this->hasMany(ContainerFollowUp::class, 'booking_container_id');
+    }
+
 
     public function expenses()
     {

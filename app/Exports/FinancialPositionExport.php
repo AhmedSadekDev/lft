@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -13,7 +12,6 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Color;
 
 class FinancialPositionExport implements FromCollection, WithHeadings, ShouldAutoSize, WithTitle, WithStyles, WithColumnWidths
 {
@@ -38,21 +36,16 @@ class FinancialPositionExport implements FromCollection, WithHeadings, ShouldAut
                 $company['name'],
                 $company['email'],
                 $company['phone'],
-                number_format($company['total_invoices'], 2),
-                number_format($company['total_payments'], 2),
                 number_format($company['balance'], 2),
             ]);
         }
 
-        // إضافة صف الإجمالي
         if ($this->companiesWithDebts->count() > 0) {
             $data->push([
                 '',
                 'الإجمالي',
                 '',
                 '',
-                number_format($this->companiesWithDebts->sum('total_invoices'), 2),
-                number_format($this->companiesWithDebts->sum('total_payments'), 2),
                 number_format($this->totalDebts, 2),
             ]);
         }
@@ -67,8 +60,6 @@ class FinancialPositionExport implements FromCollection, WithHeadings, ShouldAut
             'اسم الشركة',
             'البريد الإلكتروني',
             'الهاتف',
-            'إجمالي الفواتير',
-            'إجمالي المدفوعات',
             'الرصيد المستحق',
         ];
     }
@@ -86,17 +77,14 @@ class FinancialPositionExport implements FromCollection, WithHeadings, ShouldAut
             'C' => 25,
             'D' => 15,
             'E' => 18,
-            'F' => 18,
-            'G' => 18,
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        $lastRow = $this->companiesWithDebts->count() + 2; // +2 للرأس والصف الإجمالي
+        $lastRow = $this->companiesWithDebts->count() + 2;
 
-        // تنسيق رأس الجدول
-        $sheet->getStyle('A1:G1')->applyFromArray([
+        $sheet->getStyle('A1:E1')->applyFromArray([
             'font' => [
                 'bold' => true,
                 'color' => ['rgb' => 'FFFFFF'],
@@ -117,9 +105,8 @@ class FinancialPositionExport implements FromCollection, WithHeadings, ShouldAut
             ],
         ]);
 
-        // تنسيق البيانات
         if ($this->companiesWithDebts->count() > 0) {
-            $sheet->getStyle('A2:G' . ($lastRow - 1))->applyFromArray([
+            $sheet->getStyle('A2:E' . ($lastRow - 1))->applyFromArray([
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
@@ -131,16 +118,14 @@ class FinancialPositionExport implements FromCollection, WithHeadings, ShouldAut
                 ],
             ]);
 
-            // تنسيق عمود الرصيد المستحق (باللون الأحمر)
-            $sheet->getStyle('G2:G' . ($lastRow - 1))->applyFromArray([
+            $sheet->getStyle('E2:E' . ($lastRow - 1))->applyFromArray([
                 'font' => [
                     'bold' => true,
                     'color' => ['rgb' => 'D32F2F'],
                 ],
             ]);
 
-            // تنسيق صف الإجمالي
-            $sheet->getStyle('A' . $lastRow . ':G' . $lastRow)->applyFromArray([
+            $sheet->getStyle('A' . $lastRow . ':E' . $lastRow)->applyFromArray([
                 'font' => [
                     'bold' => true,
                     'size' => 12,
@@ -160,15 +145,13 @@ class FinancialPositionExport implements FromCollection, WithHeadings, ShouldAut
                 ],
             ]);
 
-            // تنسيق عمود الرصيد المستحق في صف الإجمالي
-            $sheet->getStyle('G' . $lastRow)->applyFromArray([
+            $sheet->getStyle('E' . $lastRow)->applyFromArray([
                 'font' => [
                     'color' => ['rgb' => 'D32F2F'],
                 ],
             ]);
         }
 
-        // تنسيق عمود اسم الشركة (محاذاة لليمين)
         $sheet->getStyle('B2:B' . ($lastRow > 1 ? $lastRow : 2))->applyFromArray([
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_RIGHT,

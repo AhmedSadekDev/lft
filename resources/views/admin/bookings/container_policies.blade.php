@@ -50,6 +50,13 @@
                                     <i class="fas fa-print text-primary"></i>
                                 </a>
                                 @if($allExpense->is_settled != 1)
+                                    @if(auth()->user()->hasPermissionTo('bookings.update'))
+                                        <a href="{{ route('bookings.delivery_policy_edit', $allExpense->id) }}"
+                                           class="btn btn-icon btn-light btn-hover-warning btn-sm"
+                                           title="{{ __('admin.edit') }}">
+                                            <i class="fas fa-edit text-warning"></i>
+                                        </a>
+                                    @endif
                                     <button class="btn btn-icon btn-light btn-hover-danger btn-sm delete"
                                         onclick="deleteDeliveryPolicy('{{ $allExpense->id }}')">
                                         <i class="fas fa-trash text-danger"></i>

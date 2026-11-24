@@ -42,6 +42,9 @@ use App\Http\Controllers\Admin\CompanyServicesController;
 use App\Http\Controllers\Admin\ServiceCategoryController;
 use App\Http\Controllers\Admin\CitiesAndRegionsController;
 use App\Http\Controllers\Admin\VaultTransactionController;
+use App\Http\Controllers\Admin\UsdVaultController;
+use App\Http\Controllers\Admin\FollowUpController;
+use App\Http\Controllers\Admin\ReeferTripController as AdminReeferTripController;
 use App\Http\Controllers\Admin\CompanyTransportationController;
 use App\Http\Controllers\Admin\Booking\BookingInvoiceController;
 use App\Http\Controllers\Admin\Booking\BookingServiceController;
@@ -258,6 +261,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     Route::get("booking_container_papers/{booking}", [BookingController::class, "booking_container_papers"])->name("bookings.booking_container_papers");
     Route::get("booking_container_policies/{booking}", [BookingController::class, "booking_container_policies"])->name("bookings.booking_container_policies");
     Route::get("delivery-policies/{deliveryPolicy}/land-bol", [BookingController::class, "print_land_bol"])->name("bookings.delivery_policy_land_bol");
+    Route::get("delivery-policies/{deliveryPolicy}/edit", [BookingController::class, "edit_delivery_policy"])
+        ->middleware('permission:bookings.update')
+        ->name("bookings.delivery_policy_edit");
+    Route::put("delivery-policies/{deliveryPolicy}", [BookingController::class, "update_delivery_policy"])
+        ->middleware('permission:bookings.update')
+        ->name("bookings.delivery_policy_update");
     Route::delete("delete_delivery_policy/{id}", [BookingController::class, "delete_delivery_policy"])->name("bookings.delete_delivery_policy");
     Route::delete("deletePaper/{booking}", [BookingController::class, "deletePaper"])->name("admin.papers.delete");
     // ----------------- Booking Containers -----------------
@@ -451,6 +460,20 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
     });
     // ----------------- vaults -----------------
 
+    // ----------------- USD vault / follow-ups / reefer trips -----------------
+    Route::get('usd-vault', [UsdVaultController::class, 'index'])->name('usd_vault.index');
+    Route::get('usd-vault/transactions', [UsdVaultController::class, 'transactions'])->name('usd_vault.transactions');
+    Route::post('usd-vault', [UsdVaultController::class, 'store'])->name('usd_vault.store');
+
+    Route::get('follow-ups', [FollowUpController::class, 'index'])->name('follow_ups.index');
+    Route::get('follow-ups/show', [FollowUpController::class, 'show'])->name('follow_ups.show');
+    Route::post('follow-ups', [FollowUpController::class, 'store'])->name('follow_ups.store');
+    Route::put('follow-ups/{followUp}', [FollowUpController::class, 'update'])->name('follow_ups.update');
+
+    Route::resource('reefer-trips', AdminReeferTripController::class)->names('reefer_trips');
+    Route::put('reefer-trips/{reeferTrip}/timeline', [AdminReeferTripController::class, 'updateTimeline'])->name('reefer_trips.timeline');
+    // ----------------- USD vault / follow-ups / reefer trips -----------------
+
 
     // ----------------- banks -----------------
     Route::resource('banks', BankController::class);
@@ -538,6 +561,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'middleware' => ['aut
 
     // تقرير الموقف المالي - السيارات
     Route::get('accounts/cars/financial-position', [AccountController::class, 'carsFinancialPositionReport'])->name('accounts.cars.financial-position');
+    Route::get('accounts/cars/financial-position/export-pdf', [AccountController::class, 'exportCarsFinancialPositionPDF'])->name('accounts.cars.financial-position.export.pdf');
+    Route::get('accounts/cars/financial-position/export-excel', [AccountController::class, 'exportCarsFinancialPositionExcel'])->name('accounts.cars.financial-position.export.excel');
 
     // تقرير الأرباح والخسائر
     Route::get('accounts/profit-loss', [AccountController::class, 'profitLossReport'])->name('accounts.profit-loss');

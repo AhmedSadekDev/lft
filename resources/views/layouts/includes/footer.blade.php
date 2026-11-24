@@ -29,24 +29,56 @@
 <script>
     if (typeof toastr !== 'undefined') {
         toastr.options = {
-            "closeButton": false,
+            "closeButton": true,
             "debug": false,
             "newestOnTop": true,
             "progressBar": true,
             "positionClass": "toast-top-center",
-            "preventDuplicates": false,
+            "preventDuplicates": true,
             "onclick": null,
             "showDuration": "300",
             "hideDuration": "1000",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000",
+            "timeOut": "4500",
+            "extendedTimeOut": "1500",
             "showEasing": "swing",
             "hideEasing": "linear",
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut",
-            'rtl': false
+            "rtl": true
         };
     }
+
+    window.lftFlashAlert = function (type, message) {
+        if (!message) {
+            return;
+        }
+
+        if (typeof Swal !== 'undefined' && typeof Swal.fire === 'function') {
+            Swal.fire({
+                icon: type === 'error' ? 'error' : 'success',
+                title: message,
+                confirmButtonText: 'حسناً',
+                confirmButtonColor: type === 'error' ? '#F64E60' : '#1BC5BD',
+                timer: type === 'error' ? undefined : 2800,
+                timerProgressBar: type !== 'error',
+                allowOutsideClick: true,
+                customClass: {
+                    popup: 'lft-flash-popup',
+                    title: 'lft-flash-title',
+                    confirmButton: 'lft-flash-confirm'
+                }
+            });
+            return;
+        }
+
+        if (typeof toastr !== 'undefined') {
+            if (type === 'error') {
+                toastr.error(message);
+            } else {
+                toastr.success(message);
+            }
+        }
+    };
 </script>
 <!-- =================== \CDNs =================== -->
 <script>
@@ -77,9 +109,9 @@
     });
 
     @if (Session::has('error'))
-        if (typeof toastr !== 'undefined') { toastr.error(`{{ session('error') }}`); }
+        window.lftFlashAlert('error', @json(session('error')));
     @elseif (Session::has('success'))
-        if (typeof toastr !== 'undefined') { toastr.success(`{{ session('success') }}`); }
+        window.lftFlashAlert('success', @json(session('success')));
     @endif
 </script>
 
@@ -96,7 +128,7 @@
 </script>
 
 @stack('js')
-<script src="{{ asset('assets/js/admin-ui.js') }}?v=5f"></script>
+<script src="{{ asset('assets/js/admin-ui.js') }}?v=5n"></script>
 
 <!--end::Page Scripts-->
 </body>

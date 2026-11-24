@@ -25,10 +25,20 @@ class BookingController extends Controller
         if (is_null($booking)) {
             return response()->json(['status' => false, 'message' => __('admin.not_found')]);
         }
-        $booking->load('bookingContainers.container');
+        $booking->load([
+            'bookingContainers.container',
+            'bookingContainers.delivery_policies.reeferTripLegs',
+        ]);
         $containers = ContainerResource::collection($booking->bookingContainers);
-    
-        return response()->json(['status' => true, 'message' => 'Orders', 'data' => $containers]);
+
+        $papers = BookingPaper::with('image')->where('booking_id', $booking->id)->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Orders',
+            'data' => $containers,
+            'documents' => BookingPaperResource::collection($papers),
+        ]);
     }
 
     public function getContainerDetails(BookingContainer $booking_container)
@@ -39,13 +49,36 @@ class BookingController extends Controller
             'employee',
             'shippingAgent',
         ])->first();
-        $booking_container->load(['branch', 'last_movement']);
+        $booking_container->load(['branch', 'last_movement', 'delivery_policies.reeferTripLegs']);
+
+        $followUpService = app(\App\Services\ContainerFollowUpService::class);
+        $followUps = [];
+        $publicMovements = [];
+        try {
+            $followUps = $followUpService->timelineForContainer($booking_container);
+            $publicMovements = $followUpService->publicMovementsForContainer($booking_container);
+        } catch (\Throwable $e) {
+            $followUps = [];
+            $publicMovements = [];
+        }
+
+        // leader-main reads lastMovements only — prefer follow-up timeline, else legacy rows.
+        $lastMovements = $publicMovements !== []
+            ? $publicMovements
+            : $booking_container->last_movement;
+
+        $papers = BookingPaper::with('image')
+            ->where('booking_id', $booking?->id)
+            ->get();
+
         $data = [
             'bookingDetails' => new BookingResource($booking, $booking_container->id),
             'factoryDetails' => $booking_container->branch ? new FactoryResource($booking_container->branch) : null,
-            'lastMovements'  => $booking_container->last_movement,
+            'lastMovements'  => $lastMovements,
+            'follow_ups'     => $followUps,
+            'documents'      => BookingPaperResource::collection($papers),
         ];
-    
+
         return response()->json(['status' => true, 'message' => 'Orders', 'data' => $data]);
     }
 
