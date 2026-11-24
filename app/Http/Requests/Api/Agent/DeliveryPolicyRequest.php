@@ -37,7 +37,7 @@ class DeliveryPolicyRequest extends FormRequest
             'aging_id'      => ['required', 'exists:cities_and_regions,id'],
             'date'          => ['nullable', 'date'],
             'image'         => ['sometimes', 'mimes:png,jpg,jpeg,pdf', 'max:10000'],
-            // USD record-only; required only when linked booking is reefer (see withValidator).
+            // USD record-only on reefer (optional — agent app may omit when no USD custody).
             'custody_usd'   => ['nullable', 'numeric', 'min:0'],
         ];
 
@@ -52,21 +52,15 @@ class DeliveryPolicyRequest extends FormRequest
                 return;
             }
 
+            // Non-reefer: strip custody_usd instead of failing — agent app may always send the field.
             $containers = BookingContainer::with('booking')->whereIn('id', $ids)->get();
             $isReefer = $containers->contains(function ($container) {
                 return $container->booking
                     && ShipmentWorkflow::of($container->booking) === ShipmentWorkflow::REEFER;
             });
 
-            if ($isReefer && ! $this->filled('custody_usd')) {
-                $validator->errors()->add('custody_usd', __('validation.required', [
-                    'attribute' => __('admin.custody_usd'),
-                ]));
-            }
-
-            if (! $isReefer && $this->filled('custody_usd')) {
-                // Ignore silently for non-reefer: strip in prepare or reject — reject to avoid accidental USD on EGP-only paths.
-                $validator->errors()->add('custody_usd', __('main.custody_usd_reefer_only'));
+            if (! $isReefer && $this->exists('custody_usd')) {
+                $this->merge(['custody_usd' => null]);
             }
         });
     }
