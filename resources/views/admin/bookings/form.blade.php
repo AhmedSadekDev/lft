@@ -235,30 +235,37 @@
 
             @forelse ($groupedContainers as $key => $group)
                 @php
-                    $branchId = explode('-', $key)[0];
-                    $containerCount = explode('-', $key)[1];
+                    // كل مجموعة لها index خاص بها، عشان باقي المجموعات ما تتكتبش فوق بعض عند الحفظ.
+                    $gi = $loop->index;
+                    $firstInGroup = $group->first();
+                    $branchId = $firstInGroup->branch_id;
+                    $containerCount = $group->count();
+                    $groupIds = $group->pluck('id')->implode(',');
                 @endphp
 
                 <div class="containers-divs">
 
                     <div class="row px-4 py-4 mt-4 mb-4 containers-div booking-container-block" id="containers">
 
+                        {{-- الحاويات الحالية في المجموعة (بنعدّلها هي نفسها ونحافظ على أرقامها ومصروفاتها) --}}
+                        <input type="hidden" name="containers[{{ $gi }}][booking_container_ids]" value="{{ $groupIds }}">
+
                         <div class="row align-items-center justify-content-between container-1 col-xl-12 ">
 
                             <div class="col-xl-6 ">
                                 <div class="form-group{{ $errors->has('branch_id') ? ' has-error' : '' }}">
                                     {!! Form::label('branch_id', __('admin.branch')) !!}
-                                    <select name="containers[0][branch_id]" id="branch_id" class="form-control"
+                                    <select name="containers[{{ $gi }}][branch_id]" id="branch_id" class="form-control"
                                         required>
                                         <option value="" disabled>{{ __('admin.select') }}</option>
                                         @foreach ($branches as $id => $name)
                                             <option value="{{ $id }}"
-                                                {{ old('containers.0.branch_id') == $id || $branchId == $id ? 'selected class=selected' : '' }}>
+                                                {{ old("containers.$gi.branch_id") == $id || $branchId == $id ? 'selected class=selected' : '' }}>
                                                 {{ $name }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <small class="text-danger">{{ $errors->first('containers.0.branch_id') }}</small>
+                                    <small class="text-danger">{{ $errors->first("containers.$gi.branch_id") }}</small>
                                 </div>
 
                             </div>
@@ -272,28 +279,28 @@
                             <div class="col-xl-6 ">
                                 <div class="form-group{{ $errors->has('container_id') ? ' has-error' : '' }}">
                                     {!! Form::label('container_id', __('admin.container')) !!}
-                                    <select name="containers[0][container_id]" id="container_id" class="form-control"
+                                    <select name="containers[{{ $gi }}][container_id]" id="container_id" class="form-control"
                                         required>
                                         <option value="to_be_disabled">{{ __('admin.select') }}</option>
                                         @foreach ($containers_type->all() as $id => $name)
                                             <option value="{{ $id }}"
-                                                {{ old('containers.0.container_id') == $id || (isset($group[0]) && $group[0]->container_id == $id) ? 'selected' : '' }}>
+                                                {{ old("containers.$gi.container_id") == $id || $firstInGroup->container_id == $id ? 'selected' : '' }}>
                                                 {{ $name }}
                                             </option>
                                         @endforeach
                                     </select>
                                     <small
-                                        class="text-danger">{{ $errors->first('containers.0.container_id') }}</small>
+                                        class="text-danger">{{ $errors->first("containers.$gi.container_id") }}</small>
                                 </div>
 
                             </div>
                             <div class="col-xl-6 ">
                                 <div class="form-group{{ $errors->has('arrival_date') ? ' has-error' : '' }}">
                                     {!! Form::label('arrival_date', __('admin.arrival_date')) !!}
-                                    <input type="date" name="containers[0][arrival_date]"
-                                        value="{{ old('containers.0.arrival_date') ?? $group[0]->arrival_date }}" class="form-control" required>
+                                    <input type="date" name="containers[{{ $gi }}][arrival_date]"
+                                        value="{{ old("containers.$gi.arrival_date") ?? $firstInGroup->arrival_date }}" class="form-control" required>
                                     <small
-                                        class="text-danger">{{ $errors->first('containers.0.arrival_date') }}</small>
+                                        class="text-danger">{{ $errors->first("containers.$gi.arrival_date") }}</small>
                                 </div>
 
                             </div>
@@ -301,18 +308,18 @@
                         <div class="row container-1 col-xl-12 border-bottom mx-0 mb-4">
                             <div class="col-xl-12">
                                 <!--begin::Input-->
-                                <div class="form-group{{ $errors->has('containers.0.containers_count') ? ' has-error' : '' }}">
+                                <div class="form-group{{ $errors->has("containers.$gi.containers_count") ? ' has-error' : '' }}">
                                     {!! Form::label('containers_count_input', __('admin.containers_count')) !!}
                                     <input
                                         type="number"
-                                        name="containers[0][containers_count]"
+                                        name="containers[{{ $gi }}][containers_count]"
                                         id="containers_count_input"
                                         class="form-control"
                                         placeholder="{{ __('admin.containers_count') }}"
-                                        value="{{ old('containers.0.containers_count') ?? $containerCount }}"
+                                        value="{{ old("containers.$gi.containers_count") ?? $containerCount }}"
                                         required
                                         min="1">
-                                    @error('containers.0.containers_count')
+                                    @error("containers.$gi.containers_count")
                                         <span class="form-text text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -321,83 +328,6 @@
                             </div>
                         </div>
 
-                        @for ($i = 1; $i < count(old('containers', [])); $i++)
-                            <div class="row justify-content-end col-12 container-1">
-                                <div class="col-xl-1">
-                                    <button class="btn btn-danger" type="button" data-toggle="collapse"
-                                        data-target="#collapseExample" aria-expanded="false"
-                                        aria-controls="collapseExample" onclick="removeContainer({{ $i }})">
-                                        X
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="row container-1 col-xl-12 ">
-
-                                <div class="col-xl-6 ">
-                                    <div class="form-group{{ $errors->has('branch_id') ? ' has-error' : '' }}">
-                                        {!! Form::label('branch_id', __('admin.branch')) !!}
-                                        {!! Form::select(
-                                            'containers[{{ $i }}][branch_id]',
-                                            array_replace(['to_be_disabled' => __('admin.select')], $branches?->toArray() ?? []),
-                                            old("containers.$i.branch_id"),
-                                            ['id' => 'branch_id', 'class' => 'form-control', 'required' => 'required'],
-                                        ) !!}
-                                        <small
-                                            class="text-danger">{{ $errors->first("containers.$i.branch_id") }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row container-1 col-xl-12">
-                                <div class="col-xl-6 ">
-                                    <div class="form-group{{ $errors->has('container_id') ? ' has-error' : '' }}">
-                                        {!! Form::label('container_id', __('admin.container')) !!}
-                                        {!! Form::select(
-                                            'containers[{{ $i }}][container_id]',
-                                            array_replace(['to_be_disabled' => __('admin.select')], $containers_type->all()),
-                                            old("containers.$i.container_id"),
-                                            [
-                                                'id' => 'container_id',
-                                                'class' => 'form-control',
-                                                'required' => 'required',
-                                            ],
-                                        ) !!}
-                                        <small
-                                            class="text-danger">{{ $errors->first("containers.$i.container_id") }}</small>
-                                    </div>
-                                </div>
-                                <div class="col-xl-6 ">
-                                    <div class="form-group{{ $errors->has('arrival_date') ? ' has-error' : '' }}">
-
-                                        {!! Form::label('arrival_date', __('admin.arrival_date')) !!}
-                                        {!! Form::date('containers[{{ $i }}][arrival_date]', old("containers.$i.arrival_date"), [
-                                            'class' => 'form-control',
-                                            'required' => 'required',
-                                        ]) !!}
-                                        <small
-                                            class="text-danger">{{ $errors->first("containers.$i.arrival_date") }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row container-1 col-xl-12 border-bottom mx-0 mb-4">
-                                <div class="col-xl-12">
-                                    <!--begin::Input-->
-                                    <div class="form-group">
-                                        {!! Form::label('containers_count_input', __('admin.containers_count')) !!}
-                                        {!! Form::number('containers[{{ $i }}][containers_count]', old("containers.$i.containers_count"), [
-                                            'id' => 'containers_count_input',
-                                            'class' => 'form-control',
-                                            'placeholder' => __('admin.containers_count'),
-                                            'min' => 1,
-                                            'required' => 'required',
-                                        ]) !!}
-                                        @error("containers.$i.containers_count")
-                                            <span class="form-text text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <!--end::Input-->
-                                </div>
-                            </div>
-                        @endfor
                     </div>
                 </div>
 

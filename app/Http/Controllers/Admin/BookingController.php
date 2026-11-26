@@ -292,9 +292,16 @@ class BookingController extends Controller
      */
     public function edit(Booking $booking)
     {
-        $groupedContainers = $booking->bookingContainers->groupBy(function ($container) use ($booking) {
-            return $container->branch_id . '-' . $booking->bookingContainers->count();
-        });
+        // نجمّع الحاويات حسب (الفرع + نوع الحاوية + تاريخ الوصول) عشان كل مجموعة تتعدّل لوحدها
+        // وما تتدمجش حاويات مختلفة في مجموعة واحدة (كان ده بيخلّي الحفظ يمسح حاويات).
+        $groupedContainers = $booking->bookingContainers
+            ->sortBy('id')
+            ->groupBy(fn ($container) => implode('|', [
+                $container->branch_id ?? 0,
+                $container->container_id ?? 0,
+                $container->arrival_date ?? '',
+            ]))
+            ->values();
 
         $input = array_merge(
             $this->getCreateFormInputs(),
@@ -422,81 +429,9 @@ class BookingController extends Controller
                     }
                 }
             } else {
-                // Handle nested arrays format (from form.blade.php) - containers[0][branch_id], etc.
-                // Update existing containers instead of deleting them
-                $containerIndex = 0;
-                $totalRequestContainers = 0;
-
-                // Calculate total containers from request (sum of containers_count)
-                foreach ($requestContainers as $containerGroup) {
-                    $totalRequestContainers += $containerGroup['containers_count'] ?? 1;
-                }
-
-                // Update existing containers
-                foreach ($existingContainers as $existingContainer) {
-                    // Find matching container group in request
-                    $matched = false;
-                    foreach ($requestContainers as $index => $containerGroup) {
-                        if (($containerGroup['container_id'] ?? null) == $existingContainer->container_id &&
-                            ($containerGroup['branch_id'] ?? null) == $existingContainer->branch_id) {
-                            // Update existing container, but preserve container_no and sail_of_number
-                            $updateData = [
-                                'container_id' => $containerGroup['container_id'] ?? $existingContainer->container_id,
-                                'arrival_date' => $containerGroup['arrival_date'] ?? $existingContainer->arrival_date,
-                                'branch_id' => $containerGroup['branch_id'] ?? $existingContainer->branch_id,
-                            ];
-
-                            // Only update container_no if explicitly provided in request
-                            if (isset($containerGroup['container_no']) && !empty($containerGroup['container_no'])) {
-                                $updateData['container_no'] = $containerGroup['container_no'];
-                            }
-
-                            // Only update sail_of_number if explicitly provided in request
-                            if (isset($containerGroup['sail_of_number']) && !empty($containerGroup['sail_of_number'])) {
-                                $updateData['sail_of_number'] = $containerGroup['sail_of_number'];
-                            }
-
-                            $existingContainer->update($updateData);
-                            $matched = true;
-                            break;
-                        }
-                    }
-
-                    // If no match found and container has expenses/delivery policies, keep it
-                    if (!$matched) {
-                        $hasExpenses = $existingContainer->expenses->count() > 0;
-                        $hasDeliveryPolicies = $existingContainer->delivery_policies->count() > 0;
-                        $hasPapers = $existingContainer->bookingPapers->count() > 0;
-
-                        // Only delete if container has no expenses, delivery policies, or papers
-                        if (!$hasExpenses && !$hasDeliveryPolicies && !$hasPapers) {
-                            $existingContainer->delete();
-                        }
-                    }
-                }
-
-                // Create new containers from request
-                foreach ($requestContainers as $containerGroup) {
-                    $containersCount = $containerGroup['containers_count'] ?? 1;
-                    for ($i = 0; $i < $containersCount; $i++) {
-                        // Check if this container already exists
-                        $exists = $existingContainers->contains(function ($container) use ($containerGroup) {
-                            return $container->container_id == ($containerGroup['container_id'] ?? null) &&
-                                   $container->branch_id == ($containerGroup['branch_id'] ?? null);
-                        });
-
-                        if (!$exists) {
-                            BookingContainer::create([
-                                'booking_id'    => $booking->id,
-                                'container_id'  => $containerGroup['container_id'] ?? null,
-                                'arrival_date'  => $containerGroup['arrival_date'] ?? null,
-                                'branch_id'     => $containerGroup['branch_id'] ?? null,
-                                'container_no'  => $containerGroup['container_no'] ?? null,
-                                'sail_of_number'=> $containerGroup['sail_of_number'] ?? null,
-                            ]);
-                        }
-                    }
-                }
+                // Nested groups format (form.blade.php): containers[i][branch_id|container_id|arrival_date|containers_count|booking_container_ids]
+                // الحفظ هنا بيعدّل الحاويات الموجودة نفسها (بدون مسح) ويحافظ على أرقامها ومصروفاتها.
+                $protectedKept = $this->syncBookingContainerGroups($booking, $requestContainers);
             }
             }
             // If no containers data in request, keep existing containers unchanged (only update booking details)
@@ -519,7 +454,12 @@ class BookingController extends Controller
             // Commit the transaction
             DB::commit();
 
-            return redirect()->route('bookings.index')->with('success', __('alerts.updated_successfully'));
+            $message = __('alerts.updated_successfully');
+            if (($protectedKept ?? 0) > 0) {
+                $message .= ' — لم يتم حذف ' . $protectedKept . ' حاوية لأن عليها بيانات (رقم حاوية/مصروفات/بوليصة/ملفات). احذفها يدويًا لو مطلوب.';
+            }
+
+            return redirect()->route('bookings.index')->with('success', $message);
         } catch (\Throwable $th) {
             // Rollback the transaction on error
             DB::rollBack();
@@ -529,6 +469,99 @@ class BookingController extends Controller
         }
     }
 
+
+    /**
+     * مزامنة مجموعات الحاويات من فورم التعديل بدون مسح بيانات.
+     *
+     * - المجموعة بتحمل booking_container_ids → نعدّل نفس الحاويات (فرع/نوع/تاريخ) ونحافظ على رقم الحاوية والمصروفات.
+     * - مجموعة جديدة (بدون ids) → نضيف حاويات جديدة بعددها.
+     * - مجموعة مش موجودة في الطلب → ما نلمسها (غياب مجموعة ≠ حذف).
+     * - لو العدد اتقلّل → نحذف الزيادة بس لو فاضية تمامًا (بدون رقم/مصروفات/بوليصة/ملفات).
+     *
+     * @return int عدد الحاويات اللي كان لازم تتحذف بس اتحمت لأن عليها بيانات
+     */
+    private function syncBookingContainerGroups(Booking $booking, array $groups): int
+    {
+        $protectedKept = 0;
+        $bookingContainers = $booking->bookingContainers()->orderBy('id')->get();
+
+        foreach ($groups as $group) {
+            if (! is_array($group)) {
+                continue;
+            }
+
+            $containerTypeId = isset($group['container_id']) && is_numeric($group['container_id'])
+                ? (int) $group['container_id'] : null;
+            $branchProvided = array_key_exists('branch_id', $group);
+            $branchId = isset($group['branch_id']) && is_numeric($group['branch_id'])
+                ? (int) $group['branch_id'] : null;
+            $arrivalDate = ! empty($group['arrival_date']) ? $group['arrival_date'] : null;
+            $count = max(1, (int) ($group['containers_count'] ?? 1));
+
+            $hasIdsKey = array_key_exists('booking_container_ids', $group);
+            if ($hasIdsKey) {
+                $ids = array_values(array_filter(array_map('intval', explode(',', (string) $group['booking_container_ids']))));
+                $members = $bookingContainers->whereIn('id', $ids)->values();
+            } else {
+                // فورم قديم مفتوح قبل التحديث: نطابق على النوع + الفرع ونمنع التكرار.
+                $members = $bookingContainers->filter(
+                    fn ($c) => (int) $c->container_id === (int) $containerTypeId
+                        && (int) $c->branch_id === (int) $branchId
+                )->values();
+            }
+
+            $attributes = [];
+            if ($containerTypeId !== null) {
+                $attributes['container_id'] = $containerTypeId;
+            }
+            if ($branchProvided) {
+                $attributes['branch_id'] = $branchId;
+            }
+            if ($arrivalDate !== null) {
+                $attributes['arrival_date'] = $arrivalDate;
+            }
+
+            // 1) عدّل الحاويات الحالية في المجموعة
+            if ($attributes !== []) {
+                foreach ($members as $member) {
+                    $member->update($attributes);
+                }
+            }
+
+            // 2) زوّد لو العدد أكبر
+            $missing = $count - $members->count();
+            if ($missing > 0 && $containerTypeId !== null) {
+                for ($i = 0; $i < $missing; $i++) {
+                    BookingContainer::create($attributes + ['booking_id' => $booking->id]);
+                }
+            }
+
+            // 3) قلّل لو العدد أصغر (فقط الحاويات الفاضية تمامًا، من الآخر)
+            if ($hasIdsKey && $missing < 0) {
+                $excess = -$missing;
+                foreach ($members->reverse() as $member) {
+                    if ($excess <= 0) {
+                        break;
+                    }
+                    $inUse = filled($member->container_no)
+                        || filled($member->sail_of_number)
+                        || $member->expenses()->exists()
+                        || $member->delivery_policies()->exists()
+                        || $member->bookingPapers()->exists();
+
+                    if ($inUse) {
+                        $protectedKept++;
+                        continue;
+                    }
+
+                    $member->delete();
+                    $excess--;
+                }
+            }
+        }
+
+        return $protectedKept;
+    }
 
     /**
      * Remove the specified resource from storage.
